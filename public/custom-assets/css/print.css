@@ -1,0 +1,39 @@
+header, footer, aside, nav, form, iframe, .menu, .hero, .adslot {
+    display: none;
+}
+
+article {
+    column-width: 17em;
+    column-gap: 3em;
+}
+
+/* Display url info
+*/
+/*
+a[href^="http"]:not(.no-link)::after {
+    content: "    (" attr(href) ")";
+}
+*/
+
+/*
+Append a message
+*/
+#main::after {
+    content: "Copyright 2019 Adamus IT";
+    display: block;
+    text-align: center;
+    font-size: 10px;
+}
+
+/* target all pages */
+@page {
+    margin: 2cm;
+}
+
+.table-bordered th, .table-bordered td {
+    border: 2px solid #aaaaaa !important;
+}
+
+body {
+    color: #212529;;
+}
