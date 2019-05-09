@@ -122,6 +122,18 @@
                                         </div>
                                         <div class="col-sm-6">
                                             <div class="form-group form-row">
+                                                <label for="amount_requested" class="col-sm-4 text-sm-right">Amount Requested</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" id="amount_requested" name="amount_requested" required
+                                                           class="form-control" value="" aria-describedby="helpId"
+                                                           placeholder=""/>
+                                                    <small id="helpId" class="form-text with-errors help-block"></small>
+                                                    <small id="helpId" class="form-text">(Must not exceed 30% of basic salary)</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--<div class="col-sm-6">
+                                            <div class="form-group form-row">
                                                 <label class="col-sm-4 text-sm-right">% of Salary</label>
                                                 <div class="col-sm-8 radio">
                                                     <div class="form-check form-check-inline">
@@ -145,7 +157,7 @@
                                                     <small class="help-block with-errors"></small>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div>-->
                                     </div>
                                     <div class="row">
                                         <div class="col-sm-6 pl-sm-5">

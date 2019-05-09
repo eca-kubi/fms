@@ -353,6 +353,10 @@ li.selected .dropdown-item.selected {
     z-index: auto;
 }
 
+.text-no-decoration a:hover {
+    text-decoration: none!important;
+}
+
 .multiselect-container {
     padding-left: 3rem;
     padding-right: 3rem;
@@ -394,9 +398,20 @@ ul.dropdown-menu {
     margin-left: 0.5em;
 }*/
 
+/*
+.jq-toast-li a {
+    border-bottom: 0;
+}
+*/
+
+
 /* plugin fixes */
 .bs-select a.dropdown-item.active {
 
+}
+
+.nav-link:hover{
+    background-color: unset;
 }
 
 .completed {

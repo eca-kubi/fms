@@ -82,9 +82,9 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="text-sm-right" style="width:17%"><b>% of Salary: </b></td>
+                                    <td class="text-sm-right" style="width:17%"><b>Amount Requested: </b></td>
                                     <td style="width:83%">
-                                        <?php echo $salary_advance->percentage; ?>%
+                                        <?php echo $salary_advance->amount_requested; ?> ghs
                                     </td>
                                 </tr>
                                 <tr>

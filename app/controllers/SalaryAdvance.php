@@ -24,7 +24,7 @@ class SalaryAdvance extends Controller
         $payload = [];
         $payload['current_user'] = getUserSession();
         $payload['title'] = 'Salary Advance Applications';
-        $payload['salary_advances'] = (new SalaryAdvanceModel())->get();
+        $payload['salary_advances'] = (new SalaryAdvanceModel())->get(['user_id' => getUserSession()->user_id]);
         $this->view('salary-advance/all', $payload);
     }
 
@@ -48,12 +48,13 @@ class SalaryAdvance extends Controller
             $col_data['user_id'] = $current_user->user_id;
             $col_data['percentage'] = $_POST['percentage'];
             $col_data['status'] = STATUS_PENDING_HOD_APPROVAL;
+            $col_data['amount_requested'] = $_POST['amount_requested'];
             $ret = SalaryAdvanceModel::insert($col_data);
             if ($ret) {
                 flash_success('single', 'Salary Advance Application Successful!');
                 redirect("salary-advance/single/$ret");
             } else {
-                flash_error('');
+                flash_error('single');
             }
         }
         $this->view('salary-advance/new', $payload);

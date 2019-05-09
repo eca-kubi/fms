@@ -139,7 +139,7 @@
             </li>
         </ul>
     </nav>
-    <nav class="d-md-block d-none navbar navbar-light w3-aqua flex-nowrap flex-row" id="navbar2"
+    <nav class="d-md-block d-none navbar navbar-light bg-navy text-white flex-nowrap flex-row" id="navbar2"
          style="z-index: 0">
         <div class="container-fluid">
             <ul class="navbar-nav flex-row float-left">
@@ -148,14 +148,14 @@
                         <i class="fa fa-angle-double-left  mr-1"></i>Go Back
                     </a>
                 </li>
-                <li class="nav-item ml-0 ml-sm-4 text-left pr-1 border-right fa">
-                    <a href="<?php echo site_url('cms-forms/dashboard'); ?>"
-                       class="ajax-link nav-link btn border-0 text-bold flat text-left font-raleway">
+                <li class="nav-item ml-0 ml-sm-4 text-left pr-1 border-right border-warning fa">
+                    <a href="<?php echo site_url('start-page'); ?>"
+                       class="ajax-link nav-link btn border-0 text-bold flat text-left font-raleway text-warning">
                         <i class="fa fa-home ml-4"></i> DASHBOARD
                     </a>
                 </li>
                 <li class="nav-item dropdown fa  mx-2">
-                    <a class="nav-link dropdown-item dropdown-toggle btn border-0 text-bold flat"
+                    <a class="nav-link dropdown-item dropdown-toggle btn border-0 text-bold flat text-warning"
                        data-toggle="dropdown">
                         <i class="fas fa-edit"></i>
                         Apply Now
@@ -181,32 +181,32 @@
                         </li>
                         <li class="dropdown-divider"></li>
                         <li>
-                            <a class="dropdown-item" href="<?php echo site_url('cms-forms/dashboard/active'); ?>">
+                            <a class="dropdown-item" href="#">
                                 IT
                             </a>
                         </li>
                         <li class="dropdown-divider"></li>
                         <li>
-                            <a class="dropdown-item" href="<?php echo site_url('cms-forms/dashboard/closed'); ?>">
+                            <a class="dropdown-item" href="#">
                                 HR
                             </a>
                         </li>
                         <li class="dropdown-divider"></li>
                         <li>
-                            <a class="dropdown-item" href="<?php echo site_url('cms-forms/dashboard/rejected'); ?>">
+                            <a class="dropdown-item" href="#">
                                 Admin
                             </a>
                         </li>
                         <li class="dropdown-divider"></li>
                         <li>
-                            <a class="dropdown-item" href="<?php echo site_url('cms-forms/dashboard/rejected'); ?>">
+                            <a class="dropdown-item" href="#">
                                 Mining
                             </a>
                         </li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown fa  mx-2">
-                    <a class="nav-link dropdown-item dropdown-toggle btn border-0 text-bold flat"
+                    <a class="nav-link dropdown-item text-warning dropdown-toggle btn border-0 text-bold flat"
                        data-toggle="dropdown">
                         <i class="fa fa-history"></i>
                         History
@@ -232,25 +232,25 @@
                         </li>
                         <li class="dropdown-divider"></li>
                         <li>
-                            <a class="dropdown-item" href="<?php echo site_url('cms-forms/dashboard/active'); ?>">
+                            <a class="dropdown-item" href="#">
                                 IT
                             </a>
                         </li>
                         <li class="dropdown-divider"></li>
                         <li>
-                            <a class="dropdown-item" href="<?php echo site_url('cms-forms/dashboard/closed'); ?>">
+                            <a class="dropdown-item" href="#">
                                 HR
                             </a>
                         </li>
                         <li class="dropdown-divider"></li>
                         <li>
-                            <a class="dropdown-item" href="<?php echo site_url('cms-forms/dashboard/rejected'); ?>">
+                            <a class="dropdown-item" href="#">
                                 Admin
                             </a>
                         </li>
                         <li class="dropdown-divider"></li>
                         <li>
-                            <a class="dropdown-item" href="<?php echo site_url('cms-forms/dashboard/rejected'); ?>">
+                            <a class="dropdown-item" href="#">
                                 Mining
                             </a>
                         </li>

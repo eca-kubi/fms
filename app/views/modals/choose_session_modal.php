@@ -17,7 +17,7 @@
 
                     </p>
                     <p>
-                        <a class="btn btn-default" href="<?php echo site_url('salary-advance'); ?>" role="button">
+                        <a class="btn btn-default" href="<?php echo site_url('start-page'); ?>" role="button">
                             Go
                             <i class="fa fa-arrow-alt-circle-right"></i>
                         </a>
@@ -25,14 +25,12 @@
                 </div>
 
                 <div class="col text-center">
-                    <img class="img-circle img-thumbnail" alt="A" avatar="Administrator" src=""
+                    <img class="img-circle img-thumbnail" alt="M" avatar="Manager" src=""
                          style="width: 100px; height: 100px;"/>
-                    <h2 class="pt-3">Admin</h2>
-                    <p class="fa text-muted font-italic pb-5">
-
-                    </p>
+                    <h2 class="pt-3">Manager</h2>
+                    <p class="fa text-muted font-italic pb-5"></p>
                     <p>
-                        <a class="btn btn-default" href="<?php echo site_url('salary-advance-admin'); ?>">Go
+                        <a class="btn btn-default" href="<?php echo site_url('start-page-manager'); ?>">Go
                             <i class="fa fa-arrow-alt-circle-right"></i>
                         </a>
                     </p>

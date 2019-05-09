@@ -35,7 +35,7 @@
                 <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="<?php echo site_url('start-page') ?>" class="nav-link">
                         <i class="nav-icon fas fa-home"></i>
                         <p>
                             Dashboard
@@ -52,7 +52,7 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item has-treeview">
-                            <a href="<?php echo site_url('cms-forms/start-change-process') ?>" class="nav-link">
+                            <a href="#" class="nav-link">
                                 <i class="nav-icon fas fa-circle-notch animated rotateIn"></i>
                                 <p>
                                     Finance
@@ -62,7 +62,7 @@
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
                                     <a href="<?php echo site_url('salary-advance'); ?>" class="nav-link">
-                                        <i class="nav-icon fas fa-circle-notch animated rotateIn"></i>
+                                        <i class="nav-icon fas fa-circle-notch animated rotateIn invisible"></i>
                                         <p>
                                             Salary Advance
                                         </p>
@@ -72,25 +72,25 @@
                             </ul>
                         </li>
                         <li class="nav-item">
-                            <a href="<?php echo site_url('cms-forms/dashboard/active'); ?>" class="nav-link">
+                            <a href="#" class="nav-link">
                                 <i class="nav-icon fas fa-circle-notch animated rotateIn"></i>
                                 <p>IT</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="<?php echo site_url('cms-forms/dashboard/closed'); ?>" class="nav-link">
+                            <a href="#" class="nav-link">
                                 <i class="fas fa-circle-notch animated rotateIn nav-icon"></i>
                                 <p>HR</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="<?php echo site_url('cms-forms/dashboard/rejected'); ?>" class="nav-link">
+                            <a href="#" class="nav-link">
                                 <i class="fas fa-circle-notch animated rotateIn nav-icon"></i>
                                 <p>Admin</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="<?php echo site_url('cms-forms/dashboard/rejected'); ?>" class="nav-link">
+                            <a href="#" class="nav-link">
                                 <i class="fas fa-circle-notch animated rotateIn nav-icon"></i>
                                 <p>Mining</p>
                             </a>

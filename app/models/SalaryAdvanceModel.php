@@ -16,6 +16,7 @@ class SalaryAdvanceModel
     public $amount_received;
     public $date_received;
     public $amount_approved;
+    public $amount_requested;
     /**
      * @var MysqliDb
      */
@@ -26,7 +27,7 @@ class SalaryAdvanceModel
         $this->db = Database::getDbh(); // MysqliDb
         if (!empty($id_salary_advance)) {
             $this->id_salary_advance = $id_salary_advance;
-            $ret = (array)$this->getOne($this->id_salary_advance);
+            $ret = (array)self::getOne($this->id_salary_advance);
             if (!empty($ret)) {
                 foreach ($ret as $key => $value) {
                     $this->{$key} = $value;
@@ -35,18 +36,23 @@ class SalaryAdvanceModel
         }
     }
 
-    public function getOne($id_salary_advance)
+    public static function getOne($id_salary_advance)
     {
-        return $this->db
-            ->objectBuilder()
+        $db = Database::getDbh();
+        return $db->objectBuilder()
             ->where('id_salary_advance', $id_salary_advance)
             ->getOne('salary_advance');
     }
 
-    public function get()
+    public static function get(array $where = null)
     {
-        return $this->db
-            ->objectBuilder()
+        $db = Database::getDbh();
+        if (!empty($where)) {
+            foreach ($where as $col => $value) {
+                $db->where($col, $value);
+            }
+        }
+        return $db->objectBuilder()
             ->get('salary_advance');
     }
 

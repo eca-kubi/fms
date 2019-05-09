@@ -657,7 +657,7 @@ function concatNameWithUserId($user_id)
         ->insert();
 }*/
 
-function echoDate($date, $official=false, $return = false)
+function echoDate($date, $official = false, $return = false)
 {
     try {
         $d = (new \Moment\Moment($date))->calendar(false);
@@ -868,7 +868,23 @@ function getDepartment($user_id)
 
 function getDepartmentID($user_id)
 {
-    return ((new User($user_id))->department)->department_id;
+    return (new User($user_id))->department_id;
+}
+
+function getCurrentHR()
+{
+    return
+        Database::getDbh()
+            ->where('prop', 'current_hr')
+            ->getValue('fms_settings', 'value');
+}
+
+function getCurrentFgmr()
+{
+    return
+        Database::getDbh()
+            ->where('prop', 'current_fgmr')
+            ->getValue('fms_settings', 'value');
 }
 
 /**
@@ -1292,7 +1308,8 @@ function getActionList()
     return $db->objectBuilder()->get('cms_action_list');
 }
 
-function isAdmin($user_id) {
+function isAdmin($user_id)
+{
     $user_role = (new User($user_id))->role;
     return in_array($user_role, ADMIN);
 }

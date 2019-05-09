@@ -5,7 +5,7 @@
 
 let URL_ROOT = '';
 let form_submit_count = 0;
-let CMS_FORM_ID = 0;
+let ID_SALARY_ADVANCE = 0;
 let lists = [];
 //let ANIMATE_FLASH = 'animated flash card infinite';
 //=============================================================
@@ -35,7 +35,7 @@ $(document).ready(function () {
     $('.print-it').printPage();
     let NAV_BAR_HEIGHT = $('.navbar-fixed').height();
     $('.content-wrapper').css('margin-top', NAV_BAR_HEIGHT + 'px');
-    CMS_FORM_ID = $('#cms_form_id').val();
+    ID_SALARY_ADVANCE = $('#cms_form_id').val();
     URL_ROOT = $('#url_root').val();
     //moment.modifyHolidays.add('Ghana');
     checkHODAssignment();
@@ -188,22 +188,22 @@ $(document).ready(function () {
             // body...
             resizeTables();
         }, 1000);
-        kendo.resize($("#action_list").parent());
+        kendo.resize($("#salary_advance_manager").parent());
     });
 
     // fix column width for tables in collapse
     $('.hide-child').removeClass('show').trigger('hidden.bs.collapse');
 
 
-    // '/cms-forms/action-list'
+    // '/salary-advance-manager-ajax/action-list'
     let dataSource = new kendo.data.DataSource({
         pageSize: 5,
         transport: {
             read: function (options) {
                 // make JSONP request to https://demos.telerik.com/kendo-ui/service/products
                 $.ajax({
-                    url: URL_ROOT + "/ActionLists/",
-                    data: {cms_form_id: CMS_FORM_ID},
+                    url: URL_ROOT + "/salary-advance-manager-ajax/",
+                    data: {id_salary_advance: ID_SALARY_ADVANCE},
                     dataType: "jsonp", // "jsonp" is required for cross-domain requests; use "json" for same-domain requests
                     success: function (result) {
                         // notify the data source that the request succeeded
@@ -216,9 +216,9 @@ $(document).ready(function () {
                 });
             },
             update: function (options) {
-                let cms_action_list_id = options.data.cms_action_list_id;
+                let idSalaryAdvance = options.data.id_salary_advance;
                 $.ajax({
-                    url: URL_ROOT + "/ActionLists/Update/" + cms_action_list_id,
+                    url: URL_ROOT + "/salary-advance-manager-ajax/update/" + idSalaryAdvance,
                     dataType: "jsonp", // "jsonp" is required for cross-domain requests; use "json" for same-domain requests
                     // send the created data items as the "models" service parameter encoded in JSON
                     data: {
@@ -236,9 +236,9 @@ $(document).ready(function () {
                 });
             },
             destroy: function (options) {
-                let cms_action_list_id = options.data.cms_action_list_id;
+                let idSalaryAdvance = options.data.id_salary_advance;
                 $.ajax({
-                    url: URL_ROOT + "/ActionLists/Destroy/" + cms_action_list_id,
+                    url: URL_ROOT + "/salary-advance-manager-ajax/destroy/" + idSalaryAdvance,
                     dataType: "jsonp", // "jsonp" is required for cross-domain requests; use "json" for same-domain requests
                     // send the created data items as the "models" service parameter encoded in JSON
                     data: {
@@ -257,9 +257,9 @@ $(document).ready(function () {
             },
             create: function (options) {
                 // make JSONP request to https://demos.telerik.com/kendo-ui/service/products/create
-                options.data.cms_form_id = CMS_FORM_ID;
+                options.data.id_salary_advance = ID_SALARY_ADVANCE;
                 $.ajax({
-                    url: URL_ROOT + "/ActionLists/Create",
+                    url: URL_ROOT + "/salary-advance-manager-ajax/create",
                     method: 'POST',
                     dataType: "jsonp", // "jsonp" is required for cross-domain requests; use "json" for same-domain requests
                     // send the created data items as the "models" service parameter encoded in JSON
@@ -317,6 +317,7 @@ $(document).ready(function () {
             }
         }
     });
+
     $('#action_list').kendoGrid({
         mobile: true,
         noRecords: true,
