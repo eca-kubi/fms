@@ -93,6 +93,6 @@ modal('change_password');
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/list.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/kendo/kendo.all.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/jQuery-printPage/jquery.printPage.js"></script>
-<script src="<?php echo URL_ROOT; ?>/public/custom-assets/js/custom.js?<?php echo microtime(); ?>"></script>
+<script src="<?php echo URL_ROOT; ?>/public/custom-assets/js/custom.js?<?php //echo microtime(); ?>"></script>
 </body>
 </html>

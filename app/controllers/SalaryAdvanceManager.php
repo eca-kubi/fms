@@ -27,6 +27,7 @@ class SalaryAdvanceManager extends Controller
         $payload = [];
         $payload['current_user'] = $current_user =  getUserSession();
         $payload['title'] = 'Salary Advance Applications';
+
         if (!isAdmin($current_user->user_id)) {
             redirect('salary-advance');
         }

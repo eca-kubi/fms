@@ -68,4 +68,15 @@ class User
         return false;
     }
 
+    public static function get(array $where = null)
+    {
+        $db = Database::getDbh();
+        if (!empty($where)) {
+            foreach ($where as $col => $value) {
+                $db->where($col, $value);
+            }
+        }
+        return $db->objectBuilder()
+            ->get('users');
+    }
 }

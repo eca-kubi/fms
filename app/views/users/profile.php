@@ -147,10 +147,8 @@
                                             <td scope="row">Managers</td>
                                             <td>
                                                 <?php
-                                                foreach ($payload['mgrs'] as $key => $value) {
-                                                    ?>
-
-                                                <?php } ?>
+                                                echo $payload['mgrs'];
+                                                ?>
                                             </td>
                                         </tr>
 

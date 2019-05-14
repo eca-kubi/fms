@@ -881,10 +881,9 @@ function getCurrentHR()
 
 function getCurrentFgmr()
 {
-    return
-        Database::getDbh()
-            ->where('prop', 'current_fgmr')
-            ->getValue('fms_settings', 'value');
+    return Database::getDbh()
+        ->where('prop', 'current_fmgr')
+        ->getValue('fms_settings', 'value');
 }
 
 /**

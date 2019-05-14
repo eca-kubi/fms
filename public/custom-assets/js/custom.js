@@ -7,35 +7,24 @@ let URL_ROOT = '';
 let form_submit_count = 0;
 let ID_SALARY_ADVANCE = 0;
 let lists = [];
-//let ANIMATE_FLASH = 'animated flash card infinite';
-//=============================================================
-// Daterangepicker Plugin
-/*let date_rangepicker_options = {
-    singleDate: true,
-    showShortcuts: false,
-    autoClose: true,
-    customArrowPrevSymbol: '<i class="fa fa-arrow-circle-left"></i>',
-    customArrowNextSymbol: '<i class="fa fa-arrow-circle-right"></i>',
-    singleMonth: true,
-    monthSelect: true,
-    yearSelect: true,
-    format: 'ddd, MMM D, YYYY',
-    //yearSelect: [1900, moment().get('year')]
-    //startDate: '1900-01-01'
-};*/
-
-// noinspection JSDeprecatedSymbols
-// noinspection JSCheckFunctionSignatures
-// noinspection JSDeprecatedSymbols
-// noinspection JSCheckFunctionSignatures
-// noinspection JSDeprecatedSymbols
-// noinspection JSCheckFunctionSignatures
-// noinspection JSDeprecatedSymbols
+let $salaryAdvanceManagerGrid;
+let employeeDataSource;
 $(document).ready(function () {
+    employeeDataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: URL_ROOT + '/employees-ajax/',
+                dataType: "json"
+            }
+        },
+    });
+    $salaryAdvanceManagerGrid = $('#salary_advance_manager');
+    $salaryAdvanceManagerGrid.on('change', "input[name=employee]", function (e) {
+        let select = $(this).data("kendoDropDownList");
+    });
     $('.print-it').printPage();
     let NAV_BAR_HEIGHT = $('.navbar-fixed').height();
     $('.content-wrapper').css('margin-top', NAV_BAR_HEIGHT + 'px');
-    ID_SALARY_ADVANCE = $('#cms_form_id').val();
     URL_ROOT = $('#url_root').val();
     //moment.modifyHolidays.add('Ghana');
     checkHODAssignment();
@@ -71,10 +60,6 @@ $(document).ready(function () {
             return false;
         }
     });
-    initList('active');
-    initList('closed');
-    initList('rejected');
-    //$(document).ajaxStart($.blockUI).ajaxStop($.unblockUI);
 
     $('form').submit(function () {
         let form_is_valid = this.checkValidity();
@@ -86,42 +71,6 @@ $(document).ready(function () {
         }
     });
     //=============================================================
-    // Datatables Plugin
-    if (typeof $.fn.dataTable !== 'undefined') {
-        $.extend(true, $.fn.dataTable.defaults, {
-            responsive: true,
-            processing: true,
-            scrollY: 100,
-            scrollX: false,
-            deferRender: true,
-            scroller: false,
-            select: false,
-            "dom": "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
-                "<'row'<'col-sm-12'tr>>" +
-                "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-            "language": {
-                processing: true,
-                "emptyTable": "No data is available ",
-                search: "_INPUT_",
-                searchPlaceholder: "Search..."
-            },
-            buttons: [
-                {
-                    extend: 'pdf',
-                    text: 'Export to PDF',
-                    exportOptions: {
-                        columns: ':visible'
-                    }
-                },
-                'excel',
-                'print'
-            ],
-            "initComplete": function (settings, json) {
-            },
-            "drawCallback": function (settings) {
-            }
-        });
-    }
 
     $('.bs-select')
         .selectpicker({
@@ -196,134 +145,90 @@ $(document).ready(function () {
 
 
     // '/salary-advance-manager-ajax/action-list'
-    let dataSource = new kendo.data.DataSource({
+    let salaryAdvanceDataSource = new kendo.data.DataSource({
         pageSize: 5,
         transport: {
-            read: function (options) {
-                // make JSONP request to https://demos.telerik.com/kendo-ui/service/products
-                $.ajax({
-                    url: URL_ROOT + "/salary-advance-manager-ajax/",
-                    data: {id_salary_advance: ID_SALARY_ADVANCE},
-                    dataType: "jsonp", // "jsonp" is required for cross-domain requests; use "json" for same-domain requests
-                    success: function (result) {
-                        // notify the data source that the request succeeded
-                        options.success(result.data);
-                    },
-                    error: function (result) {
-                        // notify the data source that the request failed
-                        options.error(result);
-                    }
-                });
+            read: {
+                url: URL_ROOT + "/salary-advance-manager-ajax/",
+                type: "post",
+                dataType: "json"
             },
-            update: function (options) {
-                let idSalaryAdvance = options.data.id_salary_advance;
-                $.ajax({
-                    url: URL_ROOT + "/salary-advance-manager-ajax/update/" + idSalaryAdvance,
-                    dataType: "jsonp", // "jsonp" is required for cross-domain requests; use "json" for same-domain requests
-                    // send the created data items as the "models" service parameter encoded in JSON
-                    data: {
-                        payload: kendo.stringify(options.data)
-                    },
-                    method: 'POST',
-                    success: function (result) {
-                        // notify the data source that the request succeeded
-                        options.success(result.data);
-                    },
-                    error: function (result) {
-                        // notify the data source that the request failed
-                        options.error(result);
-                    }
-                });
+            update: {
+                url: URL_ROOT + "/salary-advance-manager-ajax/update/",
+                type: 'post',
+                dataType: 'json'
             },
-            destroy: function (options) {
-                let idSalaryAdvance = options.data.id_salary_advance;
-                $.ajax({
-                    url: URL_ROOT + "/salary-advance-manager-ajax/destroy/" + idSalaryAdvance,
-                    dataType: "jsonp", // "jsonp" is required for cross-domain requests; use "json" for same-domain requests
-                    // send the created data items as the "models" service parameter encoded in JSON
-                    data: {
-                        payload: kendo.stringify(options.data)
-                    },
-                    method: 'POST',
-                    success: function (result) {
-                        // notify the data source that the request succeeded
-                        options.success(result.data);
-                    },
-                    error: function (result) {
-                        // notify the data source that the request failed
-                        options.error(result);
-                    }
-                });
+            destroy: {
+                url: URL_ROOT + "/salary-advance-manager-ajax/destroy/",
+                type: 'post',
+                dataType: 'json'
             },
-            create: function (options) {
-                // make JSONP request to https://demos.telerik.com/kendo-ui/service/products/create
-                options.data.id_salary_advance = ID_SALARY_ADVANCE;
-                $.ajax({
-                    url: URL_ROOT + "/salary-advance-manager-ajax/create",
-                    method: 'POST',
-                    dataType: "jsonp", // "jsonp" is required for cross-domain requests; use "json" for same-domain requests
-                    // send the created data items as the "models" service parameter encoded in JSON
-                    data: {
-                        payload: kendo.stringify(options.data)
-                    },
-                    success: function (result) {
-                        // notify the data source that the request succeeded
-                        options.success(result.data);
-                    },
-                    error: function (result) {
-                        // notify the data source that the request failed
-                        options.error(result);
-                    }
-                });
+            create: {
+                url: URL_ROOT + "/salary-advance-manager-ajax/create",
+                type: 'post',
+                dataType: 'json'
             },
-            parameterMap: function (options, operation) {
-                if (operation !== "read" && options.models) {
-                    return {models: kendo.stringify(options.models)};
-                }
-            }
+            /* parameterMap: function (options, operation) {
+                 if (operation !== "read" && options.models) {
+                     return {models: kendo.stringify(options.models)};
+                 }
+             }*/
         },
         schema: {
             model: {
-                id: "cms_action_list_id",
+                id: "id_salary_advance",
                 fields: {
-                    action: {
-                        type: 'string',
+                    employee: {
+                        editable: false,
+                        defaultValue: {name: ''}
+                    },
+                    date_raised: {
+                        type: 'date',
+                        editable: false
+                    },
+                    amount_requested: {
+                        type: 'number',
                         validation: { //set validation rules
                             required: true
                         }
                     },
-                    person_responsible: {
+                    hod_comment: {
                         type: 'string',
-                        validation: {
-                            required: true
-                        }
+                        editable: false
                     },
-                    completed: {
+                    hr_comment: {
+                        type: 'string',
+                        editable: false
+                    },
+                    fmgr_comment: {
+                        type: 'string',
+                        editable: false
+                    },
+                    department: {
+                        type: 'string',
+                        editable: false
+                    },
+                    hr_approval: {
                         type: 'boolean'
                     },
-                    date: {
-                        type: 'date'
+                    hod_approval: {
+                        type: 'boolean'
                     },
-                    cms_form_id: {
-                        type: 'number'
-                    },
-                    cms_action_list_id: {
-                        //this field will not be editable (default value is true)
-                        type: 'number',
-                        editable: false,
-                        nullable: true
+                    fmgr_approval: {
+                        type: 'boolean'
                     }
                 }
             }
         }
     });
 
-    $('#action_list').kendoGrid({
+    $salaryAdvanceManagerGrid.kendoGrid({
+        autoFitColumn: true,
         mobile: true,
         noRecords: true,
         navigatable: true,
         toolbar: ["create"],
-        editable: 'popup',
+        editable: 'inline',
         filterable: true,
         columnMenu: true,
         sortable: true,
@@ -337,81 +242,139 @@ $(document).ready(function () {
         },
         columns: [
             {
-                field: 'action',
-                title: 'Action to be Taken'
+                field: 'employee',
+                title: 'Employee',
+                template: "#=employee.name#",
+                editor: dropDownEditor,
+                width: "15%"
             },
             {
-                field: 'person_responsible',
-                title: 'Responsible Person'
+                field: 'department',
+                title: 'Department'
             },
             {
-                field: 'completed',
-                title: 'Completed?',
-                type: 'boolean',
-                template: kendo.template("#= completed? 'Yes'   : 'No' #"),
-                //editor: customBoolEditor
+                field: 'date_raised',
+                title: 'Date Raised',
+                width: "15%",
+                template: "#= kendo.toString(kendo.parseDate(data.date_raised), 'dddd dd MMM, yyyy') #"
             },
             {
-                field: 'date',
-                title: 'Date',
-                template: "#= dateTemplate(data.date) #"
+                field: 'amount_requested',
+                title: 'Amount Requested',
+                template: "#= kendo.toString('GH₵ ' + kendo.format('{0:n}', data.amount_requested)) #",
             },
+            {
+                title: 'HoD',
+                columns: [
+                    {
+                        field: 'hod_comment',
+                        title: 'HoD Comment',
+                        hidden: true,
+                        editor: textAreaEditor
+                    },
+                    {
+                        field: 'hod_approval',
+                        title: 'Status',
+                        editor: customBoolEditor,
+                        template: "#= hod_approval? 'Approved' : 'Not Approved' #"
+                    }
+                ],
+            },
+            {
+                title: 'HR',
+                columns: [
+                    {
+                        field: 'hr_comment',
+                        title: 'HR Comment',
+                        editor: textAreaEditor,
+                        hidden: true
+                    },
+                    {
+                        field: 'hr_approval',
+                        title: 'Status',
+                        editor: customBoolEditor,
+                        template: "#= hr_approval? 'Approved' : 'Not Approved' #"
+                    }
+                ],
+            },
+            {
+                title: 'Finance Mgr',
+                columns: [
+                    {
+                        field: 'fmgr_comment',
+                        title: 'FMgr. Comment',
+                        hidden: true,
+                        editor: textAreaEditor
+                    },
+                    {
+                        field: 'fmgr_approval',
+                        title: 'Status',
+                        editor: customBoolEditor,
+                        template: "#= fmgr_approval? 'Approved' : 'Not Approved' #"
+                    }
+                ],
+            },
+
             {command: ["edit", "destroy"], title: "&nbsp;", width: "220px"}
-        ],
-        dataSource: dataSource,
+        ]
+        /*detailTemplate: kendo.template(`
+ <div>
+     Name: #: employee #
+   </div>
+   `)*/,
+        dataSource: salaryAdvanceDataSource,
         dataBinding: function () {
             //let no = (this.dataSource.page() - 1) * this.dataSource.pageSize();
+        },
+        dataBound: function (e) {
+            let len = $salaryAdvanceManagerGrid.find("tbody tr").length;
+            /*for(let i=0;i<len ; i++)
+            {
+                let model = grid.data("kendoGrid").dataSource.at(i);
+                if (model && !model.hod_comment_editable) {//field names
+                    model.fields["hod_comment"].editable = false;
+                } else {
+                    model.fields["hod_comment"].editable = true;
+                }
+            }*/
+        },
+        beforeEdit: function (e) {
+            if (e.model.isNew()) {
+                // Disable the editor of the "id" column when editing data items
+                //var numeric = e.container.find("input[name=id]").data("kendoNumericTextBox");
+                //numeric.enable(false);
+                e.model.fields['employee'].editable = true;
+                e.model.fields['hod_comment'].editable = false;
+                e.model.fields['hr_comment'].editable = universal.hr_comment_editable;
+                e.model.fields['fmgr_comment'].editable = universal.fmgr_comment_editable;
+                e.model.fields['hod_approval'].editable = universal.hod_approval_editable;
+                e.model.fields['hr_approval'].editable = universal.hr_approval_editable;
+                e.model.fields['fmgr_approval'].editable = universal.fmgr_approval_editable;
+
+            } else {
+                e.model.fields['employee'].editable = false;
+                e.model.fields['hod_comment'].editable = e.model.hod_comment_editable;
+                e.model.fields['hr_comment'].editable = e.model.hr_comment_editable;
+                e.model.fields['fmgr_comment'].editable = e.model.fmgr_comment_editable;
+                e.model.fields['fmgr_approval'].editable = e.model.fmgr_approval_editable;
+                e.model.fields['hod_approval'].editable = e.model.hod_approval_editable;
+                e.model.fields['hr_approval'].editable = e.model.hr_approval_editable;
+
+            }
         }
     });
-
-    $('#action-list-read-only').kendoGrid({
-        mobile: true,
-        navigatable: true,
-        filterable: true,
-        columnMenu: true,
-        sortable: true,
-        noRecords: true,
-        height: 500,
-        resizable: true,
-        pageable: {
-            alwaysVisible: false,
-            pageSizes: [5, 10, 15, 20],
-            buttonCount: 5
-        },
-        columns: [
-            {
-                field: 'action',
-                title: 'Action to be Taken'
-            },
-            {
-                field: 'person_responsible',
-                title: 'Responsible Person'
-            },
-            {
-                field: 'completed',
-                title: 'Completed?',
-                type: 'boolean',
-                template: kendo.template("#= completed? 'Yes'   : 'No' #"),
-                //editor: customBoolEditor
-            },
-            {
-                field: 'date',
-                title: 'Date',
-                template: "#= dateTemplate(data.date) #"
-            },
-        ],
-        dataSource: dataSource
+    $salaryAdvanceManagerGrid.data('kendoGrid').thead.kendoTooltip({
+        filter: "th",
+        position: 'top',
+        content: function (e) {
+            let target = e.target; // element for which the tooltip is shown
+            return $(target).text();
+        }
     });
-
-    // '/cms-forms/pl-closure'
 
     $('.dataTables_length').addClass('d-inline-block mx-3');
     //proxyEmail();
     $('.bs-searchbox >input').attr('data-validate', false);
-
-    /*  setTimeout(()=>{
-          $('.box-header').toggleClass(ANIMATE_FLASH, false);
-      }, 5000)*/
 });
 
 window.addEventListener("load", function () {
@@ -448,73 +411,6 @@ window.addEventListener("load", function () {
     console.log("All resources finished loading!");
 });
 
-/*function isOffDay(date) {
-    return bizniz.isWeekendDay(date);
-}
-
-function getWeekendDays(startMoment, endMoment) {
-    startMoment.toDate();
-    endMoment.toDate();
-    return Math.abs(bizniz.default.weekendDaysBetween(s, e));
-}
-
-function getWeekDays(startMoment, endMoment) {
-    startMoment.toDate();
-    endMoment.toDate();
-    return Math.abs(bizniz.default.weekDaysBetween(s, e));
-}
-
-function proxyEmail() {
-    $.get(URL_ROOT + "/helpers/proxymail", {name: "value"},
-        function (data, textStatus) {
-            console.log(textStatus);
-        }
-    );
-}
-
-function getUrlParam(parameter, defaultvalue) {
-    let url_parameter = defaultvalue;
-    if (window.location.href.indexOf(parameter) > -1) url_parameter = getUrlVars()[parameter];
-    return url_parameter;
-}
-
-function getUrlVars() {
-    let vars = {};
-    window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-        vars[key] = value;
-    });
-    return vars;
-}
-
-function nextWeekDay(moment_date) {
-    return moment(moment_date.toDate(), moment_format).weekday(8);
-}
-
-function nextWorkingDay(moment_start_date) {
-    /!*do {
-        bizniz.default.addWeekDays(moment_day.toDate(), 1);
-    } while (!moment_day.isHoliday());*!/
-    return moment(moment_start_date.toDate(), moment_format);
-}
-
-function getDays(moment_start_date, moment_resume_date) {
-    let holidays = moment_start_date.holidaysBetween(moment_resume_date);
-    let holiday_count = holidays ? holidays.length : 0;
-    let days_applied_for = moment_start_date.businessDiff(moment_resume_date);
-    return {
-        'holiday_count': holiday_count,
-        'days_applied_for': days_applied_for
-    }
-}*/
-
-/*function capitalize(s) {
-    if (typeof s !== 'string') return '';
-    return s.split(/[\s,-.]+/).map(function (line) {
-        line = line[0].toUpperCase() + line.substr(1);
-        return line;
-    }).join(" ");
-}*/
-
 function resizeTables() {
     if (typeof $.fn.dataTable === 'undefined') {
         return
@@ -533,13 +429,6 @@ function customBoolEditor(container, options) {
     } else {
         options.model.completed = 0;
     }
-}*/
-
-
-/*function dateTemplate(date) {
-    let m = new moment(date);
-    return m.isValid() ? m.format("ddd, MMM D YYYY") : '';
-    //return m.isValid() ? (m.calendar().split(" at"))[0] : '';
 }*/
 
 function initList(id) {
@@ -633,3 +522,33 @@ let checkHODAssignment = function () {
         return false;
     }
 };
+
+function dropDownEditor(container, options) {
+    $('<input required name="' + options.field + '"/>')
+        .appendTo(container)
+        .kendoDropDownList({
+            dataTextField: "employee.name",
+            dataValueField: "employee.user_id",
+            dataSource: {
+                transport: {
+                    read: {
+                        url: URL_ROOT + '/employees-ajax/',
+                        dataType: "json"
+                    }
+                }
+            },
+            filter: "contains",
+            suggest: true
+            //index: 1
+        });
+}
+
+function textAreaEditor(container, options) {
+    $('<textarea class="k-textbox" name="' + options.field + '" style="width:100%;height:100%;" />').appendTo(container);
+}
+
+function customBoolEditor(container, options) {
+    let guid = kendo.guid();
+    $(`<input class="k-checkbox" id="${guid}" type="checkbox" name="${options.field}" data-bind="checked: ${options.field}" data-type="boolean">`).appendTo(container);
+    $(`<label class="k-checkbox-label" for="${guid}">&#8203;</label>`).appendTo(container);
+}

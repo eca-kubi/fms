@@ -33,7 +33,7 @@
             <div class="box collapsed">
                 <div class="box-header">
                     <h5>
-                        <?php flash('flash_dashboard'); ?>
+                        <?php flash('flash_all'); ?>
                     </h5>
                     <h3 class="box-title text-bold d-none"></h3>
                     <div class="box-tools pull-right d-none">
@@ -56,3 +56,11 @@
 </div>
 <!-- /.content-wrapper -->
 <?php require_once APP_ROOT . '\views\includes\footer.php'; ?>
+<?php
+$universal = new stdClass();
+$universal->hr_comment_editable = getCurrentHR() == $current_user->user_id;
+$universal->fgmr_comment_editable = getCurrentFgmr() == $current_user->user_id;
+?>
+<script>
+    let universal = JSON.parse(`<?php echo json_encode($universal); ?>`);
+</script>
