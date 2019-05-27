@@ -1,7 +1,5 @@
 <?php /** @noinspection ALL */
 
-use Simple\json;
-
 class SalaryAdvanceAjax extends Controller
 {
     /**
@@ -10,76 +8,102 @@ class SalaryAdvanceAjax extends Controller
     public function __construct()
     {
         parent::__construct();
-       /* if (!isLoggedIn()) {
-            redirect('users/login');
-        }*/
+        /* if (!isLoggedIn()) {
+             redirect('users/login');
+         }*/
     }
 
     public function index()
     {
-        // Get posts
-        $id_salary_advance = -1;
-        if (isset($_GET['id_salary_advance'])) {
-            $id_salary_advance = $_GET['id_salary_advance'];
-        }
+        $current_user = getUserSession();
         $db = Database::getDbh();
-        $ret = $db->where('id_salary_advance', $id_salary_advance)
-            ->objectBuilder()
-            ->get('salary_advance');
-        $json = new json();
-        $json->data = $ret;
-        isset($_GET['callback']) ? $json->send_callback($_GET['callback']) : $json->send();
+        $ret = [];
+        if (isset($_GET['id_salary_advance'])) {
+            $ret = SalaryAdvanceModel::get(['id_salary_advance' => $_GET['id_salary_advance']]);
+        } else {
+            $ret = $db->where('user_id', $current_user->user_id)
+                ->get('salary_advance');
+        }
+        echo json_encode($ret);
     }
 
     public function Create()
     {
-        //$_GET = filter_input_array(INPUT_GET, FILTER_SANITIZE_STRING);
-        $json = new json();
-        $payload = json_decode($_POST['payload']);
-        $payload->date_raised = (new \Moment\Moment($payload->date_raised))->format(\Moment\Moment::NO_TZ_MYSQL);
-        unset($payload->id_salary_advance);
-        $id = SalaryAdvanceModel::insert((array)$payload);
-        $ret = SalaryAdvanceModel::getOne($id);
-        $json->data = $ret;
-        isset($_GET['callback']) ? $json->send_callback($_GET['callback']) : $json->send();
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $current_user = getUserSession();
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            $data = [
+                'amount_requested' => $_POST['amount_requested'],
+                'user_id' => $current_user->user_id,
+                'department_id' => $current_user->department_id,
+                'department_ref' => genDeptRef($current_user->department_id)
+            ];
+            $ret = Database::getDbh()->insert('salary_advance', $data);
+            if ($ret) {
+                $ret = Database::getDbh()->where('id_salary_advance', $ret)
+                    ->get('salary_advance');
+                $ret[0]['success'] = true;
+                $remarks = get_include_contents('action_log/salary_advance_raised', $data);
+                insertLog($ret[0]['id_salary_advance'], ACTION_SALARY_ADVANCE_RAISED, $remarks, $current_user->user_id);
+            } else {
+                $ret[0]['success'] = false;
+                $ret[0]['reason'] = 'An error occurred!';
+            }
+            echo json_encode($ret);
+        }
     }
 
     /**
      * @param $id_salary_advance
      */
-    public function Update($id_salary_advance)
+    public function Update()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Sanitize POST array
-            //$_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-            $json = new json();
-            $payload = json_decode($_POST['payload']);
-            $payload->date_raised = (new \Moment\Moment($payload->date_raised))->format(\Moment\Moment::NO_TZ_MYSQL);
-            $action = (new CmsActionList());
-            $action->update($cms_action_list_id, (array)$payload);
-            $ret = $action->fetchSingle($cms_action_list_id);
-            $json->data = $ret;
-            isset($_GET['callback']) ? $json->send_callback($_GET['callback']) : $json->send();
-        } else {
-            // Get existing post from model
-            $action = (new CmsActionList(['cms_action_list_id' => $cms_action_list_id]));
-            if ($action) {
-                $json = new \Simple\json();
-                /** @noinspection PhpUndefinedFieldInspection */
-                $json->data = $action;
-                isset($_GET['callback']) ? $json->send_callback($_GET['callback']) : $json->send();
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            $current_user = getUserSession();
+            $id_salary_advance = $_POST['id_salary_advance'];
+            $ret = [];
+            $old_ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
+                ->getOne('salary_advance');
+            if ($old_ret['fmgr_approval']) {
+                $old_ret['success'] = false;
+                $old_ret['reason'] = 'Finance manager has already reviewed this application!';
+                $ret[] = $old_ret;
+            } else if ($old_ret['hr_approval']) {
+                $old_ret['success'] = false;
+                $old_ret['reason'] = 'HR has already reviewed this application!';
+                $ret[] = $old_ret;
+            } else {
+                $data['department_ref'] = $old_ret['department_ref'];
+                $data['old_amount'] = $old_ret['amount_requested'];
+                $data['new_amount'] = $_POST['amount_requested'];
+                $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
+                    ->update('salary_advance', ['amount_requested' => $_POST['amount_requested']]);
+                if ($ret) {
+                    $remarks = get_include_contents('action_log/salary_advance_updated_by_employee', $data);
+                    insertLog($id_salary_advance, ACTION_SALARY_ADVANCE_UPDATE, $remarks, $current_user->user_id);
+                    $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
+                        ->get('salary_advance');
+                    $ret[0]['success'] = true;
+                } else {
+                    $ret[0]['success'] = false;
+                    $ret[0]['reason'] = 'An error occurred!';
+                }
             }
+            echo json_encode($ret);
         }
     }
 
-    public function Destroy($cms_action_list_id)
+    public function Destroy()
     {
-        $json = new json();
-        $action = (new CmsActionList());
-        $payload = json_decode($_POST['payload']);
-        $ret = $action->destroy($cms_action_list_id);
-        //$ret = $action->fetchSingle($cms_action_list_id);
-        $json->data = $payload;
-        isset($_GET['callback']) ? $json->send_callback($_GET['callback']) : $json->send();
+        $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        $ret = Database::getDbh()->where('id_salary_advance', $_POST['id_salary_advance'])
+            ->delete('salary_advance');
+        if ($ret) {
+            echo json_encode(array('success' => true));
+            return;
+        }
+        echo json_encode(array('success' => false));
     }
 }

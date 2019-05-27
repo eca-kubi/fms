@@ -33,7 +33,9 @@ html {
     background: transparent;
     /* optional: just make scrollbar invisible */
 }
-
+textarea::-webkit-scrollbar {
+    width: unset!important;
+}
 input:not([type="hidden"]):not([type="submit"]):not([type="reset"]):not(button), select.form-control, textarea {
     border-radius: 0 !important;
 }
@@ -390,35 +392,24 @@ a.k-link.k-state-active {
 .k-tooltip {
     background: #4C5B5C !important;
     color: white !important;
-    margin-top: 20px!important;
+    border: 1px #4C5B5C !important;
 }
 .k-callout-s {
     border-top-color: #4C5B5C !important;
 }
 
-/*
-ul.dropdown-menu {
-    list-style-type: none!important;
-}*/
-/*#action_list tr:not(.child) {
-    counter-increment: rowNumber;
+.k-callout-n {
+    border-bottom-color: #4C5B5C !important;
 }
 
-#action_list tr:not(.child) td:first-child::before {
-    content: counter(rowNumber);
-    min-width: 1em;
-    margin-right: 0.5em;
-    margin-left: 0.5em;
-}*/
-
-/*
-.jq-toast-li a {
-    border-bottom: 0;
+.k-grid td {
+    overflow: hidden!important;
+    text-overflow: ellipsis!important;
+    white-space: nowrap!important;
 }
-*/
-
-
-/* plugin fixes */
+.k-edit-form-container {
+    width: 500px!important;
+}
 .bs-select a.dropdown-item.active {
 
 }

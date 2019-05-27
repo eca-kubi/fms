@@ -49,6 +49,8 @@ const STATUS_REJECTED = 'rejected';
 const ICON_FA_PLUS = 'fa-plus-circle';
 const ICON_FA_MINUS = 'fa-minus-circle';
 const ANIMATE_FLASH = 'animated flash card infinite';
+const ACTION_SALARY_ADVANCE_UPDATE = 'Salary Advance Update';
+const ACTION_SALARY_ADVANCE_RAISED = 'Salary Advance Raised';
 
 const STATUS_PENDING_HR_APPROVAL = 'Pending HR Approval';
 const STATUS_PENDING_FMGR_APPROVAL = 'Pending Financial Manager Approval';
@@ -58,3 +60,5 @@ const ADMIN = [
     'Superintendent',
     'Manager'
 ];
+
+const ROLE_SECRETARY = 'Secretary';

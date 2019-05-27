@@ -12,11 +12,11 @@
  */
 class Department
 {
-    public $d_department;
-    public $d_department_id;
-    public $d_short_name;
-    public $d_current_manager;
-    private $db;
+    public $department;
+    public $department_id;
+    public $short_name;
+    public $current_manager;
+    private$db;
 
     public function __construct($department_id = '')
     {
@@ -27,7 +27,7 @@ class Department
                 ->get('departments');
             foreach ($ret as $row) {
                 foreach ($row as $var => $value) {
-                    $this->{"d_".$var} = $value;
+                    $this->{$var} = $value;
                 }
             }
         }

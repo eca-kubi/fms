@@ -17,6 +17,10 @@ class SalaryAdvanceModel
     public $date_received;
     public $amount_approved;
     public $amount_requested;
+    public $department_ref;
+    public $hod_approval;
+    public $hr_approval;
+    public $fmgr_approval;
     /**
      * @var MysqliDb
      */

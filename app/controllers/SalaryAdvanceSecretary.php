@@ -1,6 +1,6 @@
 <?php
 
-class SalaryAdvanceManager extends Controller
+class SalaryAdvanceSecretary extends Controller
 {
     public function __construct()
     {
@@ -10,9 +10,9 @@ class SalaryAdvanceManager extends Controller
     public function index($id_salary_advance = null)
     {
         if (!isLoggedIn()) {
-            redirect('users/login/salary-advance-manager/index/'.$id_salary_advance);
+            redirect('users/login/salary-advance-secretary/index/' . $id_salary_advance);
         }
-        if (!isAdmin(getUserSession()->user_id)) {
+        if (!isSecretary(getUserSession()->user_id)) {
             redirect('salary-advance');
         }
         if (empty($id_salary_advance)) {
@@ -25,18 +25,20 @@ class SalaryAdvanceManager extends Controller
     private function all()
     {
         $payload = [];
-        $payload['current_user'] = $current_user =  getUserSession();
+        $payload['current_user'] = $current_user = getUserSession();
         $payload['title'] = 'Salary Advance Applications';
-
-        if (!isAdmin($current_user->user_id)) {
+        if (!isSecretary($current_user->user_id)) {
             redirect('salary-advance');
         }
-        if (getCurrentHR() == $current_user->user_id || getCurrentFgmr() == $current_user->user_id) {
-            $payload['salary_advances'] = (new SalaryAdvanceModel())->get();
-        } else {
-            $payload['salary_advances'] = (new SalaryAdvanceModel())->get(['department_id' => $current_user->department_id]);
+        /*$ret = Database::getDbh()->where('user_id', $current_user->user_id)
+            ->get('salary_advance_secretary');
+        foreach ($ret as $item) {
+            Database::getDbh()->orWhere('department_id', $item['department_assigned']);
         }
-        $this->view('salary-advance-manager/all', $payload);
+        $payload['salary_advances']  = Database::getDbh()->where('raised_by_secretary', true)
+            ->get('salary_advance');*/
+
+        $this->view('salary-advance-secretary/all', $payload);
     }
 
     public function single($id_salary_advance)
@@ -45,7 +47,7 @@ class SalaryAdvanceManager extends Controller
         $payload['current_user'] = getUserSession();
         $payload['title'] = 'View Salary Advance';
         $payload['salary_advance'] = new SalaryAdvanceModel($id_salary_advance);
-        $this->view('salary-advance-manager/single', $payload);
+        $this->view('salary-advance-secretary/single', $payload);
     }
 
     public function new()
@@ -62,23 +64,24 @@ class SalaryAdvanceManager extends Controller
             $ret = SalaryAdvanceModel::insert($col_data);
             if ($ret) {
                 flash_success('single', 'Salary Advance Application Successful!');
-                redirect("salary-advance-manager/single/$ret");
+                redirect("salary-advance-secretary/single/$ret");
             } else {
                 flash_error('new');
             }
         }
-        $this->view('salary-advance-manager/new', $payload);
+        $this->view('salary-advance-secretary/new', $payload);
     }
 
-    public function edit($id_salary_advance)
+    public function edit()
     {
         $payload = [];
         $payload['current_user'] = getUserSession();
         $payload['title'] = 'New Salary Advance';
-        $this->view('salary-advance-manager/edit', $payload);
+        $this->view('salary-advance-secretary/edit', $payload);
     }
 
-    public function startPage() {
+    public function startPage()
+    {
         $payload = [];
         $payload['current_user'] = getUserSession();
         $payload['title'] = 'Start';

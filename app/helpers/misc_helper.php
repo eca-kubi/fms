@@ -414,20 +414,11 @@ function getGmId($cms_form_id)
     return Database::getDbh()->where('cms_form_id', $cms_form_id)->getValue('cms_form', 'gm_id');
 }
 
-function genEmailSubject($cms_form_id)
+function genEmailSubject($id_salary_advance)
 {
-    //return EMAIL_SUBJECT . ' Form #' . $cms_form_id;
-    // we use ref number and change title
-    $cms = (new CMSFormModel(array('cms_form_id' => $cms_form_id)));
-    //$change_type = explode(',', $cms->getChangeType());
-    $ref = $cms->getHodRefNum();
-    $title = $cms->title;
-    $ref = "Change Management System [" . $ref . ' - ' . $title . "]";
-    /*  if (!empty($title)) {
-      } else {
-          $ref = "Change Management System [" . $ref . ' - ' . concatWith(',', '&', $change_type) . "]";
-      }*/
-    return $ref;
+    $salary_advance = new SalaryAdvanceModel($id_salary_advance);
+    $ref = $salary_advance->department_ref;
+    return "Salary Advance - [$ref]";
 }
 
 function genLink($cms_form_id, $controller = 'view-change-process')
@@ -859,7 +850,7 @@ function isAllImpactAssessmentComplete($cms_form_id)
 function getDepartment($user_id)
 {
     $user = new User($user_id);
-    $department = (new Department($user->department_id))->d_department;
+    $department = (new Department($user->department_id))->department;
     if (!empty($user)) {
         return $department;
     }
@@ -929,12 +920,12 @@ function inDelimiteredString($needle, $delimiter, $delimetered_string)
     return in_array($needle, $arr);
 }
 
-function getDeptRef($department_id)
+function genDeptRef($department_id)
 {
     $db = Database::getDbh();
     $ref = '';
     $ret = $db->where('department_id', $department_id)
-        ->get('cms_form');
+        ->get('salary_advance');
     $department = new Department($department_id);
     $short_name = $department->short_name;
     $count = count($ret) + 1 . "";
@@ -1134,16 +1125,16 @@ function echoPronounVsNoun($pronoun_noun, $user_id = '')
     return $pronoun_noun['noun'];
 }
 
-function insertLog($cms_form_id, $action, $remarks, $performed_by)
+function insertLog($id_salary_advance, $action, $remarks, $performed_by)
 {
     $db = Database::getDbh();
     $data = array(
-        'cms_form_id' => $cms_form_id,
+        'id_salary_advance' => $id_salary_advance,
         'action' => $action,
         'remarks' => $remarks,
         'performed_by' => $performed_by
     );
-    return $db->insert('cms_action_log', $data);
+    return $db->insert('salary_advance_action_log', $data);
 }
 
 function flash_success($method = '', $message = "Success!")
@@ -1313,3 +1304,30 @@ function isAdmin($user_id)
     return in_array($user_role, ADMIN);
 }
 
+function isSecretary($user_id)
+{
+    return Database::getDbh()->where('user_id', $user_id)
+        ->has('salary_advance_secretary');
+}
+
+function getMembersAssignedToSecretary($user_id)
+{
+    $ret = Database::getDbh()->where('user_id', $user_id)
+        ->get('salary_advance_secretary');
+    foreach ($ret as $item) {
+        Database::getDbh()->orWhere('department_id', $item['department_assigned']);
+    }
+    return Database::getDbh()->get('users');
+}
+
+function getSalaryAdvanceBySecretary($user_id)
+{
+    $ret = Database::getDbh()->where('user_id', $user_id)
+        ->get('salary_advance_secretary');
+    foreach ($ret as $item) {
+        Database::getDbh()->orWhere('department_id', $item['department_id']);
+    }
+    return Database::getDbh()->where('raised_by', $user_id)
+        ->orderBy('first_name', 'ASC')
+        ->get('users');
+}

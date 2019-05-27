@@ -6,9 +6,14 @@
       <w>blockable</w>
       <w>fmgr</w>
       <w>fontastic</w>
+      <w>groupable</w>
       <w>kendo</w>
       <w>microtime</w>
       <w>navbar</w>
+      <w>navigatable</w>
+      <w>scrollpos</w>
+      <w>startswith</w>
+      <w>textbox</w>
       <w>ucwords</w>
       <w>vcenter</w>
     </words>

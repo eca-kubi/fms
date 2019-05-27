@@ -1,3 +1,4 @@
+<?php $current_user = getUserSession(); ?>
 <div class="navbar-fixed fixed-top blockable">
     <nav class="main-header navbar navbar-expand bg-white navbar-light border-bottom px-3">
         <!-- Left navbar links -->
@@ -158,13 +159,14 @@
                     <a class="nav-link dropdown-item dropdown-toggle btn border-0 text-bold flat text-warning"
                        data-toggle="dropdown">
                         <i class="fas fa-edit"></i>
-                        Apply Now
+                        Forms
                     </a>
                     <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownId"
                         style="position:absolute">
                         <li class="dropdown-submenu"><a class="dropdown-item dropdown-toggle" href="#">Finance</a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="<?php echo site_url('salary-advance/new') ?>">Salary Advance</a></li>
+                                <li><a class="dropdown-item" href="<?php echo site_url('salary-advance') ?>">Salary
+                                        Advance</a></li>
                                 <!--<li class="dropdown-submenu"><a class="dropdown-item dropdown-toggle" href="#">Subsubmenu</a>
                                     <ul class="dropdown-menu">
                                         <li><a class="dropdown-item" href="#">Subsubmenu action</a></li>
@@ -205,7 +207,7 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item dropdown fa  mx-2">
+                <li class="nav-item dropdown fa  mx-2 d-none">
                     <a class="nav-link dropdown-item text-warning dropdown-toggle btn border-0 text-bold flat"
                        data-toggle="dropdown">
                         <i class="fa fa-history"></i>
@@ -215,7 +217,8 @@
                         style="position:absolute">
                         <li class="dropdown-submenu"><a class="dropdown-item dropdown-toggle" href="#">Finance</a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="<?php echo site_url('salary-advance')?>">Salary Advance</a></li>
+                                <li><a class="dropdown-item" href="<?php echo site_url('salary-advance') ?>">Salary
+                                        Advance</a></li>
                                 <!--<li class="dropdown-submenu"><a class="dropdown-item dropdown-toggle" href="#">Subsubmenu</a>
                                     <ul class="dropdown-menu">
                                         <li><a class="dropdown-item" href="#">Subsubmenu action</a></li>
@@ -256,6 +259,34 @@
                         </li>
                     </ul>
                 </li>
+                <?php if ($current_user->role == ROLE_SECRETARY || $current_user->role == ROLE_MANAGER || $current_user->role == ROLE_SUPERINTENDENT) { ?>
+                    <li class="nav-item dropdown fa  mx-2">
+                        <a class="nav-link dropdown-item text-warning dropdown-toggle btn border-0 text-bold flat"
+                           data-toggle="dropdown">
+                            <i class="fa fa-history"></i>
+                            Roles
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownId"
+                            style="position:absolute">
+                            <?php if ($current_user->role == ROLE_SECRETARY) { ?>
+                                <li><a class="dropdown-item"
+                                       href="<?php echo site_url('salary-advance-secretary') ?>">Secretary</a>
+                                </li>
+                            <?php } ?>
+                            <?php if ($current_user->role == ROLE_MANAGER || $current_user->role == ROLE_SUPERINTENDENT) { ?>
+                                <li class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="<?php echo site_url('salary-advance-manager') ?>">
+                                        Manager
+                                    </a>
+                                </li>
+                            <?php } ?>
+
+                        </ul>
+                    </li>
+                <?php } ?>
+
+
             </ul>
         </div>
     </nav>

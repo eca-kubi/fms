@@ -10,7 +10,7 @@ class SalaryAdvance extends Controller
     public function index($id_salary_advance = null)
     {
         if (!isLoggedIn()) {
-            redirect('users/login/salary-advance');
+            redirect('users/login/salary-advance/index/' . $id_salary_advance);
         }
         if (empty($id_salary_advance)) {
             $this->all();
@@ -22,9 +22,9 @@ class SalaryAdvance extends Controller
     private function all()
     {
         $payload = [];
-        $payload['current_user'] = getUserSession();
+        $payload['current_user'] = $current_user = getUserSession();
         $payload['title'] = 'Salary Advance Applications';
-        $payload['salary_advances'] = (new SalaryAdvanceModel())->get(['user_id' => getUserSession()->user_id]);
+        $payload['salary_advances'] = (new SalaryAdvanceModel())->get(['user_id' => $current_user->user_id]);
         $this->view('salary-advance/all', $payload);
     }
 
@@ -48,13 +48,12 @@ class SalaryAdvance extends Controller
             $col_data['user_id'] = $current_user->user_id;
             $col_data['percentage'] = $_POST['percentage'];
             $col_data['status'] = STATUS_PENDING_HOD_APPROVAL;
-            $col_data['amount_requested'] = $_POST['amount_requested'];
             $ret = SalaryAdvanceModel::insert($col_data);
             if ($ret) {
                 flash_success('single', 'Salary Advance Application Successful!');
-                redirect("salary-advance/single/$ret");
+                redirect("salary-advance/index/$ret");
             } else {
-                flash_error('single');
+                flash_error('new');
             }
         }
         $this->view('salary-advance/new', $payload);
@@ -68,11 +67,12 @@ class SalaryAdvance extends Controller
         $this->view('salary-advance/edit', $payload);
     }
 
-    public function startPage() {
+    public function startPage()
+    {
         $payload = [];
         $payload['current_user'] = getUserSession();
         $payload['title'] = 'Start';
-        $this->view('salary-advance/start-page', $payload);
+        $this->view('pages/start-page', $payload);
     }
 
 
