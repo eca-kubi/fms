@@ -355,7 +355,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             field: 'amount_payable',
                             title: 'Amount Payable',
                             template: function (dataItem) {
-                                return "<span title='" + (dataItem.amount_payable? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_payable)) : 'Pending') + "'>" + (dataItem.amount_payable? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_payable)) : 'Pending') + "</span>"
+                                return "<span title='" + (dataItem.amount_payable ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_payable)) : 'Pending') + "'>" + (dataItem.amount_payable ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_payable)) : 'Pending') + "</span>"
                             },
                             headerAttributes: {
                                 "class": "title"
@@ -397,7 +397,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                         },
                         {
                             field: 'fmgr_approval',
-                            title: 'Approved by FMgr?',
+                            title: 'Approved by Finance Mgr.?',
                             editor: customBoolEditor,
                             template: "#= fmgr_approval? 'Yes' : 'No' #",
                             headerAttributes: {
@@ -410,7 +410,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             field: 'amount_approved',
                             title: 'Amount Approved',
                             template: function (dataItem) {
-                                return "<span title='" + (dataItem.amount_approved? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_approved)) : 'Pending') + "'>" + (dataItem.amount_approved? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_approved)) : 'Pending' ) + "</span>"
+                                return "<span title='" + (dataItem.amount_approved ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_approved)) : 'Pending') + "'>" + (dataItem.amount_approved ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_approved)) : 'Pending') + "</span>"
                             },
                             headerAttributes: {
                                 "class": "title"
@@ -481,15 +481,16 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     e.model.fields['fmgr_approval'].editable = !e.model.fmgr_approval; // not editable once approved
                     e.model.fields['hod_approval'].editable = !e.model.hod_approval; // not editable once approved
                     e.model.fields['hr_approval'].editable = !e.model.hr_approval; // not editable once approved
-                    e.model.fields['amount_requested'].editable = universal['amount_requested_editable'] && e.model.hr_approval;
+                    e.model.fields.amount_payable.editable = e.model['hr_comment_editable'];
+                    e.model.fields.amount_approved.editable = e.model['fmgr_comment_editable'];
                 }
             },
             edit: function (e) {
-                let textAreaHodComment = e.container.find('.k-edit-field:eq(4) textarea');
-                let textAreaHrComment = e.container.find('.k-edit-field:eq(7) textarea');
-                let textAreaFmgrComment = e.container.find('.k-edit-field:eq(8) textarea');
-                let amountPayable = e.container.find('.k-edit-field:eq(9) input');
-                let amountApproved = e.container.find('.k-edit-field:eq(13) input');
+                let textAreaHodComment = e.container.find('.k-edit-field:eq(4) textarea[name=hod_comment]');
+                let textAreaHrComment = e.container.find('.k-edit-field:eq(7) textarea[name=hr_comment]');
+                let textAreaFmgrComment = e.container.find('.k-edit-field:eq(11) textarea[name=fmgr_comment]');
+                let amountPayable = e.container.find('.k-edit-field:eq(9) input[name=amount_payable]');
+                let amountApproved = e.container.find('.k-edit-field:eq(13) input[name=amount_approved]');
                 e.container.find('.k-edit-label').addClass('pt-2');
                 e.container.find('.k-edit-field').addClass('pt-2');
                 e.container.find('.k-edit-field .k-checkbox').parent().removeClass('pt-2');
@@ -506,11 +507,11 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     textAreaHrComment.attr('required', true).attr('data-required-msg', 'HR Comment is required!');
                     amountPayable.attr('required', true).attr('data-required-msg', 'Amount Payable is required!');
                 } else if (e.model.fields['fmgr_comment'].editable) {
-                    e.container.find('.k-edit-label:not(:eq(11),:eq(8),:eq(9))').hide();
-                    e.container.find('.k-edit-field:not(:eq(11),:eq(8),:eq(9))').hide();
+                    e.container.find('.k-edit-label:not(:eq(0),:eq(3),:eq(9),:eq(11),:eq(12),:eq(13))').hide();
+                    e.container.find('.k-edit-field:not(:eq(0),:eq(3),:eq(9),:eq(11),:eq(12),:eq(13))').hide();
                     amountPayable.attr('required', false);
                     amountApproved.attr('required', true).attr('data-required-msg', 'Amount Approved is required!');
-                    textAreaFmgrComment.attr('required', true).attr('data-required-msg', 'Fmgr. Comment is required!');
+                    textAreaFmgrComment.attr('required', true).attr('data-required-msg', 'Finance Mgr. Comment is required!');
                 }
             }
         });

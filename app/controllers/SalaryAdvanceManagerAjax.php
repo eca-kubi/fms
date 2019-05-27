@@ -115,15 +115,20 @@ class SalaryAdvanceManagerAjax extends Controller
             if ($_POST['hod_comment_editable'] === 'true') {
                 $data['hod_approval'] = $_POST['hod_approval'] === 'false' ? false : true;
                 $data['hod_comment'] = $_POST['hod_comment'];
-                $data['hod_approval'] = $_POST['hod_approval'];
                 if (!$old_ret['hod_approval_date']) {
                     $data['hod_approval_date'] = now();
+                }
+                if (!$old_ret['hod_id']) {
+                    $data['hod_id'] = $current_user->user_id;
                 }
                 $hod_remarks = get_include_contents('action_log/salary_advance_review_by_hod', $data);
             } else if ($_POST['hr_comment_editable'] === 'true') {
                 $data['hr_approval'] = $_POST['hr_approval'] === 'false' ? false : true;
                 $data['hr_comment'] = $_POST['hr_comment'];
                 $data['amount_payable'] =  $_POST['amount_payable'];
+                if (!$old_ret['hr_id']) {
+                    $data['hr_id'] = $current_user->user_id;
+                }
                 if (!$old_ret['hr_approval_date']) {
                     $data['hr_approval_date'] = now();
                 }
@@ -132,6 +137,9 @@ class SalaryAdvanceManagerAjax extends Controller
                 $data['fmgr_approval'] = $_POST['fmgr_approval'] === 'false' ? false : true;
                 $data['fmgr_comment'] = $_POST['fmgr_comment'];
                 $data['amount_approved'] = $_POST['amount_approved'];
+                if (!$old_ret['fmgr_id']) {
+                    $data['fmgr_id'] = $current_user->user_id;
+                }
                 if (!$old_ret['fmgr_approval_date']) {
                     $data['fmgr_approval_date'] = now();
                 }
@@ -152,6 +160,7 @@ class SalaryAdvanceManagerAjax extends Controller
                 $ret = $this->transformArrayData($ret);
                 $ret[0]['success'] = true;
             } else {
+                $ret = $this->transformArrayData([$old_ret]);
                 $ret[0]['success'] = false;
                 $ret[0]['reason'] = 'An error occured!';
             }
