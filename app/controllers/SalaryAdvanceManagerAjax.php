@@ -102,6 +102,7 @@ class SalaryAdvanceManagerAjax extends Controller
      */
     public function Update()
     {
+        $hod_remarks = $hr_remarks = $fmgr_remarks = '';
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Sanitize POST array
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
@@ -110,39 +111,49 @@ class SalaryAdvanceManagerAjax extends Controller
             $id_salary_advance = $_POST['id_salary_advance'];
             $old_ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
                 ->getOne('salary_advance');
-            $data['reference'] = $old_ret['department_ref'];
+            $data['department_ref'] = $old_ret['department_ref'];
             if ($_POST['hod_comment_editable'] === 'true') {
-                $payload['hod_approval'] = $_POST['hod_approval'] === 'false' ? false : true;
-                $payload['hod_comment'] = $_POST['hod_comment'];
-                $data['comment'] = $_POST['hod_comment'];
-                $data['approval'] = $_POST['hod_approval'];
+                $data['hod_approval'] = $_POST['hod_approval'] === 'false' ? false : true;
+                $data['hod_comment'] = $_POST['hod_comment'];
+                $data['hod_approval'] = $_POST['hod_approval'];
+                if (!$old_ret['hod_approval_date']) {
+                    $data['hod_approval_date'] = now();
+                }
+                $hod_remarks = get_include_contents('action_log/salary_advance_review_by_hod', $data);
+            } else if ($_POST['hr_comment_editable'] === 'true') {
+                $data['hr_approval'] = $_POST['hr_approval'] === 'false' ? false : true;
+                $data['hr_comment'] = $_POST['hr_comment'];
+                $data['amount_payable'] =  $_POST['amount_payable'];
+                if (!$old_ret['hr_approval_date']) {
+                    $data['hr_approval_date'] = now();
+                }
+                $hr_remarks = get_include_contents('action_log/salary_advance_review_by_hr', $data);
+            } else if ($_POST['fmgr_comment_editable'] === 'true') {
+                $data['fmgr_approval'] = $_POST['fmgr_approval'] === 'false' ? false : true;
+                $data['fmgr_comment'] = $_POST['fmgr_comment'];
+                $data['amount_approved'] = $_POST['amount_approved'];
+                if (!$old_ret['fmgr_approval_date']) {
+                    $data['fmgr_approval_date'] = now();
+                }
+                $fmgr_remarks = get_include_contents('action_log/salary_advance_review_by_fmgr', $data);
             }
-            if ($_POST['hr_comment_editable'] === 'true') {
-                $payload['hr_approval'] = $_POST['hr_approval'] === 'false' ? false : true;
-                $payload['hr_comment'] = $_POST['hr_comment'];
-                $data['comment'] = $_POST['hr_comment'];
-                $data['approval'] = $_POST['hr_approval'];
-            }
-            if($_POST['fmgr_comment_editable'] === 'true') {
-                $payload['fmgr_approval'] = $_POST['fmgr_approval'] === 'false' ? false : true;
-                $payload['fmgr_comment'] = $_POST['fmgr_comment'];
-                $payload['amount_requested'] = $_POST['amount_requested'];
-                $data['comment'] = $_POST['fmgr_comment'];
-                $data['approval'] = $_POST['fmgr_approval'];
-            }
-            $data['old_amount'] = number_format($old_ret['amount_requested']);
-            $data['new_amount'] = number_format($_POST['amount_requested']);
             $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
-                ->update('salary_advance', $payload);
+                ->update('salary_advance', $data);
             if ($ret) {
-                $remarks = get_include_contents('action_log/approval', $data);
-                insertLog($id_salary_advance, ACTION_SALARY_ADVANCE_UPDATE, $remarks, $current_user->user_id);
+                if (!empty($hr_remarks)) {
+                    insertLog($id_salary_advance, ACTION_SALARY_ADVANCE_UPDATE, $hr_remarks, $current_user->user_id);
+                } elseif (!empty($hod_remarks)) {
+                    insertLog($id_salary_advance, ACTION_SALARY_ADVANCE_UPDATE, $hod_remarks, $current_user->user_id);
+                } elseif (!empty(!$fmgr_remarks)) {
+                    insertLog($id_salary_advance, ACTION_SALARY_ADVANCE_UPDATE, $fmgr_remarks, $current_user->user_id);
+                }
                 $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
                     ->get('salary_advance');
                 $ret = $this->transformArrayData($ret);
                 $ret[0]['success'] = true;
             } else {
                 $ret[0]['success'] = false;
+                $ret[0]['reason'] = 'An error occured!';
             }
             echo json_encode($ret);
         }
