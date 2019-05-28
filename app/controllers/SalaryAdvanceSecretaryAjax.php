@@ -46,31 +46,7 @@ class SalaryAdvanceSecretaryAjax extends Controller
             $employee->department = getDepartment($value['user_id']);
             $value['name'] = $employee->name;
             $value['department'] = $employee->department;
-            //$value['employee'] = $employee;
             unset($value['password']);
-            /*if ($hod == $current_user->user_id) {
-                $value['hod_comment_editable'] = true;
-                $value['hod_approval_editable'] = true;
-            } else {
-                $value['hod_comment_editable'] = false;
-                $value['hod_approval_editable'] = false;
-            }
-            if ($hr == $current_user->user_id && $value['hod_approval']) {
-                $value['hr_comment_editable'] = true;
-                $value['hr_approval_editable'] = true;
-            } else {
-                $value['hr_comment_editable'] = false;
-                $value['hr_approval_editable'] = false;
-            }
-            if ($fmgr == $current_user->user_id && $value['hr_approval']) {
-                $value['fmgr_comment_editable'] = true;
-                $value['fmgr_approval_editable'] = true;
-                $value['amount_requested_editable'] = true;
-            } else {
-                $value['fmgr_comment_editable'] = false;
-                $value['fmgr_approval_editable'] = false;
-                $value['amount_requested_editable'] = false;
-            }*/
         }
         return $ret;
     }
