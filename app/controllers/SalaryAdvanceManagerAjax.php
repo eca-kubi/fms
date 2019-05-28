@@ -127,7 +127,7 @@ class SalaryAdvanceManagerAjax extends Controller
             } else if ($_POST['hr_comment_editable'] === 'true') {
                 $data['hr_approval'] = $_POST['hr_approval'] === 'false' ? false : true;
                 $data['hr_comment'] = $_POST['hr_comment'];
-                $data['amount_payable'] =  $_POST['amount_payable'];
+                $data['amount_payable'] = $_POST['amount_payable'];
                 if (!$old_ret['hr_id']) {
                     $data['hr_id'] = $current_user->user_id;
                 }

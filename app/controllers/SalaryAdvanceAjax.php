@@ -67,7 +67,11 @@ class SalaryAdvanceAjax extends Controller
             $ret = [];
             $old_ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
                 ->getOne('salary_advance');
-            if ($old_ret['fmgr_approval']) {
+            if ($old_ret['hod_approval']) {
+                $old_ret['success'] = false;
+                $old_ret['reason'] = 'The HoD has already reviewed this application!';
+                $ret[] = $old_ret;
+            } else if ($old_ret['fmgr_approval']) {
                 $old_ret['success'] = false;
                 $old_ret['reason'] = 'Finance manager has already reviewed this application!';
                 $ret[] = $old_ret;
@@ -75,7 +79,7 @@ class SalaryAdvanceAjax extends Controller
                 $old_ret['success'] = false;
                 $old_ret['reason'] = 'HR has already reviewed this application!';
                 $ret[] = $old_ret;
-            } else {
+            }  else {
                 $data['department_ref'] = $old_ret['department_ref'];
                 $data['old_amount'] = $old_ret['amount_requested'];
                 $data['new_amount'] = $_POST['amount_requested'];
@@ -99,19 +103,36 @@ class SalaryAdvanceAjax extends Controller
     public function Destroy()
     {
         $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-        $ret = Database::getDbh()->where('id_salary_advance', $_POST['id_salary_advance'])
-            ->update('salary_advance', ['deleted' => true]);
-        $data['department_ref'] = Database::getDbh()->where('id_salary_advance', $_POST['id_salary_advance'])
-            ->getValue('salary_advance', 'department_ref');
-        $remarks = get_include_contents('action_log/salary_advance_deleted', $data);
-        insertLog($_POST['id_salary_advance'], ACTION_SALARY_ADVANCE_RAISED, $remarks, getUserSession()->user_id);
-        if ($ret) {
-            $ret = [['success' => true]];
-            echo json_encode($ret);
-            return;
+        $ret = [];
+        $old_ret = Database::getDbh()->where('id_salary_advance', $_POST['id_salary_advance'])
+            ->getOne('salary_advance');
+        if ($old_ret['hod_approval']) {
+            $old_ret['success'] = false;
+            $old_ret['reason'] = 'The HoD has already reviewed this application!';
+            $ret[] = $old_ret;
+        } else if ($old_ret['fmgr_approval']) {
+            $old_ret['success'] = false;
+            $old_ret['reason'] = 'Finance manager has already reviewed this application!';
+            $ret[] = $old_ret;
+        } else if ($old_ret['hr_approval']) {
+            $old_ret['success'] = false;
+            $old_ret['reason'] = 'HR has already reviewed this application!';
+            $ret[] = $old_ret;
         } else {
-            $ret = [['success' => false, 'reason' => 'An error occured']];
-            echo json_encode($ret);
+            $ret = Database::getDbh()->where('id_salary_advance', $_POST['id_salary_advance'])
+                ->update('salary_advance', ['deleted' => true]);
+            $data['department_ref'] = Database::getDbh()->where('id_salary_advance', $_POST['id_salary_advance'])
+                ->getValue('salary_advance', 'department_ref');
+            $remarks = get_include_contents('action_log/salary_advance_deleted', $data);
+            insertLog($_POST['id_salary_advance'], ACTION_SALARY_ADVANCE_RAISED, $remarks, getUserSession()->user_id);
+            if ($ret) {
+                $ret = [['success' => true]];
+                echo json_encode($ret);
+                return;
+            } else {
+                $ret = [['success' => false, 'reason' => 'An error occured']];
+            }
         }
+        echo json_encode($ret);
     }
 }
