@@ -146,13 +146,19 @@ class SalaryAdvanceSecretaryAjax extends Controller
 
     public function Destroy()
     {
-        $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         $ret = Database::getDbh()->where('id_salary_advance', $_POST['id_salary_advance'])
-            ->delete('salary_advance');
+            ->update('salary_advance', ['deleted' => true]);
+        $data['department_ref'] = Database::getDbh()->where('id_salary_advance', $_POST['id_salary_advance'])
+            ->getValue('salary_advance', 'department_ref');
+        $remarks = get_include_contents('action_log/salary_advance_deleted', $data);
+        insertLog($_POST['id_salary_advance'], ACTION_SALARY_ADVANCE_RAISED, $remarks, getUserSession()->user_id);
         if ($ret) {
-            echo json_encode(array('success' => true));
+            $ret = [['success' => true]];
+            echo json_encode($ret);
             return;
+        } else {
+            $ret = [['success' => false, 'reason' => 'An error occured']];
+            echo json_encode($ret);
         }
-        echo json_encode(array('success' => false));
     }
 }
