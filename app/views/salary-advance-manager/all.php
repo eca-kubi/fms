@@ -499,8 +499,8 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     e.model.fields['fmgr_approval'].editable = !e.model.fmgr_approval; // not editable once approved
                     e.model.fields['hod_approval'].editable = !e.model.hod_approval; // not editable once approved
                     e.model.fields['hr_approval'].editable = !e.model.hr_approval; // not editable once approved
-                    e.model.fields.amount_payable.editable = e.model['hr_comment_editable'];
-                    e.model.fields.amount_approved.editable = e.model['fmgr_comment_editable'];
+                    e.model.fields.amount_payable.editable = e.model['hr_comment_editable'] && !e.model.fmgr_approval;
+                    e.model.fields.amount_approved.editable = e.model['fmgr_comment_editable'] && !e.model.fmgr_approval;
                 }
             },
             edit: function (e) {
