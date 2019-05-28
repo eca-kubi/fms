@@ -8,9 +8,6 @@ class SalaryAdvanceManagerAjax extends Controller
     public function __construct()
     {
         parent::__construct();
-        /* if (!isLoggedIn()) {
-             redirect('users/login');
-         }*/
     }
 
     public function index()
@@ -37,9 +34,6 @@ class SalaryAdvanceManagerAjax extends Controller
         }
         $ret = $this->transformArrayData($ret);
         echo json_encode($ret);
-        /* $json = new json();
-         $json->data = $ret;
-         isset($_GET['callback']) ? $json->send_callback($_GET['callback']) : $json->send();*/
     }
 
     private function transformArrayData($ret)
