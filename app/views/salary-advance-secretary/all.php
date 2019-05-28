@@ -255,6 +255,9 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 {
                     field: 'department',
                     title: 'Department',
+                    template: function (dataItem) {
+                        return "<span title='" + dataItem.department + "'>" + dataItem.department + "</span>";
+                    },
                     headerAttributes: {
                         "class": "title"
                     },
@@ -265,8 +268,11 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 {
                     field: 'date_raised',
                     title: 'Date Raised',
-                    width: "14%",
-                    template: "#= kendo.toString(kendo.parseDate(date_raised), 'dddd dd MMM, yyyy') #",
+                    //width: "14%",
+                    template: function (dataItem) {
+                        let date =  kendo.toString(kendo.parseDate(dataItem.date_raised), 'dddd dd MMM, yyyy');
+                        return "<span title='" + date + "'>" + date + "</span>";
+                    },
                     headerAttributes: {
                         "class": "title"
                     },
@@ -287,11 +293,25 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     field: 'received_by',
                     title: 'Received By',
                     hidden: true,
-                    template: "#: received_by #",
+                    template: function (dataItem) {
+                        return dataItem.received_by? "<span title='" + dataItem.received_by + "'>" + dataItem.received_by + "</span>" : "<span title='Pending'>Pending</span>"
+                    },
                     headerAttributes: {
                         "class": "title"
                     },
                     groupHeaderTemplate: "Received By: #:  received_by #",
+                },
+                {
+                    field: 'date_received',
+                    title: 'Date Received',
+                    hidden: true,
+                   template: function (dataItem) {
+                       return dataItem.date_received? kendo.toString(kendo.parseDate(dataItem.date_received), 'dddd dd MMM, yyyy') : 'Pending';
+                   },
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    //groupHeaderTemplate: "Date Received: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') #",
                 },
                 {
                     title: 'HoD',
