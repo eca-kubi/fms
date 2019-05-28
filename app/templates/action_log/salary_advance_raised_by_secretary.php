@@ -8,6 +8,7 @@
 $current_user = getUserSession();
 /** @var string $department_ref */
 /** @var string $amount_requested */
-$body = getNameJobTitleAndDepartment($current_user->user_id) . " has raised the Salary Advance application with reference $department_ref. <br> ".
+/** @var string $user_id */
+$body = getNameJobTitleAndDepartment($current_user->user_id) . " has raised the Salary Advance application for ". getNameJobTitleAndDepartment($user_id). "</br> The reference number is $department_ref <br> ".
     "Amount Requested: GH₵ " . number_format($amount_requested, 2) ."<br>";
 echo $body;

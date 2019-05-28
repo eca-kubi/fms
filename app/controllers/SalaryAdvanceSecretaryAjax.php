@@ -85,6 +85,8 @@ class SalaryAdvanceSecretaryAjax extends Controller
             $data['raised_by_secretary'] = true;
             $ret = Database::getDbh()->insert('salary_advance', $data);
             if ($ret) {
+                $remarks = get_include_contents('action_log/salary_advance_raised_by_secretary', $data);
+                insertLog($id_salary_advance, ACTION_SALARY_ADVANCE_UPDATE, $remarks, $current_user->user_id);
                 $ret = Database::getDbh()->where('id_salary_advance', $ret)
                     ->get('salary_advance');
                 $ret[0]['success'] = true;
