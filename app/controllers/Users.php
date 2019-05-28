@@ -16,12 +16,12 @@ class Users extends Controller
     {
         $payload['title'] = 'CMS Login';
         $payload['redirect_url'] = $redirect_url;
-        if (isLoggedIn()) {
+        /*if (isLoggedIn()) {
             //goBack();
             if (isAdmin(getUserSession()->user_id)) {
                 redirect('users/choose-session');
             }
-        }
+        }*/
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $payload['post'] = validatePost('login_form');
             $post = $payload['post'];
@@ -42,9 +42,10 @@ class Users extends Controller
                     if (!empty($redirect_url)) {
                         redirect($redirect_url);
                     }
-                    if (isAdmin($loggedInUser->user_id)) {
+                    redirect('start-page');
+                    /*if (isAdmin($loggedInUser->user_id)) {
                         redirect('users/choose-session');
-                    }
+                    }*/
                 }
             }
         } else {

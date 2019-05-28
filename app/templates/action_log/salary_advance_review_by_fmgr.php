@@ -10,8 +10,6 @@ $current_user = getUserSession();
 /** @var string $fmgr_approval */
 /** @var string $amount_approved */
 
-$body = getNameJobTitleAndDepartment($current_user->user_id) . " has reviewed the Salary Advance application with reference $department_ref. <br> ".
-    "Approved?: " . ($fmgr_approval? "Yes" : "No") . "</br>" .
-    $fmgr_approval? "Approval Date: ". "</br>Amount Approved: "  . $amount_approved : "";
-
+$body = (getNameJobTitleAndDepartment($current_user->user_id) . " has reviewed the Salary Advance application with reference $department_ref. <br> Approved?: ")
+    . ($fmgr_approval ? "Yes" . "</br>Amount Payable: " . number_format($amount_approved, 2) : "No");
 echo $body;

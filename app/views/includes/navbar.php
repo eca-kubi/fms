@@ -268,6 +268,9 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownId"
                             style="position:absolute">
+                            <li><a class="dropdown-item"
+                                   href="<?php echo site_url('salary-advance') ?>">User</a>
+                            </li>
                             <?php if ($current_user->role == ROLE_SECRETARY) { ?>
                                 <li><a class="dropdown-item"
                                        href="<?php echo site_url('salary-advance-secretary') ?>">Secretary</a>
