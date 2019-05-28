@@ -204,7 +204,11 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             type: 'boolean'
                         },
                         amount_received: {
-                            type: "number"
+                            type: "number",
+                            validation: { //set validation rules
+                                //required: false,
+                                min: '0'
+                            }
                         }
                     }
                 }
@@ -296,12 +300,12 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     title: 'Amount Received',
                     hidden: true,
                     template: function (dataItem) {
-                        return dataItem.amount_received? "<span title='" + dataItem.amount_received + "'>" + dataItem.amount_received + "</span>" : "<span title='Pending'>Pending</span>"
+                        return dataItem.amount_received? "<span title='" + kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_received)) + "'>" +kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_received)) + "</span>" : "<span title='Pending'>Pending</span>"
                     },
                     headerAttributes: {
                         "class": "title"
                     },
-                    groupHeaderTemplate: "Amount Received: #:  value #",
+                    groupHeaderTemplate: "Amount Received: #: kendo.toString('GH₵ ' + kendo.format('{0:n}', value)) #",
                 },
                 {
                     field: 'received_by',
@@ -537,7 +541,10 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 e.container.find('.k-edit-label').addClass('pt-2');
                 e.container.find('.k-edit-field').addClass('pt-2');
                 if (e.model.fmgr_approval) {
-                    e.container.find('.k-edit-field input[name=amount_received]').show();
+                    e.container.find('.k-edit-label:eq(4)').show(); // toggle visibility for amount received
+                    e.container.find('.k-edit-field:eq(4)').show();
+                    e.container.find('.k-edit-label:eq(5)').show(); // toggle visibility for received by
+                    e.container.find('.k-edit-field:eq(5)').show();
                 }
             },
             save: function (e) {
