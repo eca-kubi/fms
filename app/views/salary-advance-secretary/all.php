@@ -169,14 +169,16 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             validation: { //set validation rules
                                 required: false,
                                 min: '0'
-                            }
+                            },
+                            editable: false
                         },
                         amount_approved: {
                             type: 'number',
                             validation: { //set validation rules
                                 required: false,
                                 min: '0'
-                            }
+                            },
+                            editable: false
                         },
                         received_by: {
                             type: 'string'
@@ -296,43 +298,6 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     aggregates: ["max", "min"]
                 },
                 {
-                    field: 'amount_received',
-                    title: 'Amount Received',
-                    hidden: true,
-                    template: function (dataItem) {
-                        return dataItem.amount_received? "<span title='" + kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_received)) + "'>" +kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_received)) + "</span>" : "<span title='Pending'>Pending</span>"
-                    },
-                    headerAttributes: {
-                        "class": "title"
-                    },
-                    groupHeaderTemplate: "Amount Received: #: kendo.toString('GH₵ ' + kendo.format('{0:n}', value)) #",
-                },
-                {
-                    field: 'received_by',
-                    title: 'Received By',
-                    hidden: true,
-                    template: function (dataItem) {
-                        return dataItem.received_by? "<span title='" + dataItem.received_by + "'>" + dataItem.received_by + "</span>" : "<span title='Pending'>Pending</span>"
-                    },
-                    headerAttributes: {
-                        "class": "title"
-                    },
-                    groupHeaderTemplate: "Received By: #:  value #",
-                },
-                {
-                    field: 'date_received',
-                    title: 'Date Received',
-                    hidden: true,
-                   template: function (dataItem) {
-                        let date = dataItem.date_received? kendo.toString(kendo.parseDate(dataItem.date_received), 'dddd dd MMM, yyyy') : 'Pending';
-                       return "<span title='" + date + "'>" + date + "</span>";
-                   },
-                    headerAttributes: {
-                        "class": "title"
-                    },
-                    groupHeaderTemplate: "Date Received: #= value? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : 'Pending' #",
-                },
-                {
                     title: 'HoD',
                     headerAttributes: {
                         "class": "title"
@@ -371,7 +336,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             headerAttributes: {
                                 "class": "title"
                             },
-                            hidden: true
+                            hidden: true,
                         }
                     ],
                 },
@@ -486,6 +451,43 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     ],
                 },
                 {
+                    field: 'amount_received',
+                    title: 'Amount Received',
+                    hidden: true,
+                    template: function (dataItem) {
+                        return dataItem.amount_received? "<span title='" + kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_received)) + "'>" +kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_received)) + "</span>" : "<span title='Pending'>Pending</span>"
+                    },
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    groupHeaderTemplate: "Amount Received: #: kendo.toString('GH₵ ' + kendo.format('{0:n}', value)) #",
+                },
+                {
+                    field: 'received_by',
+                    title: 'Received By',
+                    hidden: true,
+                    template: function (dataItem) {
+                        return dataItem.received_by? "<span title='" + dataItem.received_by + "'>" + dataItem.received_by + "</span>" : "<span title='Pending'>Pending</span>"
+                    },
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    groupHeaderTemplate: "Received By: #:  value #",
+                },
+                {
+                    field: 'date_received',
+                    title: 'Date Received',
+                    hidden: true,
+                    template: function (dataItem) {
+                        let date = dataItem.date_received? kendo.toString(kendo.parseDate(dataItem.date_received), 'dddd dd MMM, yyyy') : 'Pending';
+                        return "<span title='" + date + "'>" + date + "</span>";
+                    },
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    groupHeaderTemplate: "Date Received: #= value? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : 'Pending' #",
+                },
+                {
                     template: "<span class='text-center action-tools row'>" +
                         "<span class='col' title='Edit'><a href='\\#' class='text-black action-edit'><i class='fa fa-pencil'></i></a></span>" +
                         "<span class='col' title='Delete'><a href='\\#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span>" +
@@ -541,11 +543,15 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 e.container.find('.k-edit-label').addClass('pt-2');
                 e.container.find('.k-edit-field').addClass('pt-2');
                 if (e.model.fmgr_approval) {
-                    e.container.find('.k-edit-label:eq(4)').show(); // toggle visibility for amount received
-                    e.container.find('.k-edit-field:eq(4)').show();
-                    e.container.find('.k-edit-label:eq(5)').show(); // toggle visibility for received by
-                    e.container.find('.k-edit-field:eq(5)').show();
+                    e.container.find('.k-edit-label:eq(15)').show(); // toggle visibility for amount received
+                    e.container.find('.k-edit-field:eq(15)').show();
+                    e.container.find('.k-edit-label:eq(16)').show(); // toggle visibility for received by
+                    e.container.find('.k-edit-field:eq(16)').show();
                 }
+                e.container.find('.k-edit-label:eq(9)').toggle(e.model.amount_payable);
+                e.container.find('.k-edit-label:eq(13)').toggle(e.model.amount_approved);
+                e.container.find('.k-edit-field:eq(9)').toggle(e.model.amount_payable);
+                e.container.find('.k-edit-field:eq(13)').toggle(e.model.amount_approved);
             },
             save: function (e) {
                 //console.log(('saved'))
