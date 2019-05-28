@@ -79,6 +79,7 @@ class SalaryAdvanceSecretaryAjax extends Controller
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             $data['user_id'] = $_POST['user_id'];
+            $data['raised_by_id'] = getUserSession()->user_id;
             $data['department_id'] = $_POST['department_id'];
             $data['amount_requested'] = $_POST['amount_requested'];
             $data['raised_by_secretary'] = true;
@@ -113,14 +114,18 @@ class SalaryAdvanceSecretaryAjax extends Controller
                 $old_ret['success'] = false;
                 $old_ret['reason'] = 'Finance manager has already reviewed this application!';
                 $ret[] = $old_ret;
+            } else if ($old_ret['hr_approval']) {
+                $old_ret['success'] = false;
+                $old_ret['reason'] = 'HR has already reviewed this application!';
+                $ret[] = $old_ret;
             } else {
-                $data['reference'] = $old_ret['department_ref'];
+                $data['department_ref'] = $old_ret['department_ref'];
                 $data['old_amount'] = number_format($old_ret['amount_requested']);
                 $data['new_amount'] = number_format($_POST['amount_requested']);
                 $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
                     ->update('salary_advance', ['amount_requested' => $_POST['amount_requested']]);
                 if ($ret) {
-                    $remarks = get_include_contents('action_log/approval', $data);
+                    $remarks = get_include_contents('action_log/salary_advance_updated_by_secretary', $data);
                     insertLog($id_salary_advance, ACTION_SALARY_ADVANCE_UPDATE, $remarks, $current_user->user_id);
                     $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
                         ->get('salary_advance');
