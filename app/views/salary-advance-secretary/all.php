@@ -64,12 +64,13 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
 <!--suppress HtmlUnknownTarget -->
 <script>
     let universal = JSON.parse(`<?php echo json_encode($universal); ?>`);
+    let salaryAdvanceDataSource;
     $(document).ready(function () {
         $salaryAdvanceManagerGrid = $("#salary_advance_manager");
         $salaryAdvanceManagerGrid.on('change', "input[name=employee]", function (e) {
             //let select = $(this).data("kendoDropDownList");
         });
-        let salaryAdvanceDataSource = new kendo.data.DataSource({
+        salaryAdvanceDataSource = new kendo.data.DataSource({
             pageSize: 5,
             transport: {
                 read: {
@@ -100,7 +101,12 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
             },
             requestEnd: function (e) {
                 if (e.type === 'update' && !e.response[0].success) {
-                    toastError(e.response[0].reason);
+                    toastError('An error occurred!');
+                } else if (e.type === 'update' && e.response[0].success) {
+                    toastSuccess('Success', 5000);
+                }
+                if (e.type === 'create' && e.response[0].success) {
+                    toastSuccess('Success', 5000);
                 }
             },
             schema: {
@@ -151,7 +157,46 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             editable: false
                         },
                         user_id: {type: "number"},
-                        department_id: {type: "number"}
+                        department_id: {type: "number"},
+                        amount_payable: {
+                            type: 'number',
+                            validation: { //set validation rules
+                                required: true,
+                                min: '0'
+                            }
+                        },
+                        amount_approved: {
+                            type: 'number',
+                            validation: { //set validation rules
+                                required: true,
+                                min: '0'
+                            }
+                        },
+                        received_by: {
+                            type: 'string'
+                        },
+                        fmgr_approval_date: {
+                            type: 'date'
+                        },
+                        hr_approval_date: {
+                            type: 'date'
+                        },
+                        date_received: {
+                            type: 'date'
+                        },
+                        department_ref: {},
+                        hr_id: {
+                            type: 'number'
+                        },
+                        hod_id: {
+                            type: 'number'
+                        },
+                        fmgr_id: {
+                            type: 'number'
+                        },
+                        raised_by_secretary: {
+                            type: 'boolean'
+                        }
                     }
                 }
             }
@@ -215,19 +260,22 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     field: 'date_raised',
                     title: 'Date Raised',
                     width: "14%",
-                    template: "#= kendo.toString(kendo.parseDate(data.date_raised), 'dddd dd MMM, yyyy') #",
+                    template: "#= kendo.toString(kendo.parseDate(date_raised), 'dddd dd MMM, yyyy') #",
                     headerAttributes: {
                         "class": "title"
-                    }
+                    },
+                    groupHeaderTemplate: "Date Raised: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') #"
                 },
                 {
                     field: 'amount_requested',
                     title: 'Amount Requested',
                     width: "12%",
-                    template: "#= kendo.toString('GH₵ ' + kendo.format('{0:n}', data.amount_requested)) #",
+                    template: "#= kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_requested)) #",
                     headerAttributes: {
                         "class": "title"
-                    }
+                    },
+                    groupHeaderTemplate: "Amount Requested: #= kendo.toString('GH₵ ' + kendo.format('{0:n}', value)) #",
+                    aggregates: ["max", "min"]
                 },
                 {
                     title: 'HoD',
@@ -253,12 +301,22 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                         },
                         {
                             field: 'hod_approval',
-                            title: 'Approved?',
+                            title: 'Approved by HoD?',
                             editor: customBoolEditor,
                             template: "#= hod_approval? 'Yes' : 'No' #",
                             headerAttributes: {
                                 "class": "title"
-                            }
+                            },
+                            groupHeaderTemplate: "HoD Approved: #= value? 'Yes' : 'No' # | Total: #= count #",
+                            aggregates: ["count"]
+                        },
+                        {
+                            field: 'hod_approval_date',
+                            title: 'HoD. Approval Date ',
+                            headerAttributes: {
+                                "class": "title"
+                            },
+                            hidden: true
                         }
                     ],
                 },
@@ -286,24 +344,46 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                         },
                         {
                             field: 'hr_approval',
-                            title: 'Approved?',
+                            title: 'Approved by HR?',
                             editor: customBoolEditor,
                             template: "#= hr_approval? 'Yes' : 'No' #",
                             headerAttributes: {
                                 "class": "title"
-                            }
+                            },
+                            groupHeaderTemplate: "HR Approved: #= value? 'Yes' : 'No' # |  Total: #= count #",
+                            aggregates: ["count"]
+                        },
+                        {
+                            field: 'amount_payable',
+                            title: 'Amount Payable',
+                            template: function (dataItem) {
+                                return "<span title='" + (dataItem.amount_payable ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_payable)) : 'Pending') + "'>" + (dataItem.amount_payable ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_payable)) : 'Pending') + "</span>"
+                            },
+                            headerAttributes: {
+                                "class": "title"
+                            },
+                            groupHeaderTemplate: "Amount Payable: #= value? kendo.toString('GH₵ ' + kendo.format('{0:n}', value)) : 'Pending' #",
+                            aggregates: ["max", "min"]
+                        },
+                        {
+                            field: 'hr_approval_date',
+                            title: 'HR. Approval Date ',
+                            headerAttributes: {
+                                "class": "title"
+                            },
+                            hidden: true
                         }
                     ],
                 },
                 {
-                    title: 'Finance Mgr',
+                    title: 'Finance Mgr.',
                     headerAttributes: {
                         "class": "title"
                     },
                     columns: [
                         {
                             field: 'fmgr_comment',
-                            title: 'FMgr. Comment',
+                            title: 'Finance Mgr. Comment',
                             hidden: false,
                             editor: textAreaEditor,
                             headerAttributes: {
@@ -319,12 +399,34 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                         },
                         {
                             field: 'fmgr_approval',
-                            title: 'Approved?',
+                            title: 'Approved by Finance Mgr.?',
                             editor: customBoolEditor,
                             template: "#= fmgr_approval? 'Yes' : 'No' #",
                             headerAttributes: {
                                 "class": "title"
-                            }
+                            },
+                            groupHeaderTemplate: "Finance Manager Approved: #= value? 'Yes' : 'No' # |  Total: #=count #",
+                            aggregates: ["count"]
+                        },
+                        {
+                            field: 'amount_approved',
+                            title: 'Amount Approved',
+                            template: function (dataItem) {
+                                return "<span title='" + (dataItem.amount_approved ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_approved)) : 'Pending') + "'>" + (dataItem.amount_approved ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_approved)) : 'Pending') + "</span>"
+                            },
+                            headerAttributes: {
+                                "class": "title"
+                            },
+                            groupHeaderTemplate: "Amount Approved: #= value? kendo.toString('GH₵ ' + kendo.format('{0:n}', value)): 'Pending' #",
+                            aggregates: ["max", "min"]
+                        },
+                        {
+                            field: 'fmgr_approval_date',
+                            title: 'Finance Mgr. Approval Date ',
+                            headerAttributes: {
+                                "class": "title"
+                            },
+                            hidden: true
                         }
                     ],
                 },
@@ -339,16 +441,29 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 },
             ],
             detailTemplate: kendo.template(`
-    <div class="">
-     Name: #= name #
+     <div class="">
+        <b>Employee</b>: #= name # </br>
+        <b>Date Raised</b>: #= kendo.toString(kendo.parseDate(date_raised), 'dddd dd MMM, yyyy') #</br>
+        <b>Amount Requested </b>: #= kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_requested)) #</br>
+        <b>Approved by HoD?</b> #= hod_approval? 'Yes' : 'No' #</br>
+        #=hod_approval_date? '<b>HoD Approval Date: </b>' + kendo.toString(kendo.parseDate(hod_approval_date), 'dddd dd MMM, yyyy')+'</br>': '' #
+        <b>Approved by HR? </b> #= hr_approval? 'Yes' : 'No' # </br>
+        #=hr_approval_date? '<b>HR Approval Date: </b>' + kendo.toString(kendo.parseDate(hr_approval_date), 'dddd dd MMM, yyyy')+'</br>': '' #
+        <b >Amount Payable </b>: #= amount_payable? kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_payable)) : 'Pending' #</br>
+        <b>Approved by Finance Manager? </b> #= fmgr_approval? 'Yes' : 'No' # </br>
+        #=fmgr_approval_date? '<b>Finance Mgr. Approval Date: </b>' + kendo.toString(kendo.parseDate(fmgr_approval_date), 'dddd dd MMM, yyyy')+'</br>': '' #
+        <b>Amount Approved </b>: #= amount_approved? kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_approved)) : 'Pending' #</br>
+        <b>Amount Received </b>: #= amount_received? kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_received)) : 'Pending' #</br>
+        #=date_received? '<b>Date Received: </b>' + kendo.toString(kendo.parseDate(date_received), 'dddd dd MMM, yyyy')+'</br>': '' #
+        #=received_by? '<b>Received by: </b>' + ''  +'</br>': '' #
     </div>
    `),
             dataSource: salaryAdvanceDataSource,
             dataBinding: function () {
-                let no = (this.dataSource.page() - 1) * this.dataSource.pageSize();
+                //let no = (this.dataSource.page() - 1) * this.dataSource.pageSize();
             },
             dataBound: function (e) {
-                let len = $salaryAdvanceManagerGrid.find("tbody tr").length;
+                //let len = $salaryAdvanceManagerGrid.find("tbody tr").length;
                 /*for(let i=0;i<len ; i++)
                 {
                     let model = grid.data("kendoGrid").dataSource.at(i);
@@ -381,7 +496,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 e.container.find('.k-edit-field').addClass('pt-2');
             },
             save: function (e) {
-                console.log(('saved'))
+                //console.log(('saved'))
                 //e.model.employee.name
             }
         });

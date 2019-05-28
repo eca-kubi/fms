@@ -65,12 +65,13 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
 <script>
     let universal = JSON.parse(`<?php echo json_encode($universal); ?>`);
     let $salaryAdvanceManagerGrid;
+    let salaryAdvanceDataSource;
     $(document).ready(function () {
         $salaryAdvanceManagerGrid = $('#salary_advance_manager');
         $salaryAdvanceManagerGrid.on('change', "input[name=employee]", function (e) {
             //let select = $(this).data("kendoDropDownList");
         });
-        let salaryAdvanceDataSource = new kendo.data.DataSource({
+        salaryAdvanceDataSource = new kendo.data.DataSource({
             pageSize: 5,
             transport: {
                 read: {
@@ -195,7 +196,9 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                         },
                         raised_by_secretary: {
                             type: 'boolean'
-                        }
+                        },
+                        user_id : {type: 'number'},
+                        department_id: {type: 'number'}
                     }
                 }
             }
@@ -374,7 +377,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     ],
                 },
                 {
-                    title: 'Finance Mgr',
+                    title: 'Finance Mgr.',
                     headerAttributes: {
                         "class": "title"
                     },
