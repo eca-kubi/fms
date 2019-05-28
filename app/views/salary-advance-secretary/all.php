@@ -184,13 +184,20 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             type: 'string'
                         },
                         fmgr_approval_date: {
-                            type: 'date'
+                            type: 'date',
+                            editable: false
                         },
                         hr_approval_date: {
-                            type: 'date'
+                            type: 'date',
+                            editable: false
+                        },
+                        hod_approval_date: {
+                            type: 'date',
+                            editable: false
                         },
                         date_received: {
-                            type: 'date'
+                            type: 'date',
+                            editable: false
                         },
                         department_ref: {},
                         hr_id: {
@@ -278,7 +285,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     field: 'date_raised',
                     title: 'Date Raised',
                     template: function (dataItem) {
-                        let date =  kendo.toString(kendo.parseDate(dataItem.date_raised), 'dddd dd MMM, yyyy');
+                        let date = kendo.toString(kendo.parseDate(dataItem.date_raised), 'dddd dd MMM, yyyy');
                         return "<span title='" + date + "'>" + date + "</span>";
                     },
                     headerAttributes: {
@@ -336,7 +343,12 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             headerAttributes: {
                                 "class": "title"
                             },
-                            hidden: true,
+                            template: function (dataItem) {
+                                let date = kendo.toString(kendo.parseDate(dataItem.hod_approval_date), 'dddd dd MMM, yyyy');
+                                return "<span title='" + date + "'>" + date + "</span>";
+                            },
+                            groupHeaderTemplate: "Date Raised: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') #",
+                            hidden: true
                         }
                     ],
                 },
@@ -391,6 +403,11 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             headerAttributes: {
                                 "class": "title"
                             },
+                            template: function (dataItem) {
+                                let date = kendo.toString(kendo.parseDate(dataItem.hr_approval_date), 'dddd dd MMM, yyyy');
+                                return "<span title='" + date + "'>" + date + "</span>";
+                            },
+                            groupHeaderTemplate: "Date Raised: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') #",
                             hidden: true
                         }
                     ],
@@ -446,6 +463,11 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             headerAttributes: {
                                 "class": "title"
                             },
+                            template: function (dataItem) {
+                                let date = kendo.toString(kendo.parseDate(dataItem.fmgr_approval_date), 'dddd dd MMM, yyyy');
+                                return "<span title='" + date + "'>" + date + "</span>";
+                            },
+                            groupHeaderTemplate: "Date Raised: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') #",
                             hidden: true
                         }
                     ],
@@ -455,7 +477,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     title: 'Amount Received',
                     hidden: true,
                     template: function (dataItem) {
-                        return dataItem.amount_received? "<span title='" + kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_received)) + "'>" +kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_received)) + "</span>" : "<span title='Pending'>Pending</span>"
+                        return dataItem.amount_received ? "<span title='" + kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_received)) + "'>" + kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_received)) + "</span>" : "<span title='Pending'>Pending</span>"
                     },
                     headerAttributes: {
                         "class": "title"
@@ -467,7 +489,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     title: 'Received By',
                     hidden: true,
                     template: function (dataItem) {
-                        return dataItem.received_by? "<span title='" + dataItem.received_by + "'>" + dataItem.received_by + "</span>" : "<span title='Pending'>Pending</span>"
+                        return dataItem.received_by ? "<span title='" + dataItem.received_by + "'>" + dataItem.received_by + "</span>" : "<span title='Pending'>Pending</span>"
                     },
                     headerAttributes: {
                         "class": "title"
@@ -479,7 +501,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     title: 'Date Received',
                     hidden: true,
                     template: function (dataItem) {
-                        let date = dataItem.date_received? kendo.toString(kendo.parseDate(dataItem.date_received), 'dddd dd MMM, yyyy') : 'Pending';
+                        let date = dataItem.date_received ? kendo.toString(kendo.parseDate(dataItem.date_received), 'dddd dd MMM, yyyy') : 'Pending';
                         return "<span title='" + date + "'>" + date + "</span>";
                     },
                     headerAttributes: {
