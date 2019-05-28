@@ -161,14 +161,14 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                         amount_payable: {
                             type: 'number',
                             validation: { //set validation rules
-                                required: true,
+                                required: false,
                                 min: '0'
                             }
                         },
                         amount_approved: {
                             type: 'number',
                             validation: { //set validation rules
-                                required: true,
+                                required: false,
                                 min: '0'
                             }
                         },

@@ -78,15 +78,17 @@ class SalaryAdvanceSecretaryAjax extends Controller
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            $current_user = getUserSession();
             $data['user_id'] = $_POST['user_id'];
             $data['raised_by_id'] = getUserSession()->user_id;
             $data['department_id'] = $_POST['department_id'];
             $data['amount_requested'] = $_POST['amount_requested'];
+            $data['department_ref'] = genDeptRef($current_user->department_id);
             $data['raised_by_secretary'] = true;
             $ret = Database::getDbh()->insert('salary_advance', $data);
             if ($ret) {
                 $remarks = get_include_contents('action_log/salary_advance_raised_by_secretary', $data);
-                insertLog($id_salary_advance, ACTION_SALARY_ADVANCE_UPDATE, $remarks, $current_user->user_id);
+                insertLog($ret, ACTION_SALARY_ADVANCE_UPDATE, $remarks, $current_user->user_id);
                 $ret = Database::getDbh()->where('id_salary_advance', $ret)
                     ->get('salary_advance');
                 $ret[0]['success'] = true;
