@@ -110,14 +110,17 @@ class SalaryAdvanceAjax extends Controller
             $old_ret['success'] = false;
             $old_ret['reason'] = 'The HoD has already reviewed this application!';
             $ret[] = $old_ret;
+            $ret['errors'] = ['The HoD has already reviewed this application!'];
         } else if ($old_ret['fmgr_approval']) {
             $old_ret['success'] = false;
             $old_ret['reason'] = 'Finance manager has already reviewed this application!';
             $ret[] = $old_ret;
+            $ret['errors'] = ['Finance manager has already reviewed this application!'];
         } else if ($old_ret['hr_approval']) {
             $old_ret['success'] = false;
             $old_ret['reason'] = 'HR has already reviewed this application!';
             $ret[] = $old_ret;
+            $ret['errors'] = ['HR has already reviewed this application!'];
         } else {
             $ret = Database::getDbh()->where('id_salary_advance', $_POST['id_salary_advance'])
                 ->update('salary_advance', ['deleted' => true]);
