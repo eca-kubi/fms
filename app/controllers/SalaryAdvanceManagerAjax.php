@@ -106,7 +106,6 @@ class SalaryAdvanceManagerAjax extends Controller
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Sanitize POST array
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-            $payload = [];
             $current_user = getUserSession();
             $id_salary_advance = $_POST['id_salary_advance'];
             $old_ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)

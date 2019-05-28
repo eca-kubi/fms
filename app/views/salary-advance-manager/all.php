@@ -476,6 +476,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 }*/
             },
             beforeEdit: function (e) {
+                window.grid_uid = e.model.uid; // uid of current editing row
                 if (!e.model.isNew()) {
                     e.model.fields['name'].editable = false;
                     e.model.fields['hod_comment'].editable = e.model['hod_comment_editable'];

@@ -339,7 +339,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             },
                             template: function (dataItem) {
                                 let hr_comment = dataItem.hr_comment ? dataItem.hr_comment : '';
-                                return "<span title='" + hr_comment + "'>" + hr_comment + "</span>"
+                                return `<span title='${hr_comment}'>${hr_comment}</span>`
                             }
                         },
                         {
@@ -475,23 +475,14 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 }*/
             },
             beforeEdit: function (e) {
-                if (e.model.isNew()) {
-                    // Disable the editor of the "id" column when editing data items
-                    //var numeric = e.container.find("input[name=id]").data("kendoNumericTextBox");
-                    //numeric.enable(false);
-                    window.grid_uid = e.model.uid;
-                    e.model.fields['name'].editable = true;
-                    e.model.fields['amount_requested'].editable = true;
-                } else {
-                    e.model.fields['name'].editable = false;
-                    e.model.fields['amount_requested'].editable = !(e.model.hod_approval || e.model.fmgr_approval || e.model.hr_approval);
-                }
+                window.grid_uid = e.model.uid; // uid of current editing row
+                e.model.fields['amount_requested'].editable = !(e.model.hod_approval || e.model.fmgr_approval || e.model.hr_approval);
+                e.model.fields['name'].editable = e.model.isNew();
             },
             edit: function (e) {
-                e.container.find('.k-edit-label:not(:eq(3)):not(:eq(0))').hide();
-                e.container.find('.k-edit-field:not(:eq(3)):not(:eq(0))').hide();
-                e.container.find('.k-edit-label:eq(3) label').text('Amt. Requested');
-                e.container.find('.k-edit-field:eq(3) input').attr('data-required-msg', 'Amount Requested is required!');
+                e.container.find('.k-edit-label:not(:eq(0),:eq(3))').hide();
+                e.container.find('.k-edit-field:not(:eq(0),:eq(3))').hide();
+                e.container.find('.k-edit-field:eq(3) input[name=amount_requested]').attr('data-required-msg', 'Amount Requested is required!');
                 e.container.find('.k-edit-label').addClass('pt-2');
                 e.container.find('.k-edit-field').addClass('pt-2');
             },
