@@ -85,18 +85,6 @@ class SalaryAdvanceManagerAjax extends Controller
 
     public function Create()
     {
-        /*if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-            $ret = Database::getDbh()->insert('salary_advance', ['amount_requested' => $_POST['amount_requested']]);
-            if ($ret) {
-                $ret = Database::getDbh()->where('id_salary_advance', $ret)
-                    ->get('salary_advance');
-                $ret[0]['success'] = true;
-            } else {
-                $ret[0]['success'] = false;
-            }
-            echo json_encode($ret);
-        }*/
     }
 
     /**
