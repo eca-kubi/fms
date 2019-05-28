@@ -113,6 +113,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     toastSuccess('Success', 5000);
                 } else if (e.type === 'destroy' && !e.response[0].success) {
                     e.response[0].reason ? toastError(e.response[0].reason) : toastError('An error occurred!');
+                    salaryAdvanceDataSource.cancelChanges();
                 }
             },
             schema: {
