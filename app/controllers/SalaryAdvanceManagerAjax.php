@@ -136,7 +136,7 @@ class SalaryAdvanceManagerAjax extends Controller
                     insertLog($id_salary_advance, ACTION_SALARY_ADVANCE_UPDATE, $hr_remarks, $current_user->user_id);
                 } elseif (!empty($hod_remarks)) {
                     insertLog($id_salary_advance, ACTION_SALARY_ADVANCE_UPDATE, $hod_remarks, $current_user->user_id);
-                } elseif (!empty(!$fmgr_remarks)) {
+                } elseif (!empty($fmgr_remarks)) {
                     insertLog($id_salary_advance, ACTION_SALARY_ADVANCE_UPDATE, $fmgr_remarks, $current_user->user_id);
                 }
                 $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
