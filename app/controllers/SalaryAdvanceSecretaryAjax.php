@@ -46,6 +46,7 @@ class SalaryAdvanceSecretaryAjax extends Controller
             $employee->department = getDepartment($value['user_id']);
             $value['name'] = $employee->name;
             $value['department'] = $employee->department;
+            $value['raised_by'] = $value['raised_by_id']? concatNameWithUserId($value['raised_by_id']): "";
             unset($value['password']);
         }
         return $ret;

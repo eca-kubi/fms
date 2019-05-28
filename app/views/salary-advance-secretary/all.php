@@ -287,21 +287,11 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     field: 'received_by',
                     title: 'Received By',
                     hidden: true,
-                    template: "#= received_by #",
+                    template: "#: received_by #",
                     headerAttributes: {
                         "class": "title"
                     },
-                    groupHeaderTemplate: "Received By: #=  received_by #",
-                },
-                {
-                    field: 'date_received',
-                    title: 'Date Received',
-                    hidden: true,
-                    template: "#= kendo.toString(kendo.parseDate(date_received), 'dddd dd MMM, yyyy')",
-                    headerAttributes: {
-                        "class": "title"
-                    },
-                    groupHeaderTemplate: "Date Received: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') #",
+                    groupHeaderTemplate: "Received By: #:  received_by #",
                 },
                 {
                     title: 'HoD',

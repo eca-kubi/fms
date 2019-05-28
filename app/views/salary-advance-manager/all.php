@@ -94,7 +94,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     type: 'post',
                     dataType: 'json'
                 },
-                errors: function(response) {
+                errors: function (response) {
                     console.log("errors as function", response.errors[0]);
                     return response.errors;
                 }
@@ -104,7 +104,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                      }
                  }*/
             },
-            error: function(e) {
+            error: function (e) {
                 console.log("error event handler", e.errors[0]);
                 salaryAdvanceDataSource.cancelChanges();
             },
@@ -211,8 +211,9 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                         raised_by_secretary: {
                             type: 'boolean'
                         },
-                        user_id : {type: 'number'},
-                        department_id: {type: 'number'}
+                        user_id: {type: 'number'},
+                        department_id: {type: 'number'},
+                        raised_by_id: {type: "number"}
                     }
                 }
             }
