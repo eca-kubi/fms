@@ -105,6 +105,7 @@ class SalaryAdvanceManagerAjax extends Controller
     public function Update()
     {
         $hod_remarks = $hr_remarks = $fmgr_remarks = '';
+        hasActiveApplication(29);
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Sanitize POST array
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);

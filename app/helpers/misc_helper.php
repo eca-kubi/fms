@@ -1331,3 +1331,9 @@ function getSalaryAdvanceBySecretary($user_id)
         ->orderBy('first_name', 'ASC')
         ->get('users');
 }
+
+function hasActiveApplication($user_id)
+{
+    $ret = Database::getDbh()->rawQuery("SELECT COUNT(*) total from salary_advance WHERE user_id = $user_id AND YEAR(date_raised) = YEAR(CURRENT_DATE()) AND MONTH(date_raised) = MONTH(CURRENT_DATE())");
+    return $ret['total'];
+}
