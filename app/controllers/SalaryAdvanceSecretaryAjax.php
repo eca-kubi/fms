@@ -27,6 +27,7 @@ class SalaryAdvanceSecretaryAjax extends Controller
                 Database::getDbh()->orWhere('department_id', $item['department_assigned']);
             }
             $salary_advances = Database::getDbh()->where('raised_by_secretary', true)
+                ->where('deleted', false)
                 ->get('salary_advance');
         }
         $salary_advances = $this->transformArrayData($salary_advances);
