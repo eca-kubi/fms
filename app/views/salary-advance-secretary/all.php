@@ -202,6 +202,9 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                         },
                         raised_by_secretary: {
                             type: 'boolean'
+                        },
+                        amount_received: {
+                            type: "number"
                         }
                     }
                 }
@@ -268,7 +271,6 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 {
                     field: 'date_raised',
                     title: 'Date Raised',
-                    //width: "14%",
                     template: function (dataItem) {
                         let date =  kendo.toString(kendo.parseDate(dataItem.date_raised), 'dddd dd MMM, yyyy');
                         return "<span title='" + date + "'>" + date + "</span>";
@@ -290,6 +292,18 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     aggregates: ["max", "min"]
                 },
                 {
+                    field: 'amount_received',
+                    title: 'Amount Received',
+                    hidden: true,
+                    template: function (dataItem) {
+                        return dataItem.amount_received? "<span title='" + dataItem.amount_received + "'>" + dataItem.amount_received + "</span>" : "<span title='Pending'>Pending</span>"
+                    },
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    groupHeaderTemplate: "Amount Received: #:  value #",
+                },
+                {
                     field: 'received_by',
                     title: 'Received By',
                     hidden: true,
@@ -299,19 +313,20 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     headerAttributes: {
                         "class": "title"
                     },
-                    groupHeaderTemplate: "Received By: #:  received_by #",
+                    groupHeaderTemplate: "Received By: #:  value #",
                 },
                 {
                     field: 'date_received',
                     title: 'Date Received',
                     hidden: true,
                    template: function (dataItem) {
-                       return dataItem.date_received? kendo.toString(kendo.parseDate(dataItem.date_received), 'dddd dd MMM, yyyy') : 'Pending';
+                        let date = dataItem.date_received? kendo.toString(kendo.parseDate(dataItem.date_received), 'dddd dd MMM, yyyy') : 'Pending';
+                       return "<span title='" + date + "'>" + date + "</span>";
                    },
                     headerAttributes: {
                         "class": "title"
                     },
-                    //groupHeaderTemplate: "Date Received: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') #",
+                    groupHeaderTemplate: "Date Received: #= value? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : 'Pending' #",
                 },
                 {
                     title: 'HoD',
@@ -521,6 +536,9 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 e.container.find('.k-edit-field:eq(3) input[name=amount_requested]').attr('data-required-msg', 'Amount Requested is required!');
                 e.container.find('.k-edit-label').addClass('pt-2');
                 e.container.find('.k-edit-field').addClass('pt-2');
+                if (e.model.fmgr_approval) {
+                    e.container.find('.k-edit-field input[name=amount_received]').show();
+                }
             },
             save: function (e) {
                 //console.log(('saved'))
