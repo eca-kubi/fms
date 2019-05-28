@@ -26,9 +26,11 @@ class SalaryAdvanceManagerAjax extends Controller
         } else {
             if ($current_user->user_id == $hr || $current_user->user_id == $fmgr) {
                 $ret = $db->where('user_id', $current_user->user_id, '!=')
+                    ->where('deleted', false)
                     ->get('salary_advance');
             } else {
                 $ret = $db->where('user_id', $current_user->user_id, '!=')
+                    ->where('deleted', false)
                     ->where('department_id', $current_user->department_id)
                     ->get('salary_advance');
             }
@@ -171,11 +173,14 @@ class SalaryAdvanceManagerAjax extends Controller
     {
         $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         $ret = Database::getDbh()->where('id_salary_advance', $_POST['id_salary_advance'])
-            ->delete('salary_advance');
+            ->update('salary_advance', ['deleted' => true]);
         if ($ret) {
-            echo json_encode(array('success' => true));
+            $ret = [['success' => true]];
+            echo json_encode($ret);
             return;
+        } else {
+            $ret = [['success' => false, 'reason' => 'An error occured']];
+            echo json_encode($ret);
         }
-        echo json_encode(array('success' => false));
     }
 }

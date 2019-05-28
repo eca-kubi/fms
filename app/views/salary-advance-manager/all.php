@@ -109,6 +109,11 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 if (e.type === 'create' && e.response[0].success) {
                     toastSuccess('Success', 5000);
                 }
+                if (e.type === 'destroy' && e.response[0].success) {
+                    toastSuccess('Success', 5000);
+                } else if (e.type === 'destroy' && !e.response[0].success) {
+                    toastError('An error occurred!');
+                }
             },
             schema: {
                 model: {
