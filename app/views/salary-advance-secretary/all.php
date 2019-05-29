@@ -262,7 +262,9 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     field: 'name',
                     title: 'Employee',
                     editor: dropDownEditor,
-                    template: "#:name#",
+                    template: function (dataItem) {
+                        return "<span title='" + dataItem.name + "'>" + dataItem.name + "</span>";
+                    },
                     width: "15%",
                     headerAttributes: {
                         "class": "title"
@@ -286,7 +288,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     title: 'Date Raised',
                     template: function (dataItem) {
                         let date = kendo.toString(kendo.parseDate(dataItem.date_raised), 'dddd dd MMM, yyyy');
-                        return "<span title='" + date + "'>" + date + "</span>";
+                        return "<span title='Date Raised: " + date + "'>" + date + "</span>";
                     },
                     headerAttributes: {
                         "class": "title"
@@ -298,12 +300,12 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     title: 'Amount Requested',
                     //width: "12%",
                     template: function (dataItem) {
-                        return "<span title='" + (dataItem.amount_requested ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_requested)) : '') + "'>" + (dataItem.amount_requested ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_requested)) : '') + "</span>"
+                        return "<span title='Amount Requested: " + (dataItem.amount_requested ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_requested)) : '') + "'>" + (dataItem.amount_requested ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_requested)) : '') + "</span>"
                     },
                     headerAttributes: {
                         "class": "title"
                     },
-                    groupHeaderTemplate: "Amount Payable: #= value? kendo.toString('GH₵ ' + kendo.format('{0:n}', value)) : 'Pending' #",
+                    groupHeaderTemplate: "Amount Requested: #= value? kendo.toString('GH₵ ' + kendo.format('{0:n}', value)) : 'Pending' #",
                     aggregates: ["max", "min"]
                 },
                 {
@@ -325,14 +327,17 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             },
                             template: function (dataItem) {
                                 let hod_comment = dataItem.hod_comment ? dataItem.hod_comment : '';
-                                return "<span title='" + hod_comment + "'>" + hod_comment + "</span>"
+                                return "<span title='HoD Comment: " + hod_comment + "'>" + hod_comment + "</span>"
                             }
                         },
                         {
                             field: 'hod_approval',
                             title: 'Approved by HoD?',
                             editor: customBoolEditor,
-                            template: "#= hod_approval? 'Yes' : 'No' #",
+                            template: function (dataItem) {
+                                let hod_approval = dataItem.hod_approval ? dataItem.hod_approval : '';
+                                return "<span title='HoD Approved: " + (hod_approval? 'Yes' : 'No') + "'>" + (hod_approval? 'Yes' : 'No') + "</span>"
+                            },
                             headerAttributes: {
                                 "class": "title"
                             },
@@ -347,7 +352,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             },
                             template: function (dataItem) {
                                 let date = kendo.toString(kendo.parseDate(dataItem.hod_approval_date), 'dddd dd MMM, yyyy');
-                                return "<span title='" + date + "'>" + date + "</span>";
+                                return "<span title='HoD Approval Date: " + date + "'>" + date + "</span>";
                             },
                             groupHeaderTemplate: "Date Raised: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') #",
                             hidden: true
@@ -373,14 +378,17 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             },
                             template: function (dataItem) {
                                 let hr_comment = dataItem.hr_comment ? dataItem.hr_comment : '';
-                                return `<span title='${hr_comment}'>${hr_comment}</span>`
+                                return `<span title='HR Comment: ${hr_comment}'>${hr_comment}</span>`
                             }
                         },
                         {
                             field: 'hr_approval',
                             title: 'Approved by HR?',
                             editor: customBoolEditor,
-                            template: "#= hr_approval? 'Yes' : 'No' #",
+                            template: function (dataItem) {
+                                let hr_approval = dataItem.hr_approval ? dataItem.hr_approval : '';
+                                return "<span title='HR Approved: " + (hr_approval? 'Yes' : 'No') + "'>" + (hr_approval? 'Yes' : 'No') + "</span>"
+                            },
                             headerAttributes: {
                                 "class": "title"
                             },
@@ -391,7 +399,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             field: 'amount_payable',
                             title: 'Amount Payable',
                             template: function (dataItem) {
-                                return "<span title='" + (dataItem.amount_payable ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_payable)) : '') + "'>" + (dataItem.amount_payable ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_payable)) : '') + "</span>"
+                                return "<span title='Amount Payable: " + (dataItem.amount_payable ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_payable)) : '') + "'>" + (dataItem.amount_payable ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_payable)) : '') + "</span>"
                             },
                             headerAttributes: {
                                 "class": "title"
@@ -407,9 +415,9 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             },
                             template: function (dataItem) {
                                 let date = kendo.toString(kendo.parseDate(dataItem.hr_approval_date), 'dddd dd MMM, yyyy');
-                                return "<span title='" + date + "'>" + date + "</span>";
+                                return "<span title='HR Approval Date: " + date + "'>" + date + "</span>";
                             },
-                            groupHeaderTemplate: "Date Raised: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') #",
+                            groupHeaderTemplate: "HR Approval Date: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') #",
                             hidden: true
                         }
                     ],
@@ -433,14 +441,17 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             },
                             template: function (dataItem) {
                                 let fmgr_comment = dataItem.fmgr_comment ? dataItem.fmgr_comment : '';
-                                return "<span title='" + fmgr_comment + "'>" + fmgr_comment + "</span>"
+                                return "<span title='Finance Mgr. Comment: " + fmgr_comment + "'>" + fmgr_comment + "</span>"
                             }
                         },
                         {
                             field: 'fmgr_approval',
                             title: 'Approved by Finance Mgr.?',
                             editor: customBoolEditor,
-                            template: "#= fmgr_approval? 'Yes' : 'No' #",
+                            template: function (dataItem) {
+                                let fmgr_approval = dataItem.fmgr_approval_date ? dataItem.fmgr_approval : '';
+                                return "<span title='Approved by Finance Mgr.: " + (fmgr_approval? 'Yes' : 'No') + "'>" + (fmgr_approval? 'Yes' : 'No') + "</span>"
+                            },
                             headerAttributes: {
                                 "class": "title"
                             },
@@ -451,7 +462,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             field: 'amount_approved',
                             title: 'Amount Approved',
                             template: function (dataItem) {
-                                return "<span title='" + (dataItem.amount_approved ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_approved)) : '') + "'>" + (dataItem.amount_approved ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_approved)) : '') + "</span>"
+                                return "<span title='Amount Approved: " + (dataItem.amount_approved ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_approved)) : '') + "'>" + (dataItem.amount_approved ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_approved)) : '') + "</span>"
                             },
                             headerAttributes: {
                                 "class": "title"
@@ -467,9 +478,9 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             },
                             template: function (dataItem) {
                                 let date = kendo.toString(kendo.parseDate(dataItem.fmgr_approval_date), 'dddd dd MMM, yyyy');
-                                return "<span title='" + date + "'>" + date + "</span>";
+                                return "<span title='Finance Mgr. Approval Date: " + date + "'>" + date + "</span>";
                             },
-                            groupHeaderTemplate: "Date Raised: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') #",
+                            groupHeaderTemplate: "Finance Mgr. Approval Date: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') #",
                             hidden: true
                         }
                     ],
@@ -479,7 +490,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     title: 'Amount Received',
                     hidden: true,
                     template: function (dataItem) {
-                        return dataItem.amount_received ? "<span title='" + kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_received)) + "'>" + kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_received)) + "</span>" : "<span title='Pending'>Pending</span>"
+                        return dataItem.amount_received ? "<span title='Amount Received: " + kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_received)) + "'>" + kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_received)) + "</span>" : "<span title='Pending'>Pending</span>"
                     },
                     headerAttributes: {
                         "class": "title"
@@ -491,7 +502,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     title: 'Received By',
                     hidden: true,
                     template: function (dataItem) {
-                        return dataItem.received_by ? "<span title='" + dataItem.received_by + "'>" + dataItem.received_by + "</span>" : "<span title='Pending'>Pending</span>"
+                        return dataItem.received_by ? "<span title='Received by: " + dataItem.received_by + "'>" + dataItem.received_by + "</span>" : "<span title='Pending'>Pending</span>"
                     },
                     headerAttributes: {
                         "class": "title"
@@ -504,7 +515,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     hidden: true,
                     template: function (dataItem) {
                         let date = dataItem.date_received ? kendo.toString(kendo.parseDate(dataItem.date_received), 'dddd dd MMM, yyyy') : 'Pending';
-                        return "<span title='" + date + "'>" + date + "</span>";
+                        return "<span title='Date Received: " + date + "'>" + date + "</span>";
                     },
                     headerAttributes: {
                         "class": "title"
