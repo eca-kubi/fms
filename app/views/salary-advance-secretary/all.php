@@ -336,7 +336,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             editor: customBoolEditor,
                             template: function (dataItem) {
                                 let hod_approval = dataItem.hod_approval ? dataItem.hod_approval : '';
-                                return "<span title='HoD Approved: " + (hod_approval? 'Yes' : 'No') + "'>" + (hod_approval? 'Yes' : 'No') + "</span>"
+                                return "<span title='HoD Approved: " + (hod_approval ? 'Yes' : 'No') + "'>" + (hod_approval ? 'Yes' : 'No') + "</span>"
                             },
                             headerAttributes: {
                                 "class": "title"
@@ -387,7 +387,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             editor: customBoolEditor,
                             template: function (dataItem) {
                                 let hr_approval = dataItem.hr_approval ? dataItem.hr_approval : '';
-                                return "<span title='HR Approved: " + (hr_approval? 'Yes' : 'No') + "'>" + (hr_approval? 'Yes' : 'No') + "</span>"
+                                return "<span title='HR Approved: " + (hr_approval ? 'Yes' : 'No') + "'>" + (hr_approval ? 'Yes' : 'No') + "</span>"
                             },
                             headerAttributes: {
                                 "class": "title"
@@ -450,7 +450,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             editor: customBoolEditor,
                             template: function (dataItem) {
                                 let fmgr_approval = dataItem.fmgr_approval_date ? dataItem.fmgr_approval : '';
-                                return "<span title='Approved by Finance Mgr.: " + (fmgr_approval? 'Yes' : 'No') + "'>" + (fmgr_approval? 'Yes' : 'No') + "</span>"
+                                return "<span title='Approved by Finance Mgr.: " + (fmgr_approval ? 'Yes' : 'No') + "'>" + (fmgr_approval ? 'Yes' : 'No') + "</span>"
                             },
                             headerAttributes: {
                                 "class": "title"
@@ -570,6 +570,8 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 window.grid_uid = e.model.uid; // uid of current editing row
                 e.model.fields['amount_requested'].editable = !(e.model.hod_approval || e.model.fmgr_approval || e.model.hr_approval);
                 e.model.fields['name'].editable = e.model.isNew();
+                e.model.fields['received_by'].editable = Boolean(e.date_received);
+                e.model.fields['amount_received'].editable = Boolean(e.date_received);
             },
             edit: function (e) {
                 e.container.find('.k-edit-label:not(:eq(0),:eq(3))').hide();
@@ -577,16 +579,16 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 e.container.find('.k-edit-field:eq(3) input[name=amount_requested]').attr('data-required-msg', 'Amount Requested is required!');
                 e.container.find('.k-edit-label').addClass('pt-2');
                 e.container.find('.k-edit-field').addClass('pt-2');
-                if (e.model.fmgr_approval) {
-                    e.container.find('.k-edit-label:eq(15)').show(); // toggle visibility for amount received
-                    e.container.find('.k-edit-field:eq(15)').show();
-                    e.container.find('.k-edit-label:eq(16)').show(); // toggle visibility for received by
-                    e.container.find('.k-edit-field:eq(16)').show();
-                }
+                e.container.find('.k-edit-label:eq(15)').toggle(Boolean(e.model.fmgr_approval)); // toggle visibility for amount received
+                e.container.find('.k-edit-field:eq(15)').toggle(Boolean(e.model.fmgr_approval)).attr('required', Boolean(e.model.fmgr_approval));
+                e.container.find('.k-edit-label:eq(16)').toggle(Boolean(e.model.fmgr_approval)); // toggle visibility for received by
+                e.container.find('.k-edit-field:eq(16)').toggle(Boolean(e.model.fmgr_approval)).attr('required', Boolean(e.model.fmgr_approval));
                 e.container.find('.k-edit-label:eq(9)').toggle(Boolean(e.model.amount_payable));
                 e.container.find('.k-edit-label:eq(13)').toggle(Boolean(e.model.amount_approved));
                 e.container.find('.k-edit-field:eq(9)').toggle(Boolean(e.model.amount_payable));
                 e.container.find('.k-edit-field:eq(13)').toggle(Boolean(e.model.amount_approved));
+                e.container.find('.k-edit-label:eq(17)').toggle(Boolean(e.model.date_received));
+                e.container.find('.k-edit-field:eq(17)').toggle(Boolean(e.model.date_received));
             },
             save: function (e) {
                 //console.log(('saved'))
