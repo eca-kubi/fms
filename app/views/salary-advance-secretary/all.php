@@ -389,7 +389,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             field: 'amount_payable',
                             title: 'Amount Payable',
                             template: function (dataItem) {
-                                return "<span title='" + (dataItem.amount_payable ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_payable)) : 'Pending') + "'>" + (dataItem.amount_payable ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_payable)) : 'Pending') + "</span>"
+                                return "<span title='" + (dataItem.amount_payable ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_payable)) : '') + "'>" + (dataItem.amount_payable ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_payable)) : '') + "</span>"
                             },
                             headerAttributes: {
                                 "class": "title"
@@ -449,7 +449,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             field: 'amount_approved',
                             title: 'Amount Approved',
                             template: function (dataItem) {
-                                return "<span title='" + (dataItem.amount_approved ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_approved)) : 'Pending') + "'>" + (dataItem.amount_approved ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_approved)) : 'Pending') + "</span>"
+                                return "<span title='" + (dataItem.amount_approved ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_approved)) : '') + "'>" + (dataItem.amount_approved ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_approved)) : '') + "</span>"
                             },
                             headerAttributes: {
                                 "class": "title"
@@ -534,7 +534,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
         <b>Amount Approved </b>: #= amount_approved? kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_approved)) : 'Pending' #</br>
         <b>Amount Received </b>: #= amount_received? kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_received)) : 'Pending' #</br>
         #=date_received? '<b>Date Received: </b>' + kendo.toString(kendo.parseDate(date_received), 'dddd dd MMM, yyyy')+'</br>': '' #
-        #=received_by? '<b>Received by: </b>' + ''  +'</br>': '' #
+        #=received_by? '<b>Received by: </b>' + received_by  +'</br>': '' #
     </div>
    `),
             dataSource: salaryAdvanceDataSource,
@@ -570,10 +570,10 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     e.container.find('.k-edit-label:eq(16)').show(); // toggle visibility for received by
                     e.container.find('.k-edit-field:eq(16)').show();
                 }
-                e.container.find('.k-edit-label:eq(9)').toggle(e.model.amount_payable);
-                e.container.find('.k-edit-label:eq(13)').toggle(e.model.amount_approved);
-                e.container.find('.k-edit-field:eq(9)').toggle(e.model.amount_payable);
-                e.container.find('.k-edit-field:eq(13)').toggle(e.model.amount_approved);
+                e.container.find('.k-edit-label:eq(9)').toggle(Boolean(e.model.amount_payable));
+                e.container.find('.k-edit-label:eq(13)').toggle(Boolean(e.model.amount_approved));
+                e.container.find('.k-edit-field:eq(9)').toggle(Boolean(e.model.amount_payable));
+                e.container.find('.k-edit-field:eq(13)').toggle(Boolean(e.model.amount_approved));
             },
             save: function (e) {
                 //console.log(('saved'))

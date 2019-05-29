@@ -89,10 +89,53 @@ class SalaryAdvanceSecretaryAjax extends Controller
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             $current_user = getUserSession();
             $id_salary_advance = $_POST['id_salary_advance'];
+            $payload = [];
             $ret = [];
             $old_ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
                 ->getOne('salary_advance');
-            if ($old_ret['hod_approval']) {
+            if (!($old_ret['hod_approval'] && $old_ret['fmgr_approval'] && $old_ret['hr_approval'])) {
+                $data['department_ref'] = $old_ret['department_ref'];
+                $data['old_amount'] = number_format($old_ret['amount_requested']);
+                $data['new_amount'] = number_format($_POST['amount_requested']);
+                $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
+                    ->update('salary_advance', ['amount_requested' => $_POST['amount_requested']]);
+                if ($ret) {
+                    $remarks = get_include_contents('action_log/salary_advance_updated_by_secretary', $data);
+                    insertLog($id_salary_advance, ACTION_SALARY_ADVANCE_UPDATE, $remarks, $current_user->user_id);
+                    $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
+                        ->get('salary_advance');
+                    $ret[0]['success'] = true;
+                } else {
+                    $ret[0]['success'] = false;
+                    $ret[0]['reason'] = 'An error occured';
+                }
+            } else if ($old_ret['hod_approval'] && $old_ret['fmgr_approval'] && $old_ret['hr_approval']) {
+                $data['department_ref'] = $old_ret['department_ref'];
+                $data['amount_received'] = $_POST['amount_received'];
+                $data['received_by'] = $_POST['received_by'];
+                if (!$old_ret['date_received']) {
+                    $data['date_received'] = now();
+                }
+                $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
+                    ->update('salary_advance', $data);
+                if ($ret) {
+                    $remarks = get_include_contents('action_log/amount_received_updated_by_secretary', $data);
+                    insertLog($id_salary_advance, ACTION_SALARY_ADVANCE_UPDATE, $remarks, $current_user->user_id);
+                    $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
+                        ->get('salary_advance');
+                    $ret[0]['success'] = true;
+                } else {
+                    $ret[0]['success'] = false;
+                    $ret[0]['reason'] = 'An error occured';
+                }
+            } else{
+                $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
+                    ->get('salary_advance');
+                if ($ret) {
+                    $ret[0]['success'] = true;
+                }
+            }
+            /*if ($old_ret['hod_approval']) {
                 $old_ret['success'] = false;
                 $old_ret['reason'] = 'The HoD has already reviewed this application!';
                 $ret[] = $old_ret;
@@ -120,7 +163,7 @@ class SalaryAdvanceSecretaryAjax extends Controller
                     $ret[0]['success'] = false;
                     $ret[0]['reason'] = 'An error occured';
                 }
-            }
+            }*/
             $ret = $this->transformArrayData($ret);
             echo json_encode($ret);
         }
