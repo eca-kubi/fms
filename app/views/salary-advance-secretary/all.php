@@ -583,11 +583,11 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 e.container.find('.k-edit-field:eq(15)').toggle(Boolean(e.model.fmgr_approval)).attr('required', Boolean(e.model.fmgr_approval));
                 e.container.find('.k-edit-label:eq(16)').toggle(Boolean(e.model.fmgr_approval)); // toggle visibility for received by
                 e.container.find('.k-edit-field:eq(16)').toggle(Boolean(e.model.fmgr_approval)).attr('required', Boolean(e.model.fmgr_approval));
-                e.container.find('.k-edit-label:eq(9)').toggle(Boolean(e.model.amount_payable));
-                e.container.find('.k-edit-label:eq(13)').toggle(Boolean(e.model.amount_approved));
+                e.container.find('.k-edit-label:eq(9)').toggle(Boolean(e.model.amount_payable)); // toggle visibility for amount payable
                 e.container.find('.k-edit-field:eq(9)').toggle(Boolean(e.model.amount_payable));
+                e.container.find('.k-edit-label:eq(13)').toggle(Boolean(e.model.amount_approved)); // toggle visibility for amount approved
                 e.container.find('.k-edit-field:eq(13)').toggle(Boolean(e.model.amount_approved));
-                e.container.find('.k-edit-label:eq(17)').toggle(Boolean(e.model.date_received));
+                e.container.find('.k-edit-label:eq(17)').toggle(Boolean(e.model.date_received)); // toggle visibility for date received
                 e.container.find('.k-edit-field:eq(17)').toggle(Boolean(e.model.date_received));
             },
             save: function (e) {
