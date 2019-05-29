@@ -95,11 +95,20 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     type: 'post',
                     dataType: 'json'
                 },
+                errors: function (response) {
+                    //console.log("errors as function", response.errors[0]);
+                    return response.errors;
+                }
                 /* parameterMap: function (options, operation) {
                      if (operation !== "read" && options.models) {
                          return {models: kendo.stringify(options.models)};
                      }
                  }*/
+            },
+            error: function (e) {
+                //console.log("error event handler", e.errors[0]);
+                toastError(e.errors[0]);
+                salaryAdvanceDataSource.cancelChanges();
             },
             requestEnd: function (e) {
                 if (e.type === 'update' && !e.response[0].success) {
