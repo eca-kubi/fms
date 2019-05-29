@@ -169,40 +169,49 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             type: 'boolean'
                         },
                         hod_approval: {
-                            type: 'boolean'
+                            type: 'boolean',
+                            editable: false
                         },
                         fmgr_approval: {
-                            type: 'boolean'
+                            type: 'boolean',
+                            editable: false
+
                         },
                         amount_payable: {
                             type: 'number',
                             validation: { //set validation rules
                                 required: true,
                                 min: '0'
-                            }
+                            },
+                            editable: false
                         },
                         amount_approved: {
                             type: 'number',
                             validation: { //set validation rules
                                 required: true,
                                 min: '0'
-                            }
+                            },
+                            editable: false
                         },
                         received_by: {
                             type: 'string',
                             editable: false
                         },
                         fmgr_approval_date: {
-                            type: 'date'
+                            type: 'date',
+                            editable: false
                         },
                         hr_approval_date: {
-                            type: 'date'
+                            type: 'date',
+                            editable: false
                         },
                         date_received: {
                             type: 'date',
                             editable: false
                         },
-                        department_ref: {},
+                        department_ref: {
+                            editable: false
+                        },
                         hr_id: {
                             type: 'number'
                         },
@@ -216,7 +225,9 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             type: 'boolean'
                         },
                         user_id: {type: 'number'},
-                        department_id: {type: 'number'},
+                        department_id: {
+                            type: 'number', editable: false
+                        },
                         raised_by_id: {type: "number"},
                         amount_received: {
                             type: "number", editable: false
@@ -553,8 +564,8 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
             dataBinding: function () {
                 //let no = (this.dataSource.page() - 1) * this.dataSource.pageSize();
             },
-            dataBound: function (e) {
-                let grid = $salaryAdvanceGrid.data('kendoGrid')
+            dataBound: function () {
+                let grid = $salaryAdvanceGrid.data('kendoGrid');
                 grid.hideColumn("name");
                 grid.hideColumn("department");
                 //let len = $salaryAdvanceGrid.find("tbody tr").length;
