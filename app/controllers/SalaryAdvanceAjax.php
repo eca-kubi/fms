@@ -25,6 +25,7 @@ class SalaryAdvanceAjax extends Controller
                 ->where('deleted', false)
                 ->get('salary_advance');
         }
+        $ret = $this->transformArrayData($ret);
         echo json_encode($ret);
     }
 
@@ -50,6 +51,7 @@ class SalaryAdvanceAjax extends Controller
                 $ret[0]['success'] = false;
                 $ret[0]['reason'] = 'An error occurred!';
             }
+            $ret = $this->transformArrayData($ret);
             echo json_encode($ret);
         }
     }
@@ -96,6 +98,7 @@ class SalaryAdvanceAjax extends Controller
                     $ret[0]['reason'] = 'An error occurred!';
                 }
             }
+            $ret = $this->transformArrayData($ret);
             echo json_encode($ret);
         }
     }
@@ -137,5 +140,46 @@ class SalaryAdvanceAjax extends Controller
             }
         }
         echo json_encode($ret);
+    }
+
+    private function transformArrayData($ret)
+    {
+        $current_user = getUserSession();
+        $fmgr = getCurrentFgmr();
+        $hr = getCurrentHR();
+        foreach ($ret as $key => &$value) {
+            $hod = getCurrentManager($value['department_id']);
+            $employee = new stdClass();
+            $employee->name = concatNameWithUserId($value['user_id']);
+            $employee->user_id = $value['user_id'];
+            $employee->department = getDepartment($value['user_id']);
+            $value['department'] = $employee->department;
+            $value['employee'] = $employee;
+            unset($value['password']);
+            if ($hod == $current_user->user_id) {
+                $value['hod_comment_editable'] = true;
+                $value['hod_approval_editable'] = true;
+            } else {
+                $value['hod_comment_editable'] = false;
+                $value['hod_approval_editable'] = false;
+            }
+            if ($hr == $current_user->user_id && $value['hod_approval']) {
+                $value['hr_comment_editable'] = true;
+                $value['hr_approval_editable'] = true;
+            } else {
+                $value['hr_comment_editable'] = false;
+                $value['hr_approval_editable'] = false;
+            }
+            if ($fmgr == $current_user->user_id && $value['hr_approval']) {
+                $value['fmgr_comment_editable'] = true;
+                $value['fmgr_approval_editable'] = true;
+                $value['amount_requested_editable'] = true;
+            } else {
+                $value['fmgr_comment_editable'] = false;
+                $value['fmgr_approval_editable'] = false;
+                $value['amount_requested_editable'] = false;
+            }
+        }
+        return $ret;
     }
 }

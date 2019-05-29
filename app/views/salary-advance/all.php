@@ -580,19 +580,24 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 }*/
             },
             beforeEdit: function (e) {
-                if (e.model.isNew()) {
-                    e.model.fields['amount_requested'].editable = true;
-                } else {
-                    e.model.fields['amount_requested'].editable = !(e.model.hod_approval || e.model.fmgr_approval || e.model.hr_approval);
-                }
+                    e.model.fields['amount_requested'].editable = e.model.isNew() || !(e.model.hod_approval || e.model.fmgr_approval || e.model.hr_approval);
             },
             edit: function (e) {
-                e.container.find('.k-edit-label:not(:eq(1))').hide();
-                e.container.find('.k-edit-field:not(:eq(1))').hide();
-                e.container.find('.k-edit-label:eq(1) label').text('Amt. Requested');
-                e.container.find('.k-edit-field:eq(1) input').attr('data-required-msg', 'Amount Requested is required!');
+                e.container.find('.k-edit-label:not(:eq(3))').hide();
+                e.container.find('.k-edit-field:not(:eq(3))').hide();
+                e.container.find('.k-edit-field:eq(3) input[name=amount_requested]').attr('data-required-msg', 'Amount Requested is required!');
                 e.container.find('.k-edit-label').addClass('pt-2');
                 e.container.find('.k-edit-field').addClass('pt-2');
+                e.container.find('.k-edit-label:eq(9)').toggle(Boolean(e.model.amount_payable)); // toggle visibility for amount payable
+                e.container.find('.k-edit-field:eq(9)').toggle(Boolean(e.model.amount_payable));
+                e.container.find('.k-edit-label:eq(15)').toggle(Boolean(e.model.amount_received)); // toggle visibility for amount received
+                e.container.find('.k-edit-field:eq(15)').toggle(Boolean(e.model.amount_received));
+                e.container.find('.k-edit-label:eq(16)').toggle(Boolean(e.model.received_by)); // toggle visibility for received by
+                e.container.find('.k-edit-field:eq(16)').toggle(Boolean(e.model.received_by));
+                e.container.find('.k-edit-label:eq(13)').toggle(Boolean(e.model.amount_approved)); // toggle visibility for amount approved
+                e.container.find('.k-edit-field:eq(13)').toggle(Boolean(e.model.amount_approved));
+                e.container.find('.k-edit-label:eq(17)').toggle(Boolean(e.model.date_received)); // toggle visibility for date received
+                e.container.find('.k-edit-field:eq(17)').toggle(Boolean(e.model.date_received));
             }
         });
 

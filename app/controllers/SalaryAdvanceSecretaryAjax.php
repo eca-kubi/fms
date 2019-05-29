@@ -8,9 +8,6 @@ class SalaryAdvanceSecretaryAjax extends Controller
     public function __construct()
     {
         parent::__construct();
-        /* if (!isLoggedIn()) {
-             redirect('users/login');
-         }*/
     }
 
     public function index()
@@ -135,35 +132,6 @@ class SalaryAdvanceSecretaryAjax extends Controller
                     $ret[0]['success'] = true;
                 }
             }
-            /*if ($old_ret['hod_approval']) {
-                $old_ret['success'] = false;
-                $old_ret['reason'] = 'The HoD has already reviewed this application!';
-                $ret[] = $old_ret;
-            } else if ($old_ret['fmgr_approval']) {
-                $old_ret['success'] = false;
-                $old_ret['reason'] = 'Finance manager has already reviewed this application!';
-                $ret[] = $old_ret;
-            } else if ($old_ret['hr_approval']) {
-                $old_ret['success'] = false;
-                $old_ret['reason'] = 'HR has already reviewed this application!';
-                $ret[] = $old_ret;
-            } else {
-                $data['department_ref'] = $old_ret['department_ref'];
-                $data['old_amount'] = number_format($old_ret['amount_requested']);
-                $data['new_amount'] = number_format($_POST['amount_requested']);
-                $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
-                    ->update('salary_advance', ['amount_requested' => $_POST['amount_requested']]);
-                if ($ret) {
-                    $remarks = get_include_contents('action_log/salary_advance_updated_by_secretary', $data);
-                    insertLog($id_salary_advance, ACTION_SALARY_ADVANCE_UPDATE, $remarks, $current_user->user_id);
-                    $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
-                        ->get('salary_advance');
-                    $ret[0]['success'] = true;
-                } else {
-                    $ret[0]['success'] = false;
-                    $ret[0]['reason'] = 'An error occured';
-                }
-            }*/
             $ret = $this->transformArrayData($ret);
             echo json_encode($ret);
         }
