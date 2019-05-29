@@ -166,10 +166,15 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             editable: false
                         },
                         hr_approval: {
-                            type: 'boolean'
+                            type: 'boolean',
+                            editable: false
                         },
                         hod_approval: {
                             type: 'boolean',
+                            editable: false
+                        },
+                        hod_approval_date : {
+                            type: "date",
                             editable: false
                         },
                         fmgr_approval: {
