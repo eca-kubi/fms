@@ -95,7 +95,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     dataType: 'json'
                 },
                 errors: function (response) {
-                    console.log("errors as function", response.errors[0]);
+                    //console.log("errors as function", response.errors[0]);
                     return response.errors;
                 }
                 /* parameterMap: function (options, operation) {
@@ -105,7 +105,8 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                  }*/
             },
             error: function (e) {
-                console.log("error event handler", e.errors[0]);
+                //console.log("error event handler", e.errors[0]);
+                toastError(e.errors[0]);
                 salaryAdvanceDataSource.cancelChanges();
             },
             requestEnd: function (e) {
@@ -120,8 +121,8 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 if (e.type === 'destroy' && e.response[0].success) {
                     toastSuccess('Success', 5000);
                 } else if (e.type === 'destroy' && !e.response[0].success) {
-                    e.response[0].reason ? toastError(e.response[0].reason) : toastError('An error occurred!');
-                    salaryAdvanceDataSource.cancelChanges();
+                    //e.response[0].reason ? toastError(e.response[0].reason) : toastError('An error occurred!');
+                    //salaryAdvanceDataSource.cancelChanges();
                 }
             },
             schema: {
