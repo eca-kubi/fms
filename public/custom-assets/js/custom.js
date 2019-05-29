@@ -78,10 +78,10 @@ window.addEventListener("load", function () {
 function dropDownEditor(container, options) {
     $('<input  required name="' + options.field + '" data-bind="value:name" data-required-msg="Employee is required!"/>')
         .appendTo(container)
-        .on('change', function (e) {
+        .on('change', function () {
             console.log('');
-            let option = options;
-            let contain = container;
+            //let option = options;
+            //let contain = container;
             //options.model.department = options.model.employee.department;
             // options.model.name = options.model.employee.name;
         })
