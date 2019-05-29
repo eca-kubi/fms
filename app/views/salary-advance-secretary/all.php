@@ -296,12 +296,14 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 {
                     field: 'amount_requested',
                     title: 'Amount Requested',
-                    width: "12%",
-                    template: "#= kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_requested)) #",
+                    //width: "12%",
+                    template: function (dataItem) {
+                        return "<span title='" + (dataItem.amount_requested ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_requested)) : '') + "'>" + (dataItem.amount_requested ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_requested)) : '') + "</span>"
+                    },
                     headerAttributes: {
                         "class": "title"
                     },
-                    groupHeaderTemplate: "Amount Requested: #= kendo.toString('GH₵ ' + kendo.format('{0:n}', value)) #",
+                    groupHeaderTemplate: "Amount Payable: #= value? kendo.toString('GH₵ ' + kendo.format('{0:n}', value)) : 'Pending' #",
                     aggregates: ["max", "min"]
                 },
                 {
