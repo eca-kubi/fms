@@ -173,7 +173,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             type: 'boolean',
                             editable: false
                         },
-                        hod_approval_date : {
+                        hod_approval_date: {
                             type: "date",
                             editable: false
                         },
@@ -248,7 +248,24 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
             mobile: true,
             noRecords: true,
             navigatable: true,
-            toolbar: ["create"],
+            toolbar: ["create", "excel"],
+            excel: {
+                fileName: "Salary Advance Export.xlsx",
+                //proxyURL: "https://demos.telerik.com/kendo-ui/service/export",
+                filterable: true
+            },
+            excelExport: function (e) {
+                let sheet = e.workbook.sheets[0];
+                sheet.columns[0].autoWidth = false;
+                for (let rowIndex = 1; rowIndex < sheet.rows.length; rowIndex++) {
+                    if (rowIndex % 2 === 0) {
+                        let row = sheet.rows[rowIndex];
+                        for (let cellIndex = 0; cellIndex < row.cells.length; cellIndex++) {
+                            //row.cells[cellIndex].fontName = "Poppins";
+                        }
+                    }
+                }
+            },
             editable: 'popup',
             filterable: {
                 operators: {
@@ -585,7 +602,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 }*/
             },
             beforeEdit: function (e) {
-                    e.model.fields['amount_requested'].editable = e.model.isNew() || !(e.model.hod_approval || e.model.fmgr_approval || e.model.hr_approval);
+                e.model.fields['amount_requested'].editable = e.model.isNew() || !(e.model.hod_approval || e.model.fmgr_approval || e.model.hr_approval);
             },
             edit: function (e) {
                 e.container.find('.k-edit-label:not(:eq(3))').hide();

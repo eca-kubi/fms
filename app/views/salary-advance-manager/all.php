@@ -231,7 +231,24 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
             mobile: true,
             noRecords: true,
             navigatable: true,
-            //toolbar: ["create"],
+            toolbar: ["excel"],
+            excel: {
+                fileName: "Salary Advance Export.xlsx",
+                //proxyURL: "https://demos.telerik.com/kendo-ui/service/export",
+                filterable: true
+            },
+            excelExport: function (e) {
+                let sheet = e.workbook.sheets[0];
+                sheet.columns[0].autoWidth = false;
+                for (let rowIndex = 1; rowIndex < sheet.rows.length; rowIndex++) {
+                    if (rowIndex % 2 === 0) {
+                        let row = sheet.rows[rowIndex];
+                        for (let cellIndex = 0; cellIndex < row.cells.length; cellIndex++) {
+                            //row.cells[cellIndex].fontName = "Poppins";
+                        }
+                    }
+                }
+            },
             editable: 'popup',
             filterable: {
                 operators: {
