@@ -506,7 +506,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 {
                     field: 'amount_received',
                     title: 'Amount Received',
-                    hidden: true,
+                    hidden: false,
                     template: function (dataItem) {
                         return dataItem.amount_received ? "<span title='Amount Received: " + kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_received)) + "'>" + kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_received)) + "</span>" : "<span title='Pending'>Pending</span>"
                     },
