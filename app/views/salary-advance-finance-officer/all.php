@@ -190,7 +190,8 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             editable: false
                         },
                         received_by: {
-                            type: 'string'
+                            type: 'string',
+                            required: true
                         },
                         fmgr_approval_date: {
                             type: 'date',
@@ -224,7 +225,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                         amount_received: {
                             type: "number",
                             validation: { //set validation rules
-                                //required: false,
+                                required: true,
                                 min: '0'
                             }
                         }
@@ -606,12 +607,14 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 e.container.find('.k-edit-label').addClass('pt-2');
                 e.container.find('.k-edit-field').addClass('pt-2');
                 e.container.find('.k-edit-label:eq(15)').toggle(Boolean(e.model.fmgr_approval)); // toggle visibility for amount received
-                let amountReceivedContainer = e.container.find('.k-edit-field:eq(15)');
-                amountReceivedContainer.toggle(Boolean(e.model.fmgr_approval)); // toggle visibility for amount received
-                amountReceivedContainer.find('[name=amount_received]').data('kendoNumericTextBox').setOptions({'max': e.model.amount_approved}); // Validation to ensure that the amount received must not exceed the approved amount
-                amountReceivedContainer.attr('required', Boolean(e.model.fmgr_approval));
+                e.container.find('.k-edit-field:eq(15)').toggle(Boolean(e.model.fmgr_approval));
+                let amountReceived = e.container.find('.k-edit-field:eq(15) [name=amount_received]')
+                amountReceived.attr('data-required-msg', 'Amount Received is required!').attr('required', Boolean(e.model.fmgr_approval));
+                amountReceived.data('kendoNumericTextBox').setOptions({'max': e.model.amount_approved}); // Validation to ensure that the amount received must not exceed the approved amount
                 e.container.find('.k-edit-label:eq(16)').toggle(Boolean(e.model.fmgr_approval)); // toggle visibility for received by
-                e.container.find('.k-edit-field:eq(16)').toggle(Boolean(e.model.fmgr_approval)).attr('required', Boolean(e.model.fmgr_approval));
+                e.container.find('.k-edit-field:eq(16)').toggle(Boolean(e.model.fmgr_approval));
+                let receivedBy = e.container.find(".k-edit-field:eq(16) [name=received_by]");
+                receivedBy.attr('data-required-msg', 'Received By is required!').attr('required', Boolean(e.model.fmgr_approval));
                 e.container.find('.k-edit-label:eq(9)').toggle(Boolean(e.model.amount_payable)); // toggle visibility for amount payable
                 e.container.find('.k-edit-field:eq(9)').toggle(Boolean(e.model.amount_payable));
                 e.container.find('.k-edit-label:eq(13)').toggle(Boolean(e.model.amount_approved)); // toggle visibility for amount approved
