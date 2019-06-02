@@ -630,8 +630,8 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 e.container.find('.k-edit-field:eq(15)').toggle(Boolean(e.model.amount_received));
                 e.container.find('.k-edit-label:eq(16)').toggle(Boolean(e.model.received_by)); // toggle visibility for received by
                 e.container.find('.k-edit-field:eq(16)').toggle(Boolean(e.model.received_by));
-                e.container.find('.k-edit-label:eq(13)').toggle(Boolean(e.model.amount_approved)); // toggle visibility for amount approved
-                e.container.find('.k-edit-field:eq(13)').toggle(Boolean(e.model.amount_approved));
+                e.container.find('.k-edit-label:eq(13)').toggle(Boolean(e.model["fmgr_comment_editable"] || e.model.amount_approved)); // toggle visibility for amount approved
+                e.container.find('.k-edit-field:eq(13)').toggle(Boolean(e.model["fmgr_comment_editable"] || e.model.amount_approved));
                 e.container.find('.k-edit-label:eq(17)').toggle(Boolean(e.model.date_received)); // toggle visibility for date received
                 e.container.find('.k-edit-field:eq(17)').toggle(Boolean(e.model.date_received));
             }

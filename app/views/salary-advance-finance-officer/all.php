@@ -129,7 +129,11 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     id: "id_salary_advance",
                     fields: {
                         name: {
-                            editable: false
+                            editable: false,
+                            from: "employee.name"
+                        },
+                        employee: {
+                            defaultValue: {}
                         },
                         date_raised: {
                             type: 'date',
@@ -614,6 +618,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 e.container.find('.k-edit-label:eq(16)').toggle(Boolean(e.model.fmgr_approval)); // toggle visibility for received by
                 e.container.find('.k-edit-field:eq(16)').toggle(Boolean(e.model.fmgr_approval));
                 let receivedBy = e.container.find(".k-edit-field:eq(16) [name=received_by]");
+                //e.model.received_by ? receivedBy.val(e.model.received_by) : receivedBy.val(e.model.employee.name);
                 receivedBy.attr('data-required-msg', 'Received By is required!').attr('required', Boolean(e.model.fmgr_approval));
                 e.container.find('.k-edit-label:eq(9)').toggle(Boolean(e.model.amount_payable)); // toggle visibility for amount payable
                 e.container.find('.k-edit-field:eq(9)').toggle(Boolean(e.model.amount_payable));
