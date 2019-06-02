@@ -1337,3 +1337,9 @@ function hasActiveApplication($user_id)
     $ret = Database::getDbh()->rawQuery("SELECT COUNT(*) total from salary_advance WHERE user_id = $user_id AND YEAR(date_raised) = YEAR(CURRENT_DATE()) AND MONTH(date_raised) = MONTH(CURRENT_DATE())");
     return $ret[0]['total'];
 }
+
+function isFinanceOfficer($user_id) {
+    return Database::getDbh()->where('value', $user_id)
+        ->where('prop', 'finance_officer')
+        ->has('fms_settings');
+}

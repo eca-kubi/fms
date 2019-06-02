@@ -1,6 +1,6 @@
 <?php
 
-class SalaryAdvanceSecretary extends Controller
+class SalaryAdvanceFinanceOfficer extends Controller
 {
     public function __construct()
     {
@@ -10,9 +10,9 @@ class SalaryAdvanceSecretary extends Controller
     public function index($id_salary_advance = null)
     {
         if (!isLoggedIn()) {
-            redirect('users/login/salary-advance-secretary/index/' . $id_salary_advance);
+            redirect('users/login/salary-advance-finance-officer/index/' . $id_salary_advance);
         }
-        if (!isSecretary(getUserSession()->user_id)) {
+        if (!isFinanceOfficer(getUserSession()->user_id)) {
             redirect('salary-advance');
         }
         if (empty($id_salary_advance)) {
@@ -27,10 +27,10 @@ class SalaryAdvanceSecretary extends Controller
         $payload = [];
         $payload['current_user'] = $current_user = getUserSession();
         $payload['title'] = 'Salary Advance Applications';
-        if (!isSecretary($current_user->user_id)) {
+        if (!isFinanceOfficer($current_user->user_id)) {
             redirect('salary-advance');
         }
-        $this->view('salary-advance-secretary/all', $payload);
+        $this->view('salary-advance-finance-officer/all', $payload);
     }
 
     public function single($id_salary_advance)

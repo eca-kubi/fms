@@ -74,22 +74,22 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
             pageSize: 5,
             transport: {
                 read: {
-                    url: URL_ROOT + "/salary-advance-secretary-ajax/",
+                    url: URL_ROOT + "/salary-advance-finance-officer-ajax/",
                     type: "post",
                     dataType: "json"
                 },
                 update: {
-                    url: URL_ROOT + "/salary-advance-secretary-ajax/update/",
+                    url: URL_ROOT + "/salary-advance-finance-officer-ajax/update/",
                     type: 'post',
                     dataType: 'json'
                 },
                 destroy: {
-                    url: URL_ROOT + "/salary-advance-secretary-ajax/destroy/",
+                    url: URL_ROOT + "/salary-advance-finance-officer-ajax/destroy/",
                     type: 'post',
                     dataType: 'json'
                 },
                 create: {
-                    url: URL_ROOT + "/salary-advance-secretary-ajax/create",
+                    url: URL_ROOT + "/salary-advance-finance-officer-ajax/create",
                     type: 'post',
                     dataType: 'json'
                 },
@@ -594,10 +594,10 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
             },
             beforeEdit: function (e) {
                 window.grid_uid = e.model.uid; // uid of current editing row
-                e.model.fields['amount_requested'].editable = !(e.model.hod_approval || e.model.fmgr_approval || e.model.hr_approval);
+                e.model.fields['amount_requested'].editable = false;
                 e.model.fields['name'].editable = e.model.isNew();
-                e.model.fields['received_by'].editable = Boolean(e.model.date_received);
-                e.model.fields['amount_received'].editable = Boolean(e.model.date_received);
+                e.model.fields['received_by'].editable = e.model.fmgr_approval && !Boolean(e.model.received_by);
+                e.model.fields['amount_received'].editable = e.model.fmgr_approval && !Boolean(e.model.amount_received);
             },
             edit: function (e) {
                 e.container.find('.k-edit-label:not(:eq(0),:eq(3))').hide();
@@ -606,7 +606,10 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 e.container.find('.k-edit-label').addClass('pt-2');
                 e.container.find('.k-edit-field').addClass('pt-2');
                 e.container.find('.k-edit-label:eq(15)').toggle(Boolean(e.model.fmgr_approval)); // toggle visibility for amount received
-                e.container.find('.k-edit-field:eq(15)').toggle(Boolean(e.model.fmgr_approval)).attr('required', Boolean(e.model.fmgr_approval));
+                let amountReceivedContainer = e.container.find('.k-edit-field:eq(15)');
+                amountReceivedContainer.toggle(Boolean(e.model.fmgr_approval)); // toggle visibility for amount received
+                amountReceivedContainer.find('[name=amount_received]').data('kendoNumericTextBox').setOptions({'max': e.model.amount_approved}); // Validation to ensure that the amount received must not exceed the approved amount
+                amountReceivedContainer.attr('required', Boolean(e.model.fmgr_approval));
                 e.container.find('.k-edit-label:eq(16)').toggle(Boolean(e.model.fmgr_approval)); // toggle visibility for received by
                 e.container.find('.k-edit-field:eq(16)').toggle(Boolean(e.model.fmgr_approval)).attr('required', Boolean(e.model.fmgr_approval));
                 e.container.find('.k-edit-label:eq(9)').toggle(Boolean(e.model.amount_payable)); // toggle visibility for amount payable

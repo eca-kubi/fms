@@ -259,7 +259,7 @@
                         </li>
                     </ul>
                 </li>
-                <?php if ($current_user->role == ROLE_SECRETARY || $current_user->role == ROLE_MANAGER || $current_user->role == ROLE_SUPERINTENDENT) { ?>
+                <?php if ($current_user->role == ROLE_SECRETARY || $current_user->role == ROLE_MANAGER || $current_user->role == ROLE_SUPERINTENDENT || isFinanceOfficer($current_user->user_id)) { ?>
                     <li class="nav-item dropdown fa  mx-2">
                         <a class="nav-link dropdown-item text-warning dropdown-toggle btn border-0 text-bold flat"
                            data-toggle="dropdown">
@@ -281,6 +281,14 @@
                                 <li>
                                     <a class="dropdown-item" href="<?php echo site_url('salary-advance-manager') ?>">
                                         Manager
+                                    </a>
+                                </li>
+                            <?php } ?>
+                            <?php if (isFinanceOfficer($current_user->user_id)) { ?>
+                                <li class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="<?php echo site_url('salary-advance-finance-officer') ?>">
+                                        Finance Officer
                                     </a>
                                 </li>
                             <?php } ?>
