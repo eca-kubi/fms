@@ -60,6 +60,7 @@
 $universal = new stdClass();
 $universal->hr_comment_editable = getCurrentHR() == $current_user->user_id;
 $universal->fgmr_comment_editable = $universal->amount_requested_editable = getCurrentFgmr() == $current_user->user_id;
+$universal->has_salary_advance = hasActiveApplication($current_user->user_id);
 ?>
 <!--suppress HtmlUnknownTarget -->
 <script>
@@ -622,7 +623,12 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 e.container.find('.k-edit-field:eq(17)').toggle(Boolean(e.model.received_by));
             }
         });
-
+        if (universal["has_salary_advance"]) $(".k-grid-add")
+            .removeClass("k-grid-add")
+            .addClass("k-state-disabled k-grid-add-disabled")
+            .removeAttr("href").click(function () {
+                toastError("You already have an active salary advance application for the " + moment()["format"]("MMMM") + "!");
+            });
         $salaryAdvanceGrid.data('kendoGrid').thead.kendoTooltip({
             filter: "th.title",
             position: 'top',

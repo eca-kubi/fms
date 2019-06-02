@@ -71,8 +71,9 @@ modal('change_password');
 <script src="<?php echo URL_ROOT ?>/public/assets/js/shards.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/adminlte.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/adminlte-2.js"></script>
-<!--<script src="<?php /*echo URL_ROOT; */?>/public/assets/js/moment.js"></script>
---><!--<script src="<?php /*echo URL_ROOT; */ ?>/public/assets/js/bizniz.js"></script>
+<script src="<?php echo URL_ROOT; ?>/public/assets/js/moment.js"></script>
+
+<!--<script src="<?php /*echo URL_ROOT; */ ?>/public/assets/js/bizniz.js"></script>
 -->
 <!--<script src="<?php /*echo URL_ROOT; */ ?>/public/assets/js/moment-business-with-holidays.js"></script>
 -->
