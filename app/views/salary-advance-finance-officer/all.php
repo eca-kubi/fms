@@ -610,7 +610,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 e.container.find('.k-edit-field:eq(15)').toggle(Boolean(e.model.fmgr_approval));
                 let amountReceived = e.container.find('.k-edit-field:eq(15) [name=amount_received]');
                 amountReceived.attr('data-required-msg', 'Amount Received is required!').attr('required', Boolean(e.model.fmgr_approval));
-                amountReceived.data('kendoNumericTextBox').setOptions({'max': e.model.amount_approved}); // Validation to ensure that the amount received must not exceed the approved amount
+                if (amountReceived.length) amountReceived.data('kendoNumericTextBox').setOptions({'max': e.model.amount_approved}); // Validation to ensure that the amount received must not exceed the approved amount
                 e.container.find('.k-edit-label:eq(16)').toggle(Boolean(e.model.fmgr_approval)); // toggle visibility for received by
                 e.container.find('.k-edit-field:eq(16)').toggle(Boolean(e.model.fmgr_approval));
                 let receivedBy = e.container.find(".k-edit-field:eq(16) [name=received_by]");
