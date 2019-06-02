@@ -599,7 +599,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
             },
             beforeEdit: function (e) {
                 window.grid_uid = e.model.uid; // uid of current editing row
-                e.model.fields['amount_requested'].editable = false;
+                e.model.fields['amount_requested'].editable = e.model.isNew();
                 e.model.fields['name'].editable = e.model.isNew();
                 e.model.fields['received_by'].editable = e.model.fmgr_approval && !Boolean(e.model.received_by);
                 e.model.fields['amount_received'].editable = e.model.fmgr_approval && !Boolean(e.model.amount_received);
