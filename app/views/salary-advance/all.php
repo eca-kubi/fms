@@ -560,7 +560,9 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                 },
                 {
                     template: "<span class='text-center action-tools row'>" +
-                        "<span class='col' title='Edit'><a href='\\#' class='text-black action-edit'><i class='fa fa-pencil'></i></a></span>" + "<span class='col' title='Delete'><a href='\\#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span><span class='col' title='More Info'><a href='\\#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
+                        "<span class='col' title='Edit'><a href='\\#' class='text-black action-edit'><i class='fa fa-pencil'></i></a></span>" +
+                        "<span class='col' title='Delete'><a href='\\#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span><span class='col' title='More Info'><a href='\\#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
+                            "<span class='col' title='Print'><a href='\\#' class='text-primary action-print print-it' target='_blank'><i class='fas fa-print'></i></a></span>" +
                         "</span>",
                     width: "10%",
                     title: "Action"
@@ -591,15 +593,15 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                 let grid = $salaryAdvanceGrid.data('kendoGrid');
                 grid.hideColumn("name");
                 grid.hideColumn("department");
-                //let len = $salaryAdvanceGrid.find("tbody tr").length;
-                /*for(let i=0;i<len ; i++)
+                let data = grid.dataSource.data();
+                $.each(data, function (i, row) {
+                    $('tr[data-uid="' + row.uid + '"] ').find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["id_salary_advance"]);
+                });
+                /*let len = $salaryAdvanceGrid.find("tbody tr").length;
+                for(let i=0;i<len ; i++)
                 {
-                    let model = grid.data("kendoGrid").dataSource.at(i);
-                    if (model && !model.hod_comment_editable) {//field names
-                        model.fields["hod_comment"].editable = false;
-                    } else {
-                        model.fields["hod_comment"].editable = true;
-                    }
+                    let model = grid.dataSource.at(i);
+
                 }*/
             },
             beforeEdit: function (e) {

@@ -7,6 +7,7 @@ let URL_ROOT = '';
 let lists = [];
 let employeeDataSource;
 $(document).ready(function () {
+    $(".print-it").printPage();
     jQuery.fx.off = true;
     employeeDataSource = new kendo.data.DataSource({
         transport: {
@@ -35,7 +36,7 @@ $(document).ready(function () {
     // fix column width for tables in collapse
     $('.hide-child').removeClass('show').trigger('hidden.bs.collapse');
 
-    kendo.ui.Grid.fn.currentRow = function () {
+    kendo.ui.Grid.fn["currentRow"] = function () {
         //this will only work if grid is navigatable
         let cell = this.current();
         if (cell) {
@@ -102,7 +103,7 @@ function dropDownEditor(container, options) {
                 //console.log('select')
             },
             change: function (e) {
-                let grid = $salaryAdvanceManagerGrid.data('kendoGrid');
+                let grid = $salaryAdvanceManagerGrid["data"]('kendoGrid');
                 let model = grid.dataSource.getByUid(grid_uid);
                 let selectedIndex = e.sender.selectedIndex;
                 if (selectedIndex) {
@@ -145,7 +146,7 @@ toastError = function f(message) {
     });
 };
 
-toastSuccess = function f(message, timeout=false) {
+toastSuccess = function f(message, timeout = false) {
     $.toast({
         // heading: '<u>Information</u>',
         text: `<b class="text-bold"><i class="fa fa-check text-success"></i> <span>${message}</span></b>`,
@@ -173,6 +174,7 @@ function departmentFilter(element) {
     });
 }
 
+/*
 function parseHtml(s) {
     return (new DOMParser()).parseFromString(s, 'text/html').body.innerHTML;
-}
+}*/

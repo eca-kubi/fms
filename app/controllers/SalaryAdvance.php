@@ -77,6 +77,8 @@ class SalaryAdvance extends Controller
 
     public function print ($id_salary_advance)
     {
+        $payload['current_user'] = getUserSession();
+        $payload['title'] = 'Salary Advance';
         $payload['salary_advance'] = new SalaryAdvanceModel($id_salary_advance);
         $this->view('print', $payload);
     }
