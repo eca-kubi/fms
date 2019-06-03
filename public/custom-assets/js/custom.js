@@ -7,7 +7,6 @@ let URL_ROOT = '';
 let lists = [];
 let employeeDataSource;
 $(document).ready(function () {
-    $(".print-it").printPage();
     jQuery.fx.off = true;
     employeeDataSource = new kendo.data.DataSource({
         transport: {

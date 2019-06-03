@@ -597,6 +597,7 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                 $.each(data, function (i, row) {
                     $('tr[data-uid="' + row.uid + '"] ').find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["id_salary_advance"]);
                 });
+                $(".print-it").printPage();
                 /*let len = $salaryAdvanceGrid.find("tbody tr").length;
                 for(let i=0;i<len ; i++)
                 {
