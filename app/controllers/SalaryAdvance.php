@@ -75,5 +75,10 @@ class SalaryAdvance extends Controller
         $this->view('pages/start-page', $payload);
     }
 
+    public function print ($id_salary_advance)
+    {
+        $payload['salary_advance'] = new SalaryAdvanceModel($id_salary_advance);
+        $this->view('print', $payload);
+    }
 
 }

@@ -627,7 +627,7 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
             .removeClass("k-grid-add")
             .addClass("k-state-disabled k-grid-add-disabled")
             .removeAttr("href").click(function () {
-                toastError("You already have an active salary advance application for the " + moment()["format"]("MMMM") + "!");
+                toastError("You already have an active salary advance application for the month of " + moment()["format"]("MMMM") + "!");
             });
         $salaryAdvanceGrid.data('kendoGrid').thead.kendoTooltip({
             filter: "th.title",
