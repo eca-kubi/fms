@@ -26,7 +26,7 @@ $salary_advance = $payload['salary_advance'];
         <div class="col-11">
             <h5 class="font-raleway font-weight-bold mb-0">Salary Advance
             </h5>
-            <small class="text-bold">[<?php echo $payload['salary_advance']->department_ref; ?>]</small>
+            <small class="text-bold">[<?php echo $salary_advance->department_ref; ?>]</small>
         </div>
         <div class="col-1">
             <img class="img-size-64" src="<?php echo site_url("public/assets/images/adamus.jpg") ?>" alt="">
@@ -165,7 +165,6 @@ $salary_advance = $payload['salary_advance'];
                     <!-- /.box-footer-->
                 </div>
             </div>
-
         </section>
         <!-- /.content -->
     </div>
