@@ -56,7 +56,7 @@ const ACTION_SALARY_ADVANCE_DELETED= 'Salary Advance Deleted';
 const STATUS_PENDING_HR_APPROVAL = 'Pending HR Approval';
 const STATUS_PENDING_FMGR_APPROVAL = 'Pending Financial Manager Approval';
 const STATUS_PENDING_HOD_APPROVAL = 'Pending HoD Approval';
-
+const CURRENCY_GHS = "GH₵";
 const ADMIN = [
     'Superintendent',
     'Manager'

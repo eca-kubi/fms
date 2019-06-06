@@ -670,7 +670,7 @@ function echoDateOfficial($date, $official = false)
             $t = (new \Moment\Moment($date))->format('hh:mm a', new \Moment\CustomFormats\MomentJs());
             return $d . ' at ' . $t;
         } else {
-            return $d = (new \Moment\Moment($date))->format('ddd, MMM D YYYY hh:mm a', new \Moment\CustomFormats\MomentJs());
+            return $d = (new \Moment\Moment($date))->format('ddd, MMM D YYYY', new \Moment\CustomFormats\MomentJs());
         }
     } catch (\Moment\MomentException $e) {
     }
