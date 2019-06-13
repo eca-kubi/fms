@@ -53,3 +53,9 @@
 .fontastic-005-support:before {
   content: "\e004";
 }
+.fontastic-engineering:before {
+  content: "\e005";
+}
+.fontastic-robot:before {
+  content: "\e006";
+}

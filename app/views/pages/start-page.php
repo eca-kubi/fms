@@ -154,7 +154,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6 mbr-col-md-10 coming-soon">
+            <div class="col-lg-6 mbr-col-md-10" data-toggle="list" data-list='["<a href=\"<?php echo HOST . "/nearmiss" ?>\">Near Miss</a>"]'>
                 <div class="wrap">
                     <div class="ico-wrap">
                         <span class="mbr-iconfont fa-user-shield fa"></span>
@@ -162,7 +162,7 @@
                     <div class="text-wrap vcenter">
                         <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">HSE <span></span></h2>
                         <p class="mbr-fonts-style text1 mbr-text display-6">
-                            <span>All HSE-related forms. (Coming soon)</span>
+                            <span>Near Miss, etc.</span>
                             <span class="invisible">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                         </p>
                     </div>
@@ -177,6 +177,34 @@
                         <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Mining <span></span></h2>
                         <p class="mbr-fonts-style text1 mbr-text display-6">
                             <span>All Mining-related forms. (Coming soon)</span>
+                            <span class="invisible">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mbr-col-md-10 coming-soon">
+                <div class="wrap">
+                    <div class="ico-wrap">
+                        <span class="mbr-iconfont fontastic-engineering"></span>
+                    </div>
+                    <div class="text-wrap vcenter">
+                        <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Engineering <span></span></h2>
+                        <p class="mbr-fonts-style text1 mbr-text display-6">
+                            <span>All Engineering-related forms. (Coming soon)</span>
+                            <span class="invisible">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mbr-col-md-10 coming-soon">
+                <div class="wrap">
+                    <div class="ico-wrap">
+                        <span class="mbr-iconfont fontastic-robot"></span>
+                    </div>
+                    <div class="text-wrap vcenter">
+                        <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Processing <span></span></h2>
+                        <p class="mbr-fonts-style text1 mbr-text display-6">
+                            <span>All Processing-related forms. (Coming soon)</span>
                             <span class="invisible">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                         </p>
                     </div>

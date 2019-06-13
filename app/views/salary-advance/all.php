@@ -237,6 +237,13 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                         raised_by_id: {type: "number"},
                         amount_received: {
                             type: "number", editable: false
+                        },
+                        percentage: {
+                            type: "number",
+                            validation: { //set validation rules
+                                min: "10",
+                                max: "30"
+                            },
                         }
                     }
                 }
@@ -332,6 +339,19 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                     groupHeaderTemplate: "Date Raised: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') #"
                 },
                 {
+                    field: 'percentage',
+                    title: 'Percentage',
+                    //width: "12%",
+                    template: function (dataItem) {
+                        return "<span title='Percentage: " + (dataItem.percentage ? kendo.toString('% ' + kendo.format('{0:n}', dataItem.percentage)) : '') + "'>" + (dataItem.percentage ? kendo.toString('% ' + kendo.format('{0:n}', dataItem.percentage)) : '') + "</span>"
+                    },
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    groupHeaderTemplate: "Percentage: #= value? kendo.toString('% ' + kendo.format('{0:n}', value)) : '' #",
+                    aggregates: ["max", "min"]
+                },
+                {
                     field: 'amount_requested',
                     title: 'Amount Requested',
                     //width: "12%",
@@ -341,7 +361,7 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                     headerAttributes: {
                         "class": "title"
                     },
-                    groupHeaderTemplate: "Amount Requested: #= value? kendo.toString('GH₵ ' + kendo.format('{0:n}', value)) : 'Pending' #",
+                    groupHeaderTemplate: "Amount Requested: #= value? kendo.toString('GH₵ ' + kendo.format('{0:n}', value)) : '' #",
                     aggregates: ["max", "min"]
                 },
                 {
@@ -562,7 +582,7 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                     template: "<span class='text-center action-tools row'>" +
                         "<span class='col' title='Edit'><a href='\\#' class='text-black action-edit'><i class='fa fa-pencil'></i></a></span>" +
                         "<span class='col' title='Delete'><a href='\\#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span><span class='col' title='More Info'><a href='\\#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
-                            "<span class='col' title='Print'><a href='\\#' class='text-primary action-print print-it' target='_blank'><i class='fas fa-print'></i></a></span>" +
+                        "<span class='col' title='Print'><a href='\\#' class='text-primary action-print print-it' target='_blank'><i class='fas fa-print'></i></a></span>" +
                         "</span>",
                     width: "10%",
                     title: "Action"
@@ -607,23 +627,46 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
             },
             beforeEdit: function (e) {
                 e.model.fields['amount_requested'].editable = e.model.isNew() || !(e.model.hod_approval || e.model.fmgr_approval || e.model.hr_approval);
+                e.model.fields["percentage"].editable = e.model.isNew() || !(e.model.hod_approval || e.model.fmgr_approval || e.model.hr_approval);
             },
             edit: function (e) {
-                e.container.find('.k-edit-label:not(:eq(3))').hide();
-                e.container.find('.k-edit-field:not(:eq(3))').hide();
-                e.container.find('.k-edit-field:eq(3) input[name=amount_requested]').attr('data-required-msg', 'Amount Requested is required!');
-                e.container.find('.k-edit-label').addClass('pt-2');
-                e.container.find('.k-edit-field').addClass('pt-2');
-                e.container.find('.k-edit-label:eq(9)').toggle(Boolean(e.model.amount_payable)); // toggle visibility for amount payable
-                e.container.find('.k-edit-field:eq(9)').toggle(Boolean(e.model.amount_payable));
-                e.container.find('.k-edit-label:eq(15)').toggle(Boolean(e.model.amount_received)); // toggle visibility for amount received
-                e.container.find('.k-edit-field:eq(15)').toggle(Boolean(e.model.amount_received));
-                e.container.find('.k-edit-label:eq(16)').toggle(Boolean(e.model.received_by)); // toggle visibility for received by
-                e.container.find('.k-edit-field:eq(16)').toggle(Boolean(e.model.received_by));
-                e.container.find('.k-edit-label:eq(13)').toggle(Boolean(e.model.amount_approved)); // toggle visibility for amount approved
-                e.container.find('.k-edit-field:eq(13)').toggle(Boolean(e.model.amount_approved));
-                e.container.find('.k-edit-label:eq(17)').toggle(Boolean(e.model.received_by)); // toggle visibility for date received // kendo grid has date set to today by default
+                let percentageInput = e.container.find('.k-edit-field:eq(3)');
+                let percentageLabel = e.container.find('.k-edit-label:eq(3)');
+                let amountRequested = e.container.find(".k-edit-field:eq(4)");
+                let amountRequestedLabel = e.container.find('.k-edit-label:eq(4)');
+                if (e.model.isNew())  {
+                    let togglePercentage = $("<p class='text-sm'><a href='#'>Enter Value as Percentage</a></p>")
+                        .on("click", function () {
+                            amountRequested.toggle(false);
+                            amountRequestedLabel.toggle(false);
+                            percentageInput.toggle(true);
+                            percentageLabel.toggle(true);
+                        });
+                    let toggleAmountRequested= $("<p class='text-sm'><a href='#'>Enter Actual Value</a></p>")
+                        .on("click", function () {
+                            amountRequested.toggle(true);
+                            amountRequestedLabel.toggle(true);
+                            percentageInput.toggle(false);
+                            percentageLabel.toggle(false);
+                        });
+                    amountRequested.append(togglePercentage);
+                    percentageInput.append(toggleAmountRequested);
+                }
+                e.container.find('.k-edit-label').addClass("pt-2").toggle(false);
+                e.container.find('.k-edit-field').addClass("pt-2").toggle(false);
+                amountRequestedLabel.toggle(true);
+                amountRequested.toggle(true);
+                //e.container.find('.k-edit-field:eq(4) input[name=amount_requested]').attr('data-required-msg', 'Amount Requested is required!');
+                e.container.find('.k-edit-label:eq(10)').toggle(Boolean(e.model.amount_payable)); // toggle visibility for amount payable
+                e.container.find('.k-edit-field:eq(10)').toggle(Boolean(e.model.amount_payable));
+                e.container.find('.k-edit-label:eq(16)').toggle(Boolean(e.model.amount_received)); // toggle visibility for amount received
+                e.container.find('.k-edit-field:eq(16)').toggle(Boolean(e.model.amount_received));
+                e.container.find('.k-edit-label:eq(17)').toggle(Boolean(e.model.received_by)); // toggle visibility for received by
                 e.container.find('.k-edit-field:eq(17)').toggle(Boolean(e.model.received_by));
+                e.container.find('.k-edit-label:eq(14)').toggle(Boolean(e.model.amount_approved)); // toggle visibility for amount approved
+                e.container.find('.k-edit-field:eq(14)').toggle(Boolean(e.model.amount_approved));
+                e.container.find('.k-edit-label:eq(18)').toggle(Boolean(e.model.received_by)); // toggle visibility for date received // kendo grid has date set to today by default
+                e.container.find('.k-edit-field:eq(18)').toggle(Boolean(e.model.received_by));
             }
         });
         if (universal["has_salary_advance"]) $(".k-grid-add")
