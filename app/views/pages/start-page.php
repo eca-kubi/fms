@@ -167,7 +167,7 @@
                     <div class="text-wrap vcenter">
                         <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">HSE <span></span></h2>
                         <p class="mbr-fonts-style text1 mbr-text display-6">
-                            <span>Near Miss, etc.</span>
+                            <span>Near Miss, etc.<span class="invisible">Lorem Ipsum is simply dummy</span></span>
                             <span class="invisible">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                         </p>
                     </div>
