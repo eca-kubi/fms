@@ -93,6 +93,11 @@
 <body>
 <section>
     <div class="container">
+            <div class="row">
+                <span class="m-1 ml-auto">
+                    <a href="<?php echo site_url("users/logout") ?>" class="btn btn-pill btn-primary"><i class="fa fa-lock"></i>&nbsp;Sign out</a>
+                </span>
+            </div>
         <div class="row mbr-justify-content-center">
             <div class="col-lg-6 mbr-col-md-10"  data-toggle="list" data-list='["<a href=\"<?php echo site_url("salary-advance") ?>\">Salary Advance</a>"]'>
                 <div class="wrap">
