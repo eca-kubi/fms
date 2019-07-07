@@ -32,6 +32,12 @@ class StartPage extends Controller
         $payload['title'] = 'HR';
         $this->view('pages/start-page-hr', $payload);
     }
+
+    public function admin() {
+        $payload = [];
+        $payload['title'] = 'Admin';
+        $this->view('pages/start-page-admin', $payload);
+    }
     
     public  function startPageDepartment() {
         $payload = [];
