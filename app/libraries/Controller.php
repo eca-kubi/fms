@@ -30,7 +30,8 @@ class Controller
             require_once "../app/views/$view.html";
         } else {
             // View does not exist
-            die('View is missing.');
+            //die('View is missing.');
+            redirect('errors/index/404');
         }
     }
 }

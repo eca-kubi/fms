@@ -6,7 +6,7 @@ class StartPage extends Controller
         parent::__construct();
     }
 
-    public function index()
+    public function index($department="")
     {
         $payload = [];
         $payload['title'] = 'Start Page';
@@ -20,8 +20,26 @@ class StartPage extends Controller
         $payload['title'] = 'About us';
         $this->view('pages/about', $payload);
     }
-	
-	public function test(){
+
+    public function finance() {
+        $payload = [];
+        $payload['title'] = 'Finance';
+        $this->view('pages/start-page-finance', $payload);
+    }
+
+    public function hr() {
+        $payload = [];
+        $payload['title'] = 'HR';
+        $this->view('pages/start-page-hr', $payload);
+    }
+    
+    public  function startPageDepartment() {
+        $payload = [];
+        $payload['title'] = 'Department Start Page';
+        $this->view('pages/start-page-department', $payload);
+    }
+
+    public function test(){
 		echo phpinfo();
 	}
 }
