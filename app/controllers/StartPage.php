@@ -38,11 +38,41 @@ class StartPage extends Controller
         $payload['title'] = 'Admin';
         $this->view('pages/start-page-admin', $payload);
     }
-    
-    public  function startPageDepartment() {
+
+    public function it() {
         $payload = [];
-        $payload['title'] = 'Department Start Page';
-        $this->view('pages/start-page-department', $payload);
+        $payload['title'] = 'IT';
+        $this->view('pages/start-page-it', $payload);
+    }
+
+    public function engineering() {
+        $payload = [];
+        $payload['title'] = 'Engineering';
+        $this->view('pages/start-page-engineering', $payload);
+    }
+
+    public function mining() {
+        $payload = [];
+        $payload['title'] = 'Mining';
+        $this->view('pages/start-page-mining', $payload);
+    }
+
+    public function security() {
+        $payload = [];
+        $payload['title'] = 'Security';
+        $this->view('pages/start-page-security', $payload);
+    }
+
+    public function processing() {
+        $payload = [];
+        $payload['title'] = 'Processing';
+        $this->view('pages/start-page-processing', $payload);
+    }
+
+    public function hse() {
+        $payload = [];
+        $payload['title'] = 'HSE';
+        $this->view('pages/start-page-hse', $payload);
     }
 
     public function test(){

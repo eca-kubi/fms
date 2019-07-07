@@ -17,6 +17,8 @@
     <link rel="stylesheet" href="<?php echo URL_ROOT ?>/public/assets/css/shards.min.css">
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/fonts.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/jquery-toast.min.css"/>
+    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/read-more-less.css"/>
+
 
     <link rel="stylesheet"
           href="<?php echo URL_ROOT; ?>/public/custom-assets/css/custom.css?<?php echo microtime(); ?>"/>

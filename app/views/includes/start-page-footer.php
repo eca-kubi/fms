@@ -2,6 +2,7 @@
 ?>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/jquery.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/jquery-toast.min.js"></script>
+<script src="<?php echo URL_ROOT; ?>/public/assets/js/read-more-less.js"></script>
 
 <script>
     $(function () {

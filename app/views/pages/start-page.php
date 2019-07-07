@@ -4,7 +4,7 @@
 <?php require_once APP_ROOT . '\views\includes\start-page-header.php'; ?>
 <body>
 <div class="row mbr-justify-content-center">
-    <div class="col-lg-6 mbr-col-md-10" data-url="<?php echo site_url('start-page/finance') ?>">
+    <div class="col-lg-4 mbr-col-md-10" data-url="<?php echo site_url('start-page/finance') ?>">
         <div class="wrap">
             <div class="ico-wrap">
                 <span class="mbr-iconfont fa-money fa"></span>
@@ -18,7 +18,23 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-6 mbr-col-md-10 coming-soon" data-url="<?php echo site_url('start-page/hr'); ?>">
+    <div class="col-lg-4 mbr-col-md-10 coming-soon" data-url="<?php echo site_url('start-page/security'); ?>">
+        <div class="wrap">
+            <div class="ico-wrap">
+                <span class="mbr-iconfont fontastic-001-engineer-2"></span>
+            </div>
+            <div class="text-wrap">
+                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Security
+                    <span></span>
+                </h2>
+                <p class="mbr-fonts-style text1 mbr-text display-6">
+                    <span>All Security-related forms.</span>
+                    <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 mbr-col-md-10 coming-soon" data-url="<?php echo site_url('start-page/hr'); ?>">
         <div class="wrap">
             <div class="ico-wrap">
                 <span class="mbr-iconfont fa-users fa"></span>
@@ -34,7 +50,7 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-6 mbr-col-md-10 coming-soon" data-url="<?php echo site_url('start-page/admin'); ?>">
+    <div class="col-lg-4 mbr-col-md-10 coming-soon" data-url="<?php echo site_url('start-page/admin'); ?>">
         <div class="wrap">
             <div class="ico-wrap">
                 <span class="mbr-iconfont fa-wpforms fa"></span>
@@ -50,7 +66,7 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-6 mbr-col-md-10 coming-soon" data-url="<?php echo site_url('start-page/it'); ?>">
+    <div class="col-lg-4 mbr-col-md-10 coming-soon" data-url="<?php echo site_url('start-page/it'); ?>">
         <div class="wrap">
             <div class="ico-wrap">
                 <span class="mbr-iconfont fa-windows fa"></span>
@@ -64,7 +80,7 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-6 mbr-col-md-10" data-url="<?php echo site_url('start-page/hse'); ?>">
+    <div class="col-lg-4 mbr-col-md-10" data-url="<?php echo site_url('start-page/hse'); ?>">
         <div class="wrap">
             <div class="ico-wrap">
                 <span class="mbr-iconfont fa-user-shield fa"></span>
@@ -78,7 +94,7 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-6 mbr-col-md-10 coming-soon" data-url="<?php echo site_url('start-page/mining'); ?>">
+    <div class="col-lg-4 mbr-col-md-10 coming-soon" data-url="<?php echo site_url('start-page/mining'); ?>">
         <div class="wrap">
             <div class="ico-wrap">
                 <span class="mbr-iconfont fontastic-mine-truck"></span>
@@ -92,7 +108,7 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-6 mbr-col-md-10 coming-soon" data-url="<?php echo site_url('start-page/engineering'); ?>">
+    <div class="col-lg-4 mbr-col-md-10 coming-soon" data-url="<?php echo site_url('start-page/engineering'); ?>">
         <div class="wrap">
             <div class="ico-wrap">
                 <span class="mbr-iconfont fontastic-engineering"></span>
@@ -106,7 +122,7 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-6 mbr-col-md-10 coming-soon" data-url="<?php echo site_url('start-page/processing'); ?>">
+    <div class="col-lg-4 mbr-col-md-10 coming-soon" data-url="<?php echo site_url('start-page/processing'); ?>">
         <div class="wrap">
             <div class="ico-wrap">
                 <span class="mbr-iconfont fontastic-robot"></span>
