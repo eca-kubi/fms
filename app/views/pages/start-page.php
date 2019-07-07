@@ -16,7 +16,7 @@
                     <div class="ico-wrap">
                         <span class="mbr-iconfont fa-money fa"></span>
                     </div>
-                    <div class="text-wrap vcenter">
+                    <div class="text-wrap">
                         <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Finance <span></span></h2>
                         <p class="mbr-fonts-style text1 mbr-text display-6">
                             <span>Salary Advance, etc... <span class="invisible">Coming soon</span> </span>
@@ -30,7 +30,7 @@
                     <div class="ico-wrap">
                         <span class="mbr-iconfont fa-users fa"></span>
                     </div>
-                    <div class="text-wrap vcenter">
+                    <div class="text-wrap">
                         <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">HR
                             <span></span>
                         </h2>
@@ -46,7 +46,7 @@
                     <div class="ico-wrap">
                         <span class="mbr-iconfont fa-wpforms fa"></span>
                     </div>
-                    <div class="text-wrap vcenter">
+                    <div class="text-wrap">
                         <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Admin
                             <span></span>
                         </h2>
@@ -62,7 +62,7 @@
                     <div class="ico-wrap">
                         <span class="mbr-iconfont fa-windows fa"></span>
                     </div>
-                    <div class="text-wrap vcenter">
+                    <div class="text-wrap">
                         <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">IT <span></span></h2>
                         <p class="mbr-fonts-style text1 mbr-text display-6">
                             <span>All IT-related forms. (Coming soon)</span>
@@ -76,7 +76,7 @@
                     <div class="ico-wrap">
                         <span class="mbr-iconfont fa-user-shield fa"></span>
                     </div>
-                    <div class="text-wrap vcenter">
+                    <div class="text-wrap">
                         <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">HSE <span></span></h2>
                         <p class="mbr-fonts-style text1 mbr-text display-6">
                             <span>Near Miss, etc.<span class="d-none">Lorem Ipsum is simply dummy text of the</span></span>
@@ -85,12 +85,12 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6 mbr-col-md-10 coming-soon">
+            <div class="col-lg-6 mbr-col-md-10 coming-soon" data-url="<?php echo site_url('start-page/mining'); ?>">
                 <div class="wrap">
                     <div class="ico-wrap">
                         <span class="mbr-iconfont fontastic-mine-truck"></span>
                     </div>
-                    <div class="text-wrap vcenter">
+                    <div class="text-wrap">
                         <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Mining <span></span></h2>
                         <p class="mbr-fonts-style text1 mbr-text display-6">
                             <span>All Mining-related forms. (Coming soon)</span>
@@ -99,12 +99,12 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6 mbr-col-md-10 coming-soon">
+            <div class="col-lg-6 mbr-col-md-10 coming-soon" data-url="<?php echo site_url('start-page/engineering'); ?>">
                 <div class="wrap">
                     <div class="ico-wrap">
                         <span class="mbr-iconfont fontastic-engineering"></span>
                     </div>
-                    <div class="text-wrap vcenter">
+                    <div class="text-wrap">
                         <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Engineering <span></span></h2>
                         <p class="mbr-fonts-style text1 mbr-text display-6">
                             <span>All Engineering-related forms. (Coming soon)</span>
@@ -113,12 +113,12 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6 mbr-col-md-10 coming-soon">
+            <div class="col-lg-6 mbr-col-md-10 coming-soon" data-url="<?php echo site_url('start-page/processing'); ?>">
                 <div class="wrap">
                     <div class="ico-wrap">
                         <span class="mbr-iconfont fontastic-robot"></span>
                     </div>
-                    <div class="text-wrap vcenter">
+                    <div class="text-wrap">
                         <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Processing <span></span></h2>
                         <p class="mbr-fonts-style text1 mbr-text display-6">
                             <span>All Processing-related forms. (Coming soon)</span>
@@ -130,43 +130,6 @@
         </div>
     </div>
 </section>
-<script src="<?php echo URL_ROOT; ?>/public/assets/js/jquery.min.js"></script>
-<script src="<?php echo URL_ROOT; ?>/public/assets/js/jquery-toast.min.js"></script>
-
-<script>
-    $(function () {
-        $("[data-toggle=list]").on('click', function () {
-            let list = $(this).data('list');
-            $.toast({
-                heading: 'Click on a link below:',
-                icon: 'info',
-                loader: false,        // Change it to false to disable loader
-                loaderBg: '#9EC600',  // To change the background
-                position: 'top-center',
-                stack: 1,
-                hideAfter: false,
-                text: list
-            })
-        });
-
-        $("[data-url]").on('click', function () {
-            window.location.href = $(this).data('url');
-        });
-
-        $('.coming-soon').on('click', function () {
-            $.toast({
-                heading: 'Information',
-                text: 'Coming soon!',
-                icon: 'info',
-                loader: false,        // Change it to false to disable loader
-                loaderBg: '#9EC600',  // To change the background
-                position: 'top-center',
-                stack: 1,
-                hideAfter: false
-            })
-        });
-
-    });
-</script>
+<?php require_once APP_ROOT . '/views/includes/start-page-footer.php'?>
 </body>
 </html>

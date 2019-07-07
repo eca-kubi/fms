@@ -21,8 +21,8 @@
       href="<?php echo URL_ROOT; ?>/public/custom-assets/css/custom.css?<?php echo microtime(); ?>"/>
 <style>
     section {
-        padding-top: 4rem;
-        padding-bottom: 5rem;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
         background-color: #f1f4fa;
     }
 
@@ -32,7 +32,7 @@
         padding: 1rem 1rem 1rem 1rem;
         border-radius: 0.5rem;
         box-shadow: 7px 7px 30px -5px rgba(0, 0, 0, 0.1);
-        margin-bottom: 2rem;
+        margin-bottom: 1rem;
     }
 
     .wrap:hover {
