@@ -9,7 +9,9 @@
     <div class="col-lg-4 mbr-col-md-10" data-url="<?php echo HOST . '/nearmiss' ?>">
         <div class="wrap">
             <div class="ico-wrap">
-                <span class="mbr-iconfont fa-shield fa"></span>
+                <span class="mbr-iconfont">
+                    <?php require_once APP_ROOT . '\views\includes\svg-icons\vest.svg'; ?>
+                </span>
             </div>
             <div class="text-wrap">
                 <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5 m-0">Near Miss Draw<span></span></h2>

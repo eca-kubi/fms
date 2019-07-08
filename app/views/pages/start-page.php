@@ -38,7 +38,10 @@
         <span class="text-success text-sm tag-coming-soon"><i class="fa fa-check"></i></span>
         <div class="wrap">
             <div class="ico-wrap">
-                <span class="mbr-iconfont fa-user-shield fa"></span>
+                <span class="mbr-iconfont ">
+                                        <?php require_once APP_ROOT . '\views\includes\svg-icons\vest.svg'; ?>
+
+                </span>
             </div>
             <div class="text-wrap">
                 <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">HSE <span></span></h2>
