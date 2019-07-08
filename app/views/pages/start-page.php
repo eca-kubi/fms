@@ -11,8 +11,8 @@
             </div>
             <div class="text-wrap">
                 <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Finance <span></span></h2>
-                <p class="mbr-fonts-style text1 mbr-text display-6">
-                    <span>Salary Advance, etc... <span class="invisible">Coming soon</span> </span>
+                <p class="mbr-fonts-style mbr-text display-6">
+                    <span>Salary Advance, etc...</span>
                     <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                 </p>
             </div>
@@ -24,33 +24,32 @@
                 <span class="mbr-iconfont fontastic-001-engineer-2"></span>
             </div>
             <div class="text-wrap">
-                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Security
-                    <span></span>
-                </h2>
-                <p class="mbr-fonts-style text1 mbr-text display-6">
-                    <span>All Security-related forms.</span>
+                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Security</h2>
+                <p class="mbr-fonts-style mbr-text display-6">
+                    <span>Visitor Access Form, etc.</span>
                     <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                 </p>
             </div>
         </div>
     </div>
     <div class="col-lg-4 mbr-col-md-10 coming-soon" data-url="<?php echo site_url('start-page/hr'); ?>">
+        <span class="badge badge-pill badge-outline-secondary text-sm tag-coming-soon">Coming soon</span>
         <div class="wrap">
             <div class="ico-wrap">
                 <span class="mbr-iconfont fa-users fa"></span>
             </div>
             <div class="text-wrap">
                 <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">HR
-                    <span></span>
                 </h2>
-                <p class="mbr-fonts-style text1 mbr-text display-6">
-                    <span>All HR-related forms. (Coming soon)</span>
+                <p class="mbr-fonts-style mbr-text display-6">
+                    <span class="more">All HR-related forms. (Coming soon)</span>
                     <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                 </p>
             </div>
         </div>
     </div>
     <div class="col-lg-4 mbr-col-md-10 coming-soon" data-url="<?php echo site_url('start-page/admin'); ?>">
+        <span class="badge badge-pill badge-outline-secondary text-sm tag-coming-soon">Coming soon</span>
         <div class="wrap">
             <div class="ico-wrap">
                 <span class="mbr-iconfont fa-wpforms fa"></span>
@@ -59,22 +58,23 @@
                 <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Admin
                     <span></span>
                 </h2>
-                <p class="mbr-fonts-style text1 mbr-text display-6">
-                    <span>All Admin-related forms. (Coming soon)</span>
+                <p class="mbr-fonts-style mbr-text display-6">
+                    <span class="more">All Admin-related forms. (Coming soon)</span>
                     <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                 </p>
             </div>
         </div>
     </div>
     <div class="col-lg-4 mbr-col-md-10 coming-soon" data-url="<?php echo site_url('start-page/it'); ?>">
+        <span class="badge badge-pill badge-outline-secondary text-sm tag-coming-soon">Coming soon</span>
         <div class="wrap">
             <div class="ico-wrap">
                 <span class="mbr-iconfont fa-windows fa"></span>
             </div>
             <div class="text-wrap">
                 <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">IT <span></span></h2>
-                <p class="mbr-fonts-style text1 mbr-text display-6">
-                    <span>All IT-related forms. (Coming soon)</span>
+                <p class="mbr-fonts-style mbr-text display-6">
+                    <span class="more">All IT-related forms. (Coming soon)</span>
                     <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                 </p>
             </div>
@@ -87,50 +87,53 @@
             </div>
             <div class="text-wrap">
                 <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">HSE <span></span></h2>
-                <p class="mbr-fonts-style text1 mbr-text display-6">
-                    <span>Near Miss, etc.<span class="d-none">Lorem Ipsum is simply dummy text of the</span></span>
+                <p class="mbr-fonts-style mbr-text display-6">
+                    <span>Near Miss, etc.</span>
                     <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                 </p>
             </div>
         </div>
     </div>
     <div class="col-lg-4 mbr-col-md-10 coming-soon" data-url="<?php echo site_url('start-page/mining'); ?>">
+        <span class="badge badge-pill badge-outline-secondary text-sm tag-coming-soon">Coming soon</span>
         <div class="wrap">
             <div class="ico-wrap">
                 <span class="mbr-iconfont fontastic-mine-truck"></span>
             </div>
             <div class="text-wrap">
                 <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Mining <span></span></h2>
-                <p class="mbr-fonts-style text1 mbr-text display-6">
-                    <span>All Mining-related forms. (Coming soon)</span>
+                <p class="mbr-fonts-style mbr-text display-6">
+                    <span class="more">All Mining-related forms. (Coming soon)</span>
                     <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                 </p>
             </div>
         </div>
     </div>
     <div class="col-lg-4 mbr-col-md-10 coming-soon" data-url="<?php echo site_url('start-page/engineering'); ?>">
+        <span class="badge badge-pill badge-outline-secondary text-sm tag-coming-soon">Coming soon</span>
         <div class="wrap">
             <div class="ico-wrap">
                 <span class="mbr-iconfont fontastic-engineering"></span>
             </div>
             <div class="text-wrap">
                 <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Engineering <span></span></h2>
-                <p class="mbr-fonts-style text1 mbr-text display-6">
-                    <span>All Engineering-related forms. (Coming soon)</span>
+                <p class="mbr-fonts-style mbr-text display-6">
+                    <span class="more">All Engineering-related forms. (Coming soon)</span>
                     <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                 </p>
             </div>
         </div>
     </div>
     <div class="col-lg-4 mbr-col-md-10 coming-soon" data-url="<?php echo site_url('start-page/processing'); ?>">
+        <span class="badge badge-pill badge-outline-secondary text-sm tag-coming-soon">Coming soon</span>
         <div class="wrap">
             <div class="ico-wrap">
                 <span class="mbr-iconfont fontastic-robot"></span>
             </div>
             <div class="text-wrap">
                 <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Processing <span></span></h2>
-                <p class="mbr-fonts-style text1 mbr-text display-6">
-                    <span>All Processing-related forms. (Coming soon)</span>
+                <p class="mbr-fonts-style mbr-text display-6">
+                    <span class="more">All Processing-related forms. (Coming soon)</span>
                     <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                 </p>
             </div>

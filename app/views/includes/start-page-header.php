@@ -5,6 +5,7 @@
     <title><?php /** @var array $payload */
         echo $payload['title']; ?></title>
     <link href="<?php echo URL_ROOT; ?>/public/assets/fontastic/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/tether.min.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/w3.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/animate.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/adminlte.css"/>
@@ -16,8 +17,9 @@
     <link rel="stylesheet" media="all" href="<?php echo URL_ROOT; ?>/public/assets/css/v4-shims.min.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT ?>/public/assets/css/shards.min.css">
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/fonts.css"/>
+    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/tooltips.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/jquery-toast.min.css"/>
-    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/read-more-less.css"/>
+
 
 
     <link rel="stylesheet"
@@ -111,6 +113,12 @@
 
         .vcenter {
             margin: auto;
+        }
+
+        .tag-coming-soon {
+            position: absolute;
+            right: 10px;
+            border-radius: .625rem .625rem 0 0;
         }
     </style>
 </head>

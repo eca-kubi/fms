@@ -1,14 +1,56 @@
 <?php
 ?>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/jquery.min.js"></script>
+<script src="<?php echo URL_ROOT; ?>/public/assets/js/tether.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/jquery-toast.min.js"></script>
-<script src="<?php echo URL_ROOT; ?>/public/assets/js/read-more-less.js"></script>
+<script src="<?php echo URL_ROOT; ?>/public/assets/js/jquery.shortify.js"></script>
+<script src="<?php echo URL_ROOT; ?>/public/assets/js/jquery.collapser.min.js"></script>
+
 
 <script>
     $(function () {
         $("[data-url]").on('click', function () {
             window.location.href = $(this).data('url');
         });
+
+        /*$(".more").shortify({
+            char_limit: 25,
+            position:  "tooltip-bottom",
+            ellipsis: '...'
+        });*/
+
+        $('.more').collapser({
+            target: 'next',
+            mode: 'words',
+            speed: 'slow',
+            truncate: 10,
+            ellipsis: '...',
+            effect: 'fade',
+            controlBtn: '',
+            showText: 'Show more',
+            hideText: 'Hide text',
+            showClass: 'show-class',
+            hideClass: 'hide-class',
+            atStart: 'hide',
+            lockHide: false,
+            dynamic: false,
+            changeText: false,
+            beforeShow: null,
+            afterShow: null,
+            beforeHide: null,
+            afterHide: null
+        });
+/*        new Tether({
+            element: '.tag-coming-soon',
+            target: '.tag-target',
+            attachment: 'top left',
+            targetAttachment: 'top right',
+            constraints: [{
+                to: 'window',
+                attachment: 'together'
+            }]
+        });*/
+
         /*$("[data-toggle=list]").on('click', function () {
             let list = $(this).data('list');
             $.toast({
