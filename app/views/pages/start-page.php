@@ -42,7 +42,7 @@
                 <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">HR
                 </h2>
                 <p class="mbr-fonts-style mbr-text display-6">
-                    <span class="more">All HR-related forms. (Coming soon)</span>
+                    <span class="">All HR-related forms.</span>
                     <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                 </p>
             </div>
@@ -59,7 +59,7 @@
                     <span></span>
                 </h2>
                 <p class="mbr-fonts-style mbr-text display-6">
-                    <span class="more">All Admin-related forms. (Coming soon)</span>
+                    <span class="">All Admin-related forms.</span>
                     <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                 </p>
             </div>
@@ -74,7 +74,7 @@
             <div class="text-wrap">
                 <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">IT <span></span></h2>
                 <p class="mbr-fonts-style mbr-text display-6">
-                    <span class="more">All IT-related forms. (Coming soon)</span>
+                    <span class="">All IT-related forms.</span>
                     <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                 </p>
             </div>
@@ -103,7 +103,7 @@
             <div class="text-wrap">
                 <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Mining <span></span></h2>
                 <p class="mbr-fonts-style mbr-text display-6">
-                    <span class="more">All Mining-related forms. (Coming soon)</span>
+                    <span class="">All Mining-related forms.</span>
                     <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                 </p>
             </div>
@@ -118,7 +118,7 @@
             <div class="text-wrap">
                 <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Engineering <span></span></h2>
                 <p class="mbr-fonts-style mbr-text display-6">
-                    <span class="more">All Engineering-related forms. (Coming soon)</span>
+                    <span class="">All Engineering-related forms.</span>
                     <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                 </p>
             </div>
@@ -133,7 +133,7 @@
             <div class="text-wrap">
                 <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Processing <span></span></h2>
                 <p class="mbr-fonts-style mbr-text display-6">
-                    <span class="more">All Processing-related forms. (Coming soon)</span>
+                    <span class="">All Processing-related forms.</span>
                     <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                 </p>
             </div>

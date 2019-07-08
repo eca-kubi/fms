@@ -21,7 +21,7 @@
 
         $('.more').collapser({
             target: 'next',
-            mode: 'words',
+            mode: 'chars',
             speed: 'slow',
             truncate: 10,
             ellipsis: '...',
@@ -39,6 +39,8 @@
             afterShow: null,
             beforeHide: null,
             afterHide: null
+        }).click(function (e) {
+            e.stopPropagation();
         });
 /*        new Tether({
             element: '.tag-coming-soon',
