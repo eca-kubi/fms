@@ -12,9 +12,9 @@
                 <span class="mbr-iconfont fa-shield fa"></span>
             </div>
             <div class="text-wrap">
-                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5 m-0">Near Miss<span></span></h2>
+                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5 m-0">Near Miss Draw<span></span></h2>
                 <p class="mbr-fonts-style text1 mbr-text desc">
-                    <span>Near miss draw</span>
+                    <span>Near Miss Draw, etc.</span>
                     <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                 </p>
             </div>

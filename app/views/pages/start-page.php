@@ -5,6 +5,7 @@
 <body>
 <div class="row mbr-justify-content-center">
     <div class="col-lg-4 mbr-col-md-10" data-url="<?php echo site_url('start-page/finance') ?>">
+        <span class="text-success text-sm tag-coming-soon"><i class="fa fa-check"></i></span>
         <div class="wrap">
             <div class="ico-wrap">
                 <span class="mbr-iconfont fa-money fa"></span>
@@ -19,6 +20,7 @@
         </div>
     </div>
     <div class="col-lg-4 mbr-col-md-10 coming-soon" data-url="<?php echo site_url('start-page/security'); ?>">
+        <span class="text-success text-sm tag-coming-soon"><i class="fa fa-check"></i></span>
         <div class="wrap">
             <div class="ico-wrap">
                 <span class="mbr-iconfont fontastic-001-engineer-2"></span>
@@ -32,22 +34,22 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-4 mbr-col-md-10 coming-soon" data-url="<?php echo site_url('start-page/hr'); ?>">
-        <span class="badge badge-pill badge-outline-secondary text-sm tag-coming-soon">Coming soon</span>
+    <div class="col-lg-4 mbr-col-md-10" data-url="<?php echo site_url('start-page/hse'); ?>">
+        <span class="text-success text-sm tag-coming-soon"><i class="fa fa-check"></i></span>
         <div class="wrap">
             <div class="ico-wrap">
-                <span class="mbr-iconfont fa-users fa"></span>
+                <span class="mbr-iconfont fa-user-shield fa"></span>
             </div>
             <div class="text-wrap">
-                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">HR
-                </h2>
+                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">HSE <span></span></h2>
                 <p class="mbr-fonts-style mbr-text display-6">
-                    <span class="">All HR-related forms.</span>
+                    <span>Near Miss Draw, etc.</span>
                     <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                 </p>
             </div>
         </div>
     </div>
+
     <div class="col-lg-4 mbr-col-md-10 coming-soon" data-url="<?php echo site_url('start-page/admin'); ?>">
         <span class="badge badge-pill badge-outline-secondary text-sm tag-coming-soon">Coming soon</span>
         <div class="wrap">
@@ -80,15 +82,17 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-4 mbr-col-md-10" data-url="<?php echo site_url('start-page/hse'); ?>">
+    <div class="col-lg-4 mbr-col-md-10 coming-soon" data-url="<?php echo site_url('start-page/hr'); ?>">
+        <span class="badge badge-pill badge-outline-secondary text-sm tag-coming-soon">Coming soon</span>
         <div class="wrap">
             <div class="ico-wrap">
-                <span class="mbr-iconfont fa-user-shield fa"></span>
+                <span class="mbr-iconfont fa-users fa"></span>
             </div>
             <div class="text-wrap">
-                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">HSE <span></span></h2>
+                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">HR
+                </h2>
                 <p class="mbr-fonts-style mbr-text display-6">
-                    <span>Near Miss, etc.</span>
+                    <span class="">All HR-related forms.</span>
                     <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                 </p>
             </div>
