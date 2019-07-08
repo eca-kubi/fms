@@ -6,7 +6,7 @@
     <p class="h6 callout callout-danger center-notice animated flash">No apps are available at this time!</p>
 </div>-->
 <div class="row mbr-justify-content-center">
-    <div class="col-lg-4 mbr-col-md-10" data-url="<?php echo HOST . '/nearmiss'?>">
+    <div class="col-lg-4 mbr-col-md-10" data-url="<?php echo HOST . '/nearmiss' ?>">
         <div class="wrap">
             <div class="ico-wrap">
                 <span class="mbr-iconfont fa-shield fa"></span>
