@@ -22,6 +22,38 @@
             </div>
         </div>
     </div>
+    <div class="col-lg-4 mbr-col-md-10" data-url="<?php echo HOST . '/nearmiss' ?>">
+        <div class="wrap">
+            <div class="ico-wrap">
+                <span class="mbr-iconfont">
+                    <?php require_once APP_ROOT . '\views\includes\svg-icons\vest.svg'; ?>
+                </span>
+            </div>
+            <div class="text-wrap">
+                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5 m-0">Report an Incident<span></span></h2>
+                <p class="mbr-fonts-style text1 mbr-text desc">
+                    <span>Incident reporting.</span>
+                    <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 mbr-col-md-10" data-url="<?php echo HOST . '/nearmiss' ?>">
+        <div class="wrap">
+            <div class="ico-wrap">
+                <span class="mbr-iconfont">
+                    <?php require_once APP_ROOT . '\views\includes\svg-icons\vest.svg'; ?>
+                </span>
+            </div>
+            <div class="text-wrap">
+                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5 m-0">Report Near Miss<span></span></h2>
+                <p class="mbr-fonts-style text1 mbr-text desc">
+                    <span>Near Miss Reporting.</span>
+                    <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
+                </p>
+            </div>
+        </div>
+    </div>
 </div>
 </div>
 </section>
