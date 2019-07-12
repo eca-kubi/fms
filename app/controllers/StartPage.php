@@ -9,7 +9,7 @@ class StartPage extends Controller
     public function index($department="")
     {
         $payload = [];
-        $payload['title'] = 'Start Page';
+        $payload['title'] = 'Dashboard';
         $this->view('pages/start-page', $payload);
     }
 

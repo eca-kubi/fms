@@ -1,5 +1,5 @@
 <?php
-class Pages extends Controller
+class VisitorAccessForm extends Controller
 {
     public function __construct()
     {
@@ -11,20 +11,20 @@ class Pages extends Controller
         if (!isLoggedIn()) {
             redirect('users/login');
         }
-        redirect('pages/start-page');
+       $this->dashboard();
     }
 
 
-    public function about()
+    public function dashboard()
     {
         $payload = [];
-        $payload['title'] = 'About us';
-        $this->view('pages/about', $payload);
+        $payload['title'] = 'Dashboard';
+        $this->view('visitor-access-form/dashboard', $payload);
     }
 
     public  function startPage() {
         $payload = [];
-        $payload['title'] = 'Dashboard';
+        $payload['title'] = 'Start Page';
         $this->view('pages/start-page', $payload);
     }
 

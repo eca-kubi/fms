@@ -55,8 +55,8 @@ window.addEventListener("load", function () {
         setTimeout(function () {
             $.unblockUI();
             $('.blockable').unblock({message: null});
-            $('body').scrollTo('.box', 1000, {offset: -150})
-                .scrollTo('#box', 1000, {offset: -150});
+            /*$('body').scrollTo('.box', 1000, {offset: -150})
+                .scrollTo('#box', 1000, {offset: -150});*/
         }, 1000);
     }, 500);
 
@@ -65,11 +65,11 @@ window.addEventListener("load", function () {
     window.onscroll = function () {
         let navbar = $('.navbar-fixed');
         let currentScrollPos = window.pageYOffset;
-        if (prevScrollpos > currentScrollPos) {
+        /*if (prevScrollpos > currentScrollPos) {
             navbar.prop('style').top = "0";
         } else {
             navbar.prop('style').top = "-60px";
-        }
+        }*/
         prevScrollpos = currentScrollPos;
     };
     console.log("All resources finished loading!");

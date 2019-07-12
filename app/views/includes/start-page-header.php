@@ -122,7 +122,7 @@
     </style>
 </head>
 <body>
-<section class="animated fadeInRight mark m-2 border">
+<section class="animated fadeInRight m-2 border" style="    background-image: url(<?php echo URL_ROOT; ?>/public/assets/images/bgs/background.png)">
     <div class="container">
         <div class="row border-bottom mb-2">
             <span class="h3"><?php echo $payload['title'] ?></span>

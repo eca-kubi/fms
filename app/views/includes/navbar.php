@@ -155,7 +155,7 @@
                         <i class="fa fa-home ml-4"></i> DASHBOARD
                     </a>
                 </li>
-                <li class="nav-item dropdown fa  mx-2">
+                <li class="nav-item dropdown fa  mx-2 d-none">
                     <a class="nav-link dropdown-item dropdown-toggle btn border-0 text-bold flat text-warning"
                        data-toggle="dropdown">
                         <i class="fas fa-edit"></i>
