@@ -122,12 +122,13 @@
     </style>
 </head>
 <body>
-<section class="animated fadeInRight m-2 border" style="    background-image: url(<?php echo URL_ROOT; ?>/public/assets/images/bgs/background.png)">
+<section class="animated fadeInRight m-2 border"
+         style="    background-image: url(<?php echo URL_ROOT; ?>/public/assets/images/bgs/background.png)">
     <div class="container">
-        <div class="row border-bottom mb-2">
+        <div class="row mb-2" style="border-bottom: 4px solid #eedaa8!important">
             <span class="h3"><?php echo $payload['title'] ?></span>
             <span class="m-1 ml-auto">
-                    <a href="<?php echo site_url("start-page") ?>" class="btn btn-pill btn-primary"><i
+                    <a href="<?php echo site_url("start-page") ?>" class="btn btn-pill btn-primary logout-back"><i
                                 class="fa fa-arrow-left"></i>&nbsp;Back</a>
                 </span>
         </div>
