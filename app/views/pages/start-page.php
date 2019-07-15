@@ -152,7 +152,7 @@
 <input type="hidden" id="url_root" value="<?php  echo URL_ROOT; ?>">
 <?php require_once APP_ROOT . '/views/includes/start-page-footer.php' ?>
 <script>
-    $('.logout-back').attr('href', $('#url_root').val() +'/users/logout');
+    $('.logout-back').attr('href', $('#url_root').val() +"/users/logout");
 </script>
 </body>
 </html>
