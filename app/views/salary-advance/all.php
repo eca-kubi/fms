@@ -655,7 +655,7 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                 amountRequested.find('input').attr('min', '0');
                 percentageInput.find('input').attr('min', 10).attr('max', 30).attr('data-min-msg', 'Amount Requested must be at least 10% of net salary!').attr('data-max-msg', 'Amount Requested must not exceed 30% of net salary!');
                 amountRequestedNumericTextBox.setOptions({
-                    format: "GH₵#.##",
+                    format: "GH₵#.00",
                     //min: '0'
                 });
                 amountRequestedPercentageNumericTextBox.setOptions({
@@ -668,14 +668,20 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                 radioButtonGroup.insertAfter(e.container.find('.k-edit-form-container').children('[data-container-for=amount_requested]'));
                 radioButtonGroup.on('click', '#percentageRadio', function (ev) {
                     e.model.amount_requested_is_percentage = true;
-                    if (e.model.isNew()) amountRequestedNumericTextBox.enable(false);
+                    if (e.model.isNew()) {
+                        amountRequestedNumericTextBox.enable(false);
+                        //amountRequestedNumericTextBox.value(0);
+                    }
                     amountRequestedPercentageNumericTextBox.enable();
                     amountRequestedPercentageNumericTextBox.focus();
                 });
 
                 radioButtonGroup.on('click', '#figureRadio', function (ev) {
                     e.model.amount_requested_is_percentage = false;
-                    if (e.model.isNew()) amountRequestedPercentageNumericTextBox.enable(false);
+                    if (e.model.isNew()) {
+                        amountRequestedPercentageNumericTextBox.enable(false);
+                        //amountRequestedPercentageNumericTextBox.value(10);
+                    }
                     amountRequestedNumericTextBox.enable();
                     amountRequestedNumericTextBox.focus();
                 });
