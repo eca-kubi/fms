@@ -370,7 +370,7 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                     },
                     groupHeaderTemplate: "Amount Requested (Figure): #=  value ? kendo.toString('GH₵ ' + kendo.format('{0:n}', value)) : ''#",
                     aggregates: ["max", "min", "count"],
-                    format: "{0:n0}"
+                    format: "{0:n}"
                 },
                 {
                     title: 'HoD',
@@ -668,23 +668,22 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                 radioButtonGroup.insertAfter(e.container.find('.k-edit-form-container').children('[data-container-for=amount_requested]'));
                 radioButtonGroup.on('click', '#percentageRadio', function (ev) {
                     e.model.amount_requested_is_percentage = true;
-                    amountRequestedNumericTextBox.enable('false');
+                    if (e.model.isNew()) amountRequestedNumericTextBox.enable(false);
                     amountRequestedPercentageNumericTextBox.enable();
                     amountRequestedPercentageNumericTextBox.focus();
                 });
 
                 radioButtonGroup.on('click', '#figureRadio', function (ev) {
                     e.model.amount_requested_is_percentage = false;
-                    amountRequestedPercentageNumericTextBox.enable(false);
+                    if (e.model.isNew()) amountRequestedPercentageNumericTextBox.enable(false);
                     amountRequestedNumericTextBox.enable();
                     amountRequestedNumericTextBox.focus();
                 });
 
-               /* amountRequestedPercentageNumericTextBox.value('10');
-                amountRequestedNumericTextBox.value('0');
-*/
+                amountRequestedNumericTextBox.enable(false);
+
                 e.container.data('kendoWindow').bind('activate', function (ev) {
-                    amountRequestedPercentageNumericTextBox.focus();
+                    if (e.model.isNew()) amountRequestedPercentageNumericTextBox.focus();
                 });
 
                 e.container.find('.k-edit-label:eq(10)').toggle(Boolean(e.model.amount_payable)); // toggle visibility for amount payable
