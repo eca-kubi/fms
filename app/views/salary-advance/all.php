@@ -68,6 +68,7 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
     let $salaryAdvanceGrid;
     let salaryAdvanceDataSource;
     $(document).ready(function () {
+        //$(document).on('click', '#percentageRadio', toggleAmountRequested);
         $salaryAdvanceGrid = $("#salary_advance");
         $salaryAdvanceGrid.on('change', "input[name=employee]", function (e) {
             //let select = $(this).data("kendoDropDownList");
@@ -108,7 +109,7 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
             },
             error: function (e) {
                 //console.log("error event handler", e.errors[0]);
-                toastError(e.errors[0]);
+                toastError(e.errors);
                 salaryAdvanceDataSource.cancelChanges();
             },
             requestEnd: function (e) {
@@ -143,8 +144,9 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                             editable: false
                         },
                         amount_requested: {
+                            defaultValue: '0',
                             type: 'number',
-                            editable: false,
+                            //editable: false,
                             validation: { //set validation rules
                                 required: true,
                                 min: '0'
@@ -244,7 +246,11 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                                 min: "10",
                                 max: "30"
                             },
-                        }
+                        },
+                        amount_requested_is_percentage: {
+                            type: 'boolean',
+                            defaultValue: false
+                        },
                     }
                 }
             }
@@ -343,31 +349,33 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                     title: 'Percentage',
                     //width: "12%",
                     template: function (dataItem) {
-                        return "<span title='Percentage: " + (dataItem.percentage ? kendo.toString('% ' + kendo.format('{0:n}', dataItem.percentage)) : '') + "'>" + (dataItem.percentage ? kendo.toString('% ' + kendo.format('{0:n}', dataItem.percentage)) : '') + "</span>"
+                        return "<span title='Percentage: " + (dataItem.percentage ? kendo.toString(kendo.format('{0:n}', dataItem.percentage) + '%') : '') + "'>" + (dataItem.percentage ? kendo.toString(kendo.format('{0:n}', dataItem.percentage) + '%') : '') + "</span>"
                     },
                     headerAttributes: {
                         "class": "title"
                     },
                     groupHeaderTemplate: "Percentage: #= value? kendo.toString('% ' + kendo.format('{0:n}', value)) : '' #",
-                    aggregates: ["max", "min"]
+                    aggregates: ["max", "min"],
+                    hidden: true
                 },
                 {
                     field: 'amount_requested',
                     title: 'Amount Requested',
                     //width: "12%",
                     template: function (dataItem) {
-                        return "<span title='Amount Requested: " + (dataItem.amount_requested ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_requested)) : '') + "'>" + (dataItem.amount_requested ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_requested)) : '') + "</span>"
+                        return "<span title='Amount Requested: " + (dataItem.amount_requested && dataItem.amount_requested_is_percentage ? kendo.toString(dataItem.amount_requested + '%') : (dataItem.amount_requested ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_requested)) : '')) + "'>" + ((dataItem.amount_requested && dataItem.amount_requested_is_percentage) ? kendo.toString(dataItem.amount_requested + '%') : (dataItem.amount_requested ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_requested)) : '')) + "</span>"
                     },
                     headerAttributes: {
                         "class": "title"
                     },
-                    groupHeaderTemplate: "Amount Requested: #= value? kendo.toString('GH₵ ' + kendo.format('{0:n}', value)) : '' #",
-                    aggregates: ["max", "min"]
+                    groupHeaderTemplate: "Amount Requested: #= 'Total (' + count + ')' #",
+                    aggregates: ["max", "min", "count"],
+                    format: "{0:n0}"
                 },
                 {
                     title: 'HoD',
                     headerAttributes: {
-                        "class": "title"
+                        "class": "title font-weight-bold"
                     },
                     columns: [
                         {
@@ -418,7 +426,7 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                 {
                     title: 'HR',
                     headerAttributes: {
-                        "class": "title"
+                        "class": "title font-weight-bold"
                     },
                     columns: [
                         {
@@ -481,7 +489,7 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                 {
                     title: 'Finance Mgr.',
                     headerAttributes: {
-                        "class": "title"
+                        "class": "title font-weight-bold"
                     },
                     columns: [
                         {
@@ -591,7 +599,7 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
             detailTemplate: kendo.template(`
     <div class="">
         <b>Date Raised</b>: #= kendo.toString(kendo.parseDate(date_raised), 'dddd dd MMM, yyyy') #</br>
-        <b>Amount Requested </b>: #= kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_requested)) #</br>
+        <b>Amount Requested </b>: #= (amount_requested && amount_requested_is_percentage? kendo.toString(amount_requested + '%') : (amount_requested? kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_requested)) : '')) #</br>
         <b>Approved by HoD?</b> #= hod_approval? 'Yes' : 'No' #</br>
         #=hod_approval_date? '<b>HoD Approval Date: </b>' + kendo.toString(kendo.parseDate(hod_approval_date), 'dddd dd MMM, yyyy')+'</br>': '' #
         <b>Approved by HR? </b> #= hr_approval? 'Yes' : 'No' # </br>
@@ -626,37 +634,51 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                 }*/
             },
             beforeEdit: function (e) {
+                //e.model.fields.amount_requested.editable = false;
                 e.model.fields['amount_requested'].editable = e.model.isNew() || !(e.model.hod_approval || e.model.fmgr_approval || e.model.hr_approval);
-                e.model.fields["percentage"].editable = e.model.isNew() || !(e.model.hod_approval || e.model.fmgr_approval || e.model.hr_approval);
+                //e.model.fields["percentage"].editable = e.model.isNew() || !(e.model.hod_approval || e.model.fmgr_approval || e.model.hr_approval);
             },
             edit: function (e) {
                 let percentageInput = e.container.find('.k-edit-field:eq(3)');
                 let percentageLabel = e.container.find('.k-edit-label:eq(3)');
                 let amountRequested = e.container.find(".k-edit-field:eq(4)");
                 let amountRequestedLabel = e.container.find('.k-edit-label:eq(4)');
-                if (e.model.isNew())  {
-                    let togglePercentage = $("<p class='text-sm'><a href='#'>Enter Value as Percentage</a></p>")
-                        .on("click", function () {
-                            amountRequested.toggle(false);
-                            amountRequestedLabel.toggle(false);
-                            percentageInput.toggle(true);
-                            percentageLabel.toggle(true);
-                        });
-                    let toggleAmountRequested= $("<p class='text-sm'><a href='#'>Enter Actual Value</a></p>")
-                        .on("click", function () {
-                            amountRequested.toggle(true);
-                            amountRequestedLabel.toggle(true);
-                            percentageInput.toggle(false);
-                            percentageLabel.toggle(false);
-                        });
-                    amountRequested.append(togglePercentage);
-                    percentageInput.append(toggleAmountRequested);
-                }
+                let amountRequestedNumericTextBox = amountRequested.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
+                let radioButtonGroup = $('<div class="k-edit-field"><input type="radio" name="toggleAmountRequested" id="figureRadio" class="k-radio" checked="checked"> <label class="k-radio-label" for="figureRadio">Figure</label><input type="radio" name="toggleAmountRequested" id="percentageRadio" class="k-radio" > <label class="k-radio-label" for="percentageRadio">Percentage</label></div>');
                 e.container.find('.k-edit-label').addClass("pt-2").toggle(false);
                 e.container.find('.k-edit-field').addClass("pt-2").toggle(false);
-                amountRequestedLabel.toggle(true);
                 amountRequested.toggle(true);
-                //e.container.find('.k-edit-field:eq(4) input[name=amount_requested]').attr('data-required-msg', 'Amount Requested is required!');
+                amountRequestedLabel.toggle(true);
+                amountRequested.find('input').attr('data-required-msg', 'Amount Requested is required!');
+                radioButtonGroup.insertAfter(e.container.find('.k-edit-form-container').children('[data-container-for=amount_requested]'));
+                radioButtonGroup.on('click', '#percentageRadio', function (ev) {
+                    e.model.amount_requested_is_percentage = true;
+                    amountRequestedNumericTextBox.setOptions({
+                        format: "#\\%"
+                    });
+                    amountRequested.find('input').val(10).attr('min', 10).attr('max', 30).attr('data-min-msg', 'Amount Requested must be at least 10% of net salary!').attr('data-max-msg', 'Amount Requested must not exceed 30% of net salary!').trigger('blur');
+                    amountRequestedLabel.find('label').html('Amount Requested <br><small class="text-danger text-bold">(10% - 30% of Net Salary)</small>');
+                });
+
+                radioButtonGroup.on('click', '#figureRadio', function (ev) {
+                    e.model.amount_requested_is_percentage = false;
+                    amountRequestedNumericTextBox.setOptions({
+                        format: "#.#",
+                        decimals: '1'
+                    });
+                    amountRequested.find('input').val(0).attr('min', 0).attr('data-min-msg', 'Invalid input!').removeAttr('max').trigger('blur');
+                    amountRequestedLabel.find('label').html('Amount Requested');
+                });
+
+                if (e.model.amount_requested_is_percentage) {
+                    $('#percentageRadio').click()
+                } else {
+                    $('#figureRadio').click();
+                }
+
+                e.container.data('kendoWindow').bind('activate', function (ev) {
+                    amountRequestedNumericTextBox.focus();
+                });
                 e.container.find('.k-edit-label:eq(10)').toggle(Boolean(e.model.amount_payable)); // toggle visibility for amount payable
                 e.container.find('.k-edit-field:eq(10)').toggle(Boolean(e.model.amount_payable));
                 e.container.find('.k-edit-label:eq(16)').toggle(Boolean(e.model.amount_received)); // toggle visibility for amount received
@@ -734,4 +756,10 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
             return null;
         }
     });
+
+    toggleAmountRequested = function (e) {
+        if (this.id === 'percentageRadio') {
+
+        }
+    }
 </script>

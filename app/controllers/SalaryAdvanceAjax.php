@@ -29,12 +29,54 @@ class SalaryAdvanceAjax extends Controller
         echo json_encode($ret);
     }
 
+    private function transformArrayData($ret)
+    {
+        $current_user = getUserSession();
+        $fmgr = getCurrentFgmr();
+        $hr = getCurrentHR();
+        foreach ($ret as $key => &$value) {
+            $hod = getCurrentManager($value['department_id']);
+            $employee = new stdClass();
+            $employee->name = concatNameWithUserId($value['user_id']);
+            $employee->user_id = $value['user_id'];
+            $employee->department = getDepartment($value['user_id']);
+            $value['department'] = $employee->department;
+            $value['employee'] = $employee;
+            unset($value['password']);
+            if ($hod == $current_user->user_id) {
+                $value['hod_comment_editable'] = true;
+                $value['hod_approval_editable'] = true;
+            } else {
+                $value['hod_comment_editable'] = false;
+                $value['hod_approval_editable'] = false;
+            }
+            if ($hr == $current_user->user_id && $value['hod_approval']) {
+                $value['hr_comment_editable'] = true;
+                $value['hr_approval_editable'] = true;
+            } else {
+                $value['hr_comment_editable'] = false;
+                $value['hr_approval_editable'] = false;
+            }
+            if ($fmgr == $current_user->user_id && $value['hr_approval']) {
+                $value['fmgr_comment_editable'] = true;
+                $value['fmgr_approval_editable'] = true;
+                $value['amount_requested_editable'] = true;
+            } else {
+                $value['fmgr_comment_editable'] = false;
+                $value['fmgr_approval_editable'] = false;
+                $value['amount_requested_editable'] = false;
+            }
+        }
+        return $ret;
+    }
+
     public function Create()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $current_user = getUserSession();
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             $data = [
+                'amount_requested_is_percentage' => $_POST['amount_requested_is_percentage']==='true'? true : false,
                 'amount_requested' => $_POST['amount_requested'],
                 'user_id' => $current_user->user_id,
                 'department_id' => $current_user->department_id,
@@ -50,6 +92,9 @@ class SalaryAdvanceAjax extends Controller
             } else {
                 $ret[0]['success'] = false;
                 $ret[0]['reason'] = 'An error occurred!';
+                $ret['errors'] = 'An error occured!';
+                echo json_encode($ret);
+                return;
             }
             $ret = $this->transformArrayData($ret);
             echo json_encode($ret);
@@ -81,7 +126,7 @@ class SalaryAdvanceAjax extends Controller
                 $old_ret['success'] = false;
                 $old_ret['reason'] = 'HR has already reviewed this application!';
                 $ret[] = $old_ret;
-            }  else {
+            } else {
                 $data['department_ref'] = $old_ret['department_ref'];
                 $data['old_amount'] = $old_ret['amount_requested'];
                 $data['new_amount'] = $_POST['amount_requested'];
@@ -96,6 +141,9 @@ class SalaryAdvanceAjax extends Controller
                 } else {
                     $ret[0]['success'] = false;
                     $ret[0]['reason'] = 'An error occurred!';
+                    $ret['errors'] = 'An error occured!';
+                    echo json_encode($ret);
+                    return;
                 }
             }
             $ret = $this->transformArrayData($ret);
@@ -140,46 +188,5 @@ class SalaryAdvanceAjax extends Controller
             }
         }
         echo json_encode($ret);
-    }
-
-    private function transformArrayData($ret)
-    {
-        $current_user = getUserSession();
-        $fmgr = getCurrentFgmr();
-        $hr = getCurrentHR();
-        foreach ($ret as $key => &$value) {
-            $hod = getCurrentManager($value['department_id']);
-            $employee = new stdClass();
-            $employee->name = concatNameWithUserId($value['user_id']);
-            $employee->user_id = $value['user_id'];
-            $employee->department = getDepartment($value['user_id']);
-            $value['department'] = $employee->department;
-            $value['employee'] = $employee;
-            unset($value['password']);
-            if ($hod == $current_user->user_id) {
-                $value['hod_comment_editable'] = true;
-                $value['hod_approval_editable'] = true;
-            } else {
-                $value['hod_comment_editable'] = false;
-                $value['hod_approval_editable'] = false;
-            }
-            if ($hr == $current_user->user_id && $value['hod_approval']) {
-                $value['hr_comment_editable'] = true;
-                $value['hr_approval_editable'] = true;
-            } else {
-                $value['hr_comment_editable'] = false;
-                $value['hr_approval_editable'] = false;
-            }
-            if ($fmgr == $current_user->user_id && $value['hr_approval']) {
-                $value['fmgr_comment_editable'] = true;
-                $value['fmgr_approval_editable'] = true;
-                $value['amount_requested_editable'] = true;
-            } else {
-                $value['fmgr_comment_editable'] = false;
-                $value['fmgr_approval_editable'] = false;
-                $value['amount_requested_editable'] = false;
-            }
-        }
-        return $ret;
     }
 }
