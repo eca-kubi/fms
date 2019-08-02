@@ -69,6 +69,7 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
     let salaryAdvanceDataSource;
     $(document).ready(function () {
         //$(document).on('click', '#percentageRadio', toggleAmountRequested);
+        kendo.culture().numberFormat.currency.symbol = 'GH₵';
         $salaryAdvanceGrid = $("#salary_advance");
         $salaryAdvanceGrid.on('change', "input[name=employee]", function (e) {
             //let select = $(this).data("kendoDropDownList");
@@ -144,11 +145,9 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                             editable: false
                         },
                         amount_requested: {
-                            defaultValue: '0',
                             type: 'number',
-                            //editable: false,
+                            defaultValue: '',
                             validation: { //set validation rules
-                                required: true,
                                 min: '0'
                             }
                         },
@@ -242,6 +241,7 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                         },
                         percentage: {
                             type: "number",
+                            defaultValue: '',
                             validation: { //set validation rules
                                 min: "10",
                                 max: "30"
@@ -346,31 +346,31 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                 },
                 {
                     field: 'percentage',
-                    title: 'Amount Requested (Percentage)',
+                    title: 'Amount Requested in Percentage',
                     //width: "12%",
                     template: function (dataItem) {
-                        return "<span title='Percentage: " + (dataItem.percentage ? kendo.toString(kendo.format('{0:n}', dataItem.percentage) + '%') : '') + "'>" + (dataItem.percentage ? kendo.toString(kendo.format('{0:n}', dataItem.percentage) + '%') : '') + "</span>"
+                        return "<span title='Amount Requested in Percentage: " + (dataItem.percentage ? kendo.toString(kendo.format('{0:n}', dataItem.percentage) + '%') : '') + "'>" + (dataItem.percentage ? kendo.toString(kendo.format('{0:n}', dataItem.percentage) + '%') : '') + "</span>"
                     },
                     headerAttributes: {
                         "class": "title"
                     },
-                    groupHeaderTemplate: "Amount Requested (Percentage): #= value? kendo.toString(kendo.format('{0:n}', value) + '%') : '' #",
+                    groupHeaderTemplate: "Amount Requested in Percentage: #= value? kendo.toString(kendo.format('{0:n}', value) + '%') : '' #",
                     aggregates: ["max", "min"],
                     //format: '#\\%',
-                    hidden: false
+                    hidden: false,
                 },
                 {
                     field: 'amount_requested',
-                    title: 'Amount Requested (Figure)',
-                    template: function (dataItem) {
+                    title: 'Amount Requested in Figures',
+                    /*template: function (dataItem) {
                         return "<span title='Amount Requested: " + dataItem.amount_requested ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_requested)) : '' + "'>" + dataItem.amount_requested ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_requested)) : '' + "</span>"
-                    },
+                    },*/
                     headerAttributes: {
                         "class": "title"
                     },
-                    groupHeaderTemplate: "Amount Requested (Figure): #=  value ? kendo.toString('GH₵ ' + kendo.format('{0:n}', value)) : ''#",
+                    groupHeaderTemplate: "Amount Requested in Figures: #=  value ? kendo.format('{0:c}', value) : ''#",
                     aggregates: ["max", "min", "count"],
-                    format: "{0:n}"
+                    format: "{0:c}"
                 },
                 {
                     title: 'HoD',
@@ -655,7 +655,7 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                 amountRequested.find('input').attr('min', '0');
                 percentageInput.find('input').attr('min', 10).attr('max', 30).attr('data-min-msg', 'Amount Requested must be at least 10% of net salary!').attr('data-max-msg', 'Amount Requested must not exceed 30% of net salary!');
                 amountRequestedNumericTextBox.setOptions({
-                    format: "GH₵#.00",
+                    format: "c",
                     //min: '0'
                 });
                 amountRequestedPercentageNumericTextBox.setOptions({
@@ -666,21 +666,23 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                 percentageLabel.find('label').html('Amount Requested <br><small class="text-danger text-bold">(Enter Amount as Percentage)</small>');
                 amountRequestedLabel.find('label').html('Amount Requested <br> <small class="text-danger text-bold" > (Enter Amount as Figure)</small>');
                 radioButtonGroup.insertAfter(e.container.find('.k-edit-form-container').children('[data-container-for=amount_requested]'));
-                radioButtonGroup.on('click', '#percentageRadio', function (ev) {
+                radioButtonGroup.on('click', '#percentageRadio', function () {
                     e.model.amount_requested_is_percentage = true;
                     if (e.model.isNew()) {
                         amountRequestedNumericTextBox.enable(false);
-                        //amountRequestedNumericTextBox.value(0);
+                        /*amountRequestedNumericTextBox.value('');
+                        amountRequestedPercentageNumericTextBox.value('');*/
                     }
                     amountRequestedPercentageNumericTextBox.enable();
                     amountRequestedPercentageNumericTextBox.focus();
                 });
 
-                radioButtonGroup.on('click', '#figureRadio', function (ev) {
+                radioButtonGroup.on('click', '#figureRadio', function () {
                     e.model.amount_requested_is_percentage = false;
                     if (e.model.isNew()) {
                         amountRequestedPercentageNumericTextBox.enable(false);
-                        //amountRequestedPercentageNumericTextBox.value(10);
+                        /*amountRequestedPercentageNumericTextBox.value('');
+                        amountRequestedNumericTextBox.value('');*/
                     }
                     amountRequestedNumericTextBox.enable();
                     amountRequestedNumericTextBox.focus();
@@ -688,8 +690,8 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
 
                 amountRequestedNumericTextBox.enable(false);
 
-                e.container.data('kendoWindow').bind('activate', function (ev) {
-                    if (e.model.isNew()) amountRequestedPercentageNumericTextBox.focus();
+                e.container.data('kendoWindow').bind('activate', function () {
+                    amountRequestedPercentageNumericTextBox.focus();
                 });
 
                 e.container.find('.k-edit-label:eq(10)').toggle(Boolean(e.model.amount_payable)); // toggle visibility for amount payable
@@ -770,7 +772,7 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
         }
     });
 
-    toggleAmountRequested = function (e) {
+    toggleAmountRequested = function () {
         if (this.id === 'percentageRadio') {
 
         }

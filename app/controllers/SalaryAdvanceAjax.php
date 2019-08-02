@@ -77,7 +77,8 @@ class SalaryAdvanceAjax extends Controller
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             $data = [
                 'amount_requested_is_percentage' => $_POST['amount_requested_is_percentage']==='true'? true : false,
-                'amount_requested' => $_POST['amount_requested'],
+                'amount_requested' => $_POST['amount_requested']?  $_POST['amount_requested'] : null,
+                'percentage' => $_POST['percentage'],
                 'user_id' => $current_user->user_id,
                 'department_id' => $current_user->department_id,
                 'department_ref' => genDeptRef($current_user->department_id)
