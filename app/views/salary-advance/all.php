@@ -67,6 +67,7 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
     let universal = JSON.parse(`<?php echo json_encode($universal); ?>`);
     let $salaryAdvanceGrid;
     let salaryAdvanceDataSource;
+    let $salaryAdvanceTooltip;
     $(document).ready(function () {
         //$(document).on('click', '#percentageRadio', toggleAmountRequested);
         kendo.culture().numberFormat.currency.symbol = 'GH₵';
@@ -362,6 +363,7 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                 {
                     field: 'amount_requested',
                     title: 'Amount Requested in Figures',
+                    width: '10%',
                     /*template: function (dataItem) {
                         return "<span title='Amount Requested: " + dataItem.amount_requested ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_requested)) : '' + "'>" + dataItem.amount_requested ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_requested)) : '' + "</span>"
                     },*/
@@ -552,14 +554,17 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                 {
                     field: 'amount_received',
                     title: 'Amount Received',
-                    hidden: false,
                     template: function (dataItem) {
                         return dataItem.amount_received ? "<span title='Amount Received: " + kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_received)) + "'>" + kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_received)) + "</span>" : "<span title='Pending'>Pending</span>"
+                    },
+                    width: '10%',
+                    attributes: {
+                        class: 'amount_received'
                     },
                     headerAttributes: {
                         "class": "title"
                     },
-                    groupHeaderTemplate: "Amount Received: #: kendo.toString('GH₵ ' + kendo.format('{0:n}', value)) #",
+                    groupHeaderTemplate: "Amount Received: #: kendo.format('{0:c}', value) #",
                 },
                 {
                     field: 'received_by',
@@ -587,7 +592,7 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                     groupHeaderTemplate: "Date Received: #= value? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : 'Pending' #",
                 },
                 {
-                    template: "<span class='text-center action-tools row'>" +
+                    template: "<span class='text-center action-tools'>" +
                         "<span class='col' title='Edit'><a href='\\#' class='text-black action-edit'><i class='fa fa-pencil'></i></a></span>" +
                         "<span class='col' title='Delete'><a href='\\#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span><span class='col' title='More Info'><a href='\\#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
                         "<span class='col' title='Print'><a href='\\#' class='text-primary action-print print-it' target='_blank'><i class='fas fa-print'></i></a></span>" +
@@ -706,12 +711,28 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                 e.container.find('.k-edit-field:eq(18)').toggle(Boolean(e.model.received_by));
             }
         });
+
+        /*$salaryAdvanceTooltip = $salaryAdvanceGrid.kendoTooltip({
+            filter: "td", //this filter selects the second column's cells
+            position: "right",
+            content: function(e){
+                let td = e.target.closest('td');
+                let dataItem = $salaryAdvanceGrid.data("kendoGrid").dataItem(e.target.closest("tr"));
+                if (e.target.hasClass('amount_received')) {
+                    return dataItem.amount_received;
+                }
+                //let content = dataItem.Text;
+                return '';
+            }
+        }).data("kendoTooltip");*/
+
         if (universal["has_salary_advance"]) $(".k-grid-add")
             .removeClass("k-grid-add")
             .addClass("k-state-disabled k-grid-add-disabled")
             .removeAttr("href").click(function () {
                 toastError("You already have an active salary advance application for the month of " + moment()["format"]("MMMM") + "!");
             });
+
         $salaryAdvanceGrid.data('kendoGrid').thead.kendoTooltip({
             filter: "th.title",
             position: 'top',
@@ -720,6 +741,7 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                 return $(target).text();
             }
         });
+
         $salaryAdvanceGrid.on("click", ".action-edit", function () {
             let grid = $salaryAdvanceGrid.data("kendoGrid");
             //let currentRow = grid.currentRow();
@@ -731,6 +753,7 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
             actionTools.html("<span class='col'><a href='#' class='text-success action-confirm-edit'><i class='fa fa-check'></i></a></span>" +
                 "<span class='col'><a href='#' class='text-black action-cancel-edit'><i class='k-icon k-i-cancel'></i></a></span>");
         });
+
         $salaryAdvanceGrid.on("click", ".action-cancel-edit", function () {
             //let row = $(this).closest("tr");
             let $this = $(this);
@@ -741,6 +764,7 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                 "</span>");
             $salaryAdvanceGrid.data("kendoGrid").cancelChanges();
         });
+
         $salaryAdvanceGrid.on("click", ".action-confirm-edit", function () {
             //let row = $(this).closest("tr");
             let $this = $(this);
@@ -751,14 +775,17 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                 "</span>");
             $salaryAdvanceGrid.data("kendoGrid").saveChanges();
         });
+
         $salaryAdvanceGrid.on("click", ".action-delete", function () {
             let row = $(this).closest("tr");
             $salaryAdvanceGrid.data("kendoGrid").removeRow(row);
         });
+
         $salaryAdvanceGrid.on("click", ".action-more-info", function () {
             let row = $(this).closest("tr");
             row.find('.k-hierarchy-cell>a').click();
         });
+
         kendo.ui.Grid.fn["currentRow"] = function () {
             //this will only work if grid is navigatable
             let cell = this.current();
