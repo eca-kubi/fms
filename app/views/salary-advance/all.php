@@ -147,9 +147,11 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                         },
                         amount_requested: {
                             type: 'number',
-                            defaultValue: '',
+                            // a defaultValue will not be assigned (default value is false)
+                            nullable: true,
                             validation: { //set validation rules
-                                min: '0'
+                                min: 0,
+                                //required: true
                             }
                         },
                         hod_comment: {
@@ -242,10 +244,12 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                         },
                         percentage: {
                             type: "number",
-                            defaultValue: '',
+                            // a defaultValue will not be assigned (default value is false)
+                            nullable: true,
                             validation: { //set validation rules
-                                min: "10",
-                                max: "30"
+                                min: 10,
+                                max: 30,
+                                required: true
                             },
                         },
                         amount_requested_is_percentage: {
@@ -364,9 +368,9 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                     field: 'amount_requested',
                     title: 'Amount Requested in Figures',
                     width: '10%',
-                    /*template: function (dataItem) {
-                        return "<span title='Amount Requested: " + dataItem.amount_requested ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_requested)) : '' + "'>" + dataItem.amount_requested ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_requested)) : '' + "</span>"
-                    },*/
+                    template: function (dataItem) {
+                        return "<span title='Amount Requested: " + (dataItem.amount_requested ? kendo.format('{0:c}', dataItem.amount_requested) : '') + "'>" + (dataItem.amount_requested ? kendo.format('{0:c}', dataItem.amount_requested) : '') + "</span>"
+                    },
                     headerAttributes: {
                         "class": "title"
                     },
@@ -675,8 +679,6 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                     e.model.amount_requested_is_percentage = true;
                     if (e.model.isNew()) {
                         amountRequestedNumericTextBox.enable(false);
-                        /*amountRequestedNumericTextBox.value('');
-                        amountRequestedPercentageNumericTextBox.value('');*/
                     }
                     amountRequestedPercentageNumericTextBox.enable();
                     amountRequestedPercentageNumericTextBox.focus();
@@ -686,8 +688,6 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                     e.model.amount_requested_is_percentage = false;
                     if (e.model.isNew()) {
                         amountRequestedPercentageNumericTextBox.enable(false);
-                        /*amountRequestedPercentageNumericTextBox.value('');
-                        amountRequestedNumericTextBox.value('');*/
                     }
                     amountRequestedNumericTextBox.enable();
                     amountRequestedNumericTextBox.focus();
@@ -712,19 +712,17 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
             }
         });
 
-        /*$salaryAdvanceTooltip = $salaryAdvanceGrid.kendoTooltip({
+        $salaryAdvanceTooltip = $salaryAdvanceGrid.kendoTooltip({
             filter: "td", //this filter selects the second column's cells
-            position: "right",
-            content: function(e){
-                let td = e.target.closest('td');
-                let dataItem = $salaryAdvanceGrid.data("kendoGrid").dataItem(e.target.closest("tr"));
-                if (e.target.hasClass('amount_received')) {
-                    return dataItem.amount_received;
-                }
-                //let content = dataItem.Text;
-                return '';
+            position: "top",
+            content: function (e) {
+                // hide popup as default action
+                e.sender.popup.element.css("visibility", "hidden");
+                let text = $(e.target).text();
+                if (text) e.sender.popup.element.css("visibility", "visible");
+                return text;
             }
-        }).data("kendoTooltip");*/
+        }).data("kendoTooltip");
 
         if (universal["has_salary_advance"]) $(".k-grid-add")
             .removeClass("k-grid-add")

@@ -83,6 +83,11 @@ class SalaryAdvanceAjax extends Controller
                 'department_id' => $current_user->department_id,
                 'department_ref' => genDeptRef($current_user->department_id)
             ];
+            if ($data['amount_requested_is_percentage']) {
+                unset($data['amount_requested']);
+            } else {
+                unset($data['percentage']);
+            }
             $ret = Database::getDbh()->insert('salary_advance', $data);
             if ($ret) {
                 $ret = Database::getDbh()->where('id_salary_advance', $ret)
