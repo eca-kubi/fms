@@ -61,5 +61,6 @@ const ADMIN = [
     'Superintendent',
     'Manager'
 ];
-
 const ROLE_SECRETARY = 'Secretary';
+
+include_once(APP_ROOT . '/helpers/error_codes.php');

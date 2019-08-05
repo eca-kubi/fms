@@ -75,6 +75,13 @@ class SalaryAdvanceAjax extends Controller
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $current_user = getUserSession();
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            if (hasActiveApplication($current_user->user_id)) {
+                $ret[0]['success'] = false;
+                $ret[0]['reason'] = 'You already have an active application for this month!';
+                $ret['errors'] = ['message'=>'An Application is Active!', 'code'=>ERROR_AN_APPLICATION_ALREADY_EXISTS];
+                echo json_encode($ret);
+                return;
+            }
             $data = [
                 'amount_requested_is_percentage' => $_POST['amount_requested_is_percentage']==='true'? true : false,
                 'amount_requested' => $_POST['amount_requested']?  $_POST['amount_requested'] : null,
@@ -98,7 +105,7 @@ class SalaryAdvanceAjax extends Controller
             } else {
                 $ret[0]['success'] = false;
                 $ret[0]['reason'] = 'An error occurred!';
-                $ret['errors'] = 'An error occured!';
+                $ret['errors'] = ['message' => 'An error occured!', 'code'=>ERROR_UNSPECIFIED_ERROR];
                 echo json_encode($ret);
                 return;
             }
@@ -147,7 +154,7 @@ class SalaryAdvanceAjax extends Controller
                 } else {
                     $ret[0]['success'] = false;
                     $ret[0]['reason'] = 'An error occurred!';
-                    $ret['errors'] = 'An error occured!';
+                    $ret['errors'] = ['message' => 'An error occured!', 'code'=>ERROR_UNSPECIFIED_ERROR];
                     echo json_encode($ret);
                     return;
                 }
@@ -167,17 +174,17 @@ class SalaryAdvanceAjax extends Controller
             $old_ret['success'] = false;
             $old_ret['reason'] = 'The HoD has already reviewed this application!';
             $ret[] = $old_ret;
-            $ret['errors'] = ['The HoD has already reviewed this application!'];
+            $ret['errors'] = ['message'=>'The HoD has already reviewed this application!', 'code'=>ERROR_APPLICATION_ALREADY_REVIEWED];
         } else if ($old_ret['fmgr_approval']) {
             $old_ret['success'] = false;
             $old_ret['reason'] = 'Finance manager has already reviewed this application!';
             $ret[] = $old_ret;
-            $ret['errors'] = ['Finance manager has already reviewed this application!'];
+            $ret['errors'] = ['message'=>'Finance manager has already reviewed this application!', 'code' => ERROR_APPLICATION_ALREADY_REVIEWED];
         } else if ($old_ret['hr_approval']) {
             $old_ret['success'] = false;
             $old_ret['reason'] = 'HR has already reviewed this application!';
             $ret[] = $old_ret;
-            $ret['errors'] = ['HR has already reviewed this application!'];
+            $ret['errors'] = ['message'=>'HR has already reviewed this application!', 'code' => ERROR_APPLICATION_ALREADY_REVIEWED];
         } else {
             $ret = Database::getDbh()->where('id_salary_advance', $_POST['id_salary_advance'])
                 ->update('salary_advance', ['deleted' => true]);

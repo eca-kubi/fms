@@ -71,8 +71,8 @@ modal('change_password');
 <script src="<?php echo URL_ROOT ?>/public/assets/js/shards.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/adminlte.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/adminlte-2.js"></script>
-<script src="<?php echo URL_ROOT; ?>/public/assets/js/moment.js"></script>
-
+<!--<script src="<?php /*echo URL_ROOT; */?>/public/assets/js/moment.js"></script>
+-->
 <!--<script src="<?php /*echo URL_ROOT; */ ?>/public/assets/js/bizniz.js"></script>
 -->
 <!--<script src="<?php /*echo URL_ROOT; */ ?>/public/assets/js/moment-business-with-holidays.js"></script>
@@ -96,6 +96,7 @@ modal('change_password');
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/kendo/kendo.all.min.js"></script>
 <script src="http://kendo.cdn.telerik.com/2019.2.514/js/jszip.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/jQuery-printPage/jquery.printPage.js"></script>
+<script src="<?php echo URL_ROOT; ?>/public/assets/js/bundle.js?<?php echo microtime(); ?>"></script>
 <script src="<?php echo URL_ROOT; ?>/public/custom-assets/js/custom.js?<?php echo microtime(); ?>"></script>
 </body>
 </html>

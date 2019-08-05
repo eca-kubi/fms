@@ -64,6 +64,7 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
 ?>
 <!--suppress HtmlUnknownTarget -->
 <script>
+    let str = echo('hello');
     let universal = JSON.parse(`<?php echo json_encode($universal); ?>`);
     let $salaryAdvanceGrid;
     let salaryAdvanceDataSource;
@@ -110,8 +111,11 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                  }*/
             },
             error: function (e) {
-                //console.log("error event handler", e.errors[0]);
-                toastError(e.errors);
+                if (e.errors['code'] === ERROR_AN_APPLICATION_ALREADY_EXISTS) {
+                    // Disable Add Button
+
+                }
+                toastError(e.errors['message']);
                 salaryAdvanceDataSource.cancelChanges();
             },
             requestEnd: function (e) {
@@ -254,7 +258,7 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                         },
                         amount_requested_is_percentage: {
                             type: 'boolean',
-                            defaultValue: false
+                            defaultValue: true
                         },
                     }
                 }
@@ -354,15 +358,13 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                     title: 'Amount Requested in Percentage',
                     //width: "12%",
                     template: function (dataItem) {
-                        return "<span title='Amount Requested in Percentage: " + (dataItem.percentage ? kendo.toString(kendo.format('{0:n}', dataItem.percentage) + '%') : '') + "'>" + (dataItem.percentage ? kendo.toString(kendo.format('{0:n}', dataItem.percentage) + '%') : '') + "</span>"
+                        return "<span title='Amount Requested in Percentage: " + (dataItem.percentage ? kendo.toString(dataItem.percentage, '#\\%') : '') + "'>" + (dataItem.percentage ? kendo.toString(dataItem.percentage, '#\\%') : '') + "</span>"
                     },
                     headerAttributes: {
                         "class": "title"
                     },
-                    groupHeaderTemplate: "Amount Requested in Percentage: #= value? kendo.toString(kendo.format('{0:n}', value) + '%') : '' #",
+                    groupHeaderTemplate: "Amount Requested in Percentage: #= value? value + '%' : '' #",
                     aggregates: ["max", "min"],
-                    //format: '#\\%',
-                    hidden: false,
                 },
                 {
                     field: 'amount_requested',
@@ -608,7 +610,8 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
             detailTemplate: kendo.template(`
     <div class="">
         <b>Date Raised</b>: #= kendo.toString(kendo.parseDate(date_raised), 'dddd dd MMM, yyyy') #</br>
-        <b>Amount Requested </b>:#=  amount_requested? kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_requested)) : '' #</br>
+        <b>Amount Requested in Figures</b>:#=  amount_requested? kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_requested)) : '' #</br>
+        <b>Amount Requested in Percentage </b>:#=  percentage? percentage + '%' : '' #</br>
         <b>Approved by HoD?</b> #= hod_approval? 'Yes' : 'No' #</br>
         #=hod_approval_date? '<b>HoD Approval Date: </b>' + kendo.toString(kendo.parseDate(hod_approval_date), 'dddd dd MMM, yyyy')+'</br>': '' #
         <b>Approved by HR? </b> #= hr_approval? 'Yes' : 'No' # </br>
@@ -713,7 +716,7 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
         });
 
         $salaryAdvanceTooltip = $salaryAdvanceGrid.kendoTooltip({
-            filter: "td", //this filter selects the second column's cells
+            filter: "td:not('.k-detail-cell')", //this filter selects the second column's cells
             position: "top",
             content: function (e) {
                 // hide popup as default action
