@@ -727,15 +727,11 @@ $universal->has_active_application = hasActiveApplication($current_user->user_id
                     radioButtonGroup.find('#figureRadio').attr('checked', 'checked');
                 }
                 e.container.data('kendoWindow').bind('activate', function () {
-                    /*if (e.model.isNew() || e.model.amount_requested_is_percentage) {
+                    if (e.model.isNew() || e.model.amount_requested_is_percentage) {
                         amountRequestedPercentageNumericTextBox.focus();
-                        amountRequestedNumericTextBox.enable(false);
-                        radioButtonGroup.find('#percentageRadio').attr('checked', 'checked');
                     } else {
                         amountRequestedNumericTextBox.focus();
-                        amountRequestedPercentageNumericTextBox.enable(false);
-                        radioButtonGroup.find('#figureRadio').attr('checked', 'checked');
-                    }*/
+                    }
                 });
 
                 e.container.find('.k-edit-label:eq(10)').toggle(Boolean(e.model.amount_payable)); // toggle visibility for amount payable
