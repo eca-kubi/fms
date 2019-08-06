@@ -1,1 +1,1 @@
-window.echo = require('locutus/php/strings/echo');
+window.moment = require('moment');

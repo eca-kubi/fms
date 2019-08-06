@@ -19,6 +19,7 @@
     "gulp": "^4.0.0",
     "gulp-cli": "^2.0.1",
     "gulp-postcss": "^8.0.0",
+    "moment-range": "^4.0.2",
     "postcss-color-function": "^4.0.1",
     "postcss-hexrgba": "^1.0.1",
     "postcss-import": "^12.0.1",
@@ -33,7 +34,9 @@
     "jquery": "^3.3.1",
     "locutus": "^2.0.11",
     "moment": "^2.24.0",
+    "moment-workdays": "^1.1.1",
     "normalize.css": "^8.0.1",
-    "slick-carousel": "^1.8.1"
+    "slick-carousel": "^1.8.1",
+    "smoothscroll": "^0.4.0"
   }
 }

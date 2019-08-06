@@ -64,8 +64,12 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
 ?>
 <!--suppress HtmlUnknownTarget -->
 <script>
-    let str = echo('hello');
+    /*Error constants*/
+    const ERROR_UNSPECIFIED_ERROR = 'E_1000';
+    const ERROR_AN_APPLICATION_ALREADY_EXISTS = 'E_1001';
+    const ERROR_APPLICATION_ALREADY_REVIEWED = 'E_1002';
     let universal = JSON.parse(`<?php echo json_encode($universal); ?>`);
+    let kGridAddButton;
     let $salaryAdvanceGrid;
     let salaryAdvanceDataSource;
     let $salaryAdvanceTooltip;
@@ -112,8 +116,8 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
             },
             error: function (e) {
                 if (e.errors['code'] === ERROR_AN_APPLICATION_ALREADY_EXISTS) {
-                    // Disable Add Button
-
+                    // Disable Grid Add Button
+                    disableGridAddButton();
                 }
                 toastError(e.errors['message']);
                 salaryAdvanceDataSource.cancelChanges();
@@ -126,9 +130,21 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                 }
                 if (e.type === 'create' && e.response[0].success) {
                     toastSuccess('Success', 5000);
+                    const {has_salary_advance} = universal;
+                    if (has_salary_advance) {
+                        disableGridAddButton();
+                    } else {
+                        enableGridAddButton();
+                    }
                 }
                 if (e.type === 'destroy' && e.response[0].success) {
                     toastSuccess('Success', 5000);
+                    const {has_salary_advance} = universal;
+                    if (has_salary_advance) {
+                        disableGridAddButton();
+                    } else {
+                        enableGridAddButton();
+                    }
                 } else if (e.type === 'destroy' && !e.response[0].success) {
                     e.response[0].reason ? toastError(e.response[0].reason) : toastError('An error occurred!');
                     salaryAdvanceDataSource.cancelChanges();
@@ -638,6 +654,11 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                     $('tr[data-uid="' + row.uid + '"] ').find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["id_salary_advance"]);
                 });
                 $(".print-it").printPage();
+                kGridAddButton = $(".k-grid-add");
+                const {has_salary_advance} = universal;
+                if (has_salary_advance) {
+                    disableGridAddButton();
+                }
                 /*let len = $salaryAdvanceGrid.find("tbody tr").length;
                 for(let i=0;i<len ; i++)
                 {
@@ -727,12 +748,12 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
             }
         }).data("kendoTooltip");
 
-        if (universal["has_salary_advance"]) $(".k-grid-add")
-            .removeClass("k-grid-add")
-            .addClass("k-state-disabled k-grid-add-disabled")
-            .removeAttr("href").click(function () {
-                toastError("You already have an active salary advance application for the month of " + moment()["format"]("MMMM") + "!");
-            });
+        // kGridAddButton
+        //     .removeClass("k-grid-add")
+        //     .addClass("k-state-disabled k-grid-add-disabled")
+        //     .removeAttr("href").click(function () {
+        //     toastError("You already have an active salary advance application for the month of " + moment()["format"]("MMMM") + "!");
+        // });
 
         $salaryAdvanceGrid.data('kendoGrid').thead.kendoTooltip({
             filter: "th.title",
@@ -787,6 +808,10 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
             row.find('.k-hierarchy-cell>a').click();
         });
 
+        $salaryAdvanceGrid.on('click', '.k-grid-add-disabled', function () {
+            toastError("You already have an active salary advance application for the month of " + moment()["format"]("MMMM") + "!");
+        });
+
         kendo.ui.Grid.fn["currentRow"] = function () {
             //this will only work if grid is navigatable
             let cell = this.current();
@@ -804,5 +829,19 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
         if (this.id === 'percentageRadio') {
 
         }
+    };
+
+    function disableGridAddButton() {
+        kGridAddButton.attr('disabled', 'disabled')
+            .removeClass("k-grid-add")
+            .addClass("k-state-disabled k-grid-add-disabled")
+            .removeAttr("href")
+    }
+
+    function enableGridAddButton() {
+        kGridAddButton.removeAttr('disabled')
+            .addClass('k-grid-add')
+            .removeClass('k-state-disabled k-grid-add-disabled')
+            .attr('href', '#');
     }
 </script>
