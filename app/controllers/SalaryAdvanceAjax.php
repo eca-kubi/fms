@@ -26,6 +26,7 @@ class SalaryAdvanceAjax extends Controller
                 ->get('salary_advance');
         }
         $ret = $this->transformArrayData($ret);
+        $ret['has_salary_advance'] = hasActiveApplication($current_user->user_id);
         echo json_encode($ret);
     }
 
