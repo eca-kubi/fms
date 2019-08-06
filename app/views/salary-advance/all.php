@@ -130,7 +130,7 @@ $universal->has_active_application = hasActiveApplication($current_user->user_id
                 }
                 if (e.type === 'create' && e.response[0].success) {
                     toastSuccess('Success', 5000);
-                    if ( e.response[0]['has_active_application']) {
+                    if (e.response[0]['has_active_application']) {
                         disableGridAddButton();
                     } else {
                         enableGridAddButton();
@@ -667,7 +667,7 @@ $universal->has_active_application = hasActiveApplication($current_user->user_id
             },
             beforeEdit: function (e) {
                 //e.model.fields.amount_requested.editable = false;
-                e.model.fields['amount_requested'].editable = e.model.isNew() || !(e.model.hod_approval || e.model.fmgr_approval || e.model.hr_approval);
+                e.model.fields['amount_requested'].editable = e.model.isNew() || !e.model.amount_requested_is_percentage || !(e.model.hod_approval || e.model.fmgr_approval || e.model.hr_approval);
                 //e.model.fields["percentage"].editable = e.model.isNew() || !(e.model.hod_approval || e.model.fmgr_approval || e.model.hr_approval);
             },
             edit: function (e) {
@@ -697,12 +697,13 @@ $universal->has_active_application = hasActiveApplication($current_user->user_id
                 });
                 percentageLabel.find('label').html('Amount Requested <br><small class="text-danger text-bold">(Enter Amount as Percentage)</small>');
                 amountRequestedLabel.find('label').html('Amount Requested <br> <small class="text-danger text-bold" > (Enter Amount as Figure)</small>');
+
                 radioButtonGroup.insertAfter(e.container.find('.k-edit-form-container').children('[data-container-for=amount_requested]'));
                 radioButtonGroup.on('click', '#percentageRadio', function () {
                     e.model.amount_requested_is_percentage = true;
                     if (e.model.isNew()) {
-                        amountRequestedNumericTextBox.enable(false);
                     }
+                    amountRequestedNumericTextBox.enable(false);
                     amountRequestedPercentageNumericTextBox.enable();
                     amountRequestedPercentageNumericTextBox.focus();
                 });
@@ -710,16 +711,31 @@ $universal->has_active_application = hasActiveApplication($current_user->user_id
                 radioButtonGroup.on('click', '#figureRadio', function () {
                     e.model.amount_requested_is_percentage = false;
                     if (e.model.isNew()) {
-                        amountRequestedPercentageNumericTextBox.enable(false);
                     }
+                    amountRequestedPercentageNumericTextBox.enable(false);
                     amountRequestedNumericTextBox.enable();
                     amountRequestedNumericTextBox.focus();
                 });
 
-                amountRequestedNumericTextBox.enable(false);
-
-                e.container.data('kendoWindow').bind('activate', function () {
+                if (e.model.isNew() || e.model.amount_requested_is_percentage) {
                     amountRequestedPercentageNumericTextBox.focus();
+                    amountRequestedNumericTextBox.enable(false);
+                    radioButtonGroup.find('#percentageRadio').attr('checked', 'checked');
+                } else {
+                    amountRequestedNumericTextBox.focus();
+                    amountRequestedPercentageNumericTextBox.enable(false);
+                    radioButtonGroup.find('#figureRadio').attr('checked', 'checked');
+                }
+                e.container.data('kendoWindow').bind('activate', function () {
+                    /*if (e.model.isNew() || e.model.amount_requested_is_percentage) {
+                        amountRequestedPercentageNumericTextBox.focus();
+                        amountRequestedNumericTextBox.enable(false);
+                        radioButtonGroup.find('#percentageRadio').attr('checked', 'checked');
+                    } else {
+                        amountRequestedNumericTextBox.focus();
+                        amountRequestedPercentageNumericTextBox.enable(false);
+                        radioButtonGroup.find('#figureRadio').attr('checked', 'checked');
+                    }*/
                 });
 
                 e.container.find('.k-edit-label:eq(10)').toggle(Boolean(e.model.amount_payable)); // toggle visibility for amount payable

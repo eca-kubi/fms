@@ -155,7 +155,7 @@ class SalaryAdvanceAjax extends Controller
                     $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
                         ->get('salary_advance');
                     $ret = $this->transformArrayData($ret);
-                    $ret['has_active_application'] = hasActiveApplication($current_user->user_id);
+                    $ret[0]['has_active_application'] = hasActiveApplication($current_user->user_id);
                     $ret[0]['success'] = true;
                 } else {
                     $ret[0]['success'] = false;
