@@ -695,8 +695,8 @@ $universal->has_active_application = hasActiveApplication($current_user->user_id
                     //min: '10',
                     //max: '30'
                 });
-                percentageLabel.find('label').html('Amount Requested <br><small class="text-danger text-bold">(Enter Amount as Percentage)</small>');
-                amountRequestedLabel.find('label').html('Amount Requested <br> <small class="text-danger text-bold" > (Enter Amount as Figure)</small>');
+                percentageLabel.find('label').html('Amount Requested <br><small class="text-danger text-bold">Enter as Percentage (10% - 30%)</small>');
+                amountRequestedLabel.find('label').html('Amount Requested <br> <small class="text-danger text-bold" > Enter as Figure</small>');
 
                 radioButtonGroup.insertAfter(e.container.find('.k-edit-form-container').children('[data-container-for=amount_requested]'));
                 radioButtonGroup.on('click', '#percentageRadio', function () {
