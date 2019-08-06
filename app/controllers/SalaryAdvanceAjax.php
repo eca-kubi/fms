@@ -93,9 +93,11 @@ class SalaryAdvanceAjax extends Controller
                 'department_ref' => genDeptRef($current_user->department_id)
             ];
             if ($data['amount_requested_is_percentage']) {
-                unset($data['amount_requested']);
+                //unset($data['amount_requested']);
+                $data['amount_requested'] = null;
             } else {
-                unset($data['percentage']);
+                //unset($data['percentage']);
+                $data['percentage'] = null;
             }
             $ret = Database::getDbh()->insert('salary_advance', $data);
             if ($ret) {
@@ -129,6 +131,7 @@ class SalaryAdvanceAjax extends Controller
             $current_user = getUserSession();
             $id_salary_advance = $_POST['id_salary_advance'];
             $ret = [];
+            $data = [];
             $old_ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
                 ->getOne('salary_advance');
             if ($old_ret['hod_approval']) {
@@ -144,14 +147,23 @@ class SalaryAdvanceAjax extends Controller
                 $old_ret['reason'] = 'HR has already reviewed this application!';
                 $ret[] = $old_ret;
             } else {
-                $data['department_ref'] = $old_ret['department_ref'];
-                $data['old_amount'] = $old_ret['amount_requested'];
-                $data['new_amount'] = $_POST['amount_requested'];
+                $data = [
+                    'amount_requested_is_percentage' => $_POST['amount_requested_is_percentage'] === 'true' ? true : false,
+                    'amount_requested' => $_POST['amount_requested'] ? $_POST['amount_requested'] : null,
+                    'percentage' => $_POST['percentage']
+                ];
+                if ($data['amount_requested_is_percentage']) {
+                    //unset($data['amount_requested']);
+                    $data['amount_requested'] = null;
+                } else {
+                    //unset($data['percentage']);
+                    $data['percentage'] = null;
+                }
                 $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
-                    ->update('salary_advance', ['amount_requested' => $_POST['amount_requested']]);
+                    ->update('salary_advance', $data);
                 if ($ret) {
-                    $remarks = get_include_contents('action_log/salary_advance_updated_by_employee', $data);
-                    insertLog($id_salary_advance, ACTION_SALARY_ADVANCE_UPDATE, $remarks, $current_user->user_id);
+                    //$remarks = get_include_contents('action_log/salary_advance_updated_by_employee', $data);
+                    //insertLog($id_salary_advance, ACTION_SALARY_ADVANCE_UPDATE, $remarks, $current_user->user_id);
                     $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
                         ->get('salary_advance');
                     $ret = $this->transformArrayData($ret);
