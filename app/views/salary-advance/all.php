@@ -60,7 +60,7 @@
 $universal = new stdClass();
 $universal->hr_comment_editable = getCurrentHR() == $current_user->user_id;
 $universal->fgmr_comment_editable = $universal->amount_requested_editable = getCurrentFgmr() == $current_user->user_id;
-$universal->has_salary_advance = hasActiveApplication($current_user->user_id);
+$universal->has_active_application = hasActiveApplication($current_user->user_id);
 ?>
 <!--suppress HtmlUnknownTarget -->
 <script>
@@ -130,23 +130,22 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                 }
                 if (e.type === 'create' && e.response[0].success) {
                     toastSuccess('Success', 5000);
-                    const {has_salary_advance} = universal;
-                    if (has_salary_advance) {
+                    if ( e.response[0]['has_active_application']) {
                         disableGridAddButton();
                     } else {
                         enableGridAddButton();
                     }
                 }
-                if (e.type === 'destroy' && e.response[0].success) {
+                if (e.type === 'destroy' && e.response.success) {
                     toastSuccess('Success', 5000);
-                    const {has_salary_advance} = universal;
-                    if (has_salary_advance) {
+                    universal.has_active_application = e.response['has_active_application'];
+                    if (universal.has_active_application) {
                         disableGridAddButton();
                     } else {
                         enableGridAddButton();
                     }
-                } else if (e.type === 'destroy' && !e.response[0].success) {
-                    e.response[0].reason ? toastError(e.response[0].reason) : toastError('An error occurred!');
+                } else if (e.type === 'destroy' && !e.response.success) {
+                    e.response.reason ? toastError(e.response.reason) : toastError('An error occurred!');
                     salaryAdvanceDataSource.cancelChanges();
                 }
             },
@@ -654,9 +653,9 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                     $('tr[data-uid="' + row.uid + '"] ').find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["id_salary_advance"]);
                 });
                 $(".print-it").printPage();
-                kGridAddButton = $(".k-grid-add");
-                const {has_salary_advance} = universal;
-                if (has_salary_advance) {
+                //kGridAddButton = $(".k-grid-add");
+                const {has_active_application} = universal;
+                if (has_active_application) {
                     disableGridAddButton();
                 }
                 /*let len = $salaryAdvanceGrid.find("tbody tr").length;
@@ -735,7 +734,7 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
                 e.container.find('.k-edit-field:eq(18)').toggle(Boolean(e.model.received_by));
             }
         });
-
+        kGridAddButton = $('.k-grid-add');
         $salaryAdvanceTooltip = $salaryAdvanceGrid.kendoTooltip({
             filter: "td:not('.k-detail-cell')", //this filter selects the second column's cells
             position: "top",
@@ -835,7 +834,7 @@ $universal->has_salary_advance = hasActiveApplication($current_user->user_id);
         kGridAddButton.attr('disabled', 'disabled')
             .removeClass("k-grid-add")
             .addClass("k-state-disabled k-grid-add-disabled")
-            .removeAttr("href")
+            .removeAttr("href");
     }
 
     function enableGridAddButton() {

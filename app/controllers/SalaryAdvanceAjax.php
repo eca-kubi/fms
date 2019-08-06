@@ -26,7 +26,6 @@ class SalaryAdvanceAjax extends Controller
                 ->get('salary_advance');
         }
         $ret = $this->transformArrayData($ret);
-        $ret['has_salary_advance'] = hasActiveApplication($current_user->user_id);
         echo json_encode($ret);
     }
 
@@ -76,10 +75,11 @@ class SalaryAdvanceAjax extends Controller
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $current_user = getUserSession();
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            $ret = [];
             if (hasActiveApplication($current_user->user_id)) {
-                $ret[0]['success'] = false;
-                $ret[0]['reason'] = 'You already have an active application for this month!';
-                $ret['has_salary_advance'] = true;
+                $ret['success'] = false;
+                $ret['reason'] = 'You already have an active application for this month!';
+                $ret['has_active_application'] = true;
                 $ret['errors'] = ['message' => 'An Application is Active!', 'code' => ERROR_AN_APPLICATION_ALREADY_EXISTS];
                 echo json_encode($ret);
                 return;
@@ -103,13 +103,14 @@ class SalaryAdvanceAjax extends Controller
                     ->get('salary_advance');
                 $ret = $this->transformArrayData($ret);
                 $ret[0]['success'] = true;
+                $ret[0]['has_active_application'] = hasActiveApplication($current_user->user_id);
                 $remarks = get_include_contents('action_log/salary_advance_raised', $data);
                 insertLog($ret[0]['id_salary_advance'], ACTION_SALARY_ADVANCE_RAISED, $remarks, $current_user->user_id);
             } else {
                 $ret[0]['success'] = false;
                 $ret[0]['reason'] = 'An error occurred!';
                 $ret['errors'] = ['message' => 'An error occured!', 'code' => ERROR_UNSPECIFIED_ERROR];
-                $ret['has_salary_advance'] = hasActiveApplication($current_user->user_id);
+                $ret['has_active_application'] = hasActiveApplication($current_user->user_id);
                 echo json_encode($ret);
                 return;
             }
@@ -154,13 +155,13 @@ class SalaryAdvanceAjax extends Controller
                     $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
                         ->get('salary_advance');
                     $ret = $this->transformArrayData($ret);
-                    $ret['has_salary_advance'] = hasActiveApplication($current_user->user_id);
+                    $ret['has_active_application'] = hasActiveApplication($current_user->user_id);
                     $ret[0]['success'] = true;
                 } else {
                     $ret[0]['success'] = false;
                     $ret[0]['reason'] = 'An error occurred!';
                     $ret['errors'] = ['message' => 'An error occured!', 'code' => ERROR_UNSPECIFIED_ERROR];
-                    $ret['has_salary_advance'] = hasActiveApplication($current_user->user_id);
+                    $ret['has_active_application'] = hasActiveApplication($current_user->user_id);
                     echo json_encode($ret);
                     return;
                 }
@@ -172,6 +173,7 @@ class SalaryAdvanceAjax extends Controller
     public function Destroy()
     {
         $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        $current_user = getUserSession();
         $ret = [];
         $old_ret = Database::getDbh()->where('id_salary_advance', $_POST['id_salary_advance'])
             ->getOne('salary_advance');
@@ -198,13 +200,15 @@ class SalaryAdvanceAjax extends Controller
             $remarks = get_include_contents('action_log/salary_advance_deleted', $data);
             insertLog($_POST['id_salary_advance'], ACTION_SALARY_ADVANCE_RAISED, $remarks, getUserSession()->user_id);
             if ($ret) {
-                $ret = [['success' => true]];
-                $ret['has_salary_advance'] = hasActiveApplication($current_user->user_id);
+                $ret = [];
+                $ret['success'] = true;
+                $ret['has_active_application'] = hasActiveApplication($current_user->user_id);
                 echo json_encode($ret);
                 return;
             } else {
-                $ret = [['success' => false, 'reason' => 'An error occured']];
-                $ret['has_salary_advance'] = hasActiveApplication($current_user->user_id);
+                $ret = [];
+                $ret = ['success' => false, 'reason' => 'An error occured'];
+                $ret['has_active_application'] = hasActiveApplication($current_user->user_id);
                 $ret['errors'] = ['message' => 'An error occured!', 'code' => ERROR_UNSPECIFIED_ERROR];
             }
         }
