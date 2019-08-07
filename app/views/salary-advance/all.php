@@ -666,84 +666,97 @@ $universal->has_active_application = hasActiveApplication($current_user->user_id
                 }*/
             },
             beforeEdit: function (e) {
-                //e.model.fields.amount_requested.editable = false;
-                e.model.fields['amount_requested'].editable = e.model.isNew() || !e.model.amount_requested_is_percentage || !(e.model.hod_approval || e.model.fmgr_approval || e.model.hr_approval);
-                //e.model.fields["percentage"].editable = e.model.isNew() || !(e.model.hod_approval || e.model.fmgr_approval || e.model.hr_approval);
+                e.model.fields["percentage"].editable  = e.model.fields['amount_requested'].editable = !(e.model.hod_approval || e.model.fmgr_approval || e.model.hr_approval);
             },
             edit: function (e) {
-                let percentageInput = e.container.find('.k-edit-field:eq(3)');
+                let percentageField = e.container.find('.k-edit-field:eq(3)');
                 let percentageLabel = e.container.find('.k-edit-label:eq(3)');
-                let amountRequested = e.container.find(".k-edit-field:eq(4)");
+                let amountRequestedField = e.container.find(".k-edit-field:eq(4)");
                 let amountRequestedLabel = e.container.find('.k-edit-label:eq(4)');
-                let amountRequestedNumericTextBox = amountRequested.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
-                let amountRequestedPercentageNumericTextBox = percentageInput.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
+                let amountRequestedNumericTextBox = amountRequestedField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
+                let amountRequestedPercentageNumericTextBox = percentageField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
                 let radioButtonGroup = $('<div class="k-edit-field"><input type="radio" name="toggleAmountRequested" id="percentageRadio" class="k-radio" checked="checked" > <label class="k-radio-label" for="percentageRadio" >Percentage</label><input type="radio" name="toggleAmountRequested" id="figureRadio" class="k-radio"> <label class="k-radio-label" for="figureRadio">Figure</label></div>');
+
+                // Toggle visibility off for all editor fields and labels
                 e.container.find('.k-edit-label').addClass("pt-2").toggle(false);
                 e.container.find('.k-edit-field').addClass("pt-2").toggle(false);
-                amountRequested.toggle(true);
-                amountRequestedLabel.toggle(true);
-                percentageLabel.toggle(true);
-                percentageInput.toggle(true);
-                amountRequested.find('input').attr('min', '0');
-                percentageInput.find('input').attr('min', 10).attr('max', 30).attr('data-min-msg', 'Amount Requested must be at least 10% of net salary!').attr('data-max-msg', 'Amount Requested must not exceed 30% of net salary!');
-                amountRequestedNumericTextBox.setOptions({
-                    format: "c",
-                    //min: '0'
-                });
-                amountRequestedPercentageNumericTextBox.setOptions({
-                    format: "#\\%",
-                    //min: '10',
-                    //max: '30'
-                });
-                percentageLabel.find('label').html('Amount Requested <br><small class="text-danger text-bold">Enter as Percentage (10% - 30%)</small>');
-                amountRequestedLabel.find('label').html('Amount Requested <br> <small class="text-danger text-bold" > Enter as Figure</small>');
 
-                radioButtonGroup.insertAfter(e.container.find('.k-edit-form-container').children('[data-container-for=amount_requested]'));
-                radioButtonGroup.on('click', '#percentageRadio', function () {
-                    e.model.amount_requested_is_percentage = true;
-                    if (e.model.isNew()) {
-                    }
-                    amountRequestedNumericTextBox.enable(false);
-                    amountRequestedPercentageNumericTextBox.enable();
-                    amountRequestedPercentageNumericTextBox.focus();
-                });
+                if (e.model.fields["percentage"].editable) {
+                    amountRequestedField.toggle(true);
+                    amountRequestedLabel.toggle(true);
+                    percentageLabel.toggle(true);
+                    percentageField.toggle(true);
 
-                radioButtonGroup.on('click', '#figureRadio', function () {
-                    e.model.amount_requested_is_percentage = false;
-                    if (e.model.isNew()) {
-                    }
-                    amountRequestedPercentageNumericTextBox.enable(false);
-                    amountRequestedNumericTextBox.enable();
-                    amountRequestedNumericTextBox.focus();
-                });
+                    amountRequestedField.find('input').attr('min', '0');
+                    percentageField.find('input').attr('min', 10).attr('max', 30).attr('data-min-msg', 'Amount Requested must be at least 10% of net salary!').attr('data-max-msg', 'Amount Requested must not exceed 30% of net salary!');
 
-                if (e.model.isNew() || e.model.amount_requested_is_percentage) {
-                    amountRequestedPercentageNumericTextBox.focus();
-                    amountRequestedNumericTextBox.enable(false);
-                    radioButtonGroup.find('#percentageRadio').attr('checked', 'checked');
-                } else {
-                    amountRequestedNumericTextBox.focus();
-                    amountRequestedPercentageNumericTextBox.enable(false);
-                    radioButtonGroup.find('#figureRadio').attr('checked', 'checked');
-                }
-                e.container.data('kendoWindow').bind('activate', function () {
+                    amountRequestedNumericTextBox.setOptions({
+                        format: "c",
+                        //min: '0'
+                    });
+                    amountRequestedPercentageNumericTextBox.setOptions({
+                        format: "#\\%",
+                        //min: '10',
+                        //max: '30'
+                    });
+
+                    percentageLabel.find('label').html('Amount Requested <br><small class="text-danger text-bold">Enter as Percentage (10% - 30%)</small>');
+                    amountRequestedLabel.find('label').html('Amount Requested <br> <small class="text-danger text-bold" > Enter as Figure</small>');
+
+                    radioButtonGroup.insertAfter(e.container.find('.k-edit-form-container').children('[data-container-for=amount_requested]'));
+                    radioButtonGroup.on('click', '#percentageRadio', function () {
+                        e.model.amount_requested_is_percentage = true;
+                        if (e.model.isNew()) {
+                        }
+                        amountRequestedNumericTextBox.enable(false);
+                        amountRequestedPercentageNumericTextBox.enable();
+                        amountRequestedPercentageNumericTextBox.focus();
+                    });
+
+                    radioButtonGroup.on('click', '#figureRadio', function () {
+                        e.model.amount_requested_is_percentage = false;
+                        if (e.model.isNew()) {
+                        }
+                        amountRequestedPercentageNumericTextBox.enable(false);
+                        amountRequestedNumericTextBox.enable();
+                        amountRequestedNumericTextBox.focus();
+                    });
+
                     if (e.model.isNew() || e.model.amount_requested_is_percentage) {
                         amountRequestedPercentageNumericTextBox.focus();
+                        amountRequestedNumericTextBox.enable(false);
+                        radioButtonGroup.find('#percentageRadio').attr('checked', 'checked');
                     } else {
                         amountRequestedNumericTextBox.focus();
+                        amountRequestedPercentageNumericTextBox.enable(false);
+                        radioButtonGroup.find('#figureRadio').attr('checked', 'checked');
                     }
-                });
+                    e.container.data('kendoWindow').bind('activate', function () {
+                        if (e.model.isNew() || e.model.amount_requested_is_percentage) {
+                            amountRequestedPercentageNumericTextBox.focus();
+                        } else {
+                            amountRequestedNumericTextBox.focus();
+                        }
+                    });
+                } else {
+                    percentageLabel.find('label').html('Amount Requested');
+                    amountRequestedLabel.find('label').html('Amount Requested');
 
-                e.container.find('.k-edit-label:eq(10)').toggle(Boolean(e.model.amount_payable)); // toggle visibility for amount payable
-                e.container.find('.k-edit-field:eq(10)').toggle(Boolean(e.model.amount_payable));
-                e.container.find('.k-edit-label:eq(16)').toggle(Boolean(e.model.amount_received)); // toggle visibility for amount received
-                e.container.find('.k-edit-field:eq(16)').toggle(Boolean(e.model.amount_received));
-                e.container.find('.k-edit-label:eq(17)').toggle(Boolean(e.model.received_by)); // toggle visibility for received by
-                e.container.find('.k-edit-field:eq(17)').toggle(Boolean(e.model.received_by));
-                e.container.find('.k-edit-label:eq(14)').toggle(Boolean(e.model.amount_approved)); // toggle visibility for amount approved
-                e.container.find('.k-edit-field:eq(14)').toggle(Boolean(e.model.amount_approved));
-                e.container.find('.k-edit-label:eq(18)').toggle(Boolean(e.model.received_by)); // toggle visibility for date received // kendo grid has date set to today by default
-                e.container.find('.k-edit-field:eq(18)').toggle(Boolean(e.model.received_by));
+                    e.container.find('.k-edit-label:eq(3)').toggle(Boolean(e.model.percentage)); // toggle visibility for amount requested in percentage
+                    e.container.find('.k-edit-field:eq(3)').toggle(Boolean(e.model.percentage));
+                    e.container.find('.k-edit-label:eq(4)').toggle(Boolean(e.model.amount_requested)); // toggle visibility for amount requested in percentage
+                    e.container.find('.k-edit-field:eq(4)').toggle(Boolean(e.model.amount_requested));
+                    e.container.find('.k-edit-label:eq(10)').toggle(Boolean(e.model.amount_payable)); // toggle visibility for amount payable
+                    e.container.find('.k-edit-field:eq(10)').toggle(Boolean(e.model.amount_payable));
+                    e.container.find('.k-edit-label:eq(16)').toggle(Boolean(e.model.amount_received)); // toggle visibility for amount received
+                    e.container.find('.k-edit-field:eq(16)').toggle(Boolean(e.model.amount_received));
+                    e.container.find('.k-edit-label:eq(17)').toggle(Boolean(e.model.received_by)); // toggle visibility for received by
+                    e.container.find('.k-edit-field:eq(17)').toggle(Boolean(e.model.received_by));
+                    e.container.find('.k-edit-label:eq(14)').toggle(Boolean(e.model.amount_approved)); // toggle visibility for amount approved
+                    e.container.find('.k-edit-field:eq(14)').toggle(Boolean(e.model.amount_approved));
+                    e.container.find('.k-edit-label:eq(18)').toggle(Boolean(e.model.received_by)); // toggle visibility for date received // kendo grid has date set to today by default
+                    e.container.find('.k-edit-field:eq(18)').toggle(Boolean(e.model.received_by));
+                }
             }
         });
         kGridAddButton = $('.k-grid-add');
