@@ -23,10 +23,12 @@ class SalaryAdvanceManagerAjax extends Controller
         } else {
             if ($current_user->user_id == $hr || $current_user->user_id == $fmgr) {
                 $ret = $db->where('user_id', $current_user->user_id, '!=')
+                    ->orderBy('date_raised')
                     ->where('deleted', false)
                     ->get('salary_advance');
             } else {
                 $ret = $db->where('user_id', $current_user->user_id, '!=')
+                    ->orderBy('date_raised')
                     ->where('deleted', false)
                     ->where('department_id', $current_user->department_id)
                     ->get('salary_advance');
@@ -87,7 +89,6 @@ class SalaryAdvanceManagerAjax extends Controller
     public function Update()
     {
         $hod_remarks = $hr_remarks = $fmgr_remarks = '';
-        hasActiveApplication(29);
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Sanitize POST array
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);

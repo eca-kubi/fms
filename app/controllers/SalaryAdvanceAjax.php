@@ -22,6 +22,7 @@ class SalaryAdvanceAjax extends Controller
             $ret = SalaryAdvanceModel::get(['id_salary_advance' => $_GET['id_salary_advance']]);
         } else {
             $ret = $db->where('user_id', $current_user->user_id)
+                ->orderBy('date_raised')
                 ->where('deleted', false)
                 ->get('salary_advance');
         }
