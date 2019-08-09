@@ -315,7 +315,7 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
                     template: function (dataItem) {
                         return "<span title='" + dataItem.name + "'>" + dataItem.name + "</span>";
                     },
-                    width: "15%",
+                    width: "8%",
                     headerAttributes: {
                         "class": "title"
                     }
