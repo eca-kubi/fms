@@ -348,7 +348,6 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
                 {
                     field: 'percentage',
                     title: 'Amount Requested in Percentage',
-                    //width: "12%",
                     template: function (dataItem) {
                         return "<span title='Amount Requested in Percentage: " + (dataItem.percentage ? kendo.toString(dataItem.percentage, '#\\%') : '') + "'>" + (dataItem.percentage ? kendo.toString(dataItem.percentage, '#\\%') : '') + "</span>"
                     },
@@ -357,6 +356,7 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
                     },
                     groupHeaderTemplate: "Amount Requested in Percentage: #= value? value + '%' : '' #",
                     aggregates: ["max", "min"],
+                    format: "{0:#\\%}"
                 },
                 {
                     field: 'amount_requested',
@@ -463,7 +463,7 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
                             field: 'amount_payable',
                             title: 'Amount Payable',
                             template: function (dataItem) {
-                                return "<span title='Amount Payable: " + (dataItem.amount_payable ? kendo.format('{0:c}', dataItem.amount_payable) : '') + "'>" + (dataItem.amount_payable ?  kendo.format('{0:c}', dataItem.amount_payable) : '') + "</span>"
+                                return "<span title='Amount Payable: " + (dataItem.amount_payable ? kendo.format('{0:c}', dataItem.amount_payable) : '') + "'>" + (dataItem.amount_payable ? kendo.format('{0:c}', dataItem.amount_payable) : '') + "</span>"
                             },
                             format: "{0:c}",
                             headerAttributes: {
@@ -527,7 +527,7 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
                             field: 'amount_approved',
                             title: 'Amount Approved',
                             template: function (dataItem) {
-                                return "<span title='Amount Approved: " + (dataItem.amount_approved ?  kendo.format('{0:c}', dataItem.amount_approved) : '') + "'>" + (dataItem.amount_approved ?  kendo.format('{0:c}', dataItem.amount_approved) : '') + "</span>"
+                                return "<span title='Amount Approved: " + (dataItem.amount_approved ? kendo.format('{0:c}', dataItem.amount_approved) : '') + "'>" + (dataItem.amount_approved ? kendo.format('{0:c}', dataItem.amount_approved) : '') + "</span>"
                             },
                             headerAttributes: {
                                 "class": "title"
@@ -554,7 +554,7 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
                     field: 'amount_received',
                     title: 'Amount Received',
                     template: function (dataItem) {
-                        return dataItem.amount_received ? "<span title='Amount Received: " +  kendo.format('{0:c}', dataItem.amount_received) + "'>" +  kendo.format('{0:c}', dataItem.amount_received) + "</span>" : "<span title='Pending'>Pending</span>"
+                        return dataItem.amount_received ? "<span title='Amount Received: " + kendo.format('{0:c}', dataItem.amount_received) + "'>" + kendo.format('{0:c}', dataItem.amount_received) + "</span>" : "<span title='Pending'>Pending</span>"
                     },
                     width: '10%',
                     attributes: {
@@ -693,9 +693,10 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
 
                 e.container.find('.k-edit-field .k-checkbox').parent().removeClass('pt-2');
 
+                // Toggleability
                 nameLabelField.toggle(true);
-                amountRequestedLabelField.toggle(!e.model.amount_requested_is_percentage || universal['isFmgr']);
-                percentageLabelField.toggle(e.model.amount_requested_is_percentage || universal['isFmgr']);
+                amountRequestedLabelField.toggle(!e.model.amount_requested_is_percentage /*|| universal['isFmgr']*/);
+                percentageLabelField.toggle(e.model.amount_requested_is_percentage /*|| universal['isFmgr']*/);
                 hodCommentLabelField.toggle(e.model["hod_comment_editable"]);
                 hodApprovalLabelField.toggle(e.model["hod_approval_editable"]);
                 hrApprovalLabelField.toggle(universal['isHr']);
@@ -707,14 +708,20 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
                 receivedByLabelField.toggle(Boolean(e.model.received_by)); // toggle visibility for received by
                 dateReceivedLabelField.toggle(Boolean(e.model.date_received)); // toggle visibility for date received
 
-                e.model.fields.amount_approved.editable = !e.model.fmgr_approval && universal['isFmgr'];
-                e.model.fields.amount_requested.editable = !e.model.fmgr_approval && universal['isFmgr'];
-                e.model.fields.percentage.editable = !e.model.fmgr_approval && universal['isFmgr'];
+                // Editability
+                /*e.model.fields.amount_requested.editable = !e.model.fmgr_approval && universal['isFmgr'];
+                e.model.fields.percentage.editable = !e.model.fmgr_approval && universal['isFmgr'];*/
+                e.model.fields.amount_requested.editable = false;
+                e.model.fields.percentage.editable = false;
                 e.model.fields.amount_payable.editable = !e.model.hr_approval && universal['isHR'];
                 e.model.fields.hod_comment.editable = e.model["hod_comment_editable"];
                 e.model.fields.hod_approval.editable = e.model["hod_approval_editable"] && !e.model.hod_approval;
+                e.model.fields.amount_approved.editable = !e.model.fmgr_approval && universal['isFmgr'];
+                e.model.fields.fmgr_approval.editable = e.model["fmgr_approval_editable"] && !e.model.fmgr_approval;
+                e.model.fields.fmgr_comment.editable = e.model["fmgr_comment_editable"];
 
-                if (!e.model.fields.amount_requested.editable || !universal['isFmgr']) {
+                // Edit Labels
+                if (!e.model.fields.amount_requested.editable /*|| !universal['isFmgr']*/) {
                     // This Label means Amount Requested and Percentage fields will not be edited
                     percentageLabelField.find('label').html('Amount Requested <br><small class="text-danger text-bold">(10% to 30% of Salary)</small>');
                     amountRequestedLabelField.find('label').html('Amount Requested <br> <small class="text-danger text-bold" ></small>');
@@ -729,13 +736,10 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
                 hrCommentLabelField.find('.k-textbox').attr('required', Boolean(e.model["hr_comment_editable"])).attr('data-required-msg', 'HR Comment is required!').attr('rows', '6');
                 amountPayableLabelField.find('.k-input').attr('data-required-msg', 'Amount Payable is required');
 
-                // Add formatting to numeric text boxes
-                if (e.model.fields.amount_payable.editable) {
-                    amountPayableNumericTextBox.setOptions({
-                        format: "c"
-                    });
-                }
-
+                // Set formatting
+                /*amountRequestedPercentageNumericTextBox.setOptions({
+                    format: "#\\%",
+                });*/
 
                 /*if (e.model.fields['hod_comment'].editable) {
                     e.container.find('.k-edit-label:not(:eq(3),:eq(4),:eq(5))').hide();

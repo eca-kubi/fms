@@ -371,7 +371,6 @@ $universal->has_active_application = hasActiveApplication($current_user->user_id
                 {
                     field: 'percentage',
                     title: 'Amount Requested in Percentage',
-                    //width: "12%",
                     template: function (dataItem) {
                         return "<span title='Amount Requested in Percentage: " + (dataItem.percentage ? kendo.toString(dataItem.percentage, '#\\%') : '') + "'>" + (dataItem.percentage ? kendo.toString(dataItem.percentage, '#\\%') : '') + "</span>"
                     },
@@ -380,6 +379,7 @@ $universal->has_active_application = hasActiveApplication($current_user->user_id
                     },
                     groupHeaderTemplate: "Amount Requested in Percentage: #= value? value + '%' : '' #",
                     aggregates: ["max", "min"],
+                    format: "{0:#\\%}"
                 },
                 {
                     field: 'amount_requested',
@@ -666,7 +666,7 @@ $universal->has_active_application = hasActiveApplication($current_user->user_id
                 }*/
             },
             beforeEdit: function (e) {
-                e.model.fields["percentage"].editable  = e.model.fields['amount_requested'].editable = !(e.model.hod_approval || e.model.fmgr_approval || e.model.hr_approval);
+                e.model.fields["percentage"].editable = e.model.fields['amount_requested'].editable = !(e.model.hod_approval || e.model.fmgr_approval || e.model.hr_approval);
             },
             edit: function (e) {
                 let percentageField = e.container.find('.k-edit-field:eq(3)');
@@ -689,16 +689,6 @@ $universal->has_active_application = hasActiveApplication($current_user->user_id
 
                     amountRequestedField.find('input').attr('min', '0');
                     percentageField.find('input').attr('min', 10).attr('max', 30).attr('data-min-msg', 'Amount Requested must be at least 10% of net salary!').attr('data-max-msg', 'Amount Requested must not exceed 30% of net salary!');
-
-                    amountRequestedNumericTextBox.setOptions({
-                        format: "c",
-                        //min: '0'
-                    });
-                    amountRequestedPercentageNumericTextBox.setOptions({
-                        format: "#\\%",
-                        //min: '10',
-                        //max: '30'
-                    });
 
                     percentageLabel.find('label').html('Amount Requested <br><small class="text-danger text-bold">Enter as Percentage (10% - 30%)</small>');
                     amountRequestedLabel.find('label').html('Amount Requested <br> <small class="text-danger text-bold" > Enter as Figure</small>');
