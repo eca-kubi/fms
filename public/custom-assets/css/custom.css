@@ -422,6 +422,28 @@ a.k-link.k-state-active {
     color: #000;
 }
 
+.close-jq-toast-single {
+    top: -3px;
+    right: 4px;
+}
+
+.close-jq-toast-single:hover {
+    color: red;
+}
+
+.jq-toast-wrap {
+    width: auto;
+}
+
+.jq-toast-single .text-bold, .close-jq-toast-single{
+    font-weight: 900;
+}
+
+/*th {
+    white-space: normal!important;
+    text-overflow: clip!important;
+    overflow-wrap: break-word!important;
+}*/
 /* shim */
 
 /* Portrait phones and smaller */
