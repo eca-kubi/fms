@@ -640,7 +640,7 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
             },
             beforeEdit: function (e) {
                 window.grid_uid = e.model.uid; // uid of current editing row
-                e.model.fields["percentage"].editable = e.model.fields['amount_requested'].editable = universal['isFmgr'] && !e.model.fmgr_approval;
+                /*e.model.fields["percentage"].editable = e.model.fields['amount_requested'].editable = universal['isFmgr'] && !e.model.fmgr_approval;
                 e.model.fields['hod_comment'].editable = e.model['hod_comment_editable'];
                 e.model.fields['hr_comment'].editable = e.model['hr_comment_editable'];
                 e.model.fields['fmgr_comment'].editable = e.model['fmgr_comment_editable'];
@@ -648,26 +648,10 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
                 e.model.fields['hod_approval'].editable = !e.model.hod_approval; // not editable once approved
                 e.model.fields['hr_approval'].editable = !e.model.hr_approval; // not editable once approved
                 e.model.fields.amount_payable.editable = universal['isHr'] && !e.model.hr_approval;
-                e.model.fields.amount_approved.editable = universal['isFmgr'] && !e.model.fmgr_approval;
-                /* if (!e.model.isNew()) {
-                     e.model.fields['name'].editable = false;
-                     e.model.fields['hod_comment'].editable = e.model['hod_comment_editable'];
-                     e.model.fields['hr_comment'].editable = e.model['hr_comment_editable'];
-                     e.model.fields['fmgr_comment'].editable = e.model['fmgr_comment_editable'];
-                     e.model.fields['fmgr_approval'].editable = !e.model.fmgr_approval; // not editable once approved
-                     e.model.fields['hod_approval'].editable = !e.model.hod_approval; // not editable once approved
-                     e.model.fields['hr_approval'].editable = !e.model.hr_approval; // not editable once approved
-                     e.model.fields.amount_payable.editable = e.model['hr_comment_editable'] && !e.model.fmgr_approval;
-                     e.model.fields.amount_approved.editable = e.model['fmgr_comment_editable'] && !e.model.fmgr_approval;
-                 }*/
+                e.model.fields.amount_approved.editable = universal['isFmgr'] && !e.model.fmgr_approval;*/
+
             },
             edit: function (e) {
-                let textAreaHodComment = e.container.find('.k-edit-field:eq(4) textarea[name=hod_comment]');
-                let textAreaHrComment = e.container.find('.k-edit-field:eq(7) textarea[name=hr_comment]');
-                let textAreaFmgrComment = e.container.find('.k-edit-field:eq(11) textarea[name=fmgr_comment]');
-                let amountPayable = e.container.find('.k-edit-field:eq(9) input[name=amount_payable]');
-                let amountApproved = e.container.find('.k-edit-field:eq(13) input[name=amount_approved]');
-
                 let nameLabelField = e.container.find('.k-edit-label:eq(0), .k-edit-field:eq(0)');
                 let percentageLabelField = e.container.find('.k-edit-label:eq(3), .k-edit-field:eq(3)');
                 let amountRequestedLabelField = e.container.find('.k-edit-label:eq(4), .k-edit-field:eq(4)');
