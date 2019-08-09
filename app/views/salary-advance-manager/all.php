@@ -675,8 +675,8 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
                 let hodApprovalLabelField = e.container.find('.k-edit-label:eq(6), .k-edit-field:eq(6)');
                 let hrCommentLabelField = e.container.find('.k-edit-label:eq(8), .k-edit-field:eq(8)');
                 let hrApprovalLabelField = e.container.find('.k-edit-label:eq(9), .k-edit-field:eq(9)');
-                //let fmgrCommentLabelField =
                 let amountPayableLabelField = e.container.find('.k-edit-label:eq(10), .k-edit-field:eq(10)');
+                let fmgrCommentLabelField = e.container.find('.k-edit-label:eq(12), .k-edit-field:eq(12)');
                 let fmgrApprovalLabelField = e.container.find('.k-edit-label:eq(13), .k-edit-field:eq(13)');
                 let amountApprovedLabelField = e.container.find('.k-edit-label:eq(14), .k-edit-field:eq(14)');
                 let amountReceivedLabelField = e.container.find('.k-edit-label:eq(15), .k-edit-field:eq(15)');
@@ -697,11 +697,12 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
                 nameLabelField.toggle(true);
                 amountRequestedLabelField.toggle(!e.model.amount_requested_is_percentage /*|| universal['isFmgr']*/);
                 percentageLabelField.toggle(e.model.amount_requested_is_percentage /*|| universal['isFmgr']*/);
-                hodCommentLabelField.toggle(e.model["hod_comment_editable"]);
-                hodApprovalLabelField.toggle(e.model["hod_approval_editable"]);
+                hodCommentLabelField.toggle(Boolean(e.model["hod_comment_editable"]));
+                hodApprovalLabelField.toggle(Boolean(e.model["hod_approval_editable"]));
                 hrApprovalLabelField.toggle(universal['isHr']);
                 hrCommentLabelField.toggle(universal['isHr']);
-                fmgrApprovalLabelField.toggle(Boolean(e.model.fmgr_approval)); // toggle visibility for amount approved
+                fmgrApprovalLabelField.toggle(universal['isFmgr']);
+                fmgrCommentLabelField.toggle(universal['isFmgr']);
                 amountPayableLabelField.toggle(Boolean(universal['isHr']) || Boolean(e.model.hr_approval));
                 amountApprovedLabelField.toggle(Boolean(universal['isFmgr']) || Boolean(e.model.fmgr_approval)); // toggle visibility for amount approved
                 amountReceivedLabelField.toggle(Boolean(e.model.amount_received)); // toggle visibility for amount received
@@ -732,34 +733,11 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
                 }
 
                 // Validations
-                hodCommentLabelField.find('.k-textbox').attr('required', Boolean(e.model["hod_comment_editable"])).attr('data-required-msg', 'HoD Comment is required!').attr('rows', '6');
-                hrCommentLabelField.find('.k-textbox').attr('required', Boolean(e.model["hr_comment_editable"])).attr('data-required-msg', 'HR Comment is required!').attr('rows', '6');
+                hodCommentLabelField.find('.k-textbox').attr('data-required-msg', 'HoD Comment is required!').attr('rows', '6');
+                hrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'HR Comment is required!').attr('rows', '6');
                 amountPayableLabelField.find('.k-input').attr('data-required-msg', 'Amount Payable is required');
-
-                // Set formatting
-                /*amountRequestedPercentageNumericTextBox.setOptions({
-                    format: "#\\%",
-                });*/
-
-                /*if (e.model.fields['hod_comment'].editable) {
-                    e.container.find('.k-edit-label:not(:eq(3),:eq(4),:eq(5))').hide();
-                    e.container.find('.k-edit-field:not(:eq(3),:eq(4),:eq(5))').hide();
-                    textAreaHodComment.attr('required', true).attr('data-required-msg', 'HoD Comment is required!');
-                    amountApproved.attr('required', false);
-                    amountPayable.attr('required', false);
-                } else if (e.model.fields['hr_comment'].editable) {
-                    e.container.find('.k-edit-label:not(:eq(0),:eq(3),:eq(7),:eq(8),:eq(9))').hide();
-                    e.container.find('.k-edit-field:not(:eq(0),:eq(3),:eq(7),:eq(8),:eq(9))').hide();
-                    amountApproved.attr('required', false);
-                    textAreaHrComment.attr('required', true).attr('data-required-msg', 'HR Comment is required!');
-                    amountPayable.attr('required', true).attr('data-required-msg', 'Amount Payable is required!');
-                } else if (e.model.fields['fmgr_comment'].editable) {
-                    e.container.find('.k-edit-label:not(:eq(0),:eq(3),:eq(9),:eq(11),:eq(12),:eq(13))').hide();
-                    e.container.find('.k-edit-field:not(:eq(0),:eq(3),:eq(9),:eq(11),:eq(12),:eq(13))').hide();
-                    amountPayable.attr('required', false);
-                    amountApproved.attr('required', true).attr('data-required-msg', 'Amount Approved is required!');
-                    textAreaFmgrComment.attr('required', true).attr('data-required-msg', 'Finance Mgr. Comment is required!');
-                }*/
+                fmgrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'Finance Mgr. Comment is required!').attr('rows', '6');
+                amountApprovedLabelField.find('.k-input').attr('data-required-msg', 'Amount Approved is required');
             }
         });
 
