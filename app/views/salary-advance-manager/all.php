@@ -702,8 +702,8 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
                 hrApprovalLabelField.toggle(universal['isHr']);
                 hrCommentLabelField.toggle(universal['isHr']);
                 fmgrApprovalLabelField.toggle(Boolean(e.model.fmgr_approval)); // toggle visibility for amount approved
-                amountPayableLabelField.toggle(Boolean(universal['isHr']));
-                amountApprovedLabelField.toggle(Boolean(universal['isFmgr'])); // toggle visibility for amount approved
+                amountPayableLabelField.toggle(Boolean(universal['isHr']) || Boolean(e.model.hr_approval));
+                amountApprovedLabelField.toggle(Boolean(universal['isFmgr']) || Boolean(e.model.fmgr_approval)); // toggle visibility for amount approved
                 amountReceivedLabelField.toggle(Boolean(e.model.amount_received)); // toggle visibility for amount received
                 receivedByLabelField.toggle(Boolean(e.model.received_by)); // toggle visibility for received by
                 dateReceivedLabelField.toggle(Boolean(e.model.date_received)); // toggle visibility for date received
