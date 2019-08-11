@@ -236,7 +236,8 @@ $universal->has_active_application = hasActiveApplication($current_user->user_id
                         },
                         date_received: {
                             type: 'date',
-                            editable: false
+                            editable: false,
+                            nullable: true
                         },
                         department_ref: {
                             editable: false
@@ -669,29 +670,24 @@ $universal->has_active_application = hasActiveApplication($current_user->user_id
                 e.model.fields["percentage"].editable = e.model.fields['amount_requested'].editable = !Boolean(e.model.hod_approval || e.model.fmgr_approval || e.model.hr_approval);
             },
             edit: function (e) {
-                let percentageField = e.container.find('.k-edit-field:eq(1)');
-                let percentageLabel = e.container.find('.k-edit-label:eq(1)');
-                let amountRequestedField = e.container.find(".k-edit-field:eq(2)");
-                let amountRequestedLabel = e.container.find('.k-edit-label:eq(2)');
-                let amountRequestedNumericTextBox = amountRequestedField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
-                let amountRequestedPercentageNumericTextBox = percentageField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
-                let radioButtonGroup = $('<div class="k-edit-field"><input type="radio" name="toggleAmountRequested" id="percentageRadio" class="k-radio" checked="checked" > <label class="k-radio-label" for="percentageRadio" >Percentage</label><input type="radio" name="toggleAmountRequested" id="figureRadio" class="k-radio"> <label class="k-radio-label" for="figureRadio">Figure</label></div>');
+                let percentageLabelField = e.container.find('.k-edit-label:eq(1), .k-edit-field:eq(1) ');
+                let amountRequestedLabelField = e.container.find(".k-edit-label:eq(2), .k-edit-field:eq(2)");
+                let amountRequestedNumericTextBox = amountRequestedLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
+                let amountRequestedPercentageNumericTextBox = percentageLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
+                let radioButtonGroup = $('<div class="editor-field"><input type="radio" name="toggleAmountRequested" id="percentageRadio" class="k-radio" checked="checked" > <label class="k-radio-label" for="percentageRadio" >Percentage</label><input type="radio" name="toggleAmountRequested" id="figureRadio" class="k-radio"> <label class="k-radio-label" for="figureRadio">Figure</label></div>');
 
                 // Toggle visibility off for all editor fields and labels
-                e.container.find('.k-edit-label').addClass("pt-2").toggle(false);
-                e.container.find('.k-edit-field').addClass("pt-2").toggle(false);
+                e.container.find('.k-edit-label, .k-edit-field').addClass("pt-2").toggle(false);
 
-                if (e.model.fields["percentage"].editable) {
-                    amountRequestedField.toggle(true);
-                    amountRequestedLabel.toggle(true);
-                    percentageLabel.toggle(true);
-                    percentageField.toggle(true);
+                if (e.model.isNew() || e.model.fields["percentage"].editable) {
+                    amountRequestedLabelField.toggle(true);
+                    percentageLabelField.toggle(true);
 
-                    amountRequestedField.find('input').attr('min', '0');
-                    percentageField.find('input').attr('min', 10).attr('max', 30).attr('data-min-msg', 'Amount Requested must be at least 10% of net salary!').attr('data-max-msg', 'Amount Requested must not exceed 30% of net salary!');
+                    amountRequestedLabelField.find('input').attr('min', '0');
+                    percentageLabelField.find('input').attr('min', 10).attr('max', 30).attr('data-min-msg', 'Amount Requested must be at least 10% of net salary!').attr('data-max-msg', 'Amount Requested must not exceed 30% of net salary!');
 
-                    percentageLabel.find('label').html('Amount Requested <br><small class="text-danger text-bold">Enter as Percentage (10% - 30%)</small>');
-                    amountRequestedLabel.find('label').html('Amount Requested <br> <small class="text-danger text-bold" > Enter as Figure</small>');
+                    percentageLabelField.find('label').html('Amount Requested <br><small class="text-danger text-bold">Enter as Percentage (10% - 30%)</small>');
+                    amountRequestedLabelField.find('label').html('Amount Requested <br> <small class="text-danger text-bold" > Enter as Figure</small>');
 
                     radioButtonGroup.insertAfter(e.container.find('.k-edit-form-container').children('[data-container-for=amount_requested]'));
                     radioButtonGroup.on('click', '#percentageRadio', function () {
@@ -708,7 +704,7 @@ $universal->has_active_application = hasActiveApplication($current_user->user_id
                         amountRequestedNumericTextBox.focus();
                     });
 
-                    if (e.model.isNew() || e.model.amount_requested_is_percentage) {
+                    if (e.model.amount_requested_is_percentage) {
                         amountRequestedPercentageNumericTextBox.focus();
                         amountRequestedNumericTextBox.enable(false);
                         radioButtonGroup.find('#percentageRadio').attr('checked', 'checked');
@@ -719,18 +715,18 @@ $universal->has_active_application = hasActiveApplication($current_user->user_id
                     }
 
                     e.container.data('kendoWindow').bind('activate', function () {
-                        if (e.model.isNew() || e.model.amount_requested_is_percentage) {
+                        if (e.model.amount_requested_is_percentage) {
                             amountRequestedPercentageNumericTextBox.focus();
                         } else {
                             amountRequestedNumericTextBox.focus();
                         }
                     });
                 } else {
-                    percentageLabel.find('label').html('Amount Requested');
-                    amountRequestedLabel.find('label').html('Amount Requested');
+                    percentageLabelField.toggle(Boolean(e.model.amount_requested_is_percentage)).find('label').html('Amount Requested');
+                    amountRequestedLabelField.toggle(!Boolean(e.model.amount_requested_is_percentage)).find('label').html('Amount Requested');
                 }
-                e.container.find('.k-edit-label:eq(1), .k-edit-field:eq(1)').toggle(Boolean(e.model.percentage)); // toggle visibility for amount requested in percentage
-                e.container.find('.k-edit-label:eq(2), .k-edit-field:eq(2)').toggle(Boolean(e.model.amount_requested)); // toggle visibility for amount requested in figures
+             /*   e.container.find('.k-edit-label:eq(1), .k-edit-field:eq(1)').toggle(Boolean(e.model.percentage) || Boolean(e.model.amount_requested_is_percentage)); // toggle visibility for amount requested in percentage
+                e.container.find('.k-edit-label:eq(2), .k-edit-field:eq(2)').toggle(Boolean(e.model.amount_requested)); // toggle visibility for amount requested in figures*/
                 e.container.find('.k-edit-label:eq(8), .k-edit-field:eq(8)').toggle(Boolean(e.model.hr_approval)); // toggle visibility for amount payable
                 e.container.find('.k-edit-label:eq(12), .k-edit-field:eq(12)').toggle(Boolean(e.model.fmgr_approval)); // toggle visibility for amount approved
                 e.container.find('.k-edit-label:eq(14), .k-edit-field:eq(14)').toggle(Boolean(e.model.amount_received)); // toggle visibility for amount received
