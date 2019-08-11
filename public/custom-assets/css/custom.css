@@ -439,6 +439,10 @@ a.k-link.k-state-active {
     font-weight: 900;
 }
 
+.k-edit-label {
+    padding: 0.65em 0 0;
+}
+
 /*th {
     white-space: normal!important;
     text-overflow: clip!important;

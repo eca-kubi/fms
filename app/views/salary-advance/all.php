@@ -153,13 +153,13 @@ $universal->has_active_application = hasActiveApplication($current_user->user_id
                 model: {
                     id: "id_salary_advance",
                     fields: {
-                        name: {
+                        /*name: {
                             editable: false,
                             from: "employee.name"
                         },
                         employee: {
                             defaultValue: {}
-                        },
+                        },*/
                         date_raised: {
                             type: 'date',
                             editable: false
@@ -331,7 +331,7 @@ $universal->has_active_application = hasActiveApplication($current_user->user_id
                 buttonCount: 5
             },
             columns: [
-                {
+                /*{
                     field: 'name',
                     title: 'Employee',
                     editor: dropDownEditor,
@@ -342,8 +342,8 @@ $universal->has_active_application = hasActiveApplication($current_user->user_id
                     headerAttributes: {
                         "class": "title"
                     }
-                },
-                {
+                },*/
+               /* {
                     field: 'department',
                     title: 'Department',
                     template: function (dataItem) {
@@ -355,7 +355,7 @@ $universal->has_active_application = hasActiveApplication($current_user->user_id
                     filterable: {
                         ui: departmentFilter
                     }
-                },
+                },*/
                 {
                     field: 'date_raised',
                     title: 'Date Raised',
@@ -666,13 +666,13 @@ $universal->has_active_application = hasActiveApplication($current_user->user_id
                 }*/
             },
             beforeEdit: function (e) {
-                e.model.fields["percentage"].editable = e.model.fields['amount_requested'].editable = !(e.model.hod_approval || e.model.fmgr_approval || e.model.hr_approval);
+                e.model.fields["percentage"].editable = e.model.fields['amount_requested'].editable = !Boolean(e.model.hod_approval || e.model.fmgr_approval || e.model.hr_approval);
             },
             edit: function (e) {
-                let percentageField = e.container.find('.k-edit-field:eq(3)');
-                let percentageLabel = e.container.find('.k-edit-label:eq(3)');
-                let amountRequestedField = e.container.find(".k-edit-field:eq(4)");
-                let amountRequestedLabel = e.container.find('.k-edit-label:eq(4)');
+                let percentageField = e.container.find('.k-edit-field:eq(1)');
+                let percentageLabel = e.container.find('.k-edit-label:eq(1)');
+                let amountRequestedField = e.container.find(".k-edit-field:eq(2)");
+                let amountRequestedLabel = e.container.find('.k-edit-label:eq(2)');
                 let amountRequestedNumericTextBox = amountRequestedField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
                 let amountRequestedPercentageNumericTextBox = percentageField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
                 let radioButtonGroup = $('<div class="k-edit-field"><input type="radio" name="toggleAmountRequested" id="percentageRadio" class="k-radio" checked="checked" > <label class="k-radio-label" for="percentageRadio" >Percentage</label><input type="radio" name="toggleAmountRequested" id="figureRadio" class="k-radio"> <label class="k-radio-label" for="figureRadio">Figure</label></div>');
@@ -696,8 +696,6 @@ $universal->has_active_application = hasActiveApplication($current_user->user_id
                     radioButtonGroup.insertAfter(e.container.find('.k-edit-form-container').children('[data-container-for=amount_requested]'));
                     radioButtonGroup.on('click', '#percentageRadio', function () {
                         e.model.amount_requested_is_percentage = true;
-                        if (e.model.isNew()) {
-                        }
                         amountRequestedNumericTextBox.enable(false);
                         amountRequestedPercentageNumericTextBox.enable();
                         amountRequestedPercentageNumericTextBox.focus();
@@ -705,8 +703,6 @@ $universal->has_active_application = hasActiveApplication($current_user->user_id
 
                     radioButtonGroup.on('click', '#figureRadio', function () {
                         e.model.amount_requested_is_percentage = false;
-                        if (e.model.isNew()) {
-                        }
                         amountRequestedPercentageNumericTextBox.enable(false);
                         amountRequestedNumericTextBox.enable();
                         amountRequestedNumericTextBox.focus();
@@ -721,6 +717,7 @@ $universal->has_active_application = hasActiveApplication($current_user->user_id
                         amountRequestedPercentageNumericTextBox.enable(false);
                         radioButtonGroup.find('#figureRadio').attr('checked', 'checked');
                     }
+
                     e.container.data('kendoWindow').bind('activate', function () {
                         if (e.model.isNew() || e.model.amount_requested_is_percentage) {
                             amountRequestedPercentageNumericTextBox.focus();
@@ -731,22 +728,14 @@ $universal->has_active_application = hasActiveApplication($current_user->user_id
                 } else {
                     percentageLabel.find('label').html('Amount Requested');
                     amountRequestedLabel.find('label').html('Amount Requested');
-
-                    e.container.find('.k-edit-label:eq(3)').toggle(Boolean(e.model.percentage)); // toggle visibility for amount requested in percentage
-                    e.container.find('.k-edit-field:eq(3)').toggle(Boolean(e.model.percentage));
-                    e.container.find('.k-edit-label:eq(4)').toggle(Boolean(e.model.amount_requested)); // toggle visibility for amount requested in percentage
-                    e.container.find('.k-edit-field:eq(4)').toggle(Boolean(e.model.amount_requested));
-                    e.container.find('.k-edit-label:eq(10)').toggle(Boolean(e.model.amount_payable)); // toggle visibility for amount payable
-                    e.container.find('.k-edit-field:eq(10)').toggle(Boolean(e.model.amount_payable));
-                    e.container.find('.k-edit-label:eq(16)').toggle(Boolean(e.model.amount_received)); // toggle visibility for amount received
-                    e.container.find('.k-edit-field:eq(16)').toggle(Boolean(e.model.amount_received));
-                    e.container.find('.k-edit-label:eq(17)').toggle(Boolean(e.model.received_by)); // toggle visibility for received by
-                    e.container.find('.k-edit-field:eq(17)').toggle(Boolean(e.model.received_by));
-                    e.container.find('.k-edit-label:eq(14)').toggle(Boolean(e.model.amount_approved)); // toggle visibility for amount approved
-                    e.container.find('.k-edit-field:eq(14)').toggle(Boolean(e.model.amount_approved));
-                    e.container.find('.k-edit-label:eq(18)').toggle(Boolean(e.model.received_by)); // toggle visibility for date received // kendo grid has date set to today by default
-                    e.container.find('.k-edit-field:eq(18)').toggle(Boolean(e.model.received_by));
                 }
+                e.container.find('.k-edit-label:eq(1), .k-edit-field:eq(1)').toggle(Boolean(e.model.percentage)); // toggle visibility for amount requested in percentage
+                e.container.find('.k-edit-label:eq(2), .k-edit-field:eq(2)').toggle(Boolean(e.model.amount_requested)); // toggle visibility for amount requested in figures
+                e.container.find('.k-edit-label:eq(8), .k-edit-field:eq(8)').toggle(Boolean(e.model.hr_approval)); // toggle visibility for amount payable
+                e.container.find('.k-edit-label:eq(12), .k-edit-field:eq(12)').toggle(Boolean(e.model.fmgr_approval)); // toggle visibility for amount approved
+                e.container.find('.k-edit-label:eq(14), .k-edit-field:eq(14)').toggle(Boolean(e.model.amount_received)); // toggle visibility for amount received
+                e.container.find('.k-edit-label:eq(15), .k-edit-field:eq(15)').toggle(Boolean(e.model.received_by)); // toggle visibility for received by
+                e.container.find('.k-edit-label:eq(16), .k-edit-field:eq(16)').toggle(Boolean(e.model.date_received)); // toggle visibility for date received // kendo grid has date set to today by default
             }
         });
         kGridAddButton = $('.k-grid-add');

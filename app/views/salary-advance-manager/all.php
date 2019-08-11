@@ -533,7 +533,8 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
                                 "class": "title"
                             },
                             groupHeaderTemplate: "Amount Approved: #= value?  kendo.format('{0:c}', value): 'Pending' #",
-                            aggregates: ["max", "min"]
+                            aggregates: ["max", "min"],
+                            format: "{0:c}"
                         },
                         {
                             field: 'fmgr_approval_date',
@@ -640,15 +641,19 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
             },
             beforeEdit: function (e) {
                 window.grid_uid = e.model.uid; // uid of current editing row
-                /*e.model.fields["percentage"].editable = e.model.fields['amount_requested'].editable = universal['isFmgr'] && !e.model.fmgr_approval;
-                e.model.fields['hod_comment'].editable = e.model['hod_comment_editable'];
-                e.model.fields['hr_comment'].editable = e.model['hr_comment_editable'];
-                e.model.fields['fmgr_comment'].editable = e.model['fmgr_comment_editable'];
-                e.model.fields['fmgr_approval'].editable = !e.model.fmgr_approval; // not editable once approved
-                e.model.fields['hod_approval'].editable = !e.model.hod_approval; // not editable once approved
-                e.model.fields['hr_approval'].editable = !e.model.hr_approval; // not editable once approved
-                e.model.fields.amount_payable.editable = universal['isHr'] && !e.model.hr_approval;
-                e.model.fields.amount_approved.editable = universal['isFmgr'] && !e.model.fmgr_approval;*/
+                // Editability
+                /*e.model.fields.amount_requested.editable = !e.model.fmgr_approval && universal['isFmgr'];
+                e.model.fields.percentage.editable = !e.model.fmgr_approval && universal['isFmgr'];*/
+                e.model.fields.amount_requested.editable = false;
+                e.model.fields.percentage.editable = false;
+                e.model.fields.hod_comment.editable = e.model["hod_comment_editable"];
+                e.model.fields.hod_approval.editable = e.model["hod_approval_editable"] && !e.model.hod_approval;
+                e.model.fields.amount_payable.editable = universal['isHr'] && !Boolean(e.model.hr_approval);
+                e.model.fields.hr_approval.editable = universal['isHr'] && !Boolean(e.model.hr_approval);
+                e.model.fields.hr_comment.editable = universal['isHr'];
+                e.model.fields.amount_approved.editable = universal['isFmgr'] && !Boolean(e.model.fmgr_approval);
+                e.model.fields.fmgr_approval.editable = universal['isFmgr'] && !Boolean(e.model.fmgr_approval);
+                e.model.fields.fmgr_comment.editable = universal['isFmgr'];
 
             },
             edit: function (e) {
@@ -663,9 +668,10 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
                 let fmgrCommentLabelField = e.container.find('.k-edit-label:eq(12), .k-edit-field:eq(12)');
                 let fmgrApprovalLabelField = e.container.find('.k-edit-label:eq(13), .k-edit-field:eq(13)');
                 let amountApprovedLabelField = e.container.find('.k-edit-label:eq(14), .k-edit-field:eq(14)');
-                let amountReceivedLabelField = e.container.find('.k-edit-label:eq(15), .k-edit-field:eq(15)');
-                let receivedByLabelField = e.container.find('.k-edit-label:eq(16), .k-edit-field:eq(16)');
-                let dateReceivedLabelField = e.container.find('.k-edit-label:eq(17), .k-edit-field:eq(17)');
+                let fmgrApprovalDateLabelField = e.container.find('.k-edit-label:eq(15), .k-edit-field:eq(15)');
+                let amountReceivedLabelField = e.container.find('.k-edit-label:eq(16), .k-edit-field:eq(16)');
+                let receivedByLabelField = e.container.find('.k-edit-label:eq(17), .k-edit-field:eq(17)');
+                let dateReceivedLabelField = e.container.find('.k-edit-label:eq(18), .k-edit-field:eq(18)');
 
                 let amountRequestedNumericTextBox = amountRequestedLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
                 let amountRequestedPercentageNumericTextBox = percentageLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
@@ -684,26 +690,14 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
                 hodCommentLabelField.toggle(Boolean(e.model["hod_comment_editable"]));
                 hodApprovalLabelField.toggle(Boolean(e.model["hod_approval_editable"]));
                 hrApprovalLabelField.toggle(universal['isHr']);
-                hrCommentLabelField.toggle(universal['isHr']);
-                fmgrApprovalLabelField.toggle(universal['isFmgr']);
-                fmgrCommentLabelField.toggle(universal['isFmgr']);
+                hrCommentLabelField.toggle(!Boolean(e.model.hr_approval));
+                fmgrApprovalLabelField.toggle(!Boolean(e.model.fmgr_approval));
+                fmgrCommentLabelField.toggle(!Boolean(e.model.fmgr_approval));
                 amountPayableLabelField.toggle(Boolean(universal['isHr']) || Boolean(e.model.hr_approval));
                 amountApprovedLabelField.toggle(Boolean(universal['isFmgr']) || Boolean(e.model.fmgr_approval)); // toggle visibility for amount approved
                 amountReceivedLabelField.toggle(Boolean(e.model.amount_received)); // toggle visibility for amount received
                 receivedByLabelField.toggle(Boolean(e.model.received_by)); // toggle visibility for received by
                 dateReceivedLabelField.toggle(Boolean(e.model.date_received)); // toggle visibility for date received
-
-                // Editability
-                /*e.model.fields.amount_requested.editable = !e.model.fmgr_approval && universal['isFmgr'];
-                e.model.fields.percentage.editable = !e.model.fmgr_approval && universal['isFmgr'];*/
-                e.model.fields.amount_requested.editable = false;
-                e.model.fields.percentage.editable = false;
-                e.model.fields.amount_payable.editable = !e.model.hr_approval && universal['isHR'];
-                e.model.fields.hod_comment.editable = e.model["hod_comment_editable"];
-                e.model.fields.hod_approval.editable = e.model["hod_approval_editable"] && !e.model.hod_approval;
-                e.model.fields.amount_approved.editable = !e.model.fmgr_approval && universal['isFmgr'];
-                e.model.fields.fmgr_approval.editable = e.model["fmgr_approval_editable"] && !e.model.fmgr_approval;
-                e.model.fields.fmgr_comment.editable = e.model["fmgr_comment_editable"];
 
                 // Edit Labels
                 if (!e.model.fields.amount_requested.editable /*|| !universal['isFmgr']*/) {
