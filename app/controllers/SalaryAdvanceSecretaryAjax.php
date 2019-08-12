@@ -59,7 +59,7 @@ class SalaryAdvanceSecretaryAjax extends Controller
             $data = [
                 'amount_requested_is_percentage' => $_POST['amount_requested_is_percentage'] === 'true' ? true : false,
                 'amount_requested' => $_POST['amount_requested'] ? $_POST['amount_requested'] : null,
-                'raised_by' => getUserSession()->user_id,
+                'raised_by_id' => getUserSession()->user_id,
                 'percentage' => $_POST['percentage'],
                 'user_id' =>$_POST['user_id'],
                 'department_id' => $_POST['department_id'],
@@ -92,6 +92,7 @@ class SalaryAdvanceSecretaryAjax extends Controller
             } else {
                 $ret[0]['success'] = false;
                 $ret[0]['reason'] = 'An error occured';
+                $ret['errors'] = ['message' => 'An error occured!', 'code' => ERROR_UNSPECIFIED_ERROR];
             }
             $ret = $this->transformArrayData($ret);
             echo json_encode($ret);
