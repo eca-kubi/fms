@@ -34,7 +34,7 @@ class EmployeesAjax extends Controller
         foreach ($ret as $key => &$value) {
             $employee = new stdClass();
             $employee->name = concatNameWithUserId($value['user_id']);
-            $employee->department = getDepartment($value['user_id']);
+            $employee->department = getDepartment( (new User($value['user_id']))->department_id);
             $value['name'] = $employee->name;
             $value['employee'] = $employee;
             $value['department'] = $employee->department;

@@ -41,7 +41,8 @@ class SalaryAdvanceSecretaryAjax extends Controller
             $hod = getCurrentManager($value['department_id']);
             $employee = new stdClass();
             $employee->name = concatNameWithUserId($value['user_id']);
-            $employee->department = getDepartment($value['user_id']);
+            $employee->department = getDepartment((new User($value['user_id']))->department_id);
+            $value['employee'] = $employee;
             $value['name'] = $employee->name;
             $value['department'] = $employee->department;
             $value['raised_by'] = $value['raised_by_id'] ? concatNameWithUserId($value['raised_by_id']) : "";
