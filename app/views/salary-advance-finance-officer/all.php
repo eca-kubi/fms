@@ -106,7 +106,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
             },
             error: function (e) {
                 //console.log("error event handler", e.errors[0]);
-                toastError(e.errors[0]);
+                toastError(e.errors['message']);
                 salaryAdvanceDataSource.cancelChanges();
             },
             requestEnd: function (e) {
@@ -263,7 +263,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
             mobile: true,
             noRecords: true,
             navigatable: true,
-            toolbar: ["create", "excel"],
+            toolbar: [ "excel"],
             excel: {
                 fileName: "Salary Advance Export.xlsx",
                 //proxyURL: "https://demos.telerik.com/kendo-ui/service/export",
@@ -594,56 +594,40 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 {
                     template: "<span class='text-center action-tools'>" +
                         "<span class='col' title='Edit'><a href='\\#' class='text-black action-edit'><i class='fa fa-pencil'></i></a></span>" +
-                        "<span class='col' title='Delete'><a href='\\#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span><span class='col' title='More Info'><a href='\\#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
+                        "<span class='col d-none' title='Delete'><a href='\\#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span><span class='col' title='More Info'><a href='\\#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
                         "<span class='col' title='Print'><a href='\\#' class='text-primary action-print print-it' target='_blank'><i class='fas fa-print'></i></a></span>" +
                         "</span>",
                     width: "10%",
                     title: "Action"
                 },
             ],
-            detailTemplate: kendo.template(`
-     <div class="">
-        <b>Date Raised</b>: #= kendo.toString(kendo.parseDate(date_raised), 'dddd dd MMM, yyyy') #</br>
-        #=amount_requested? '<b>Amount Requested in Figures</b>: ' + kendo.format('{0:c}', amount_requested) + '</br>' : ''#
-        #=percentage? '<b>Amount Requested in Percentage </b>' + percentage + '%</br>' : '' #
-        <b>Approved by HoD?</b> #= hod_approval? 'Yes' : 'No' #</br>
-        #=hod_approval_date? '<b>HoD Approval Date: </b>' + kendo.toString(kendo.parseDate(hod_approval_date), 'dddd dd MMM, yyyy')+'</br>': '' #
-        <b>Approved by HR? </b> #= hr_approval? 'Yes' : 'No' # </br>
-        #=hr_approval_date? '<b>HR Approval Date: </b>' + kendo.toString(kendo.parseDate(hr_approval_date), 'dddd dd MMM, yyyy')+'</br>': '' #
-        <b >Amount Payable </b>: #= amount_payable? kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_payable)) : 'Pending' #</br>
-        <b>Approved by Finance Manager? </b> #= fmgr_approval? 'Yes' : 'No' # </br>
-        #=fmgr_approval_date? '<b>Finance Mgr. Approval Date: </b>' + kendo.toString(kendo.parseDate(fmgr_approval_date), 'dddd dd MMM, yyyy')+'</br>': '' #
-        <b>Amount Approved </b>: #= amount_approved? kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_approved)) : 'Pending' #</br>
-        <b>Amount Received </b>: #= amount_received? kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_received)) : 'Pending' #</br>
-        #=date_received? '<b>Date Received: </b>' + kendo.toString(kendo.parseDate(date_received), 'dddd dd MMM, yyyy')+'</br>': '' #
-        #=received_by? '<b>Received by: </b>' + received_by  +'</br>': '' #
-    </div>
-   `),
+            detailTemplate: kendo.template(summaryTemplate),
             dataSource: salaryAdvanceDataSource,
             dataBinding: function () {
                 //let no = (this.dataSource.page() - 1) * this.dataSource.pageSize();
             },
             dataBound: function (e) {
-                //let len = $salaryAdvanceGrid.find("tbody tr").length;
-                /*for(let i=0;i<len ; i++)
-                {
-                    let model = grid.data("kendoGrid").dataSource.at(i);
-                    if (model && !model.hod_comment_editable) {//field names
-                        model.fields["hod_comment"].editable = false;
-                    } else {
-                        model.fields["hod_comment"].editable = true;
-                    }
-                }*/
+                let grid = $salaryAdvanceGrid.data('kendoGrid');
+                let data = grid.dataSource.data();
+                $.each(data, function (i, row) {
+                    $('tr[data-uid="' + row.uid + '"] ').find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["id_salary_advance"]);
+                });
+                $(".print-it").printPage();
             },
             beforeEdit: function (e) {
                 window.grid_uid = e.model.uid; // uid of current editing row
-                e.model.fields['amount_requested'].editable = e.model.isNew();
+                /*e.model.fields['amount_requested'].editable = e.model.isNew();
                 e.model.fields['name'].editable = e.model.isNew();
                 e.model.fields['received_by'].editable = e.model.fmgr_approval && !Boolean(e.model.received_by);
-                e.model.fields['amount_received'].editable = e.model.fmgr_approval && !Boolean(e.model.amount_received);
+                e.model.fields['amount_received'].editable = e.model.fmgr_approval && !Boolean(e.model.amount_received);*/
+                // Editability
+                e.model.fields.amount_requested.editable = false;
+                e.model.fields.percentage.editable = false;
+                e.model.fields.received_by.editable = e.model.fmgr_approval && !Boolean(e.model.received_by);
+
             },
             edit: function (e) {
-                e.container.find('.k-edit-label:not(:eq(0),:eq(3))').hide();
+               /* e.container.find('.k-edit-label:not(:eq(0),:eq(3))').hide();
                 e.container.find('.k-edit-field:not(:eq(0),:eq(3))').hide();
                 e.container.find('.k-edit-field:eq(3) input[name=amount_requested]').attr('data-required-msg', 'Amount Requested is required!');
                 e.container.find('.k-edit-label').addClass('pt-2');
@@ -663,7 +647,41 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 e.container.find('.k-edit-label:eq(13)').toggle(Boolean(e.model.amount_approved)); // toggle visibility for amount approved
                 e.container.find('.k-edit-field:eq(13)').toggle(Boolean(e.model.amount_approved));
                 e.container.find('.k-edit-label:eq(17)').toggle(Boolean(e.model.date_received)); // toggle visibility for date received
-                e.container.find('.k-edit-field:eq(17)').toggle(Boolean(e.model.date_received));
+                e.container.find('.k-edit-field:eq(17)').toggle(Boolean(e.model.date_received));*/
+                let nameLabelField = e.container.find('.k-edit-label:eq(0), .k-edit-field:eq(0)');
+                let percentageLabelField = e.container.find('.k-edit-label:eq(3), .k-edit-field:eq(3)');
+                let amountRequestedLabelField = e.container.find('.k-edit-label:eq(4), .k-edit-field:eq(4)');
+                let hodCommentLabelField = e.container.find('.k-edit-label:eq(5), .k-edit-field:eq(5)');
+                let hodApprovalLabelField = e.container.find('.k-edit-label:eq(6), .k-edit-field:eq(6)');
+                let hrCommentLabelField = e.container.find('.k-edit-label:eq(8), .k-edit-field:eq(8)');
+                let hrApprovalLabelField = e.container.find('.k-edit-label:eq(9), .k-edit-field:eq(9)');
+                let amountPayableLabelField = e.container.find('.k-edit-label:eq(10), .k-edit-field:eq(10)');
+                let fmgrCommentLabelField = e.container.find('.k-edit-label:eq(12), .k-edit-field:eq(12)');
+                let fmgrApprovalLabelField = e.container.find('.k-edit-label:eq(13), .k-edit-field:eq(13)');
+                let amountApprovedLabelField = e.container.find('.k-edit-label:eq(14), .k-edit-field:eq(14)');
+                let amountReceivedLabelField = e.container.find('.k-edit-label:eq(16), .k-edit-field:eq(16)');
+                let receivedByLabelField = e.container.find('.k-edit-label:eq(17), .k-edit-field:eq(17)');
+                let dateReceivedLabelField = e.container.find('.k-edit-label:eq(18), .k-edit-field:eq(18)');
+
+                // Edit labels
+                percentageLabelField.find('label').html('Amount Requested <br><small class="text-danger text-bold">10% to 30% of Salary</small>');
+                amountRequestedLabelField.find('label').html('Amount Requested <br> <small class="text-danger text-bold" ></small>');
+
+                // Toggle visibility off for all editor fields and labels
+                e.container.find('.k-edit-label, .k-edit-field').addClass("pt-2").toggle(false);
+                e.container.find('.k-edit-field .k-checkbox').parent().removeClass('pt-2');
+
+                nameLabelField.toggle(true);
+                amountRequestedLabelField.toggle(!e.model.amount_requested_is_percentage /*|| universal['isFmgr']*/);
+                percentageLabelField.toggle(e.model.amount_requested_is_percentage /*|| universal['isFmgr']*/);
+                fmgrApprovalLabelField.toggle(true);
+                //fmgrCommentLabelField.toggle(Boolean(e.model.fmgr_approval));
+                amountPayableLabelField.toggle(Boolean(e.model.hr_approval));
+                amountApprovedLabelField.toggle(Boolean(e.model.fmgr_approval)); // toggle visibility for amount approved
+                amountReceivedLabelField.toggle(Boolean(e.model.amount_received)); // toggle visibility for amount received
+                receivedByLabelField.toggle(Boolean(e.model.fmgr_approval)); // toggle visibility for received by
+                dateReceivedLabelField.toggle(Boolean(e.model.date_received)); // toggle visibility for date received
+
             },
             save: function (e) {
                 //console.log(('saved'))
@@ -708,7 +726,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
             let $this = $(this);
             let actionTools = $this.closest('.action-tools');
             actionTools.html("<span class='col' title='Edit'><a href='#' class='text-black action-edit'><i class='fa fa-pencil'></i></a></span>" +
-                "<span class='col' title='Delete'><a href='#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span>" +
+                "<span class='col d-none' title='Delete'><a href='#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span>" +
                 "<span class='col' title='More Info'><a href='#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
                 "</span>");
             $salaryAdvanceGrid.data("kendoGrid").cancelChanges();
@@ -718,7 +736,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
             let $this = $(this);
             let actionTools = $this.closest('.action-tools');
             actionTools.html("<span class='col' title='Edit'><a href='#' class='text-black action-edit'><i class='fa fa-pencil'></i></a></span>" +
-                "<span class='col' title='Delete'><a href='#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span>" +
+                "<span class='col d-none' title='Delete'><a href='#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span>" +
                 "<span class='col' title='More Info'><a href='#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
                 "</span>");
             $salaryAdvanceGrid.data("kendoGrid").saveChanges();

@@ -619,36 +619,19 @@ $universal->has_active_application = hasActiveApplication($current_user->user_id
                         "<span class='col' title='Delete'><a href='\\#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span><span class='col' title='More Info'><a href='\\#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
                         "<span class='col' title='Print'><a href='\\#' class='text-primary action-print print-it' target='_blank'><i class='fas fa-print'></i></a></span>" +
                         "</span>",
-                    width: "10%",
+                    width: "12%",
                     title: "Action"
                 },
             ],
-            detailTemplate: kendo.template(`
-    <div class="">
-        <b>Date Raised</b>: #= kendo.toString(kendo.parseDate(date_raised), 'dddd dd MMM, yyyy') #</br>
-        #=amount_requested? '<b>Amount Requested in Figures</b>: ' + kendo.format('{0:c}', amount_requested) + '</br>' : ''#
-        #=percentage? '<b>Amount Requested in Percentage </b>' + percentage + '%</br>' : '' #
-        <b>Approved by HoD?</b> #= hod_approval? 'Yes' : 'No' #</br>
-        #=hod_approval_date? '<b>HoD Approval Date: </b>' + kendo.toString(kendo.parseDate(hod_approval_date), 'dddd dd MMM, yyyy')+'</br>': '' #
-        <b>Approved by HR? </b> #= hr_approval? 'Yes' : 'No' # </br>
-        #=hr_approval_date? '<b>HR Approval Date: </b>' + kendo.toString(kendo.parseDate(hr_approval_date), 'dddd dd MMM, yyyy')+'</br>': '' #
-        <b >Amount Payable </b>: #= amount_payable? kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_payable)) : 'Pending' #</br>
-        <b>Approved by Finance Manager? </b> #= fmgr_approval? 'Yes' : 'No' # </br>
-        #=fmgr_approval_date? '<b>Finance Mgr. Approval Date: </b>' + kendo.toString(kendo.parseDate(fmgr_approval_date), 'dddd dd MMM, yyyy')+'</br>': '' #
-        <b>Amount Approved </b>: #= amount_approved? kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_approved)) : 'Pending' #</br>
-        <b>Amount Received </b>: #= amount_received? kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_received)) : 'Pending' #</br>
-        #=date_received? '<b>Date Received: </b>' + kendo.toString(kendo.parseDate(date_received), 'dddd dd MMM, yyyy')+'</br>': '' #
-        #=received_by? '<b>Received by: </b>' + received_by  +'</br>': '' #
-    </div>
-   `),
+            detailTemplate: kendo.template(summaryTemplate),
             dataSource: salaryAdvanceDataSource,
             dataBinding: function () {
                 //let no = (this.dataSource.page() - 1) * this.dataSource.pageSize();
             },
             dataBound: function () {
                 let grid = $salaryAdvanceGrid.data('kendoGrid');
-                grid.hideColumn("name");
-                grid.hideColumn("department");
+                //grid.hideColumn("name");
+                //grid.hideColumn("department");
                 let data = grid.dataSource.data();
                 $.each(data, function (i, row) {
                     $('tr[data-uid="' + row.uid + '"] ').find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["id_salary_advance"]);

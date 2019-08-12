@@ -601,40 +601,18 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
                     title: "Action"
                 },
             ],
-            detailTemplate: kendo.template(`
-    <div class="">
-        <b>Date Raised</b>: #= kendo.toString(kendo.parseDate(date_raised), 'dddd dd MMM, yyyy') #</br>
-        #=amount_requested? '<b>Amount Requested in Figures</b>: ' + kendo.format('{0:c}', amount_requested) + '</br>' : ''#
-        #=percentage? '<b>Amount Requested in Percentage </b>' + percentage + '%</br>' : '' #
-        <b>Approved by HoD?</b> #= hod_approval? 'Yes' : 'No' #</br>
-        #=hod_approval_date? '<b>HoD Approval Date: </b>' + kendo.toString(kendo.parseDate(hod_approval_date), 'dddd dd MMM, yyyy')+'</br>': '' #
-        <b>Approved by HR? </b> #= hr_approval? 'Yes' : 'No' # </br>
-        #=hr_approval_date? '<b>HR Approval Date: </b>' + kendo.toString(kendo.parseDate(hr_approval_date), 'dddd dd MMM, yyyy')+'</br>': '' #
-        <b >Amount Payable </b>: #= amount_payable? kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_payable)) : 'Pending' #</br>
-        <b>Approved by Finance Manager? </b> #= fmgr_approval? 'Yes' : 'No' # </br>
-        #=fmgr_approval_date? '<b>Finance Mgr. Approval Date: </b>' + kendo.toString(kendo.parseDate(fmgr_approval_date), 'dddd dd MMM, yyyy')+'</br>': '' #
-        <b>Amount Approved </b>: #= amount_approved? kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_approved)) : 'Pending' #</br>
-        <b>Amount Received </b>: #= amount_received? kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_received)) : 'Pending' #</br>
-        #=date_received? '<b>Date Received: </b>' + kendo.toString(kendo.parseDate(date_received), 'dddd dd MMM, yyyy')+'</br>': '' #
-        #=received_by? '<b>Received by: </b>' + received_by  +'</br>': '' #
-    </div>
-   `),
+            detailTemplate: kendo.template(summaryTemplate),
             dataSource: salaryAdvanceDataSource,
             dataBinding: function () {
                 //let no = (this.dataSource.page() - 1) * this.dataSource.pageSize();
             },
             dataBound: function () {
-                //let len = $salaryAdvanceGrid.find("tbody tr").length;
-                /*for(let i=0;i<len ; i++)
-                {
-                    let model = grid.data("kendoGrid").dataSource.at(i);
-                    if (model && !model.hod_comment_editable) {//field names
-                        model.fields["hod_comment"].editable = false;
-                    } else {
-                        model.fields["hod_comment"].editable = true;
-                    }
-                }*/
                 let grid = $salaryAdvanceGrid.data('kendoGrid');
+                let data = grid.dataSource.data();
+                $.each(data, function (i, row) {
+                    $('tr[data-uid="' + row.uid + '"] ').find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["id_salary_advance"]);
+                });
+                $(".print-it").printPage();
                 if (!(universal['isHr'] || universal['isFmgr'])) {
                     grid.hideColumn('department');
                 }
@@ -689,9 +667,9 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
                 hodCommentLabelField.toggle(Boolean(e.model["hod_comment_editable"]));
                 hodApprovalLabelField.toggle(Boolean(e.model["hod_approval_editable"]));
                 hrApprovalLabelField.toggle(universal['isHr']);
-                hrCommentLabelField.toggle(!Boolean(e.model.hr_approval));
-                fmgrApprovalLabelField.toggle(!Boolean(e.model.fmgr_approval));
-                fmgrCommentLabelField.toggle(!Boolean(e.model.fmgr_approval));
+                hrCommentLabelField.toggle(!Boolean(e.model.hr_approval) && universal['isHr']);
+                fmgrApprovalLabelField.toggle(!Boolean(e.model.fmgr_approval) && universal['isFmgr']);
+                fmgrCommentLabelField.toggle(!Boolean(e.model.fmgr_approval) && universal['isFmgr']);
                 amountPayableLabelField.toggle(Boolean(universal['isHr']) || Boolean(e.model.hr_approval));
                 amountApprovedLabelField.toggle(Boolean(universal['isFmgr']) || Boolean(e.model.fmgr_approval)); // toggle visibility for amount approved
                 amountReceivedLabelField.toggle(Boolean(e.model.amount_received)); // toggle visibility for amount received
@@ -771,6 +749,7 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
                 });
             }
         });
+
         $salaryAdvanceGrid.on("click", ".action-cancel-edit", function () {
             //let row = $(this).closest("tr");
             let $this = $(this);
@@ -781,6 +760,7 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
                 "</span>");
             $salaryAdvanceGrid.data("kendoGrid").cancelChanges();
         });
+
         $salaryAdvanceGrid.on("click", ".action-confirm-edit", function () {
             //let row = $(this).closest("tr");
             let $this = $(this);
@@ -791,10 +771,12 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
                 "</span>");
             $salaryAdvanceGrid.data("kendoGrid").saveChanges();
         });
+
         $salaryAdvanceGrid.on("click", ".action-delete", function () {
             let row = $(this).closest("tr");
             $salaryAdvanceGrid.data("kendoGrid").removeRow(row);
         });
+
         $salaryAdvanceGrid.on("click", ".action-more-info", function () {
             let row = $(this).closest("tr");
             row.find('.k-hierarchy-cell>a').click();

@@ -603,39 +603,18 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     title: "Action"
                 },
             ],
-            detailTemplate: kendo.template(`
-     <div class="">
-        <b>Date Raised</b>: #= kendo.toString(kendo.parseDate(date_raised), 'dddd dd MMM, yyyy') #</br>
-        #=amount_requested? '<b>Amount Requested in Figures</b>: ' + kendo.format('{0:c}', amount_requested) + '</br>' : ''#
-        #=percentage? '<b>Amount Requested in Percentage </b>' + percentage + '%</br>' : '' #
-        <b>Approved by HoD?</b> #= hod_approval? 'Yes' : 'No' #</br>
-        #=hod_approval_date? '<b>HoD Approval Date: </b>' + kendo.toString(kendo.parseDate(hod_approval_date), 'dddd dd MMM, yyyy')+'</br>': '' #
-        <b>Approved by HR? </b> #= hr_approval? 'Yes' : 'No' # </br>
-        #=hr_approval_date? '<b>HR Approval Date: </b>' + kendo.toString(kendo.parseDate(hr_approval_date), 'dddd dd MMM, yyyy')+'</br>': '' #
-        <b >Amount Payable </b>: #= amount_payable? kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_payable)) : 'Pending' #</br>
-        <b>Approved by Finance Manager? </b> #= fmgr_approval? 'Yes' : 'No' # </br>
-        #=fmgr_approval_date? '<b>Finance Mgr. Approval Date: </b>' + kendo.toString(kendo.parseDate(fmgr_approval_date), 'dddd dd MMM, yyyy')+'</br>': '' #
-        <b>Amount Approved </b>: #= amount_approved? kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_approved)) : 'Pending' #</br>
-        <b>Amount Received </b>: #= amount_received? kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_received)) : 'Pending' #</br>
-        #=date_received? '<b>Date Received: </b>' + kendo.toString(kendo.parseDate(date_received), 'dddd dd MMM, yyyy')+'</br>': '' #
-        #=received_by? '<b>Received by: </b>' + received_by  +'</br>': '' #
-    </div>
-   `),
+            detailTemplate: kendo.template(summaryTemplate),
             dataSource: salaryAdvanceDataSource,
             dataBinding: function () {
                 //let no = (this.dataSource.page() - 1) * this.dataSource.pageSize();
             },
             dataBound: function (e) {
-                //let len = $salaryAdvanceGrid.find("tbody tr").length;
-                /*for(let i=0;i<len ; i++)
-                {
-                    let model = grid.data("kendoGrid").dataSource.at(i);
-                    if (model && !model.hod_comment_editable) {//field names
-                        model.fields["hod_comment"].editable = false;
-                    } else {
-                        model.fields["hod_comment"].editable = true;
-                    }
-                }*/
+                let grid = $salaryAdvanceGrid.data('kendoGrid');
+                let data = grid.dataSource.data();
+                $.each(data, function (i, row) {
+                    $('tr[data-uid="' + row.uid + '"] ').find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["id_salary_advance"]);
+                });
+                $(".print-it").printPage();
             },
             beforeEdit: function (e) {
                 window.grid_uid = e.model.uid; // uid of current editing row

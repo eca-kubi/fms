@@ -6,6 +6,22 @@
 let URL_ROOT = '';
 let lists = [];
 let employeeDataSource;
+let summaryTemplate = `<div class="">
+        <b>Date Raised</b>: #= kendo.toString(kendo.parseDate(date_raised), 'dddd dd MMM, yyyy') #</br>
+        #=amount_requested? '<b>Amount Requested</b>: ' + kendo.format('{0:c}', amount_requested) + '</br>' : ''#
+        #=percentage? '<b>Amount Requested</b>: ' + percentage + '% of Salary</br>' : '' #
+        <b>Approved by HoD?</b> #= hod_approval? 'Yes' : 'No' #</br>
+        #=hod_approval_date? '<b>HoD Approval Date: </b>' + kendo.toString(kendo.parseDate(hod_approval_date), 'dddd dd MMM, yyyy')+'</br>': '' #
+        <b>Approved by HR? </b> #= hr_approval? 'Yes' : 'No' # </br>
+        #=hr_approval_date? '<b>HR Approval Date: </b>' + kendo.toString(kendo.parseDate(hr_approval_date), 'dddd dd MMM, yyyy')+'</br>': '' #
+        <b >Amount Payable </b>: #= amount_payable? kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_payable)) : 'Pending' #</br>
+        <b>Approved by Finance Manager? </b> #= fmgr_approval? 'Yes' : 'No' # </br>
+        #=fmgr_approval_date? '<b>Finance Mgr. Approval Date: </b>' + kendo.toString(kendo.parseDate(fmgr_approval_date), 'dddd dd MMM, yyyy')+'</br>': '' #
+        <b>Amount Approved </b>: #= amount_approved? kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_approved)) : 'Pending' #</br>
+        <b>Amount Received </b>: #= amount_received? kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_received)) : 'Pending' #</br>
+        #=date_received? '<b>Date Received: </b>' + kendo.toString(kendo.parseDate(date_received), 'dddd dd MMM, yyyy')+'</br>': '' #
+        #=received_by? '<b>Received by: </b>' + received_by  +'</br>': '' #
+    </div>`;
 $(document).ready(function () {
     jQuery.fx.off = true;
     employeeDataSource = new kendo.data.DataSource({
@@ -95,7 +111,7 @@ function dropDownEditor(container, options) {
                         dataType: "json"
                     }
                 },
-                group: {field: 'department'}
+                group: {field: 'department_short_name'}
             },
             dataBound: function () {
                 let kDropDownList =  $("#employeeDropDownList").data("kendoDropDownList");

@@ -18,7 +18,7 @@ class SalaryAdvanceFinanceOfficerAjax extends Controller
         if (isset($_GET['id_salary_advance'])) {
             $ret = SalaryAdvanceModel::get(['id_salary_advance' => $_GET['id_salary_advance']]);
         } else {
-            $salary_advances = Database::getDbh()->where('raised_by_secretary', false)
+            $salary_advances = Database::getDbh()->orderBy('date_raised')
                 ->where('deleted', false)
                 ->get('salary_advance');
         }
@@ -40,7 +40,7 @@ class SalaryAdvanceFinanceOfficerAjax extends Controller
             $value['employee'] = $employee;
             $value['name'] = $employee->name;
             $value['department'] = $employee->department;
-            $value['raised_by'] = $value['raised_by_id']? concatNameWithUserId($value['raised_by_id']): "";
+            $value['raised_by'] = $value['raised_by_id'] ? concatNameWithUserId($value['raised_by_id']) : "";
             unset($value['password']);
         }
         return $ret;
@@ -122,7 +122,7 @@ class SalaryAdvanceFinanceOfficerAjax extends Controller
                     $ret[0]['success'] = false;
                     $ret[0]['reason'] = 'An error occured';
                 }
-            } else{
+            } else {
                 $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
                     ->get('salary_advance');
                 if ($ret) {

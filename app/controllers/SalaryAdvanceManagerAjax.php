@@ -48,7 +48,7 @@ class SalaryAdvanceManagerAjax extends Controller
             $employee = new stdClass();
             $employee->name = concatNameWithUserId($value['user_id']);
             $employee->user_id = $value['user_id'];
-            $employee->department = getDepartment($value['user_id']);
+            $employee->department = getDepartment((new User($value['user_id']))->department_id);
             $value['department'] = $employee->department;
             $value['employee'] = $employee;
             unset($value['password']);
