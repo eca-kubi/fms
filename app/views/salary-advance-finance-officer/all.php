@@ -44,7 +44,7 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body table-responsive">
-                    <div class="salary-advance-manager" id="salary_advance_manager"></div>
+                    <div class="salary-advance" id="salary_advance"></div>
                 </div>
                 <!-- /.box-body -->
                 <div class="box-footer d-none"></div>
@@ -65,9 +65,10 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
 <script>
     let universal = JSON.parse(`<?php echo json_encode($universal); ?>`);
     let salaryAdvanceDataSource;
+    kendo.culture().numberFormat.currency.symbol = 'GH₵';
     $(document).ready(function () {
-        $salaryAdvanceGrid = $("#salary_advance_manager");
-        $salaryAdvanceManagerGrid.on('change', "input[name=employee]", function (e) {
+        $salaryAdvanceGrid = $("#salary_advance");
+        $salaryAdvanceGrid.on('change', "input[name=employee]", function (e) {
             //let select = $(this).data("kendoDropDownList");
         });
         salaryAdvanceDataSource = new kendo.data.DataSource({
@@ -137,14 +138,15 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                         },
                         date_raised: {
                             type: 'date',
-                            editable: false
+                            editable: false,
                         },
                         amount_requested: {
                             type: 'number',
-                            editable: false,
+                            // a defaultValue will not be assigned (default value is false)
+                            nullable: true,
                             validation: { //set validation rules
-                                required: true,
-                                min: '0'
+                                min: 0,
+                                //required: true
                             }
                         },
                         hod_comment: {
@@ -171,16 +173,19 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             type: 'boolean',
                             editable: false
                         },
+                        hod_approval_date: {
+                            type: "date",
+                            editable: false
+                        },
                         fmgr_approval: {
                             type: 'boolean',
                             editable: false
+
                         },
-                        user_id: {type: "number"},
-                        department_id: {type: "number"},
                         amount_payable: {
                             type: 'number',
                             validation: { //set validation rules
-                                required: false,
+                                required: true,
                                 min: '0'
                             },
                             editable: false
@@ -188,14 +193,14 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                         amount_approved: {
                             type: 'number',
                             validation: { //set validation rules
-                                required: false,
+                                required: true,
                                 min: '0'
                             },
                             editable: false
                         },
                         received_by: {
                             type: 'string',
-                            required: true
+                            editable: false
                         },
                         fmgr_approval_date: {
                             type: 'date',
@@ -205,15 +210,14 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             type: 'date',
                             editable: false
                         },
-                        hod_approval_date: {
-                            type: 'date',
-                            editable: false
-                        },
                         date_received: {
                             type: 'date',
+                            editable: false,
+                            nullable: true
+                        },
+                        department_ref: {
                             editable: false
                         },
-                        department_ref: {},
                         hr_id: {
                             type: 'number'
                         },
@@ -226,19 +230,34 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                         raised_by_secretary: {
                             type: 'boolean'
                         },
+                        user_id: {type: 'number'},
+                        department_id: {
+                            type: 'number', editable: false
+                        },
+                        raised_by_id: {type: "number"},
                         amount_received: {
+                            type: "number", editable: false
+                        },
+                        percentage: {
                             type: "number",
+                            // a defaultValue will not be assigned (default value is false)
+                            nullable: true,
                             validation: { //set validation rules
-                                required: true,
-                                min: '0'
-                            }
-                        }
+                                min: 10,
+                                max: 30,
+                                required: true
+                            },
+                        },
+                        amount_requested_is_percentage: {
+                            type: 'boolean',
+                            defaultValue: true
+                        },
                     }
                 }
             }
         });
 
-        $salaryAdvanceManagerGrid.kendoGrid({
+        $salaryAdvanceGrid.kendoGrid({
             autoFitColumn: true,
             selectable: true,
             mobile: true,
@@ -296,7 +315,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     template: function (dataItem) {
                         return "<span title='" + dataItem.name + "'>" + dataItem.name + "</span>";
                     },
-                    width: "15%",
+                    width: "8%",
                     headerAttributes: {
                         "class": "title"
                     }
@@ -327,22 +346,36 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     groupHeaderTemplate: "Date Raised: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') #"
                 },
                 {
-                    field: 'amount_requested',
-                    title: 'Amount Requested',
-                    //width: "12%",
+                    field: 'percentage',
+                    title: 'Amount Requested in Percentage',
                     template: function (dataItem) {
-                        return "<span title='Amount Requested: " + (dataItem.amount_requested ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_requested)) : '') + "'>" + (dataItem.amount_requested ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_requested)) : '') + "</span>"
+                        return "<span title='Amount Requested in Percentage: " + (dataItem.percentage ? kendo.toString(dataItem.percentage, '#\\%') : '') + "'>" + (dataItem.percentage ? kendo.toString(dataItem.percentage, '#\\%') : '') + "</span>"
                     },
                     headerAttributes: {
                         "class": "title"
                     },
-                    groupHeaderTemplate: "Amount Requested: #= value? kendo.toString('GH₵ ' + kendo.format('{0:n}', value)) : 'Pending' #",
-                    aggregates: ["max", "min"]
+                    groupHeaderTemplate: "Amount Requested in Percentage: #= value? value + '%' : '' #",
+                    aggregates: ["max", "min"],
+                    format: "{0:#\\%}"
+                },
+                {
+                    field: 'amount_requested',
+                    title: 'Amount Requested in Figures',
+                    width: '10%',
+                    template: function (dataItem) {
+                        return "<span title='Amount Requested: " + (dataItem.amount_requested ? kendo.format('{0:c}', dataItem.amount_requested) : '') + "'>" + (dataItem.amount_requested ? kendo.format('{0:c}', dataItem.amount_requested) : '') + "</span>"
+                    },
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    groupHeaderTemplate: "Amount Requested in Figures: #=  value ? kendo.format('{0:c}', value) : ''#",
+                    aggregates: ["max", "min", "count"],
+                    format: "{0:c}"
                 },
                 {
                     title: 'HoD',
                     headerAttributes: {
-                        "class": "title"
+                        "class": "title font-weight-bold"
                     },
                     columns: [
                         {
@@ -393,7 +426,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 {
                     title: 'HR',
                     headerAttributes: {
-                        "class": "title"
+                        "class": "title font-weight-bold"
                     },
                     columns: [
                         {
@@ -430,12 +463,13 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             field: 'amount_payable',
                             title: 'Amount Payable',
                             template: function (dataItem) {
-                                return "<span title='Amount Payable: " + (dataItem.amount_payable ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_payable)) : '') + "'>" + (dataItem.amount_payable ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_payable)) : '') + "</span>"
+                                return "<span title='Amount Payable: " + (dataItem.amount_payable ? kendo.format('{0:c}', dataItem.amount_payable) : '') + "'>" + (dataItem.amount_payable ? kendo.format('{0:c}', dataItem.amount_payable) : '') + "</span>"
                             },
+                            format: "{0:c}",
                             headerAttributes: {
                                 "class": "title"
                             },
-                            groupHeaderTemplate: "Amount Payable: #= value? kendo.toString('GH₵ ' + kendo.format('{0:n}', value)) : 'Pending' #",
+                            groupHeaderTemplate: "Amount Payable: #= value?  kendo.format('{0:c}', value) : 'Pending' #",
                             aggregates: ["max", "min"]
                         },
                         {
@@ -456,7 +490,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 {
                     title: 'Finance Mgr.',
                     headerAttributes: {
-                        "class": "title"
+                        "class": "title font-weight-bold"
                     },
                     columns: [
                         {
@@ -493,13 +527,14 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             field: 'amount_approved',
                             title: 'Amount Approved',
                             template: function (dataItem) {
-                                return "<span title='Amount Approved: " + (dataItem.amount_approved ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_approved)) : '') + "'>" + (dataItem.amount_approved ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_approved)) : '') + "</span>"
+                                return "<span title='Amount Approved: " + (dataItem.amount_approved ? kendo.format('{0:c}', dataItem.amount_approved) : '') + "'>" + (dataItem.amount_approved ? kendo.format('{0:c}', dataItem.amount_approved) : '') + "</span>"
                             },
                             headerAttributes: {
                                 "class": "title"
                             },
-                            groupHeaderTemplate: "Amount Approved: #= value? kendo.toString('GH₵ ' + kendo.format('{0:n}', value)): 'Pending' #",
-                            aggregates: ["max", "min"]
+                            groupHeaderTemplate: "Amount Approved: #= value?  kendo.format('{0:c}', value): 'Pending' #",
+                            aggregates: ["max", "min"],
+                            format: "{0:c}"
                         },
                         {
                             field: 'fmgr_approval_date',
@@ -519,14 +554,17 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 {
                     field: 'amount_received',
                     title: 'Amount Received',
-                    hidden: false,
                     template: function (dataItem) {
-                        return dataItem.amount_received ? "<span title='Amount Received: " + kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_received)) + "'>" + kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_received)) + "</span>" : "<span title='Pending'>Pending</span>"
+                        return dataItem.amount_received ? "<span title='Amount Received: " + kendo.format('{0:c}', dataItem.amount_received) + "'>" + kendo.format('{0:c}', dataItem.amount_received) + "</span>" : "<span title='Pending'>Pending</span>"
+                    },
+                    width: '10%',
+                    attributes: {
+                        class: 'amount_received'
                     },
                     headerAttributes: {
                         "class": "title"
                     },
-                    groupHeaderTemplate: "Amount Received: #: kendo.toString('GH₵ ' + kendo.format('{0:n}', value)) #",
+                    groupHeaderTemplate: "Amount Received: #: kendo.format('{0:c}', value) #",
                 },
                 {
                     field: 'received_by',
@@ -554,10 +592,10 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                     groupHeaderTemplate: "Date Received: #= value? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : 'Pending' #",
                 },
                 {
-                    template: "<span class='text-center action-tools row'>" +
+                    template: "<span class='text-center action-tools'>" +
                         "<span class='col' title='Edit'><a href='\\#' class='text-black action-edit'><i class='fa fa-pencil'></i></a></span>" +
-                        "<span class='col' title='Delete'><a href='\\#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span>" +
-                        "<span class='col' title='More Info'><a href='\\#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
+                        "<span class='col' title='Delete'><a href='\\#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span><span class='col' title='More Info'><a href='\\#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
+                        "<span class='col' title='Print'><a href='\\#' class='text-primary action-print print-it' target='_blank'><i class='fas fa-print'></i></a></span>" +
                         "</span>",
                     width: "10%",
                     title: "Action"
@@ -565,9 +603,9 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
             ],
             detailTemplate: kendo.template(`
      <div class="">
-        <b>Employee</b>: #= name # </br>
         <b>Date Raised</b>: #= kendo.toString(kendo.parseDate(date_raised), 'dddd dd MMM, yyyy') #</br>
-        <b>Amount Requested </b>: #= kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_requested)) #</br>
+        #=amount_requested? '<b>Amount Requested in Figures</b>: ' + kendo.format('{0:c}', amount_requested) + '</br>' : ''#
+        #=percentage? '<b>Amount Requested in Percentage </b>' + percentage + '%</br>' : '' #
         <b>Approved by HoD?</b> #= hod_approval? 'Yes' : 'No' #</br>
         #=hod_approval_date? '<b>HoD Approval Date: </b>' + kendo.toString(kendo.parseDate(hod_approval_date), 'dddd dd MMM, yyyy')+'</br>': '' #
         <b>Approved by HR? </b> #= hr_approval? 'Yes' : 'No' # </br>
@@ -586,7 +624,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 //let no = (this.dataSource.page() - 1) * this.dataSource.pageSize();
             },
             dataBound: function (e) {
-                //let len = $salaryAdvanceManagerGrid.find("tbody tr").length;
+                //let len = $salaryAdvanceGrid.find("tbody tr").length;
                 /*for(let i=0;i<len ; i++)
                 {
                     let model = grid.data("kendoGrid").dataSource.at(i);
@@ -633,7 +671,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
             }
         });
 
-        $salaryAdvanceManagerGrid.data('kendoGrid').thead.kendoTooltip({
+        $salaryAdvanceGrid.data('kendoGrid').thead.kendoTooltip({
             filter: "th.title",
             position: 'top',
             content: function (e) {
@@ -641,8 +679,21 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 return $(target).text();
             }
         });
-        $salaryAdvanceManagerGrid.on("click", ".action-edit", function () {
-            let grid = $salaryAdvanceManagerGrid.data("kendoGrid");
+
+        $salaryAdvanceTooltip = $salaryAdvanceGrid.kendoTooltip({
+            filter: "td:not('.k-detail-cell')", //this filter selects the second column's cells
+            position: "top",
+            content: function (e) {
+                // hide popup as default action
+                e.sender.popup.element.css("visibility", "hidden");
+                let text = $(e.target).text();
+                if (text) e.sender.popup.element.css("visibility", "visible");
+                return text;
+            }
+        }).data("kendoTooltip");
+
+        $salaryAdvanceGrid.on("click", ".action-edit", function () {
+            let grid = $salaryAdvanceGrid.data("kendoGrid");
             //let currentRow = grid.currentRow();
             //let dataItem = grid.dataItem(currentRow);
             let row = $(this).closest("tr");
@@ -652,7 +703,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
             actionTools.html("<span class='col'><a href='#' class='text-success action-confirm-edit'><i class='fa fa-check'></i></a></span>" +
                 "<span class='col'><a href='#' class='text-black action-cancel-edit'><i class='k-icon k-i-cancel'></i></a></span>");
         });
-        $salaryAdvanceManagerGrid.on("click", ".action-cancel-edit", function () {
+        $salaryAdvanceGrid.on("click", ".action-cancel-edit", function () {
             //let row = $(this).closest("tr");
             let $this = $(this);
             let actionTools = $this.closest('.action-tools');
@@ -660,9 +711,9 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 "<span class='col' title='Delete'><a href='#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span>" +
                 "<span class='col' title='More Info'><a href='#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
                 "</span>");
-            $salaryAdvanceManagerGrid.data("kendoGrid").cancelChanges();
+            $salaryAdvanceGrid.data("kendoGrid").cancelChanges();
         });
-        $salaryAdvanceManagerGrid.on("click", ".action-confirm-edit", function () {
+        $salaryAdvanceGrid.on("click", ".action-confirm-edit", function () {
             //let row = $(this).closest("tr");
             let $this = $(this);
             let actionTools = $this.closest('.action-tools');
@@ -670,13 +721,13 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 "<span class='col' title='Delete'><a href='#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span>" +
                 "<span class='col' title='More Info'><a href='#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
                 "</span>");
-            $salaryAdvanceManagerGrid.data("kendoGrid").saveChanges();
+            $salaryAdvanceGrid.data("kendoGrid").saveChanges();
         });
-        $salaryAdvanceManagerGrid.on("click", ".action-delete", function () {
+        $salaryAdvanceGrid.on("click", ".action-delete", function () {
             let row = $(this).closest("tr");
-            $salaryAdvanceManagerGrid.data("kendoGrid").removeRow(row);
+            $salaryAdvanceGrid.data("kendoGrid").removeRow(row);
         });
-        $salaryAdvanceManagerGrid.on("click", ".action-more-info", function () {
+        $salaryAdvanceGrid.on("click", ".action-more-info", function () {
             let row = $(this).closest("tr");
             row.find('.k-hierarchy-cell>a').click();
         });

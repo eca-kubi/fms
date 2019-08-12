@@ -44,7 +44,7 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body table-responsive">
-                    <div class="salary-advance-manager" id="salary_advance"></div>
+                    <div class="salary-advance" id="salary_advance"></div>
                 </div>
                 <!-- /.box-body -->
                 <div class="box-footer d-none"></div>
@@ -754,6 +754,19 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 return $(target).text();
             }
         });
+
+        $salaryAdvanceTooltip = $salaryAdvanceGrid.kendoTooltip({
+            filter: "td:not('.k-detail-cell')", //this filter selects the second column's cells
+            position: "top",
+            content: function (e) {
+                // hide popup as default action
+                e.sender.popup.element.css("visibility", "hidden");
+                let text = $(e.target).text();
+                if (text) e.sender.popup.element.css("visibility", "visible");
+                return text;
+            }
+        }).data("kendoTooltip");
+
         $salaryAdvanceGrid.on("click", ".action-edit", function () {
             let grid = $salaryAdvanceGrid.data("kendoGrid");
             //let currentRow = grid.currentRow();

@@ -36,7 +36,7 @@ class SalaryAdvanceFinanceOfficerAjax extends Controller
             $employee = new stdClass();
             $employee->user_id = $value['user_id'];
             $employee->name = concatNameWithUserId($value['user_id']);
-            $employee->department = getDepartment($value['user_id']);
+            $employee->department = getDepartment((new User($value['user_id']))->department_id);
             $value['employee'] = $employee;
             $value['name'] = $employee->name;
             $value['department'] = $employee->department;
