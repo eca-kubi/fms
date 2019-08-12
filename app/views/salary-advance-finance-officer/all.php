@@ -63,6 +63,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
 ?>
 <!--suppress HtmlUnknownTarget -->
 <script>
+    //todo Update kendo Grid in real-time
     let universal = JSON.parse(`<?php echo json_encode($universal); ?>`);
     let salaryAdvanceDataSource;
     kendo.culture().numberFormat.currency.symbol = 'GH₵';
@@ -200,7 +201,10 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                         },
                         received_by: {
                             type: 'string',
-                            editable: false
+                            editable: false,
+                            validation: { //set validation rules
+                                required: true
+                            }
                         },
                         fmgr_approval_date: {
                             type: 'date',
@@ -252,6 +256,11 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                             type: 'boolean',
                             defaultValue: true
                         },
+                        finance_officer_comment: {
+                            validation: { //set validation rules
+                                required: true
+                            }
+                        }
                     }
                 }
             }
@@ -263,7 +272,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
             mobile: true,
             noRecords: true,
             navigatable: true,
-            toolbar: [ "excel"],
+            toolbar: ["excel"],
             excel: {
                 fileName: "Salary Advance Export.xlsx",
                 //proxyURL: "https://demos.telerik.com/kendo-ui/service/export",
@@ -565,6 +574,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                         "class": "title"
                     },
                     groupHeaderTemplate: "Amount Received: #: kendo.format('{0:c}', value) #",
+                    format: "{0:c}"
                 },
                 {
                     field: 'received_by',
@@ -590,6 +600,23 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                         "class": "title"
                     },
                     groupHeaderTemplate: "Date Received: #= value? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : 'Pending' #",
+                },
+                {
+                    field: 'finance_officer_comment',
+                    title: 'Finance Officer Comment',
+                    hidden: true,
+                    editor: textAreaEditor,
+                    template: function (dataItem) {
+                        let finance_officer_comment = dataItem.finance_officer_comment ? dataItem.finance_officer_comment : '';
+                        return "<span title='Finance Officer Comment: " + finance_officer_comment + "'>" + finance_officer_comment + "</span>";
+                    },
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    attributes: {
+                        class: 'comment'
+                    },
+                    groupHeaderTemplate: "Finance Officer Comment: #= value? value: 'Pending' #",
                 },
                 {
                     template: "<span class='text-center action-tools'>" +
@@ -623,31 +650,30 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 // Editability
                 e.model.fields.amount_requested.editable = false;
                 e.model.fields.percentage.editable = false;
-                e.model.fields.received_by.editable = e.model.fmgr_approval && !Boolean(e.model.received_by);
-
+                e.model.fields.amount_received.editable  = e.model.fields.received_by.editable = e.model.fields.finance_officer_comment.editable = e.model.fmgr_approval && !Boolean(e.model.received_by);
             },
             edit: function (e) {
-               /* e.container.find('.k-edit-label:not(:eq(0),:eq(3))').hide();
-                e.container.find('.k-edit-field:not(:eq(0),:eq(3))').hide();
-                e.container.find('.k-edit-field:eq(3) input[name=amount_requested]').attr('data-required-msg', 'Amount Requested is required!');
-                e.container.find('.k-edit-label').addClass('pt-2');
-                e.container.find('.k-edit-field').addClass('pt-2');
-                e.container.find('.k-edit-label:eq(15)').toggle(Boolean(e.model.fmgr_approval)); // toggle visibility for amount received
-                e.container.find('.k-edit-field:eq(15)').toggle(Boolean(e.model.fmgr_approval));
-                let amountReceived = e.container.find('.k-edit-field:eq(15) [name=amount_received]');
-                amountReceived.attr('data-required-msg', 'Amount Received is required!').attr('required', Boolean(e.model.fmgr_approval));
-                if (amountReceived.length) amountReceived.data('kendoNumericTextBox').setOptions({'max': e.model.amount_approved}); // Validation to ensure that the amount received must not exceed the approved amount
-                e.container.find('.k-edit-label:eq(16)').toggle(Boolean(e.model.fmgr_approval)); // toggle visibility for received by
-                e.container.find('.k-edit-field:eq(16)').toggle(Boolean(e.model.fmgr_approval));
-                let receivedBy = e.container.find(".k-edit-field:eq(16) [name=received_by]");
-                //e.model.received_by ? receivedBy.val(e.model.received_by) : receivedBy.val(e.model.employee.name);
-                receivedBy.attr('data-required-msg', 'Received By is required!').attr('required', Boolean(e.model.fmgr_approval));
-                e.container.find('.k-edit-label:eq(9)').toggle(Boolean(e.model.amount_payable)); // toggle visibility for amount payable
-                e.container.find('.k-edit-field:eq(9)').toggle(Boolean(e.model.amount_payable));
-                e.container.find('.k-edit-label:eq(13)').toggle(Boolean(e.model.amount_approved)); // toggle visibility for amount approved
-                e.container.find('.k-edit-field:eq(13)').toggle(Boolean(e.model.amount_approved));
-                e.container.find('.k-edit-label:eq(17)').toggle(Boolean(e.model.date_received)); // toggle visibility for date received
-                e.container.find('.k-edit-field:eq(17)').toggle(Boolean(e.model.date_received));*/
+                /* e.container.find('.k-edit-label:not(:eq(0),:eq(3))').hide();
+                 e.container.find('.k-edit-field:not(:eq(0),:eq(3))').hide();
+                 e.container.find('.k-edit-field:eq(3) input[name=amount_requested]').attr('data-required-msg', 'Amount Requested is required!');
+                 e.container.find('.k-edit-label').addClass('pt-2');
+                 e.container.find('.k-edit-field').addClass('pt-2');
+                 e.container.find('.k-edit-label:eq(15)').toggle(Boolean(e.model.fmgr_approval)); // toggle visibility for amount received
+                 e.container.find('.k-edit-field:eq(15)').toggle(Boolean(e.model.fmgr_approval));
+                 let amountReceived = e.container.find('.k-edit-field:eq(15) [name=amount_received]');
+                 amountReceived.attr('data-required-msg', 'Amount Received is required!').attr('required', Boolean(e.model.fmgr_approval));
+                 if (amountReceived.length) amountReceived.data('kendoNumericTextBox').setOptions({'max': e.model.amount_approved}); // Validation to ensure that the amount received must not exceed the approved amount
+                 e.container.find('.k-edit-label:eq(16)').toggle(Boolean(e.model.fmgr_approval)); // toggle visibility for received by
+                 e.container.find('.k-edit-field:eq(16)').toggle(Boolean(e.model.fmgr_approval));
+                 let receivedBy = e.container.find(".k-edit-field:eq(16) [name=received_by]");
+                 //e.model.received_by ? receivedBy.val(e.model.received_by) : receivedBy.val(e.model.employee.name);
+                 receivedBy.attr('data-required-msg', 'Received By is required!').attr('required', Boolean(e.model.fmgr_approval));
+                 e.container.find('.k-edit-label:eq(9)').toggle(Boolean(e.model.amount_payable)); // toggle visibility for amount payable
+                 e.container.find('.k-edit-field:eq(9)').toggle(Boolean(e.model.amount_payable));
+                 e.container.find('.k-edit-label:eq(13)').toggle(Boolean(e.model.amount_approved)); // toggle visibility for amount approved
+                 e.container.find('.k-edit-field:eq(13)').toggle(Boolean(e.model.amount_approved));
+                 e.container.find('.k-edit-label:eq(17)').toggle(Boolean(e.model.date_received)); // toggle visibility for date received
+                 e.container.find('.k-edit-field:eq(17)').toggle(Boolean(e.model.date_received));*/
                 let nameLabelField = e.container.find('.k-edit-label:eq(0), .k-edit-field:eq(0)');
                 let percentageLabelField = e.container.find('.k-edit-label:eq(3), .k-edit-field:eq(3)');
                 let amountRequestedLabelField = e.container.find('.k-edit-label:eq(4), .k-edit-field:eq(4)');
@@ -662,6 +688,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 let amountReceivedLabelField = e.container.find('.k-edit-label:eq(16), .k-edit-field:eq(16)');
                 let receivedByLabelField = e.container.find('.k-edit-label:eq(17), .k-edit-field:eq(17)');
                 let dateReceivedLabelField = e.container.find('.k-edit-label:eq(18), .k-edit-field:eq(18)');
+                let financeOfficerCommentLabelField = e.container.find('.k-edit-label:eq(19), .k-edit-field:eq(19)');
 
                 // Edit labels
                 percentageLabelField.find('label').html('Amount Requested <br><small class="text-danger text-bold">10% to 30% of Salary</small>');
@@ -678,10 +705,14 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 //fmgrCommentLabelField.toggle(Boolean(e.model.fmgr_approval));
                 amountPayableLabelField.toggle(Boolean(e.model.hr_approval));
                 amountApprovedLabelField.toggle(Boolean(e.model.fmgr_approval)); // toggle visibility for amount approved
-                amountReceivedLabelField.toggle(Boolean(e.model.amount_received)); // toggle visibility for amount received
+                amountReceivedLabelField.toggle(Boolean(e.model.fmgr_approval)); // toggle visibility for amount received
                 receivedByLabelField.toggle(Boolean(e.model.fmgr_approval)); // toggle visibility for received by
                 dateReceivedLabelField.toggle(Boolean(e.model.date_received)); // toggle visibility for date received
+                financeOfficerCommentLabelField.toggle(Boolean(e.model.fmgr_approval));
 
+                // Validation messages
+                financeOfficerCommentLabelField.find('textarea').attr('data-required-msg', 'Finance Officer Comment is required!');
+                receivedByLabelField.find('input').attr('data-required-msg', 'Received By is required!');
             },
             save: function (e) {
                 //console.log(('saved'))

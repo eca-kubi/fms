@@ -153,7 +153,7 @@ function dropDownEditor(container, options) {
 }
 
 function textAreaEditor(container, options) {
-    $('<textarea class="k-textbox" name="' + options.field + '" style="width:100%;height:100%;"  required/>').appendTo(container);
+    $('<textarea class="k-textbox" name="' + options.field + '" style="width:100%;height:100%;"  rows="6" required/>').appendTo(container);
 }
 
 function customBoolEditor(container, options) {
