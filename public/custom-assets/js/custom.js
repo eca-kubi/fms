@@ -16,7 +16,7 @@ $(document).ready(function () {
             }
         },
     });
-    //$('.print-it').printPage();
+    $('.print-it').printPage();
     $('.content-wrapper').css('margin-top', $('.navbar-fixed').height() + 'px');
     URL_ROOT = $('#url_root').val();
 

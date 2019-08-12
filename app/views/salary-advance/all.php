@@ -734,6 +734,7 @@ $universal->has_active_application = hasActiveApplication($current_user->user_id
                 e.container.find('.k-edit-label:eq(16), .k-edit-field:eq(16)').toggle(Boolean(e.model.date_received)); // toggle visibility for date received // kendo grid has date set to today by default
             }
         });
+
         kGridAddButton = $('.k-grid-add');
         $salaryAdvanceTooltip = $salaryAdvanceGrid.kendoTooltip({
             filter: "td:not('.k-detail-cell')", //this filter selects the second column's cells
