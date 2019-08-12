@@ -108,7 +108,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
             },
             error: function (e) {
                 //console.log("error event handler", e.errors[0]);
-                toastError(e.errors[0]);
+                toastError(e.errors['message']);
                 salaryAdvanceDataSource.cancelChanges();
             },
             requestEnd: function (e) {

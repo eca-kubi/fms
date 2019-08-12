@@ -76,7 +76,7 @@ window.addEventListener("load", function () {
 });
 
 function dropDownEditor(container, options) {
-    $('<input  required name="' + options.field + '" data-bind="value:name" data-required-msg="Employee is required!"/>')
+    $('<input id="employeeDropDownList"  required name="' + options.field + '" data-bind="value:name" data-required-msg="Employee is required!"/>')
         .appendTo(container)
         .on('change', function () {
             console.log('');
@@ -93,7 +93,21 @@ function dropDownEditor(container, options) {
                     read: {
                         url: URL_ROOT + '/employees-ajax/',
                         dataType: "json"
-                    },
+                    }
+                },
+                group: {field: 'department'}
+            },
+            dataBound: function () {
+                let kDropDownList =  $("#employeeDropDownList").data("kendoDropDownList");
+                let data = kDropDownList.dataSource.data();
+                //Iterate over the dataItems and search for a value.
+                for(let x = 0; x < data.length; x++){
+                    if (data[x].has_active_application){
+                        //removes item
+                        kDropDownList.dataSource.remove(data[x]);
+                        //selects first item
+                        //kDropDownList.select(0);
+                    }
                 }
             },
             filter: "contains",

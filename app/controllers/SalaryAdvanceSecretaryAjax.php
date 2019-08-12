@@ -75,10 +75,10 @@ class SalaryAdvanceSecretaryAjax extends Controller
                 $data['percentage'] = null;
             }
             if (hasActiveApplication( $data['user_id'])) {
-                $ret['success'] = false;
-                $ret['reason'] = 'An active application exists for this employee!';
+                $ret[0]['success'] = false;
+                $ret[0]['reason'] = 'An active application exists for this employee!';
                 $ret['has_active_application'] = true;
-                $ret['errors'] = ['message' => 'An Application is Active!', 'code' => ERROR_AN_APPLICATION_ALREADY_EXISTS];
+                $ret['errors'] = ['message' => 'An active application exists for ' . concatNameWithUserId($data['user_id']), 'code' => ERROR_AN_APPLICATION_ALREADY_EXISTS];
                 echo json_encode($ret);
                 return;
             }

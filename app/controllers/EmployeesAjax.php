@@ -27,11 +27,13 @@ class EmployeesAjax extends Controller
             if (isSecretary($current_user->user_id)) {
                 $ret = getMembersAssignedToSecretary($current_user->user_id);
             } else{
-                $ret = $db->orderBy('first_name', 'ASC')
-                    ->get('users');
+                $ret = $db->orderBy('first_name', 'ASC')->get('users');
             }
         }
         foreach ($ret as $key => &$value) {
+            if (hasActiveApplication($value['user_id'])) {
+               $value['has_active_application'] = true;
+            }
             $employee = new stdClass();
             $employee->name = concatNameWithUserId($value['user_id']);
             $employee->department = getDepartment( (new User($value['user_id']))->department_id);

@@ -1312,12 +1312,15 @@ function isSecretary($user_id)
 
 function getMembersAssignedToSecretary($user_id)
 {
-    $ret = Database::getDbh()->where('user_id', $user_id)
+    $db = Database::getDbh();
+    $ret = $db->where('user_id', $user_id)
         ->get('salary_advance_secretary');
     foreach ($ret as $item) {
-        Database::getDbh()->orWhere('department_id', $item['department_assigned']);
+        $db->orWhere('department_id', $item['department_assigned']);
     }
-    return Database::getDbh()->get('users');
+    return $db->orderBy('first_name', 'ASC')
+        ->get('users');
+
 }
 
 function getSalaryAdvanceBySecretary($user_id)
@@ -1338,7 +1341,8 @@ function hasActiveApplication($user_id)
     return $ret[0]['total'];
 }
 
-function isFinanceOfficer($user_id) {
+function isFinanceOfficer($user_id)
+{
     return Database::getDbh()->where('value', $user_id)
         ->where('prop', 'finance_officer')
         ->has('fms_settings');
