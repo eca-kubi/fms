@@ -847,11 +847,11 @@ function isAllImpactAssessmentComplete($cms_form_id)
  * @param $user_id
  * @return string
  */
-function getDepartment($user_id)
+function getDepartment($department_id)
 {
-    $user = new User($user_id);
-    $department = (new Department($user->department_id))->department;
-    if (!empty($user)) {
+    //$user = new User($user_id);
+    $department = (new Department($department_id))->department;
+    if (!empty($department)) {
         return $department;
     }
     return "N/A";
