@@ -66,7 +66,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
     let universal = JSON.parse(`<?php echo json_encode($universal); ?>`);
     let salaryAdvanceDataSource;
     $(document).ready(function () {
-        $salaryAdvanceManagerGrid = $("#salary_advance_manager");
+        $salaryAdvanceGrid = $("#salary_advance_manager");
         $salaryAdvanceManagerGrid.on('change', "input[name=employee]", function (e) {
             //let select = $(this).data("kendoDropDownList");
         });

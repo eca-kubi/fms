@@ -44,7 +44,7 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body table-responsive">
-                    <div class="salary-advance-manager" id="salary_advance_manager"></div>
+                    <div class="salary-advance-manager" id="salary_advance"></div>
                 </div>
                 <!-- /.box-body -->
                 <div class="box-footer d-none"></div>
@@ -64,10 +64,12 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
 <!--suppress HtmlUnknownTarget -->
 <script>
     let universal = JSON.parse(`<?php echo json_encode($universal); ?>`);
+    let $salaryAdvanceGrid;
     let salaryAdvanceDataSource;
+    let $salaryAdvanceTooltip;
     $(document).ready(function () {
-        $salaryAdvanceManagerGrid = $("#salary_advance_manager");
-        $salaryAdvanceManagerGrid.on('change', "input[name=employee]", function (e) {
+        $salaryAdvanceGrid = $("#salary_advance");
+        $salaryAdvanceGrid.on('change', "input[name=employee]", function (e) {
             //let select = $(this).data("kendoDropDownList");
         });
         salaryAdvanceDataSource = new kendo.data.DataSource({
@@ -233,7 +235,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
             }
         });
 
-        $salaryAdvanceManagerGrid.kendoGrid({
+        $salaryAdvanceGrid.kendoGrid({
             autoFitColumn: true,
             selectable: true,
             mobile: true,
@@ -581,7 +583,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 //let no = (this.dataSource.page() - 1) * this.dataSource.pageSize();
             },
             dataBound: function (e) {
-                //let len = $salaryAdvanceManagerGrid.find("tbody tr").length;
+                //let len = $salaryAdvanceGrid.find("tbody tr").length;
                 /*for(let i=0;i<len ; i++)
                 {
                     let model = grid.data("kendoGrid").dataSource.at(i);
@@ -622,7 +624,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
             }
         });
 
-        $salaryAdvanceManagerGrid.data('kendoGrid').thead.kendoTooltip({
+        $salaryAdvanceGrid.data('kendoGrid').thead.kendoTooltip({
             filter: "th.title",
             position: 'top',
             content: function (e) {
@@ -630,8 +632,8 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 return $(target).text();
             }
         });
-        $salaryAdvanceManagerGrid.on("click", ".action-edit", function () {
-            let grid = $salaryAdvanceManagerGrid.data("kendoGrid");
+        $salaryAdvanceGrid.on("click", ".action-edit", function () {
+            let grid = $salaryAdvanceGrid.data("kendoGrid");
             //let currentRow = grid.currentRow();
             //let dataItem = grid.dataItem(currentRow);
             let row = $(this).closest("tr");
@@ -641,7 +643,7 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
             actionTools.html("<span class='col'><a href='#' class='text-success action-confirm-edit'><i class='fa fa-check'></i></a></span>" +
                 "<span class='col'><a href='#' class='text-black action-cancel-edit'><i class='k-icon k-i-cancel'></i></a></span>");
         });
-        $salaryAdvanceManagerGrid.on("click", ".action-cancel-edit", function () {
+        $salaryAdvanceGrid.on("click", ".action-cancel-edit", function () {
             //let row = $(this).closest("tr");
             let $this = $(this);
             let actionTools = $this.closest('.action-tools');
@@ -649,9 +651,9 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 "<span class='col' title='Delete'><a href='#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span>" +
                 "<span class='col' title='More Info'><a href='#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
                 "</span>");
-            $salaryAdvanceManagerGrid.data("kendoGrid").cancelChanges();
+            $salaryAdvanceGrid.data("kendoGrid").cancelChanges();
         });
-        $salaryAdvanceManagerGrid.on("click", ".action-confirm-edit", function () {
+        $salaryAdvanceGrid.on("click", ".action-confirm-edit", function () {
             //let row = $(this).closest("tr");
             let $this = $(this);
             let actionTools = $this.closest('.action-tools');
@@ -659,13 +661,13 @@ $universal->fgmr_comment_editable = $universal->amount_requested_editable = getC
                 "<span class='col' title='Delete'><a href='#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span>" +
                 "<span class='col' title='More Info'><a href='#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
                 "</span>");
-            $salaryAdvanceManagerGrid.data("kendoGrid").saveChanges();
+            $salaryAdvanceGrid.data("kendoGrid").saveChanges();
         });
-        $salaryAdvanceManagerGrid.on("click", ".action-delete", function () {
+        $salaryAdvanceGrid.on("click", ".action-delete", function () {
             let row = $(this).closest("tr");
-            $salaryAdvanceManagerGrid.data("kendoGrid").removeRow(row);
+            $salaryAdvanceGrid.data("kendoGrid").removeRow(row);
         });
-        $salaryAdvanceManagerGrid.on("click", ".action-more-info", function () {
+        $salaryAdvanceGrid.on("click", ".action-more-info", function () {
             let row = $(this).closest("tr");
             row.find('.k-hierarchy-cell>a').click();
         });
