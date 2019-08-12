@@ -102,7 +102,7 @@ function dropDownEditor(container, options) {
                 //console.log('select')
             },
             change: function (e) {
-                let grid = $salaryAdvanceManagerGrid["data"]('kendoGrid');
+                let grid = $salaryAdvanceGrid["data"]('kendoGrid');
                 let model = grid.dataSource.getByUid(grid_uid);
                 let selectedIndex = e.sender.selectedIndex;
                 if (selectedIndex) {

@@ -604,8 +604,8 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
             detailTemplate: kendo.template(`
     <div class="">
         <b>Date Raised</b>: #= kendo.toString(kendo.parseDate(date_raised), 'dddd dd MMM, yyyy') #</br>
-        <b>Amount Requested in Figures</b>:#=  amount_requested? kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_requested)) : '' #</br>
-        <b>Amount Requested in Percentage </b>:#=  percentage? percentage + '%' : '' #</br>
+        #=amount_requested? '<b>Amount Requested in Figures</b>: ' + kendo.format('{0:c}', amount_requested) + '</br>' : ''#
+        #=percentage? '<b>Amount Requested in Percentage </b>' + percentage + '%</br>' : '' #
         <b>Approved by HoD?</b> #= hod_approval? 'Yes' : 'No' #</br>
         #=hod_approval_date? '<b>HoD Approval Date: </b>' + kendo.toString(kendo.parseDate(hod_approval_date), 'dddd dd MMM, yyyy')+'</br>': '' #
         <b>Approved by HR? </b> #= hr_approval? 'Yes' : 'No' # </br>

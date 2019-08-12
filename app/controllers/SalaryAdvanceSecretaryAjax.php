@@ -23,7 +23,8 @@ class SalaryAdvanceSecretaryAjax extends Controller
             foreach ($ret as $item) {
                 Database::getDbh()->orWhere('department_id', $item['department_assigned']);
             }
-            $salary_advances = Database::getDbh()->where('raised_by_secretary', true)
+            $salary_advances = Database::getDbh()->orderBy('date_raised')
+                ->where('raised_by_secretary', true)
                 ->where('deleted', false)
                 ->get('salary_advance');
         }
@@ -43,7 +44,7 @@ class SalaryAdvanceSecretaryAjax extends Controller
             $employee->department = getDepartment($value['user_id']);
             $value['name'] = $employee->name;
             $value['department'] = $employee->department;
-            $value['raised_by'] = $value['raised_by_id']? concatNameWithUserId($value['raised_by_id']): "";
+            $value['raised_by'] = $value['raised_by_id'] ? concatNameWithUserId($value['raised_by_id']) : "";
             unset($value['password']);
         }
         return $ret;
@@ -52,14 +53,34 @@ class SalaryAdvanceSecretaryAjax extends Controller
     public function Create()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $ret = [];
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             $current_user = getUserSession();
-            $data['user_id'] = $_POST['user_id'];
-            $data['raised_by_id'] = getUserSession()->user_id;
-            $data['department_id'] = $_POST['department_id'];
-            $data['amount_requested'] = $_POST['amount_requested'];
-            $data['department_ref'] = genDeptRef($current_user->department_id);
-            $data['raised_by_secretary'] = true;
+            $data = [
+                'amount_requested_is_percentage' => $_POST['amount_requested_is_percentage'] === 'true' ? true : false,
+                'amount_requested' => $_POST['amount_requested'] ? $_POST['amount_requested'] : null,
+                'raised_by' => getUserSession()->user_id,
+                'percentage' => $_POST['percentage'],
+                'user_id' =>$_POST['user_id'],
+                'department_id' => $_POST['department_id'],
+                'department_ref' => genDeptRef((new User($_POST['user_id']))->department_id),
+                'raised_by_secretary' => true
+            ];
+            if ($data['amount_requested_is_percentage']) {
+                //unset($data['amount_requested']);
+                $data['amount_requested'] = null;
+            } else {
+                //unset($data['percentage']);
+                $data['percentage'] = null;
+            }
+            if (hasActiveApplication( $data['user_id'])) {
+                $ret['success'] = false;
+                $ret['reason'] = 'An active application exists for this employee!';
+                $ret['has_active_application'] = true;
+                $ret['errors'] = ['message' => 'An Application is Active!', 'code' => ERROR_AN_APPLICATION_ALREADY_EXISTS];
+                echo json_encode($ret);
+                return;
+            }
             $ret = Database::getDbh()->insert('salary_advance', $data);
             if ($ret) {
                 $remarks = get_include_contents('action_log/salary_advance_raised_by_secretary', $data);
@@ -67,6 +88,7 @@ class SalaryAdvanceSecretaryAjax extends Controller
                 $ret = Database::getDbh()->where('id_salary_advance', $ret)
                     ->get('salary_advance');
                 $ret[0]['success'] = true;
+                $ret[0]['has_active_application'] = hasActiveApplication($data['user_id']);
             } else {
                 $ret[0]['success'] = false;
                 $ret[0]['reason'] = 'An error occured';
@@ -125,7 +147,7 @@ class SalaryAdvanceSecretaryAjax extends Controller
                     $ret[0]['success'] = false;
                     $ret[0]['reason'] = 'An error occured';
                 }
-            } else{
+            } else {
                 $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
                     ->get('salary_advance');
                 if ($ret) {
