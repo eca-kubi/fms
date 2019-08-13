@@ -113,11 +113,9 @@ $universal->select_row_id = $select_row_id;
                 salaryAdvanceDataSource.cancelChanges();
             },
             requestEnd: function (e) {
-                if (e.type === 'read' && e.response) {
+                /*if (e.type === 'read' && e.response) {
                     let grid = $salaryAdvanceGrid.data('kendoGrid');
-                    let selectRow = $salaryAdvanceGrid.find(`tr[data-id-salary-advance=${universal['select_row_id']}]`);
-                    grid.select(selectRow);
-                }
+                }*/
                 if (e.type === 'update' && !e.response[0].success) {
                     e.response[0].reason ? toastError(e.response[0].reason) : toastError('An error occurred!');
                 } else if (e.type === 'update' && e.response[0].success) {
