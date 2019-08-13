@@ -11,11 +11,13 @@ class SalaryAdvance extends Controller
     {
         if (!isLoggedIn()) {
             redirect('users/login/salary-advance/index/' . $id_salary_advance);
-        }
-        if (empty($id_salary_advance)) {
-            $this->all();
         } else {
-            $this->single($id_salary_advance);
+            $payload = [];
+            $payload['current_user'] = $current_user = getUserSession();
+            $payload['title'] = 'Salary Advance Applications';
+            $payload['salary_advances'] = (new SalaryAdvanceModel())->get(['user_id' => $current_user->user_id]);
+            $payload['select_row_id'] = $id_salary_advance;
+            $this->view('salary-advance/all', $payload);
         }
     }
 

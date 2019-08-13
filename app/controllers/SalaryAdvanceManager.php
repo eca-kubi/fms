@@ -9,20 +9,26 @@ class SalaryAdvanceManager extends Controller
 
     public function index($id_salary_advance = null)
     {
+        $payload = [];
+        $payload['current_user'] = $current_user =  getUserSession();
+        $payload['title'] = 'Salary Advance Applications';
+        $payload['select_row_id'] = $id_salary_advance;
         if (!isLoggedIn()) {
             redirect('users/login/salary-advance-manager/index/'.$id_salary_advance);
         }
         if (!isAdmin(getUserSession()->user_id)) {
             redirect('salary-advance');
         }
-        if (empty($id_salary_advance)) {
-            $this->all();
+
+        if (getCurrentHR() == $current_user->user_id || getCurrentFgmr() == $current_user->user_id) {
+            $payload['salary_advances'] = (new SalaryAdvanceModel())->get();
         } else {
-            $this->single($id_salary_advance);
+            $payload['salary_advances'] = (new SalaryAdvanceModel())->get(['department_id' => $current_user->department_id]);
         }
+        $this->view('salary-advance-manager/all', $payload);
     }
 
-    private function all()
+    /*private function all()
     {
         $payload = [];
         $payload['current_user'] = $current_user =  getUserSession();
@@ -37,7 +43,7 @@ class SalaryAdvanceManager extends Controller
             $payload['salary_advances'] = (new SalaryAdvanceModel())->get(['department_id' => $current_user->department_id]);
         }
         $this->view('salary-advance-manager/all', $payload);
-    }
+    }*/
 
     public function single($id_salary_advance)
     {

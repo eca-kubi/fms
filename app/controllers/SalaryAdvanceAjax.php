@@ -66,6 +66,15 @@ class SalaryAdvanceAjax extends Controller
                 //$ret = $this->transformArrayData($ret);
                 $ret[0]['success'] = true;
                 $ret[0]['has_active_application'] = hasActiveApplication($current_user->user_id);
+                $ref_number = genDeptRef($current_user->department_id);
+                $hod = new User(getCurrentManager($current_user->department_id));
+                $hr = new User(getCurrentHR());
+                $fmgr = new User(getCurrentFgmr());
+                $data = ['ref_number' => $ref_number, 'link' => $link];
+                $body = get_include_contents('email_templates/new_application', $data);
+                insertEmail("Salary Advance Application[$ref_number]", $body, $hod->email, $hod->first_name . ' ' . $hod->last_name);
+                insertEmail("Salary Advance Application[$ref_number]", $body, $hr->email, $hr->first_name . ' ' . $hr->last_name);
+                insertEmail("Salary Advance Application[$ref_number]", $body, $fmgr->email, $fmgr->first_name . ' ' . $fmgr->last_name);
                 $remarks = get_include_contents('action_log/salary_advance_raised', $data);
                 insertLog($ret[0]['id_salary_advance'], ACTION_SALARY_ADVANCE_RAISED, $remarks, $current_user->user_id);
             } else {

@@ -59,7 +59,9 @@
 <?php
 $universal = new stdClass();
 $universal->hr_comment_editable = $universal->isHr = getCurrentHR() == $current_user->user_id;
-$universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requested_editable = getCurrentFgmr() == $current_user->user_id;
+$universal->fgmr_comment_editable = $universal->isFmgr  = getCurrentFgmr() == $current_user->user_id;
+/** @var int $select_row_id */
+$universal->select_row_id = $select_row_id;
 ?>
 <!--suppress HtmlUnknownTarget -->
 <script>
@@ -111,6 +113,11 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
                 salaryAdvanceDataSource.cancelChanges();
             },
             requestEnd: function (e) {
+                if (e.type === 'read' && e.response) {
+                    let grid = $salaryAdvanceGrid.data('kendoGrid');
+                    let selectRow = $salaryAdvanceGrid.find(`tr[data-id-salary-advance=${universal['select_row_id']}]`);
+                    grid.select(selectRow);
+                }
                 if (e.type === 'update' && !e.response[0].success) {
                     e.response[0].reason ? toastError(e.response[0].reason) : toastError('An error occurred!');
                 } else if (e.type === 'update' && e.response[0].success) {
@@ -593,8 +600,8 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
                 },
                 {
                     template: "<span class='text-center action-tools'>" +
-                        "<span class='col' title='Edit'><a href='\\#' class='text-black action-edit'><i class='fa fa-pencil'></i></a></span>" +
-                        "<span class='col d-none' title='Delete'><a href='\\#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span><span class='col' title='More Info'><a href='\\#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
+                        "<span class='col' title='Edit'><a href='javascript:' class='text-black action-edit'><i class='fa fa-pencil'></i></a></span>" +
+                        "<span class='col d-none' title='Delete'><a href='javascript:' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span><span class='col' title='More Info'><a href='javascript:' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
                         "<span class='col' title='Print'><a href='\\#' class='text-primary action-print print-it' target='_blank'><i class='fas fa-print'></i></a></span>" +
                         "</span>",
                     width: "10%",
@@ -606,16 +613,19 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
             dataBinding: function () {
                 //let no = (this.dataSource.page() - 1) * this.dataSource.pageSize();
             },
-            dataBound: function () {
-                let grid = $salaryAdvanceGrid.data('kendoGrid');
+            dataBound: function (e) {
+                //let grid = $salaryAdvanceGrid.data('kendoGrid');
+                let grid = e.sender;
                 let data = grid.dataSource.data();
                 $.each(data, function (i, row) {
-                    $('tr[data-uid="' + row.uid + '"] ').find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["id_salary_advance"]);
+                    $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["id_salary_advance"]);
                 });
                 $(".print-it").printPage();
                 if (!(universal['isHr'] || universal['isFmgr'])) {
                     grid.hideColumn('department');
                 }
+                let selectRow = $salaryAdvanceGrid.find(`tr[data-id-salary-advance=${universal['select_row_id']}]`);
+                grid.select(selectRow);
             },
             beforeEdit: function (e) {
                 window.grid_uid = e.model.uid; // uid of current editing row
@@ -650,11 +660,11 @@ $universal->fgmr_comment_editable = $universal->isFmgr = $universal->amount_requ
                 let receivedByLabelField = e.container.find('.k-edit-label:eq(17), .k-edit-field:eq(17)');
                 let dateReceivedLabelField = e.container.find('.k-edit-label:eq(18), .k-edit-field:eq(18)');
 
-               /* let amountRequestedNumericTextBox = amountRequestedLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
-                let amountRequestedPercentageNumericTextBox = percentageLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
-                let amountPayableNumericTextBox = amountPayableLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
-                let radioButtonGroup = $('<div class="k-edit-field"><input type="radio" name="toggleAmountRequested" id="percentageRadio" class="k-radio" checked="checked" > <label class="k-radio-label" for="percentageRadio" >Percentage</label><input type="radio" name="toggleAmountRequested" id="figureRadio" class="k-radio"> <label class="k-radio-label" for="figureRadio">Figure</label></div>');
-*/
+                /* let amountRequestedNumericTextBox = amountRequestedLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
+                 let amountRequestedPercentageNumericTextBox = percentageLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
+                 let amountPayableNumericTextBox = amountPayableLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
+                 let radioButtonGroup = $('<div class="k-edit-field"><input type="radio" name="toggleAmountRequested" id="percentageRadio" class="k-radio" checked="checked" > <label class="k-radio-label" for="percentageRadio" >Percentage</label><input type="radio" name="toggleAmountRequested" id="figureRadio" class="k-radio"> <label class="k-radio-label" for="figureRadio">Figure</label></div>');
+ */
                 // Toggle visibility off for all editor fields and labels
                 e.container.find('.k-edit-label, .k-edit-field').addClass("pt-2").toggle(false);
 

@@ -59,8 +59,10 @@
 <?php
 $universal = new stdClass();
 $universal->hr_comment_editable = getCurrentHR() == $current_user->user_id;
-$universal->fgmr_comment_editable = $universal->amount_requested_editable = getCurrentFgmr() == $current_user->user_id;
+$universal->fgmr_comment_editable  = getCurrentFgmr() == $current_user->user_id;
 $universal->has_active_application = hasActiveApplication($current_user->user_id);
+/** @var int $select_row_id */
+$universal->select_row_id = $select_row_id;
 ?>
 <!--suppress HtmlUnknownTarget -->
 <script>
@@ -615,8 +617,8 @@ $universal->has_active_application = hasActiveApplication($current_user->user_id
                 },
                 {
                     template: "<span class='text-center action-tools'>" +
-                        "<span class='col' title='Edit'><a href='\\#' class='text-black action-edit'><i class='fa fa-pencil'></i></a></span>" +
-                        "<span class='col' title='Delete'><a href='\\#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span><span class='col' title='More Info'><a href='\\#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
+                        "<span class='col' title='Edit'><a href='javascript:' class='text-black action-edit'><i class='fa fa-pencil'></i></a></span>" +
+                        "<span class='col' title='Delete'><a href='javascript:' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span><span class='col' title='More Info'><a href='javascript:' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
                         "<span class='col' title='Print'><a href='\\#' class='text-primary action-print print-it' target='_blank'><i class='fas fa-print'></i></a></span>" +
                         "</span>",
                     width: "12%",
