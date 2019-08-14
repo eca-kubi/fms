@@ -162,6 +162,11 @@ function customBoolEditor(container, options) {
     $(`<label class="k-checkbox-label" for="${guid}">&#8203;</label>`).appendTo(container);
 }
 
+function hodApprovalEditor(container, options) {
+    let guid = kendo.guid();
+    $(`<div class="editor-field"><input type="radio" name="${options.field}" id="${guid}" id="${options.field}_approve" class="k-radio" data-bind="checked: ${options.field}" data-type="boolean"> <label class="k-radio-label" for="${options.field}_approve" >Approve</label><input type="radio" name="${options.field}" id="${options.field}_reject" class="k-radio" data-bind="checked: ${options.field}" data-type="boolean"> <label class="k-radio-label" for="${options.field}_reject">Reject</label></div>`);
+}
+
 toastError = function f(message) {
     $.toast({
         // heading: '<u>Information</u>',

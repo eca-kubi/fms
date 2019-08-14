@@ -599,7 +599,8 @@ $universal->select_row_id = $select_row_id;
                 {
                     template: "<span class='text-center action-tools'>" +
                         "<span class='col' title='Edit'><a href='javascript:' class='text-black action-edit'><i class='fa fa-pencil'></i></a></span>" +
-                        "<span class='col d-none' title='Delete'><a href='javascript:' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span><span class='col' title='More Info'><a href='javascript:' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
+                        "<span class='col d-none' title='Delete'><a href='javascript:' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span>" +
+                        "<span class='col d-none' title='More Info'><a href='javascript:' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
                         "<span class='col' title='Print'><a href='\\#' class='text-primary action-print print-it' target='_blank'><i class='fas fa-print'></i></a></span>" +
                         "</span>",
                     width: "10%",
@@ -624,6 +625,7 @@ $universal->select_row_id = $select_row_id;
                 }
                 let selectRow = $salaryAdvanceGrid.find(`tr[data-id-salary-advance=${universal['select_row_id']}]`);
                 grid.select(selectRow);
+                selectRow.find('.action-more-info').click();
             },
             beforeEdit: function (e) {
                 window.grid_uid = e.model.uid; // uid of current editing row
@@ -632,7 +634,7 @@ $universal->select_row_id = $select_row_id;
                 e.model.fields.percentage.editable = !e.model.fmgr_approval && universal['isFmgr'];*/
                 e.model.fields.amount_requested.editable = false;
                 e.model.fields.percentage.editable = false;
-                e.model.fields.hod_comment.editable = e.model["hod_comment_editable"];
+                e.model.fields.hod_comment.editable = e.model["hod_comment_editable"] && !Boolean(e.model['hod_comment_editable']);
                 e.model.fields.hod_approval.editable = e.model["hod_approval_editable"] && !e.model.hod_approval;
                 e.model.fields.amount_payable.editable = universal['isHr'] && !Boolean(e.model.hr_approval);
                 e.model.fields.hr_approval.editable = universal['isHr'] && !Boolean(e.model.hr_approval);
