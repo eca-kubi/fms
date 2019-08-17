@@ -185,6 +185,8 @@ function approvalEditor(container, options) {
             console.log("Event: dataBound");
         }
     }).data("kendoExtRadioButtonGroup");
+
+    $(radioButtonGroup.element).appendTo(container);
 }
 
 toastError = function f(message) {
