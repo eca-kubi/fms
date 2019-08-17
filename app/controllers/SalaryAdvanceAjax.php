@@ -34,6 +34,7 @@ class SalaryAdvanceAjax extends Controller
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $current_user = getUserSession();
+            $link = '';
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             $ret = [];
             if (hasActiveApplication($current_user->user_id)) {

@@ -162,9 +162,29 @@ function customBoolEditor(container, options) {
     $(`<label class="k-checkbox-label" for="${guid}">&#8203;</label>`).appendTo(container);
 }
 
-function hodApprovalEditor(container, options) {
+function approvalEditor(container, options) {
     let guid = kendo.guid();
-    $(`<div class="editor-field"><input type="radio" name="${options.field}" id="${guid}" id="${options.field}_approve" class="k-radio" data-bind="checked: ${options.field}" data-type="boolean"> <label class="k-radio-label" for="${options.field}_approve" >Approve</label><input type="radio" name="${options.field}" id="${options.field}_reject" class="k-radio" data-bind="checked: ${options.field}" data-type="boolean"> <label class="k-radio-label" for="${options.field}_reject">Reject</label></div>`);
+    let data = [{
+        id: "Yes", name: "Approve"
+    },{
+        id: "No", name: "Reject",
+    }];
+
+// Initialize the kendoExtRadioButtonGroup.
+    let radioButtonGroup = $("<div id='approvalRadioButtonGroup'></div>").kendoExtRadioButtonGroup({
+        dataSource: data,
+        dataValueField: "id",
+        dataTextField: "name",
+        groupName: options.field,
+        orientation: "horizontal",
+        change: function (e) {
+            console.log("Event: change", kendo.format("id: {0}, value: {1}", e.dataItem.id, e.dataItem.name));
+
+        },
+        dataBound: function () {
+            console.log("Event: dataBound");
+        }
+    }).data("kendoExtRadioButtonGroup");
 }
 
 toastError = function f(message) {
