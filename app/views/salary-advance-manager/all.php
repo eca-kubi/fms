@@ -59,7 +59,7 @@
 <?php
 $universal = new stdClass();
 $universal->hr_comment_editable = $universal->isHr = getCurrentHR() == $current_user->user_id;
-$universal->fgmr_comment_editable = $universal->isFmgr  = getCurrentFgmr() == $current_user->user_id;
+$universal->fgmr_comment_editable = $universal->isFmgr = getCurrentFgmr() == $current_user->user_id;
 /** @var int $select_row_id */
 $universal->select_row_id = $select_row_id;
 ?>
@@ -591,10 +591,8 @@ $universal->select_row_id = $select_row_id;
                         let date = dataItem.date_received ? kendo.toString(kendo.parseDate(dataItem.date_received), 'dddd dd MMM, yyyy') : 'Pending';
                         return "<span title='Date Received: " + date + "'>" + date + "</span>";
                     },
-                    headerAttributes: {
-                        "class": "title"
-                    },
-                    groupHeaderTemplate: "Date Received: #= value? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : 'Pending' #",
+                    "class": "title",
+                    groupHeaderTemplate: "Date Received: #= value? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : 'Pending' #"
                 },
                 {
                     template: "<span class='text-center action-tools'>" +
