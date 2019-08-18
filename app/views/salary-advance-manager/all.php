@@ -402,7 +402,7 @@ $universal->select_row_id = $select_row_id;
                         {
                             field: 'hod_approval',
                             title: 'Approved by HoD?',
-                            editor: customBoolEditor,
+                            editor: approvalEditor,
                             template: function (dataItem) {
                                 let hod_approval = dataItem.hod_approval ? dataItem.hod_approval : '';
                                 return "<span title='HoD Approved: " + (hod_approval ? 'Yes' : 'No') + "'>" + (hod_approval ? 'Yes' : 'No') + "</span>"

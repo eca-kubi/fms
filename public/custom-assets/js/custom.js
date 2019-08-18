@@ -114,11 +114,11 @@ function dropDownEditor(container, options) {
                 group: {field: 'department_short_name'}
             },
             dataBound: function () {
-                let kDropDownList =  $("#employeeDropDownList").data("kendoDropDownList");
+                let kDropDownList = $("#employeeDropDownList").data("kendoDropDownList");
                 let data = kDropDownList.dataSource.data();
                 //Iterate over the dataItems and search for a value.
-                for(let x = 0; x < data.length; x++){
-                    if (data[x].has_active_application){
+                for (let x = 0; x < data.length; x++) {
+                    if (data[x].has_active_application) {
                         //removes item
                         kDropDownList.dataSource.remove(data[x]);
                         //selects first item
@@ -158,35 +158,40 @@ function textAreaEditor(container, options) {
 
 function customBoolEditor(container, options) {
     let guid = kendo.guid();
-    $(`<input class="k-checkbox" id="${guid}" type="checkbox" name="${options.field}" data-bind="checked: ${options.field}" data-type="boolean">`).appendTo(container);
+    $(`<input class="k-checkbox" id="${guid}" type="checkbox" name="${options.field}" data-bind="checked:${options.field}" data-type="boolean">`).appendTo(container);
     $(`<label class="k-checkbox-label" for="${guid}">&#8203;</label>`).appendTo(container);
 }
 
 function approvalEditor(container, options) {
     let guid = kendo.guid();
     let data = [{
-        id: "Yes", name: "Approve"
-    },{
-        id: "No", name: "Reject",
+        id: 'Yes', name: "Approve"
+    }, {
+        id: 'No', name: "Reject",
     }];
 
 // Initialize the kendoExtRadioButtonGroup.
-    let radioButtonGroup = $("<div id='approvalRadioButtonGroup'></div>").kendoExtRadioButtonGroup({
-        dataSource: data,
-        dataValueField: "id",
-        dataTextField: "name",
-        groupName: options.field,
-        orientation: "horizontal",
-        change: function (e) {
-            console.log("Event: change", kendo.format("id: {0}, value: {1}", e.dataItem.id, e.dataItem.name));
-
-        },
-        dataBound: function () {
-            console.log("Event: dataBound");
-        }
-    }).data("kendoExtRadioButtonGroup");
-
-    $(radioButtonGroup.element).appendTo(container);
+    let radioButtonGroup = $("<div id='approvalRadioButtonGroup'></div>")
+        .appendTo(container)
+        .kendoExtRadioButtonGroup({
+            dataSource: data,
+            dataValueField: "id",
+            dataTextField: "name",
+            groupName: options.field,
+            orientation: "horizontal",
+            /*change: function (e) {
+                console.log("Event: change", kendo.format("id: {0}, value: {1}", e.dataItem.id, e.dataItem.name));
+                let grid = $salaryAdvanceGrid["data"]('kendoGrid');
+                let model = grid.dataSource.getByUid(grid_uid);
+                let row = grid.tbody.find("tr[data-uid='" + grid_uid + "']");
+                let dataItem = grid.dataItem(row);
+                dataItem.set("hod_approval", e.dataItem.id);
+                model.refresh();
+            },
+            dataBound: function () {
+                //console.log("Event: dataBound");
+            }*/
+        }).data("kendoExtRadioButtonGroup");
 }
 
 toastError = function f(message) {

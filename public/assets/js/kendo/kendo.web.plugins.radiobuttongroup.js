@@ -55,9 +55,9 @@
             this.dataSource.fetch();
 
             // Attach an event handler to the selection of a radio button.
-            this.element.on("click" + NS, ".k-radio-label", { sender: this }, this._onRadioButtonSelected);
+            this.element.on("click" + NS, ".k-radio-label", {sender: this}, this._onRadioButtonSelected);
 
-            this.element.css({ "display": "inline-block" });
+            this.element.css({"display": "inline-block"});
         },
 
         destroy: function () {
@@ -74,7 +74,7 @@
             var dataSource = this.options.dataSource;
 
             // If the data source is an array, then define an object and set the array to the data attribute.
-            dataSource = $.isArray(dataSource) ? { data: dataSource } : dataSource;
+            dataSource = $.isArray(dataSource) ? {data: dataSource} : dataSource;
 
             // If there is a data source defined already.
             if (this.dataSource && this._refreshHandler) {
@@ -112,7 +112,7 @@
 
             var dataItem = that.dataItem();
 
-            that.trigger("change", { dataItem: dataItem });
+            that.trigger("change", {dataItem: dataItem});
         },
 
         setDataSource: function (dataSource) {
