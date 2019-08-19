@@ -235,6 +235,47 @@ function departmentFilter(element) {
     });
 }
 
+function kendoFastReDrawRow(grid, row) {
+    let dataItem = grid.dataItem(row);
+
+    let rowChildren = $(row).children('td[role="gridcell"]');
+
+    for (let i = 0; i < grid.columns.length; i++) {
+
+        let column = grid.columns[i];
+        let template = column.template;
+        let cell = rowChildren.eq(i);
+
+        if (template !== undefined) {
+            let kendoTemplate = kendo.template(template);
+
+            // Render using template
+            cell.html(kendoTemplate(dataItem));
+        } else {
+            let fieldValue = dataItem[column.field];
+
+            let format = column.format;
+            let values = column.values;
+
+            if (values !== undefined && values != null) {
+                // use the text value mappings (for enums)
+                for (let j = 0; j < values.length; j++) {
+                    let value = values[j];
+                    if (value.value === fieldValue) {
+                        cell.html(value.text);
+                        break;
+                    }
+                }
+            } else if (format !== undefined) {
+                // use the format
+                cell.html(kendo.format(format, fieldValue));
+            } else {
+                // Just dump the plain old value
+                cell.html(fieldValue);
+            }
+        }
+    }
+}
 /*
 function parseHtml(s) {
     return (new DOMParser()).parseFromString(s, 'text/html').body.innerHTML;
