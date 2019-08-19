@@ -179,18 +179,18 @@ function approvalEditor(container, options) {
             dataTextField: "name",
             groupName: options.field,
             orientation: "horizontal",
-            /*change: function (e) {
-                console.log("Event: change", kendo.format("id: {0}, value: {1}", e.dataItem.id, e.dataItem.name));
+            change: function (e) {
+                //console.log("Event: change", kendo.format("id: {0}, value: {1}", e.dataItem.id, e.dataItem.name));
                 let grid = $salaryAdvanceGrid["data"]('kendoGrid');
                 let model = grid.dataSource.getByUid(grid_uid);
                 let row = grid.tbody.find("tr[data-uid='" + grid_uid + "']");
                 let dataItem = grid.dataItem(row);
                 dataItem.set("hod_approval", e.dataItem.id);
-                model.refresh();
+                grid.refresh();
             },
             dataBound: function () {
                 //console.log("Event: dataBound");
-            }*/
+            }
         }).data("kendoExtRadioButtonGroup");
 }
 

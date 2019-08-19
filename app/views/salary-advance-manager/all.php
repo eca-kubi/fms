@@ -667,7 +667,6 @@ $universal->select_row_id = $select_row_id;
                 e.container.find('.k-edit-label, .k-edit-field').addClass("pt-2").toggle(false);
 
                 e.container.find('.k-edit-field .k-checkbox').parent().removeClass('pt-2');
-
                 // Toggleability
                 nameLabelField.toggle(true);
                 amountRequestedLabelField.toggle(!e.model.amount_requested_is_percentage /*|| universal['isFmgr']*/);
