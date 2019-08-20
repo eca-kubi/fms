@@ -640,7 +640,6 @@ $universal->select_row_id = $select_row_id;
                 e.model.fields.amount_approved.editable = universal['isFmgr'] && !Boolean(e.model.fmgr_approval);
                 e.model.fields.fmgr_approval.editable = universal['isFmgr'] && !Boolean(e.model.fmgr_approval);
                 e.model.fields.fmgr_comment.editable = universal['isFmgr'];
-
             },
             edit: function (e) {
                 let nameLabelField = e.container.find('.k-edit-label:eq(0), .k-edit-field:eq(0)');
@@ -663,6 +662,8 @@ $universal->select_row_id = $select_row_id;
                  let amountPayableNumericTextBox = amountPayableLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
                  let radioButtonGroup = $('<div class="k-edit-field"><input type="radio" name="toggleAmountRequested" id="percentageRadio" class="k-radio" checked="checked" > <label class="k-radio-label" for="percentageRadio" >Percentage</label><input type="radio" name="toggleAmountRequested" id="figureRadio" class="k-radio"> <label class="k-radio-label" for="figureRadio">Figure</label></div>');
  */
+                // Hod Approval RadiobuttonGroup initialisation
+                //e.container.find("#approvalRadioButtonGroup" + "_hod_approval").find()
                 // Toggle visibility off for all editor fields and labels
                 e.container.find('.k-edit-label, .k-edit-field').addClass("pt-2").toggle(false);
 

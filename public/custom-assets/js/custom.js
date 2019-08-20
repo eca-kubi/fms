@@ -164,14 +164,15 @@ function customBoolEditor(container, options) {
 
 function approvalEditor(container, options) {
     let guid = kendo.guid();
+    let grid = $salaryAdvanceGrid["data"]('kendoGrid');
+    let model = grid.dataSource.getByUid(grid_uid);
     let data = [{
-        id: 'Yes', name: "Approve"
+        id: true, name: "Approve"
     }, {
-        id: 'No', name: "Reject",
+        id: false, name: "Reject",
     }];
-
 // Initialize the kendoExtRadioButtonGroup.
-    let radioButtonGroup = $("<div id='approvalRadioButtonGroup'></div>")
+    let radioButtonGroup = $(`<div id='approvalRadioButtonGroup_${options.field}'></div>`)
         .appendTo(container)
         .kendoExtRadioButtonGroup({
             dataSource: data,
@@ -181,17 +182,23 @@ function approvalEditor(container, options) {
             orientation: "horizontal",
             change: function (e) {
                 //console.log("Event: change", kendo.format("id: {0}, value: {1}", e.dataItem.id, e.dataItem.name));
-                let grid = $salaryAdvanceGrid["data"]('kendoGrid');
-                let model = grid.dataSource.getByUid(grid_uid);
                 let row = grid.tbody.find("tr[data-uid='" + grid_uid + "']");
                 let dataItem = grid.dataItem(row);
-                dataItem.set("hod_approval", e.dataItem.id);
-                grid.refresh();
+                let value = e.dataItem.id === true;
+                let checkedInp = this.element.find('.k-radio:checked');
+                dataItem.set("hod_approval", value);
+                if (!checkedInp.prop("checked")) {
+                    checkedInp.prop('checked',  true);
+                }
+                // grid.refresh();
+                // kendoFastReDrawRow(grid, row, dataItem);
             },
             dataBound: function () {
                 //console.log("Event: dataBound");
             }
         }).data("kendoExtRadioButtonGroup");
+
+    radioButtonGroup.value(model[options.field]);
 }
 
 toastError = function f(message) {
@@ -235,8 +242,8 @@ function departmentFilter(element) {
     });
 }
 
-function kendoFastReDrawRow(grid, row) {
-    let dataItem = grid.dataItem(row);
+function kendoFastReDrawRow(grid, row, dItem) {
+    let dataItem = dItem ? dItem : grid.dataItem(row);
 
     let rowChildren = $(row).children('td[role="gridcell"]');
 
@@ -276,6 +283,7 @@ function kendoFastReDrawRow(grid, row) {
         }
     }
 }
+
 /*
 function parseHtml(s) {
     return (new DOMParser()).parseFromString(s, 'text/html').body.innerHTML;
