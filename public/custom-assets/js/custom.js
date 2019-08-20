@@ -187,9 +187,9 @@ function approvalEditor(container, options) {
                 let value = e.dataItem.id === true;
                 let checkedInp = this.element.find('.k-radio:checked');
                 dataItem.set("hod_approval", value);
-                if (!checkedInp.prop("checked")) {
+                /*if (!checkedInp.prop("checked")) {
                     checkedInp.prop('checked',  true);
-                }
+                }*/
                 // grid.refresh();
                 // kendoFastReDrawRow(grid, row, dataItem);
             },
