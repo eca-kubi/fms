@@ -412,8 +412,7 @@ $universal->select_row_id = $select_row_id;
                             title: 'Approved by HoD?',
                             editor: approvalEditor,
                             template: function (dataItem) {
-                                let hod_approval = dataItem.hod_approval ? dataItem.hod_approval : '';
-                                return "<span title='HoD Approved: " + (hod_approval ? 'Yes' : 'No') + "'>" + (hod_approval ? 'Yes' : 'No') + "</span>"
+                                return "<span title='HoD Approved: " + (dataItem.hod_approval===null ? 'Pending' : dataItem.hod_approval? 'Yes' : 'No') + "'>" +  (dataItem.hod_approval===null ? 'Pending' : dataItem.hod_approval? 'Yes' : 'No') + "</span>"
                             },
                             headerAttributes: {
                                 "class": "title"
@@ -429,11 +428,11 @@ $universal->select_row_id = $select_row_id;
                                 "class": "title"
                             },
                             template: function (dataItem) {
-                                let date = kendo.toString(kendo.parseDate(dataItem.hod_approval_date), 'dddd dd MMM, yyyy');
+                                let date = dataItem.hod_approval_date ? kendo.toString(kendo.parseDate(dataItem.hod_approval_date), 'dddd dd MMM, yyyy') : '';
                                 return "<span title='HoD Approval Date: " + date + "'>" + date + "</span>";
                             },
                             width: 200,
-                            groupHeaderTemplate: "Date Raised: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') #",
+                            groupHeaderTemplate: "Date Raised: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') : '' #",
                             hidden: true
                         }
                     ],
@@ -466,8 +465,7 @@ $universal->select_row_id = $select_row_id;
                             title: 'Approved by HR?',
                             editor: customBoolEditor,
                             template: function (dataItem) {
-                                let hr_approval = dataItem.hr_approval ? dataItem.hr_approval : '';
-                                return "<span title='HR Approved: " + (hr_approval ? 'Yes' : 'No') + "'>" + (hr_approval ? 'Yes' : 'No') + "</span>"
+                                return "<span title='HR Approved: " + (dataItem.hr_approval===null ? 'Pending' : dataItem.hr_approval? 'Yes' : 'No') + "'>" + (dataItem.hr_approval===null ? 'Pending' : dataItem.hr_approval? 'Yes' : 'No') + "</span>"
                             },
                             headerAttributes: {
                                 "class": "title"
@@ -496,11 +494,11 @@ $universal->select_row_id = $select_row_id;
                                 "class": "title"
                             },
                             template: function (dataItem) {
-                                let date = kendo.toString(kendo.parseDate(dataItem.hr_approval_date), 'dddd dd MMM, yyyy');
+                                let date = dataItem.hr_approval_date ? kendo.toString(kendo.parseDate(dataItem.hr_approval_date), 'dddd dd MMM, yyyy') : '';
                                 return "<span title='HR Approval Date: " + date + "'>" + date + "</span>";
                             },
                             width: 200,
-                            groupHeaderTemplate: "HR Approval Date: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') #",
+                            groupHeaderTemplate: "HR Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') : '' #",
                             hidden: true
                         }
                     ],
@@ -533,8 +531,7 @@ $universal->select_row_id = $select_row_id;
                             title: 'Approved by Finance Mgr.?',
                             editor: customBoolEditor,
                             template: function (dataItem) {
-                                let fmgr_approval = dataItem.fmgr_approval ? dataItem.fmgr_approval : '';
-                                return "<span title='Approved by Finance Mgr.: " + (fmgr_approval ? 'Yes' : 'No') + "'>" + (fmgr_approval ? 'Yes' : 'No') + "</span>"
+                                return "<span title='Approved by Finance Mgr.: " +  (dataItem.fmgr_approval===null ? 'Pending' : dataItem.fmgr_approval? 'Yes' : 'No') + "'>" +  (dataItem.fmgr_approval===null ? 'Pending' : dataItem.fmgr_approval? 'Yes' : 'No') + "</span>"
                             },
                             headerAttributes: {
                                 "class": "title"
@@ -563,11 +560,11 @@ $universal->select_row_id = $select_row_id;
                                 "class": "title"
                             },
                             template: function (dataItem) {
-                                let date = kendo.toString(kendo.parseDate(dataItem.fmgr_approval_date), 'dddd dd MMM, yyyy');
+                                let date = dataItem.fmgr_approval_date ? kendo.toString(kendo.parseDate(dataItem.fmgr_approval_date), 'dddd dd MMM, yyyy') : '';
                                 return "<span title='Finance Mgr. Approval Date: " + date + "'>" + date + "</span>";
                             },
                             width: 200,
-                            groupHeaderTemplate: "Finance Mgr. Approval Date: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') #",
+                            groupHeaderTemplate: "Finance Mgr. Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') : '' #",
                             hidden: true
                         }
                     ],
@@ -621,8 +618,8 @@ $universal->select_row_id = $select_row_id;
                         "</span>",
                     width: 100,
                     title: "",
-                    locked: true,
-                    lockable: true
+                    /*locked: true,
+                    lockable: true*/
                 },
             ],
             //detailTemplate: kendo.template(summaryTemplate),
