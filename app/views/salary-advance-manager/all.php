@@ -325,7 +325,9 @@ $universal->select_row_id = $select_row_id;
                     width: 200,
                     headerAttributes: {
                         "class": "title"
-                    }
+                    },
+                   /* locked: true,
+                    lockable: true*/
                 },
                 {
                     field: 'department',
