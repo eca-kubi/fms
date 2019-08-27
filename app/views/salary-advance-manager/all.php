@@ -618,6 +618,7 @@ $universal->select_row_id = $select_row_id;
                         "</span>",
                     width: 100,
                     title: "",
+                    locked: true
                     /*locked: true,
                     lockable: true*/
                 },
@@ -659,20 +660,20 @@ $universal->select_row_id = $select_row_id;
                 e.model.fields.fmgr_comment.editable = universal['isFmgr'];
             },
             edit: function (e) {
-                let nameLabelField = e.container.find('.k-edit-label:eq(0), .k-edit-field:eq(0)');
-                let percentageLabelField = e.container.find('.k-edit-label:eq(3), .k-edit-field:eq(3)');
-                let amountRequestedLabelField = e.container.find('.k-edit-label:eq(4), .k-edit-field:eq(4)');
-                let hodCommentLabelField = e.container.find('.k-edit-label:eq(5), .k-edit-field:eq(5)');
-                let hodApprovalLabelField = e.container.find('.k-edit-label:eq(6), .k-edit-field:eq(6)');
-                let hrCommentLabelField = e.container.find('.k-edit-label:eq(8), .k-edit-field:eq(8)');
-                let hrApprovalLabelField = e.container.find('.k-edit-label:eq(9), .k-edit-field:eq(9)');
-                let amountPayableLabelField = e.container.find('.k-edit-label:eq(10), .k-edit-field:eq(10)');
-                let fmgrCommentLabelField = e.container.find('.k-edit-label:eq(12), .k-edit-field:eq(12)');
-                let fmgrApprovalLabelField = e.container.find('.k-edit-label:eq(13), .k-edit-field:eq(13)');
-                let amountApprovedLabelField = e.container.find('.k-edit-label:eq(14), .k-edit-field:eq(14)');
-                let amountReceivedLabelField = e.container.find('.k-edit-label:eq(16), .k-edit-field:eq(16)');
-                let receivedByLabelField = e.container.find('.k-edit-label:eq(17), .k-edit-field:eq(17)');
-                let dateReceivedLabelField = e.container.find('.k-edit-label:eq(18), .k-edit-field:eq(18)');
+                let nameLabelField = e.container.find('.k-edit-label:eq(1), .k-edit-field:eq(1)');
+                let percentageLabelField = e.container.find('.k-edit-label:eq(4), .k-edit-field:eq(4)');
+                let amountRequestedLabelField = e.container.find('.k-edit-label:eq(5), .k-edit-field:eq(5)');
+                let hodCommentLabelField = e.container.find('.k-edit-label:eq(6), .k-edit-field:eq(6)');
+                let hodApprovalLabelField = e.container.find('.k-edit-label:eq(7), .k-edit-field:eq(7)');
+                let hrCommentLabelField = e.container.find('.k-edit-label:eq(9), .k-edit-field:eq(9)');
+                let hrApprovalLabelField = e.container.find('.k-edit-label:eq(10), .k-edit-field:eq(10)');
+                let amountPayableLabelField = e.container.find('.k-edit-label:eq(11), .k-edit-field:eq(11)');
+                let fmgrCommentLabelField = e.container.find('.k-edit-label:eq(13), .k-edit-field:eq(13)');
+                let fmgrApprovalLabelField = e.container.find('.k-edit-label:eq(14), .k-edit-field:eq(14)');
+                let amountApprovedLabelField = e.container.find('.k-edit-label:eq(15), .k-edit-field:eq(15)');
+                let amountReceivedLabelField = e.container.find('.k-edit-label:eq(17), .k-edit-field:eq(17)');
+                let receivedByLabelField = e.container.find('.k-edit-label:eq(18), .k-edit-field:eq(18)');
+                let dateReceivedLabelField = e.container.find('.k-edit-label:eq(19), .k-edit-field:eq(19)');
 
                 /* let amountRequestedNumericTextBox = amountRequestedLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
                  let amountRequestedPercentageNumericTextBox = percentageLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
