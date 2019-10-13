@@ -44,7 +44,7 @@
                 </li>
                 <li class="nav-item has-treeview">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-file-word-o"></i>
+                        <i class="nav-icon fa fa-file"></i>
                         <p>
                            Forms
                             <i class="right fas fa-angle-left"></i>

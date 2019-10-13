@@ -79,6 +79,20 @@ class SalaryAdvanceManagerAjax extends Controller
         return $ret;
     }
 
+    public function isCommentEditable($mgr, $param) {
+        $current_user = getUserSession();
+        $fmgr = getCurrentFgmr();
+        $hr = getCurrentHR();
+        $hod = getCurrentManager($param['department_id']);
+        if ($mgr === 'fmgr') {
+            return ($fmgr == $current_user->user_id) && $param['hr_approval'];
+        } else if ($mgr  == 'hr') {
+            return ($hr == $current_user->user_id) && $param['hod_approval'];
+        } else {
+           return $hod == $current_user->user_id;
+        }
+    }
+
     public function Create()
     {
     }

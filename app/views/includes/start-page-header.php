@@ -11,14 +11,14 @@
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/adminlte.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/adminlte-miscellaneous.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/box-widget.css"/>
-    <link rel="stylesheet" media="all" href="<?php echo URL_ROOT; ?>/public/assets/css/font-awesome.css"/>
     <link rel="stylesheet" media="all" href="<?php echo URL_ROOT; ?>/public/assets/css/fa-animate.css"/>
-    <link rel="stylesheet" media="all" href="<?php echo URL_ROOT; ?>/public/assets/css/all.css"/>
-    <link rel="stylesheet" media="all" href="<?php echo URL_ROOT; ?>/public/assets/css/v4-shims.min.css"/>
-    <link rel="stylesheet" href="<?php echo URL_ROOT ?>/public/assets/css/shards.min.css">
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/fonts.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/tooltips.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/jquery-toast.min.css"/>
+    <link rel="stylesheet" media="all" href="<?php echo URL_ROOT; ?>/public/assets/css/font-awesome-free/css/all.css"/>
+    <link rel="stylesheet" media="all" href="<?php echo URL_ROOT; ?>/public/assets/css/font-awesome-pro/css/all.css"/>
+    <link rel="stylesheet" media="all" href="<?php echo URL_ROOT; ?>/public/assets/css/font-awesome-free/css/v4-shims.min.css"/>
+    <link rel="stylesheet" href="<?php echo URL_ROOT ?>/public/assets/css/shards.min.css">
 
 
     <link rel="stylesheet"
@@ -128,7 +128,6 @@
         <div class="row mb-2" style="border-bottom: 4px solid #eedaa8!important">
             <span class="h3"><?php echo $payload['title'] ?></span>
             <span class="m-1 ml-auto">
-                    <a href="<?php echo site_url("start-page") ?>" class="btn btn-pill btn-primary logout-back"><i
-                                class="fa fa-arrow-left"></i>&nbsp;Back</a>
+                    <a href="<?php echo site_url("start-page") ?>" class="btn btn-pill btn-primary logout-back"><i class="fa fa-arrow-left"></i>&nbsp;Back</a>
                 </span>
         </div>

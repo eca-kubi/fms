@@ -1,5 +1,5 @@
 {
-  "name": "fictional-university-lwc",
+  "name": "fms",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -37,6 +37,7 @@
     "moment-workdays": "^1.1.1",
     "node-rsa": "^1.0.5",
     "normalize.css": "^8.0.1",
+    "popper": "^1.0.1",
     "slick-carousel": "^1.8.1",
     "smoothscroll": "^0.4.0"
   }

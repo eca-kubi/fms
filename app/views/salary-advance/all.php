@@ -1,6 +1,15 @@
+<?php
+$universal = new stdClass();
+$universal->hr_comment_editable = getCurrentHR() == $current_user->user_id;
+$universal->fgmr_comment_editable  = getCurrentFgmr() == $current_user->user_id;
+$universal->has_active_application = hasActiveApplication($current_user->user_id);
+/** @var int $select_row_id */
+$universal->select_row_id = $select_row_id;
+?>
 <?php require_once APP_ROOT . '\views\includes\header.php'; ?>
 <?php require_once APP_ROOT . '\views\includes\navbar.php'; ?>
 <?php require_once APP_ROOT . '\views\includes\sidebar.php'; ?>
+<input id="url_root" type="hidden" value="<?php  echo URL_ROOT; ?>">
 <!-- .content-wrapper -->
 <div class="content-wrapper animated fadeInRight" style="margin-top: <?php echo NAVBAR_MT; ?>">
     <!-- .content-header-->
@@ -53,18 +62,13 @@
         </div>
     </section>
     <!-- /.content -->
+    <!-- footer -->
+    <?php require_once APP_ROOT . '\views\includes\footer.php'; ?>
+    <!-- footer -->
 </div>
-<!-- /.content-wrapper -->
-<?php require_once APP_ROOT . '\views\includes\footer.php'; ?>
-<?php
-$universal = new stdClass();
-$universal->hr_comment_editable = getCurrentHR() == $current_user->user_id;
-$universal->fgmr_comment_editable  = getCurrentFgmr() == $current_user->user_id;
-$universal->has_active_application = hasActiveApplication($current_user->user_id);
-/** @var int $select_row_id */
-$universal->select_row_id = $select_row_id;
-?>
-<!--suppress HtmlUnknownTarget -->
+</div>
+<!-- /.wrapper -->
+<?php require_once APP_ROOT . '\views\includes\scripts.php'; ?>
 <script>
     /*Error constants*/
     const ERROR_UNSPECIFIED_ERROR = 'E_1000';
@@ -77,6 +81,7 @@ $universal->select_row_id = $select_row_id;
     let $salaryAdvanceTooltip;
     $(document).ready(function () {
         //$(document).on('click', '#percentageRadio', toggleAmountRequested);
+        URL_ROOT = $('#url_root').val();
         kendo.culture().numberFormat.currency.symbol = 'GH₵';
         $salaryAdvanceGrid = $("#salary_advance");
         $salaryAdvanceGrid.on('change', "input[name=employee]", function (e) {
@@ -346,19 +351,19 @@ $universal->select_row_id = $select_row_id;
                         "class": "title"
                     }
                 },*/
-               /* {
-                    field: 'department',
-                    title: 'Department',
-                    template: function (dataItem) {
-                        return "<span title='" + dataItem.department + "'>" + dataItem.department + "</span>";
-                    },
-                    headerAttributes: {
-                        "class": "title"
-                    },
-                    filterable: {
-                        ui: departmentFilter
-                    }
-                },*/
+                /* {
+                     field: 'department',
+                     title: 'Department',
+                     template: function (dataItem) {
+                         return "<span title='" + dataItem.department + "'>" + dataItem.department + "</span>";
+                     },
+                     headerAttributes: {
+                         "class": "title"
+                     },
+                     filterable: {
+                         ui: departmentFilter
+                     }
+                 },*/
                 {
                     field: 'date_raised',
                     title: 'Date Raised',
@@ -710,8 +715,8 @@ $universal->select_row_id = $select_row_id;
                     percentageLabelField.toggle(Boolean(e.model.amount_requested_is_percentage)).find('label').html('Amount Requested');
                     amountRequestedLabelField.toggle(!Boolean(e.model.amount_requested_is_percentage)).find('label').html('Amount Requested');
                 }
-             /*   e.container.find('.k-edit-label:eq(1), .k-edit-field:eq(1)').toggle(Boolean(e.model.percentage) || Boolean(e.model.amount_requested_is_percentage)); // toggle visibility for amount requested in percentage
-                e.container.find('.k-edit-label:eq(2), .k-edit-field:eq(2)').toggle(Boolean(e.model.amount_requested)); // toggle visibility for amount requested in figures*/
+                /*   e.container.find('.k-edit-label:eq(1), .k-edit-field:eq(1)').toggle(Boolean(e.model.percentage) || Boolean(e.model.amount_requested_is_percentage)); // toggle visibility for amount requested in percentage
+                   e.container.find('.k-edit-label:eq(2), .k-edit-field:eq(2)').toggle(Boolean(e.model.amount_requested)); // toggle visibility for amount requested in figures*/
                 e.container.find('.k-edit-label:eq(8), .k-edit-field:eq(8)').toggle(Boolean(e.model.hr_approval)); // toggle visibility for amount payable
                 e.container.find('.k-edit-label:eq(12), .k-edit-field:eq(12)').toggle(Boolean(e.model.fmgr_approval)); // toggle visibility for amount approved
                 e.container.find('.k-edit-label:eq(14), .k-edit-field:eq(14)').toggle(Boolean(e.model.amount_received)); // toggle visibility for amount received
@@ -830,3 +835,5 @@ $universal->select_row_id = $select_row_id;
             .attr('href', '#');
     }
 </script>
+</body>
+</html>

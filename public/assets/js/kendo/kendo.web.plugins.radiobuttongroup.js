@@ -108,7 +108,7 @@
 
             that.element.find(".k-radio").prop("checked", false).removeClass("k-state-selected");
 
-            $target.prev(".k-radio").prop("checked", true).addClass("k-state-selected");
+            $target.siblings(".k-radio").prop("checked", true).addClass("k-state-selected");
 
             var dataItem = that.dataItem();
 

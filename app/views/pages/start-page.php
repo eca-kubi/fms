@@ -8,12 +8,12 @@
         <span class="text-success text-sm tag-coming-soon"><i class="fa fa-check"></i></span>
         <div class="wrap">
             <div class="ico-wrap">
-                <span class="mbr-iconfont fa-money fa"></span>
+                <span class="mbr-iconfont fa fa-money"></span>
             </div>
             <div class="text-wrap">
                 <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Finance <span></span></h2>
                 <p class="mbr-fonts-style mbr-text display-6">
-                    <span>Salary Advance, etc...</span>
+                    <span>Salary Advance...</span>
                     <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                 </p>
             </div>
@@ -28,7 +28,7 @@
             <div class="text-wrap">
                 <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Security</h2>
                 <p class="mbr-fonts-style mbr-text display-6">
-                    <span>Visitor Access Form, etc.</span>
+                    <span>Visitor Access Form...</span>
                     <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                 </p>
             </div>
@@ -46,7 +46,7 @@
             <div class="text-wrap">
                 <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">HSE <span></span></h2>
                 <p class="mbr-fonts-style mbr-text display-6">
-                    <span>Near Miss Draw, etc.</span>
+                    <span>Near Miss Draw...</span>
                     <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                 </p>
             </div>
@@ -152,7 +152,7 @@
 <input type="hidden" id="url_root" value="<?php  echo URL_ROOT; ?>">
 <?php require_once APP_ROOT . '/views/includes/start-page-footer.php' ?>
 <script>
-    $('.logout-back').attr('href', $('#url_root').val() +"/users/logout");
+    $('.logout-back').html("Logout <i class='fa fa-sign-out' ></i>").attr('href', $('#url_root').val() +"/users/logout");
 </script>
 </body>
 </html>

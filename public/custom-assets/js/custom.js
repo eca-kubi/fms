@@ -24,6 +24,7 @@ let summaryTemplate = `<div class="">
     </div>`;
 $(document).ready(function () {
     jQuery.fx.off = true;
+    URL_ROOT = $('#url_root').val();
     employeeDataSource = new kendo.data.DataSource({
         transport: {
             read: {
@@ -34,8 +35,6 @@ $(document).ready(function () {
     });
     $('.print-it').printPage();
     $('.content-wrapper').css('margin-top', $('.navbar-fixed').height() + 'px');
-    URL_ROOT = $('#url_root').val();
-
     $('.modal').on('shown.bs.modal', (e) => {
         let $this = $(e.currentTarget);
         $this.find('input[type=text]:first').focus();
@@ -186,7 +185,7 @@ function approvalEditor(container, options) {
                 let dataItem = grid.dataItem(row);
                 let value = e.dataItem.id === true;
                 let checkedInp = this.element.find('.k-radio:checked');
-                dataItem.set("hod_approval", value);
+                dataItem.set(options.field, value);
                 /*if (!checkedInp.prop("checked")) {
                     checkedInp.prop('checked',  true);
                 }*/
@@ -198,7 +197,7 @@ function approvalEditor(container, options) {
             }
         }).data("kendoExtRadioButtonGroup");
 
-    radioButtonGroup.value(model[options.field]);
+    radioButtonGroup.value(Boolean(model[options.field]));
 }
 
 toastError = function f(message) {
