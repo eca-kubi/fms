@@ -47,15 +47,40 @@
                     on this operation. The information below is
                     a preliminary assessment of an incident and is not a formal review of the accident.
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-bordered border-secondary">
+                <div class="table-responsive mt-1">
+                    <table class="table table-bordered border-secondary text-black font-raleway">
                         <tr>
-                            <td class="w-25">Incident/Alert Title</td>
+                            <td class="w-25 text-bold">Incident/Alert Title</td>
                             <td class="w-75"></td>
                         </tr>
                         <tr>
-                            <td class="w-25">Type of Alert</td>
+                            <td class="w-25 text-bold">Type of Alert</td>
                             <td class="w-75"></td>
+                        </tr>
+                        <tr>
+                            <td class="w-25 text-bold">Date of Incident</td>
+                            <td class="w-75"></td>
+                        </tr>
+                        <tr>
+                            <td class="w-25 text-bold">Type of Alert</td>
+                            <td class="w-75"></td>
+                        </tr>
+                        <tr>
+                            <td class="w-25 text-bold">Issued By</td>
+                            <td class="w-75"></td>
+                        </tr>
+                        <tr>
+                            <td class="w-25 text-bold">Location/Department</td>
+                            <td class="w-75"></td>
+                        </tr>
+                        <tr class="text-center">
+                            <td colspan="2"><span class="text-bold">Incident Description</span><br></td>
+                        </tr>
+                        <tr class="text-center">
+                            <td colspan="2"><span class="text-bold">Probable Immediate/ Basic Causes/ Contributing Factors</span><br></td>
+                        </tr>
+                        <tr class="text-center">
+                            <td colspan="2"><span class="text-bold">Immedia Actions Taken after Incident</span><br></td>
                         </tr>
                     </table>
                 </div>
