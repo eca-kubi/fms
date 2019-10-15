@@ -71,6 +71,7 @@ $universal->select_row_id = $select_row_id;
 <?php require_once APP_ROOT . '\views\includes\scripts.php'; ?>
 <script>
     /*Error constants*/
+    const dbg_turn_off_disable_add_button = true;
     const ERROR_UNSPECIFIED_ERROR = 'E_1000';
     const ERROR_AN_APPLICATION_ALREADY_EXISTS = 'E_1001';
     const ERROR_APPLICATION_ALREADY_REVIEWED = 'E_1002';
@@ -147,7 +148,7 @@ $universal->select_row_id = $select_row_id;
                     toastSuccess('Success', 5000);
                     universal.has_active_application = e.response['has_active_application'];
                     if (universal.has_active_application) {
-                        disableGridAddButton();
+                       disableGridAddButton();
                     } else {
                         enableGridAddButton();
                     }
@@ -665,7 +666,7 @@ $universal->select_row_id = $select_row_id;
                 //kGridAddButton = $(".k-grid-add");
                 const {has_active_application} = universal;
                 if (has_active_application) {
-                    disableGridAddButton();
+                    //disableGridAddButton();
                 }
                 /*let len = $salaryAdvanceGrid.find("tbody tr").length;
                 for(let i=0;i<len ; i++)
@@ -851,7 +852,8 @@ $universal->select_row_id = $select_row_id;
     };
 
     function disableGridAddButton() {
-        kGridAddButton.attr('disabled', 'disabled')
+        if (!dbg_turn_off_disable_add_button)
+            kGridAddButton.attr('disabled', 'disabled')
             .removeClass("k-grid-add")
             .addClass("k-state-disabled k-grid-add-disabled")
             .removeAttr("href");

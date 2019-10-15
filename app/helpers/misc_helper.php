@@ -797,7 +797,7 @@ function insertEmail($subject, $body, $recipient_address, $recipient_name)
  */
 function getCurrentGM(): int
 {
-    return (new CmsSettingsModel())->getValue('current_gm');
+    return (new SettingsModel())->getValue('current_gm');
 }
 
 function its_logged_in_user($user_id)
@@ -844,7 +844,7 @@ function isAllImpactAssessmentComplete($cms_form_id)
 }
 
 /**
- * @param $user_id
+ * @param $department_id
  * @return string
  */
 function getDepartment($department_id)
@@ -892,7 +892,7 @@ function getNameJobTitleAndDepartment($user_id)
     $user = new User($user_id);
     return concatNameWithUserId($user_id) .
         " - " . $user->job_title . " @ " .
-        getDepartment($user_id);
+        getDepartment($user->department_id);
 }
 
 function getOriginatorDepartmentID($cms_form_id)

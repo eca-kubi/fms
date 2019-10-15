@@ -36,7 +36,7 @@ class SalaryAdvanceAjax extends Controller
             $current_user = getUserSession();
             $link = '';
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-            $ret = [];
+            $ret = [];/*
             if (hasActiveApplication($current_user->user_id)) {
                 $ret['success'] = false;
                 $ret['reason'] = 'You already have an active application for this month!';
@@ -44,7 +44,7 @@ class SalaryAdvanceAjax extends Controller
                 $ret['errors'] = ['message' => 'An Application is Active!', 'code' => ERROR_AN_APPLICATION_ALREADY_EXISTS];
                 echo json_encode($ret);
                 return;
-            }
+            }*/
             $data = [
                 'amount_requested_is_percentage' => $_POST['amount_requested_is_percentage'] === 'true' ? true : false,
                 'amount_requested' => $_POST['amount_requested'] ? $_POST['amount_requested'] : null,
@@ -71,13 +71,16 @@ class SalaryAdvanceAjax extends Controller
                 $hod = new User(getCurrentManager($current_user->department_id));
                 $hr = new User(getCurrentHR());
                 $fmgr = new User(getCurrentFgmr());
-                $data = ['ref_number' => $ref_number, 'link' => $link];
-                $body = get_include_contents('email_templates/new_application', $data);
-                insertEmail("Salary Advance Application[$ref_number]", $body, $hod->email, $hod->first_name . ' ' . $hod->last_name);
-                insertEmail("Salary Advance Application[$ref_number]", $body, $hr->email, $hr->first_name . ' ' . $hr->last_name);
-                insertEmail("Salary Advance Application[$ref_number]", $body, $fmgr->email, $fmgr->first_name . ' ' . $fmgr->last_name);
-                $remarks = get_include_contents('action_log/salary_advance_raised', $data);
-                insertLog($ret[0]['id_salary_advance'], ACTION_SALARY_ADVANCE_RAISED, $remarks, $current_user->user_id);
+                $gmgr = new User(getCurrentGM());
+                $data = ['ref_number' => $ref_number, 'link' => URL_ROOT . '/salary-advance/' . $ret[0]['id_salary_advance']];
+                $body = get_include_contents('email_templates/salary-advance/new_application', $data);
+                $subject = "Salary Advance Application ($ref_number)";
+                insertEmail($subject, $body, $hod->email, $hod->first_name . ' ' . $hod->last_name);
+                insertEmail($subject, $body, $hr->email, $hr->first_name . ' ' . $hr->last_name);
+                insertEmail($subject, $body, $fmgr->email, $fmgr->first_name . ' ' . $fmgr->last_name);
+                insertEmail($subject, $body, $gmgr->email, $gmgr->first_name . ' ' . $gmgr->last_name);
+              //  $remarks = get_include_contents('action_log/salary_advance_raised', $data);
+             //   insertLog($ret[0]['id_salary_advance'], ACTION_SALARY_ADVANCE_RAISED, $remarks, $current_user->user_id);
             } else {
                 $ret[0]['success'] = false;
                 $ret[0]['reason'] = 'An error occurred!';

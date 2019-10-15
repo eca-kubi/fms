@@ -30,6 +30,7 @@ define('DB_HOST', 'localhost');
 define('DB_USER', 'appiahmakuta');
 define('DB_PASS', 'gmail300');
 define('DB_NAME', 'sms');
+define('EMAIL_TABLE', 'emails');
 try {
     $mail = new PHPMailer(true); // Passing `true` enables exceptions
     //Server settings
@@ -66,14 +67,13 @@ try {
 function fetch_email(): array
 {
     $db = Database::getDbh();
-    $ret = $db->where('sent', false)->
-    objectBuilder()->
-    get('cms_email');
+    $ret = $db->where('sent', false)
+        ->objectBuilder()
+        ->get(EMAIL_TABLE);
     return $ret;
 }
 
 function update_status($id)
 {
-    Database::getDbh()->where('email_id', $id)->
-    update('cms_email', ['sent' => true]);
+    Database::getDbh()->where('email_id', $id)->update(EMAIL_TABLE, ['sent' => true]);
 }
