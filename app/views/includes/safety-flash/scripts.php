@@ -48,7 +48,7 @@
 -->
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/jquery-toast.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/bootstrap.bundle.js"></script>
-<script src="<?php echo URL_ROOT ?>/public/assets/js/shards.min.js"></script>
+<script src="<?php echo URL_ROOT ?>/public/assets/shards/js/shards.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/adminlte.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/adminlte-2.js"></script>
 <!--<script src="<?php /*echo URL_ROOT; */?>/public/assets/js/moment.js"></script>
@@ -73,9 +73,10 @@
 -->
 <!--<script src="<?php /*echo URL_ROOT; */?>/public/assets/js/list.js"></script>
 -->
+<script src="<?php echo URL_ROOT; ?>/public/assets/select2/js/select2.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/kendo/kendo.all.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/kendo/kendo.web.plugins.radiobuttongroup.js"></script>
 <script src="http://kendo.cdn.telerik.com/2019.2.514/js/jszip.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/jQuery-printPage/jquery.printPage.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/bundle.js?<?php echo microtime(); ?>"></script>
-<script src="<?php echo URL_ROOT; ?>/public/custom-assets/js/safety-flash/custom.js?<?php //echo microtime(); ?>"></script>
+<script src="<?php echo URL_ROOT; ?>/public/assets/safety-flash/js/custom.js?<?php echo microtime(); ?>"></script>

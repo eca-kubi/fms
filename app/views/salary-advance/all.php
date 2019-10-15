@@ -623,11 +623,14 @@ $universal->select_row_id = $select_row_id;
                 {
                     template: "<span class='text-center action-tools'>" +
                         "<span class='col' title='Edit'><a href='javascript:' class='text-black action-edit'><i class='fa fa-pencil'></i></a></span>" +
-                        "<span class='col' title='Delete'><a href='javascript:' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span><span class='col' title='More Info'><a href='javascript:' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
+                        "<span class='col d-none' title='Delete'><a href='javascript:' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span>" +
+                        "<span class='col d-none' title='More Info'><a href='javascript:' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
                         "<span class='col' title='Print'><a href='\\#' class='text-primary action-print print-it' target='_blank'><i class='fas fa-print'></i></a></span>" +
                         "</span>",
-                    width: "12%",
+                    width: 100,
                     title: "Action"
+                    /*locked: true,
+                    lockable: true*/
                 },
             ],
             detailTemplate: kendo.template(summaryTemplate),

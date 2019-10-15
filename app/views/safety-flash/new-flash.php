@@ -27,7 +27,7 @@
     <!-- content -->
     <section class="content">
         <div class="container-fluid">
-            <div id="flash_form" class="px-sm-5 mx-sm-5">
+            <div id="flashForm" class="px-sm-5 mx-sm-5">
                 <div class="text-right">
                     <img class="col-2 w3-hide-small" src="<?php echo URL_ROOT ?>/public/assets/images/adamus.jpg"
                          alt="">
@@ -95,6 +95,8 @@
 <!-- footer -->
 </div>
 <!-- /.wrapper -->
+<?php require_once APP_ROOT . '\views\includes\safety-flash\flash-form.php'; ?>
+
 <?php require_once APP_ROOT . '\views\includes\safety-flash\scripts.php'; ?>
 </body>
 </html>

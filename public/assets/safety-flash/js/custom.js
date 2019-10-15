@@ -5,14 +5,39 @@
 
 let URL_ROOT = '';
 $(document).ready(function () {
+    $('body').niceScroll();
     jQuery.fx.off = true;
     URL_ROOT = $('#url_root').val();
     $('.print-it').printPage();
+    // override bootstrap modal focus
+    $.fn.modal.Constructor.prototype._enforceFocus = function () {
+    };
+
     $('.content-wrapper').css('margin-top', $('.navbar-fixed').height() + 'px');
+
     $('.modal').on('shown.bs.modal', (e) => {
         let $this = $(e.currentTarget);
-        $this.find('input[type=text]:first').focus();
+        //$this.find('input:eq(0)[type=text]').focus();
     });
+
+    $('#flashFormModal').on('shown.bs.modal', (e) => {
+        let $this = $(e.currentTarget);
+        $this.find('#incidentTitle').select2({
+            tags: true,
+            placeholder: ''
+        });
+
+        $this.find('#typeOfAlert').select2({
+            tags: true,
+            multiple: true
+        });
+
+        $this.find('#typeOfIncident').select2({
+            tags: true,
+            multiple: true
+        });
+    }).modal('show');
+
 
     //$('form[data-toggle=validator] input[type=text]:not([readonly]):first').focus();
 

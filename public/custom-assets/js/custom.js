@@ -7,6 +7,12 @@ let URL_ROOT = '';
 let lists = [];
 let employeeDataSource;
 let summaryTemplate = `<div class="">
+        <b>Action</b>:  #= "<span class='text-center action-tools'>" +
+                        "<span class='col' title='Edit'><a href='javascript:' class='text-black action-edit in-detail-row'><i class='fa fa-pencil'></i></a></span>" +
+                        "<span class='col d-none' title='Delete'><a href='javascript:' class='text-danger action-delete in-detail-row'><i class='fas fa-trash-alt'></i></a></span>" +
+                        "<span class='col d-none' title='More Info'><a href='javascript:' class='text-primary action-more-info in-detail-row'><i class='fas fa-info-circle'></i></a></span>" +
+                        "<span class='col' title='Print'><a href='\\\\#' class='text-primary action-print print-it in-detail-row' target='_blank'><i class='fas fa-print'></i></a></span>" +
+                        "</span>"# </br>
         <b>Date Raised</b>: #= kendo.toString(kendo.parseDate(date_raised), 'dddd dd MMM, yyyy') #</br>
         #=amount_requested? '<b>Amount Requested</b>: ' + kendo.format('{0:c}', amount_requested) + '</br>' : ''#
         #=percentage? '<b>Amount Requested</b>: ' + percentage + '% of Salary</br>' : '' #

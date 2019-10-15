@@ -26,11 +26,12 @@
     <link rel="stylesheet" media="all" href="<?php echo URL_ROOT; ?>/public/assets/css/font-awesome-pro/css/all.css"/>
     <link rel="stylesheet" media="all"
           href="<?php echo URL_ROOT; ?>/public/assets/css/font-awesome-free/css/v4-shims.min.css"/>
-    <link rel="stylesheet" href="<?php echo URL_ROOT ?>/public/assets/css/shards.min.css">
+    <link rel="stylesheet" href="<?php echo URL_ROOT ?>/public/assets/shards/css/shards.min.css">
+    <link rel="stylesheet" href="<?php echo URL_ROOT ?>/public/assets/select2/css/select2.min.css">
     <link rel="stylesheet"
-          href="<?php echo URL_ROOT; ?>/public/custom-assets/css/custom.css?<?php //echo microtime(); ?>"/>
+          href="<?php echo URL_ROOT; ?>/public/custom-assets/css/custom.css?<?php echo microtime(); ?>"/>
     <link rel="stylesheet"
-          href="<?php echo URL_ROOT; ?>/public/assets/safety-flash/css/custom.css?<?php //echo microtime(); ?>"/>
+          href="<?php echo URL_ROOT; ?>/public/assets/safety-flash/css/custom.css?<?php echo microtime(); ?>"/>
     <link rel="stylesheet" media="print"
           href="<?php echo URL_ROOT; ?>/public/custom-assets/css/print.css?<?php echo microtime(); ?>"/>
 </head>

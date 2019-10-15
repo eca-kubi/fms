@@ -56,6 +56,8 @@
 </div>
 <!-- /.content-wrapper -->
 <?php require_once APP_ROOT . '\views\includes\footer.php'; ?>
+<?php require_once APP_ROOT . '\views\includes\scripts.php'; ?>
+
 <?php
 $universal = new stdClass();
 $universal->currency_symbol = CURRENCY_GHS;
@@ -70,6 +72,7 @@ $universal->select_row_id = $select_row_id;
     let $salaryAdvanceGrid;
     let salaryAdvanceDataSource;
     $(document).ready(function () {
+        URL_ROOT = $('#url_root').val();
         kendo.culture().numberFormat.currency.symbol = 'GH₵';
         $salaryAdvanceGrid = $('#salary_advance');
         $salaryAdvanceGrid.on('change', "input[name=employee]", function (e) {
@@ -625,13 +628,12 @@ $universal->select_row_id = $select_row_id;
                         "<span class='col' title='Print'><a href='\\#' class='text-primary action-print print-it' target='_blank'><i class='fas fa-print'></i></a></span>" +
                         "</span>",
                     width: 100,
-                    title: "",
-                    locked: true
+                    title: "Action",
                     /*locked: true,
                     lockable: true*/
                 },
             ],
-            //detailTemplate: kendo.template(summaryTemplate),
+            detailTemplate: kendo.template(summaryTemplate),
             dataSource: salaryAdvanceDataSource,
             dataBinding: function () {
                 //let no = (this.dataSource.page() - 1) * this.dataSource.pageSize();
@@ -664,24 +666,24 @@ $universal->select_row_id = $select_row_id;
                 e.model.fields.hr_approval.editable = universal['isHr'] && !Boolean(e.model.hr_approval_date);
                 e.model.fields.hr_comment.editable = universal['isHr'] && !Boolean(e.model.hr_comment);
                 e.model.fields.amount_approved.editable = universal['isFmgr'] && !Boolean(e.model.fmgr_approval_date);
-                e.model.fields.fmgr_approval.editable = universal['isFmgr'] && !Boolean(e.model.fmgr_approval_date) && ;lBoolean(e.model.hr_approval);
+                e.model.fields.fmgr_approval.editable = universal['isFmgr'] && !Boolean(e.model.fmgr_approval_date) && Boolean(e.model.hr_approval);
                 e.model.fields.fmgr_comment.editable = Boolean(e.model["fmgr_comment_editable"]);
             },
             edit: function (e) {
-                let nameLabelField = e.container.find('.k-edit-label:eq(1), .k-edit-field:eq(1)');
-                let percentageLabelField = e.container.find('.k-edit-label:eq(4), .k-edit-field:eq(4)');
-                let amountRequestedLabelField = e.container.find('.k-edit-label:eq(5), .k-edit-field:eq(5)');
-                let hodApprovalLabelField = e.container.find('.k-edit-label:eq(6), .k-edit-field:eq(6)');
-                let hodCommentLabelField = e.container.find('.k-edit-label:eq(7), .k-edit-field:eq(7)');
-                let hrApprovalLabelField = e.container.find('.k-edit-label:eq(9), .k-edit-field:eq(9)');
-                let hrCommentLabelField = e.container.find('.k-edit-label:eq(10), .k-edit-field:eq(10)');
-                let amountPayableLabelField = e.container.find('.k-edit-label:eq(11), .k-edit-field:eq(11)');
-                let fmgrApprovalLabelField = e.container.find('.k-edit-label:eq(13), .k-edit-field:eq(13)');
-                let fmgrCommentLabelField = e.container.find('.k-edit-label:eq(14), .k-edit-field:eq(14)');
-                let amountApprovedLabelField = e.container.find('.k-edit-label:eq(15), .k-edit-field:eq(15)');
-                let amountReceivedLabelField = e.container.find('.k-edit-label:eq(17), .k-edit-field:eq(17)');
-                let receivedByLabelField = e.container.find('.k-edit-label:eq(18), .k-edit-field:eq(18)');
-                let dateReceivedLabelField = e.container.find('.k-edit-label:eq(19), .k-edit-field:eq(19)');
+                let nameLabelField = e.container.find('.k-edit-label:eq(0), .k-edit-field:eq(0)');
+                let percentageLabelField = e.container.find('.k-edit-label:eq(3), .k-edit-field:eq(3)');
+                let amountRequestedLabelField = e.container.find('.k-edit-label:eq(4), .k-edit-field:eq(4)');
+                let hodApprovalLabelField = e.container.find('.k-edit-label:eq(5), .k-edit-field:eq(5)');
+                let hodCommentLabelField = e.container.find('.k-edit-label:eq(6), .k-edit-field:eq(6)');
+                let hrApprovalLabelField = e.container.find('.k-edit-label:eq(8), .k-edit-field:eq(8)');
+                let hrCommentLabelField = e.container.find('.k-edit-label:eq(9), .k-edit-field:eq(9)');
+                let amountPayableLabelField = e.container.find('.k-edit-label:eq(10), .k-edit-field:eq(10)');
+                let fmgrApprovalLabelField = e.container.find('.k-edit-label:eq(12), .k-edit-field:eq(12)');
+                let fmgrCommentLabelField = e.container.find('.k-edit-label:eq(13), .k-edit-field:eq(13)');
+                let amountApprovedLabelField = e.container.find('.k-edit-label:eq(14), .k-edit-field:eq(14)');
+                let amountReceivedLabelField = e.container.find('.k-edit-label:eq(16), .k-edit-field:eq(16)');
+                let receivedByLabelField = e.container.find('.k-edit-label:eq(17), .k-edit-field:eq(17)');
+                let dateReceivedLabelField = e.container.find('.k-edit-label:eq(18), .k-edit-field:eq(18)');
 
                 /* let amountRequestedNumericTextBox = amountRequestedLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
                  let amountRequestedPercentageNumericTextBox = percentageLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
@@ -753,17 +755,23 @@ $universal->select_row_id = $select_row_id;
 
         $salaryAdvanceGrid.on("click", ".action-edit", function (e) {
             let grid = $salaryAdvanceGrid.data("kendoGrid");
-            let currentRow = grid.currentRow();
+            let target = $(e.currentTarget);
+            let currentRow;
+            if (target.hasClass('in-detail-row')) {
+                currentRow = target.closest('tr.k-detail-row').prev('tr.k-master-row');
+            } else {
+                currentRow = grid.currentRow();
+            }
             let dataItem = grid.dataItem(currentRow);
             let errorMsg = '';
             if (dataItem['hod_approval_editable'] || (dataItem['hr_approval_editable'] && dataItem.hod_approval) || (dataItem['fmgr_approval_editable'] && dataItem.hr_approval)) {
-                let row = $(this).closest("tr");
+                /*let row = $(this).closest("tr.k-master-row");
                 let $this = $(this);
-                let actionTools = $this.closest('.action-tools');
-                grid.editRow(row);
-                actionTools.html("<span class='col'><a href='#' class='text-success action-confirm-edit'><i class='fa fa-check'></i></a></span>" +
+                let actionTools = $this.closest('.action-tools');*/
+                grid.editRow(currentRow);
+                /*actionTools.html("<span class='col'><a href='#' class='text-success action-confirm-edit'><i class='fa fa-check'></i></a></span>" +
                     "<span class='col'><a href='#' class='text-black action-cancel-edit'><i class='k-icon k-i-cancel'></i></a></span>");
-
+*/
             } else {
                 if (!dataItem.hod_approval) {
                     errorMsg = 'HoD must approve it first!'

@@ -9,3 +9,4 @@
         <b>Version 2.0</b>
     </div>
 </footer>
+<input type="hidden" id="url_root" value="<?php echo URL_ROOT; ?>">
