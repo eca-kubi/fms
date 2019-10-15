@@ -659,7 +659,6 @@ $universal->select_row_id = $select_row_id;
                 //grid.hideColumn("department");
                 let data = grid.dataSource.data();
                 $.each(data, function (i, row) {
-                    console.log('add print it')
                     $('tr[data-uid="' + row.uid + '"] ').find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["id_salary_advance"]);
                 });
                 $(".print-it").printPage();

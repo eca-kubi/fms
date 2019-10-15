@@ -82,7 +82,7 @@ class SalaryAdvance extends Controller
         $payload['current_user'] = getUserSession();
         $payload['title'] = 'Salary Advance';
         $payload['salary_advance'] = new SalaryAdvanceModel($id_salary_advance);
-        $this->view('print', $payload);
+        $this->view('print-salary-advance', $payload);
     }
 
 }
