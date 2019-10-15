@@ -616,7 +616,9 @@ $universal->select_row_id = $select_row_id;
                         let date = dataItem.date_received ? kendo.toString(kendo.parseDate(dataItem.date_received), 'dddd dd MMM, yyyy') : '';
                         return "<span title='Date Received: " + date + "'>" + date + "</span>";
                     },
-                    "class": "title",
+                    headerAttributes: {
+                        "class": "title"
+                    },
                     width: 200,
                     groupHeaderTemplate: "Date Received: #= value? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : 'Pending' #"
                 },
@@ -652,6 +654,13 @@ $universal->select_row_id = $select_row_id;
                 let selectRow = $salaryAdvanceGrid.find(`tr[data-id-salary-advance=${universal['select_row_id']}]`);
                 grid.select(selectRow);
                 selectRow.find('.action-more-info').click();
+            },
+            detailInit: function (e) {
+                let grid = $salaryAdvanceGrid.data("kendoGrid");
+                let masterRow = e.detailRow.prev('tr.k-master-row');
+                let dataItem = grid.dataItem(masterRow);
+                e.detailRow.find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + dataItem["id_salary_advance"]);
+                $(".print-it").printPage();
             },
             beforeEdit: function (e) {
                 window.grid_uid = e.model.uid; // uid of current editing row
