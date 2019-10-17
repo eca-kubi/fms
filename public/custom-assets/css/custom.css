@@ -31,13 +31,19 @@ html {
 html:hover {
     overflow: auto;
 }
+
 /*::-webkit-scrollbar {
     width: 0;
     !* remove scrollbar space *!
     background: transparent;
     !* optional: just make scrollbar invisible *!
 }*/
-
+th.title {
+    font-weight: bold !important;
+}
+.k-grid-header {
+    padding-right: 0 !important;
+}
 .k-grid-content {
     margin: 0 auto;
     overflow: hidden;

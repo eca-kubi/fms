@@ -330,7 +330,7 @@ $universal->select_row_id = $select_row_id;
             },
             columnMenu: true,
             sortable: true,
-            groupable: true,
+            //groupable: true,
             height: 520,
             resizable: true,
             scrollable: true,
@@ -644,7 +644,10 @@ $universal->select_row_id = $select_row_id;
                         "<span class='col' title='Print'><a href='\\#' class='text-primary action-print print-it' target='_blank'><i class='fas fa-print'></i></a></span>" +
                         "</span>",
                     width: 100,
-                    title: "Action"
+                    title: "Action",
+                    headerAttributes: {
+                        "class": "title"
+                    },
                     /*locked: true,
                     lockable: true*/
                 },
