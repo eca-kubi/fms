@@ -313,35 +313,7 @@ $universal->select_row_id = $select_row_id;
                 messages: {
                     info: "",
                     selectedItemsFormat: ""
-                },
-                operators: {
-                    date: {
-                        gte: "From Date",
-                        lte: "To Date"
-                    },
-                    string: {
-                        //startswith: "Starts with",
-                        //eq: "Is equal to",
-                        //neq: "Is not equal to",
-                        contains: ""
-                    }
                 }
-            },
-            filter: function(e) {
-                if (e.filter == null) {
-                    console.log("filter has been cleared");
-                } else {
-                    console.log(e.filter.logic);
-                    console.log(e.filter.filters[0].field);
-                    console.log(e.filter.filters[0].operator);
-                    console.log(e.filter.filters[0].value);
-                }
-            },
-            filterMenuInit: function (e) {
-                e.container.find('.k-select').addClass('.d-none');
-            },
-            filterMenuOpen: function () {
-                console.log('column menu init')
             },
             columnMenu: false,
             sortable: true,
@@ -949,49 +921,6 @@ $universal->select_row_id = $select_row_id;
         });
     });
 
-    function dateRangeFilter(args) {
-        let filterCell = args.element.parents(".k-filtercell");
-        let field = filterCell.attr('data-field');
-        //let clearButton = $('<button type="button" class="k-button k-button-icon" title="Clear" aria-label="Clear" data-bind="visible:operatorVisible" style=""><span class="k-icon k-i-filter-clear"></span></button>')
-        filterCell.empty();
-        filterCell.html('<span style="display:flex; justify-content:center;"><span>From:</span><input  class="start-date"  placeholder="mm/dd/yyyy"/><span>To:</span><input  class="end-date"  placeholder="mm/dd/yyyy"/></span>');
-
-        $(".start-date", filterCell).kendoDatePicker({
-            change: function (e) {
-                let startDate = e.sender.value(),
-                    endDate = $("input.end-date", filterCell).data("kendoDatePicker").value(),
-                    dataSource =$salaryAdvanceGrid.data("kendoGrid").dataSource;
-
-                if (startDate & endDate) {
-                    let filter = {logic: "and", filters: []};
-                    filter.filters.push({field: field, operator: "gte", value: startDate});
-                    filter.filters.push({field: field, operator: "lte", value: endDate});
-                    dataSource.filter(filter);
-                }
-            }
-        });
-
-        $(".end-date", filterCell).kendoDatePicker({
-            change: function (e) {
-                let startDate = $("input.start-date", filterCell).data("kendoDatePicker").value(),
-                    endDate = e.sender.value(),
-                    dataSource = $salaryAdvanceGrid.data("kendoGrid").dataSource;
-
-                if (startDate & endDate) {
-                    let filter = {logic: "and", filters: []};
-                    filter.filters.push({field: field, operator: "gte", value: startDate});
-                    filter.filters.push({field: field, operator: "lte", value: endDate});
-                    dataSource.filter(filter);
-                    /*let filterEvent = $.Event('filter');
-                    filterEvent.field = field;
-                    filterEvent.filter = filter;
-                    filterEvent.sender = $salaryAdvanceGrid;
-                    $salaryAdvanceGrid.data('kendoGrid').trigger('filter', filterEvent);*/
-                }
-            }
-        });
-
-    }
 </script>
 <script type="text/x-kendo-template" id="toolbarTemplate">
     <div class="row">

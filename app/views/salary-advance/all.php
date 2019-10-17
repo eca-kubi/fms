@@ -305,6 +305,17 @@ $universal->select_row_id = $select_row_id;
                 let sheet = e.workbook.sheets[0];
                 sheet.columns[0].autoWidth = false;
                 for (let rowIndex = 1; rowIndex < sheet.rows.length; rowIndex++) {
+                    let row = sheet.rows[rowIndex];
+                    let dataItem = {
+                        hod_approval: row.cells[5].value,
+                        fmgr_approval: row.cells[12].value,
+                        hr_approval: row.cells[8].value
+                    };
+                    row.cells[5].value = dataItem.hod_approval == null? 'Pending': (dataItem.hod_approval? 'Approved': 'Rejected');
+                    row.cells[8].value = dataItem.hr_approval == null? 'Pending': (dataItem.hr_approval? 'Approved': 'Rejected');
+                    row.cells[12].value = dataItem.fmgr_approval == null? 'Pending': (dataItem.fmgr_approval? 'Approved': 'Rejected');
+
+                    // alternating row colors
                     if (rowIndex % 2 === 0) {
                         let row = sheet.rows[rowIndex];
                         for (let cellIndex = 0; cellIndex < row.cells.length; cellIndex++) {
@@ -315,17 +326,11 @@ $universal->select_row_id = $select_row_id;
             },
             editable: 'popup',
             filterable: {
-                operators: {
-                    date: {
-                        gte: "From Date",
-                        lte: "To Date"
-                    },
-                    string: {
-                        startswith: "Starts with",
-                        eq: "Is equal to",
-                        neq: "Is not equal to",
-                        contains: "Contains"
-                    }
+                extra: false,
+                mode: "row",
+                messages: {
+                    info: "",
+                    selectedItemsFormat: ""
                 }
             },
             columnMenu: true,
@@ -375,8 +380,13 @@ $universal->select_row_id = $select_row_id;
                     headerAttributes: {
                         "class": "title"
                     },
-                    width: 200,
-                    groupHeaderTemplate: "Date Raised: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') #"
+                    width: 450,
+                    groupHeaderTemplate: "Date Raised: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') #",
+                    filterable: {
+                        cell: {
+                            template: dateRangeFilter
+                        }
+                    }
                 },
                 {
                     field: 'percentage',
@@ -390,7 +400,8 @@ $universal->select_row_id = $select_row_id;
                     width: 250,
                     groupHeaderTemplate: "Amount Requested in Percentage: #= value? value + '%' : '' #",
                     aggregates: ["max", "min"],
-                    format: "{0:#\\%}"
+                    format: "{0:#\\%}",
+                    filterable: false
                 },
                 {
                     field: 'amount_requested',
@@ -404,237 +415,254 @@ $universal->select_row_id = $select_row_id;
                     },
                     groupHeaderTemplate: "Amount Requested in Figures: #=  value ? kendo.format('{0:c}', value) : ''#",
                     aggregates: ["max", "min", "count"],
-                    format: "{0:c}"
+                    format: "{0:c}",
+                    filterable: false
                 },
                 {
-                    title: 'HoD',
-                    headerAttributes: {
-                        "class": "title font-weight-bold"
+                    field: 'hod_approval',
+                    title: 'HoD Approval',
+                    editor: approvalEditor,
+                    template: function (dataItem) {
+                        return "<span title='HoD Approved: " + (dataItem.hod_approval === null ? 'Pending' : dataItem.hod_approval ? 'Yes' : 'No') + "'>" + (dataItem.hod_approval === null ? 'Pending' : dataItem.hod_approval ? 'Yes' : 'No') + "</span>"
                     },
-                    columns: [
-                        {
-                            field: 'hod_comment',
-                            title: 'HoD Comment',
-                            hidden: false,
-                            editor: textAreaEditor,
-                            headerAttributes: {
-                                "class": "title"
-                            },
-                            attributes: {
-                                class: 'comment'
-                            },
-                            width: 200,
-                            template: function (dataItem) {
-                                let hod_comment = dataItem.hod_comment ? dataItem.hod_comment : '';
-                                return "<span title='HoD Comment: " + hod_comment + "'>" + hod_comment + "</span>"
-                            }
-                        },
-                        {
-                            field: 'hod_approval',
-                            title: 'Approved by HoD?',
-                            editor: customBoolEditor,
-                            template: function (dataItem) {
-                                let hod_approval = dataItem.hod_approval ? dataItem.hod_approval : '';
-                                return "<span title='HoD Approved: " + (hod_approval ? 'Yes' : 'No') + "'>" + (hod_approval ? 'Yes' : 'No') + "</span>"
-                            },
-                            width: 200,
-                            headerAttributes: {
-                                "class": "title"
-                            },
-                            groupHeaderTemplate: "HoD Approved: #= value? 'Yes' : 'No' # | Total: #= count #",
-                            aggregates: ["count"]
-                        },
-                        {
-                            field: 'hod_approval_date',
-                            title: 'HoD. Approval Date ',
-                            headerAttributes: {
-                                "class": "title"
-                            },
-                            width: 200,
-                            template: function (dataItem) {
-                                let date = kendo.toString(kendo.parseDate(dataItem.hod_approval_date), 'dddd dd MMM, yyyy');
-                                return "<span title='HoD Approval Date: " + date + "'>" + date + "</span>";
-                            },
-                            groupHeaderTemplate: "Date Raised: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') #",
-                            hidden: true
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    width: 200,
+                    groupHeaderTemplate: "HoD Approved: #= value? 'Yes' : 'No' # | Total: #= count #",
+                    aggregates: ["count"],
+                    /*filterable:{
+                        ui: function(element){
+                            element.kendoDropDownList({
+                                dataSource: [{ value: 1, text: "Approved" }, { value: 0, text: "Rejected" }],
+                                //optionLabel: "--Select--",
+                                dataTextField: "text",
+                                dataValueField: "value",
+                            });
                         }
-                    ],
+                    }*/
+                    filterable: false
                 },
                 {
-                    title: 'HR',
+                    field: 'hod_comment',
+                    title: 'HoD Comment',
+                    hidden: false,
+                    editor: textAreaEditor,
                     headerAttributes: {
-                        "class": "title font-weight-bold"
+                        "class": "title"
                     },
-                    columns: [
-                        {
-                            field: 'hr_comment',
-                            title: 'HR Comment',
-                            editor: textAreaEditor,
-                            hidden: false,
-                            headerAttributes: {
-                                "class": "title"
-                            },
-                            attributes: {
-                                class: 'comment'
-                            },
-                            width: 200,
-                            template: function (dataItem) {
-                                let hr_comment = dataItem.hr_comment ? dataItem.hr_comment : '';
-                                return `<span title='HR Comment: ${hr_comment}'>${hr_comment}</span>`
-                            }
-                        },
-                        {
-                            field: 'hr_approval',
-                            title: 'Approved by HR?',
-                            editor: customBoolEditor,
-                            template: function (dataItem) {
-                                let hr_approval = dataItem.hr_approval ? dataItem.hr_approval : '';
-                                return "<span title='HR Approved: " + (hr_approval ? 'Yes' : 'No') + "'>" + (hr_approval ? 'Yes' : 'No') + "</span>"
-                            },
-                            headerAttributes: {
-                                "class": "title"
-                            },
-                            width: 200,
-                            groupHeaderTemplate: "HR Approved: #= value? 'Yes' : 'No' # |  Total: #= count #",
-                            aggregates: ["count"]
-                        },
-                        {
-                            field: 'amount_payable',
-                            title: 'Amount Payable',
-                            template: function (dataItem) {
-                                return "<span title='Amount Payable: " + (dataItem.amount_payable ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_payable)) : '') + "'>" + (dataItem.amount_payable ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_payable)) : '') + "</span>"
-                            },
-                            headerAttributes: {
-                                "class": "title"
-                            },
-                            width: 200,
-                            groupHeaderTemplate: "Amount Payable: #= value? kendo.toString('GH₵ ' + kendo.format('{0:n}', value)) : 'Pending' #",
-                            aggregates: ["max", "min"]
-                        },
-                        {
-                            field: 'hr_approval_date',
-                            title: 'HR. Approval Date ',
-                            headerAttributes: {
-                                "class": "title"
-                            },
-                            template: function (dataItem) {
-                                let date = kendo.toString(kendo.parseDate(dataItem.hr_approval_date), 'dddd dd MMM, yyyy');
-                                return "<span title='HR Approval Date: " + date + "'>" + date + "</span>";
-                            },
-                            width: 200,
-                            groupHeaderTemplate: "HR Approval Date: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') #",
-                            hidden: true
-                        }
-                    ],
+                    attributes: {
+                        class: 'comment'
+                    },
+                    template: function (dataItem) {
+                        let hod_comment = dataItem.hod_comment ? dataItem.hod_comment : '';
+                        return "<span title='HoD Comment: " + hod_comment + "'>" + hod_comment + "</span>"
+                    },
+                    width: 200,
+                    filterable: false
                 },
                 {
-                    title: 'Finance Mgr.',
+                    field: 'hod_approval_date',
+                    title: 'HoD. Approval Date ',
                     headerAttributes: {
-                        "class": "title font-weight-bold"
+                        "class": "title"
                     },
-                    columns: [
-                        {
-                            field: 'fmgr_comment',
-                            title: 'Finance Mgr. Comment',
-                            hidden: false,
-                            editor: textAreaEditor,
-                            headerAttributes: {
-                                "class": "title"
-                            },
-                            attributes: {
-                                class: 'comment'
-                            },
-                            width: 200,
-                            template: function (dataItem) {
-                                let fmgr_comment = dataItem.fmgr_comment ? dataItem.fmgr_comment : '';
-                                return "<span title='Finance Mgr. Comment: " + fmgr_comment + "'>" + fmgr_comment + "</span>"
-                            }
-                        },
-                        {
-                            field: 'fmgr_approval',
-                            title: 'Approved by Finance Mgr.?',
-                            editor: customBoolEditor,
-                            template: function (dataItem) {
-                                let fmgr_approval = dataItem.fmgr_approval_date ? dataItem.fmgr_approval : '';
-                                return "<span title='Approved by Finance Mgr.: " + (fmgr_approval ? 'Yes' : 'No') + "'>" + (fmgr_approval ? 'Yes' : 'No') + "</span>"
-                            },
-                            headerAttributes: {
-                                "class": "title"
-                            },
-                            width: 200,
-                            groupHeaderTemplate: "Finance Manager Approved: #= value? 'Yes' : 'No' # |  Total: #=count #",
-                            aggregates: ["count"]
-                        },
-                        {
-                            field: 'amount_approved',
-                            title: 'Amount Approved',
-                            template: function (dataItem) {
-                                return "<span title='Amount Approved: " + (dataItem.amount_approved ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_approved)) : '') + "'>" + (dataItem.amount_approved ? kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_approved)) : '') + "</span>"
-                            },
-                            headerAttributes: {
-                                "class": "title"
-                            },
-                            width: 200,
-                            groupHeaderTemplate: "Amount Approved: #= value? kendo.toString('GH₵ ' + kendo.format('{0:n}', value)): 'Pending' #",
-                            aggregates: ["max", "min"]
-                        },
-                        {
-                            field: 'fmgr_approval_date',
-                            title: 'Finance Mgr. Approval Date ',
-                            headerAttributes: {
-                                "class": "title"
-                            },
-                            width: 200,
-                            template: function (dataItem) {
-                                let date = kendo.toString(kendo.parseDate(dataItem.fmgr_approval_date), 'dddd dd MMM, yyyy');
-                                return "<span title='Finance Mgr. Approval Date: " + date + "'>" + date + "</span>";
-                            },
-                            groupHeaderTemplate: "Finance Mgr. Approval Date: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') #",
-                            hidden: true
-                        }
-                    ],
+                    template: function (dataItem) {
+                        let date = dataItem.hod_approval_date ? kendo.toString(kendo.parseDate(dataItem.hod_approval_date), 'dddd dd MMM, yyyy') : '';
+                        return "<span title='HoD Approval Date: " + date + "'>" + date + "</span>";
+                    },
+                    width: 200,
+                    groupHeaderTemplate: "Date Raised: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') : '' #",
+                    hidden: false,
+                    filterable: false
+
+                },
+                {
+                    field: 'hr_approval',
+                    title: 'HR Approval',
+                    editor: approvalEditor,
+                    template: function (dataItem) {
+                        return "<span title='HR Approved: " + (dataItem.hr_approval === null ? 'Pending' : dataItem.hr_approval ? 'Yes' : 'No') + "'>" + (dataItem.hr_approval === null ? 'Pending' : dataItem.hr_approval ? 'Yes' : 'No') + "</span>"
+                    },
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    groupHeaderTemplate: "HR Approved: #= value? 'Yes' : 'No' # |  Total: #= count #",
+                    aggregates: ["count"],
+                    width: 200,
+                    filterable: false
+
+                },
+                {
+                    field: 'hr_comment',
+                    title: 'HR Comment',
+                    editor: textAreaEditor,
+                    hidden: false,
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    attributes: {
+                        class: 'comment'
+                    },
+                    template: function (dataItem) {
+                        let hr_comment = dataItem.hr_comment ? dataItem.hr_comment : '';
+                        return `<span title='HR Comment: ${hr_comment}'>${hr_comment}</span>`
+                    },
+                    width: 200,
+                    filterable: false
+
+                },
+                {
+                    field: 'amount_payable',
+                    title: 'Amount Payable',
+                    template: function (dataItem) {
+                        return "<span title='Amount Payable: " + (kendo.format('{0:c}', dataItem.amount_payable)) + "'>" + (kendo.format('{0:c}', dataItem.amount_payable)) + "</span>"
+                    },
+                    format: "{0:c}",
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    groupHeaderTemplate: "Amount Payable: #= value?  kendo.format('{0:c}', value) : 'Pending' #",
+                    aggregates: ["max", "min"],
+                    width: 200,
+                    filterable: false
+
+                },
+                {
+                    field: 'hr_approval_date',
+                    title: 'HR. Approval Date ',
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    template: function (dataItem) {
+                        let date = dataItem.hr_approval_date ? kendo.toString(kendo.parseDate(dataItem.hr_approval_date), 'dddd dd MMM, yyyy') : '';
+                        return "<span title='HR Approval Date: " + date + "'>" + date + "</span>";
+                    },
+                    width: 200,
+                    groupHeaderTemplate: "HR Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') : '' #",
+                    hidden: false,
+                    filterable: false
+
+                },
+                {
+                    field: 'fmgr_approval',
+                    title: 'Fin. Mgr. Approval',
+                    editor: approvalEditor,
+                    template: function (dataItem) {
+                        return "<span title='Approved by Finance Mgr.: " + (dataItem.fmgr_approval === null ? 'Pending' : dataItem.fmgr_approval ? 'Yes' : 'No') + "'>" + (dataItem.fmgr_approval === null ? 'Pending' : dataItem.fmgr_approval ? 'Yes' : 'No') + "</span>"
+                    },
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    width: 200,
+                    groupHeaderTemplate: "Finance Manager Approved: #= value? 'Yes' : 'No' # |  Total: #=count #",
+                    aggregates: ["count"],
+                    filterable: false
+
+                },
+                {
+                    field: 'fmgr_comment',
+                    title: 'Fin. Mgr. Comment',
+                    hidden: false,
+                    editor: textAreaEditor,
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    attributes: {
+                        class: 'comment'
+                    },
+                    width: 200,
+                    template: function (dataItem) {
+                        let fmgr_comment = dataItem.fmgr_comment ? dataItem.fmgr_comment : '';
+                        return "<span title='Finance Mgr. Comment: " + fmgr_comment + "'>" + fmgr_comment + "</span>"
+                    },
+                    filterable: false
+
+                },
+                {
+                    field: 'amount_approved',
+                    title: 'Amount Approved',
+                    template: function (dataItem) {
+                        return "<span title='Amount Approved: " + (kendo.format('{0:c}', dataItem.amount_approved)) + "'>" + (kendo.format('{0:c}', dataItem.amount_approved)) + "</span>"
+                    },
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    groupHeaderTemplate: "Amount Approved: #= value?  kendo.format('{0:c}', value): 'Pending' #",
+                    aggregates: ["max", "min"],
+                    format: "{0:c}",
+                    width: 200,
+                    filterable: false
+
+                },
+                {
+                    field: 'fmgr_approval_date',
+                    title: 'Fin. Mgr. Approval Date ',
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    template: function (dataItem) {
+                        let date = dataItem.fmgr_approval_date ? kendo.toString(kendo.parseDate(dataItem.fmgr_approval_date), 'dddd dd MMM, yyyy') : '';
+                        return "<span title='Finance Mgr. Approval Date: " + date + "'>" + date + "</span>";
+                    },
+                    width: 200,
+                    groupHeaderTemplate: "Finance Mgr. Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') : '' #",
+                    hidden: false,
+                    filterable: false
+
                 },
                 {
                     field: 'amount_received',
                     title: 'Amount Received',
                     template: function (dataItem) {
-                        return dataItem.amount_received ? "<span title='Amount Received: " + kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_received)) + "'>" + kendo.toString('GH₵ ' + kendo.format('{0:n}', dataItem.amount_received)) + "</span>" : "<span title='Pending'>Pending</span>"
+                        return "<span title='Amount Received: " + kendo.format('{0:c}', dataItem.amount_received) + "'>" + kendo.format('{0:c}', dataItem.amount_received) + "</span>";
+
+                        // return dataItem.amount_received ? "<span title='Amount Received: " + kendo.format('{0:c}', dataItem.amount_received) + "'>" + kendo.format('{0:c}', dataItem.amount_received) + "</span>" : "<span title='0' " + universal.currency_symbol + ">0" + universal.currency_symbol + "</span>"
                     },
-                    width: 200,
                     attributes: {
                         class: 'amount_received'
                     },
                     headerAttributes: {
                         "class": "title"
                     },
+                    width: 200,
                     groupHeaderTemplate: "Amount Received: #: kendo.format('{0:c}', value) #",
+                    filterable: false
+
                 },
                 {
                     field: 'received_by',
                     title: 'Received By',
-                    hidden: true,
+                    hidden: false,
                     template: function (dataItem) {
                         return dataItem.received_by ? "<span title='Received by: " + dataItem.received_by + "'>" + dataItem.received_by + "</span>" : "<span title='Pending'>Pending</span>"
                     },
-                    width: 200,
                     headerAttributes: {
                         "class": "title"
                     },
+                    width: 200,
                     groupHeaderTemplate: "Received By: #:  value #",
+                    filterable: false
+
                 },
                 {
                     field: 'date_received',
                     title: 'Date Received',
-                    hidden: true,
-                    width: 200,
+                    hidden: false,
                     template: function (dataItem) {
-                        let date = dataItem.date_received ? kendo.toString(kendo.parseDate(dataItem.date_received), 'dddd dd MMM, yyyy') : 'Pending';
+                        let date = dataItem.date_received ? kendo.toString(kendo.parseDate(dataItem.date_received), 'dddd dd MMM, yyyy') : '';
                         return "<span title='Date Received: " + date + "'>" + date + "</span>";
                     },
                     headerAttributes: {
                         "class": "title"
                     },
+                    width: 450,
                     groupHeaderTemplate: "Date Received: #= value? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : 'Pending' #",
+                    filterable: {
+                        cell: {
+                            template: dateRangeFilter
+                        }
+                    }
                 },
                 {
                     template: "<span class='text-center action-tools'>" +
@@ -657,26 +685,26 @@ $universal->select_row_id = $select_row_id;
             dataBinding: function () {
                 //let no = (this.dataSource.page() - 1) * this.dataSource.pageSize();
             },
-            dataBound: function () {
-                let grid = $salaryAdvanceGrid.data('kendoGrid');
-                //grid.hideColumn("name");
-                //grid.hideColumn("department");
+            dataBound: function (e) {
+                let grid = e.sender;
                 let data = grid.dataSource.data();
                 $.each(data, function (i, row) {
-                    $('tr[data-uid="' + row.uid + '"] ').find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["id_salary_advance"]);
+                    $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["id_salary_advance"]);
                 });
                 $(".print-it").printPage();
-                //kGridAddButton = $(".k-grid-add");
+                let headingRow = $salaryAdvanceGrid.find('thead tr[role=row]');
+                headingRow.find('th.k-hierarchy-cell').hide();
+                headingRow.find('th.k-hierarchy-cell').next('th').attr('colspan', 2);
+                let filterRow = $salaryAdvanceGrid.find('thead tr.k-filter-row');
+                filterRow.find('th.k-hierarchy-cell').hide();
+                filterRow.find('th.k-hierarchy-cell').next('th').attr('colspan', 2);
                 const {has_active_application} = universal;
                 if (has_active_application) {
                     //disableGridAddButton();
                 }
-                /*let len = $salaryAdvanceGrid.find("tbody tr").length;
-                for(let i=0;i<len ; i++)
-                {
-                    let model = grid.dataSource.at(i);
-
-                }*/
+                let selectRow = $salaryAdvanceGrid.find(`tr[data-id-salary-advance=${universal['select_row_id']}]`);
+                grid.select(selectRow);
+                selectRow.find('.action-more-info').click();
             },
             detailInit: function (e) {
                 let grid = $salaryAdvanceGrid.data("kendoGrid");

@@ -289,6 +289,49 @@ function kendoFastReDrawRow(grid, row, dItem) {
     }
 }
 
+function dateRangeFilter(args) {
+    let filterCell = args.element.parents(".k-filtercell");
+    let field = filterCell.attr('data-field');
+    //let clearButton = $('<button type="button" class="k-button k-button-icon" title="Clear" aria-label="Clear" data-bind="visible:operatorVisible" style=""><span class="k-icon k-i-filter-clear"></span></button>')
+    filterCell.empty();
+    filterCell.html('<span style="display:flex; justify-content:center;"><span>From:</span><input  class="start-date"  placeholder="mm/dd/yyyy"/><span>To:</span><input  class="end-date"  placeholder="mm/dd/yyyy"/></span>');
+
+    $(".start-date", filterCell).kendoDatePicker({
+        change: function (e) {
+            let startDate = e.sender.value(),
+                endDate = $("input.end-date", filterCell).data("kendoDatePicker").value(),
+                dataSource =$salaryAdvanceGrid.data("kendoGrid").dataSource;
+
+            if (startDate & endDate) {
+                let filter = {logic: "and", filters: []};
+                filter.filters.push({field: field, operator: "gte", value: startDate});
+                filter.filters.push({field: field, operator: "lte", value: endDate});
+                dataSource.filter(filter);
+            }
+        }
+    });
+
+    $(".end-date", filterCell).kendoDatePicker({
+        change: function (e) {
+            let startDate = $("input.start-date", filterCell).data("kendoDatePicker").value(),
+                endDate = e.sender.value(),
+                dataSource = $salaryAdvanceGrid.data("kendoGrid").dataSource;
+
+            if (startDate & endDate) {
+                let filter = {logic: "and", filters: []};
+                filter.filters.push({field: field, operator: "gte", value: startDate});
+                filter.filters.push({field: field, operator: "lte", value: endDate});
+                dataSource.filter(filter);
+                /*let filterEvent = $.Event('filter');
+                filterEvent.field = field;
+                filterEvent.filter = filter;
+                filterEvent.sender = $salaryAdvanceGrid;
+                $salaryAdvanceGrid.data('kendoGrid').trigger('filter', filterEvent);*/
+            }
+        }
+    });
+
+}
 /*
 function parseHtml(s) {
     return (new DOMParser()).parseFromString(s, 'text/html').body.innerHTML;
