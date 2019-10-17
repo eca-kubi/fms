@@ -333,9 +333,9 @@ $universal->select_row_id = $select_row_id;
                     selectedItemsFormat: ""
                 }
             },
-            columnMenu: true,
+            columnMenu: false,
             sortable: true,
-            //groupable: true,
+            groupable: false,
             height: 520,
             resizable: true,
             scrollable: true,
