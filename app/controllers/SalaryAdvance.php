@@ -9,6 +9,7 @@ class SalaryAdvance extends Controller
 
     public function index($id_salary_advance = null)
     {
+        $db = Database::getDbh();
         if (!isLoggedIn()) {
             redirect('users/login/salary-advance/index/' . $id_salary_advance);
         } else {
@@ -17,25 +18,44 @@ class SalaryAdvance extends Controller
             $payload['title'] = 'Salary Advance Applications';
             $payload['salary_advances'] = (new SalaryAdvanceModel())->get(['user_id' => $current_user->user_id]);
             $payload['select_row_id'] = $id_salary_advance;
-            $this->view('salary-advance/all', $payload);
+            if ($id_salary_advance && $this->canViewSalaryAdvance($current_user->user_id, $id_salary_advance)) {
+                $this->single($id_salary_advance);
+            } else {
+                $this->view('salary-advance/all', $payload);
+            }
         }
     }
 
-    private function all()
+    private function canViewSalaryAdvance($user_id, $id_salary_advance)
     {
-        $payload = [];
-        $payload['current_user'] = $current_user = getUserSession();
-        $payload['title'] = 'Salary Advance Applications';
-        $payload['salary_advances'] = (new SalaryAdvanceModel())->get(['user_id' => $current_user->user_id]);
-        $this->view('salary-advance/all', $payload);
+        $db = Database::getDbh();
+        $salary_advance = $db->where('id_salary_advance', $id_salary_advance)
+            ->objectBuilder()
+            ->getOne('salary_advance');
+        $applicant = new User($salary_advance->user_id);
+        return $db->where('user_id', $user_id)->where('id_salary_advance', $id_salary_advance)->has('salary_advance') || isCurrentGM($user_id) || isCurrentHR($user_id) || isCurrentFmgr($user_id) || isCurrentManager($applicant->department_id, $user_id);
     }
 
     public function single($id_salary_advance)
     {
         $payload = [];
-        $payload['current_user'] = getUserSession();
+        $db = Database::getDbh();
+        $payload['current_user'] = $current_user = getUserSession();
         $payload['title'] = 'View Salary Advance';
-        $payload['salary_advance'] = new SalaryAdvanceModel($id_salary_advance);
+        if (!$db->where('id_salary_advance', $id_salary_advance)->has('salary_advance')) {
+            redirect('errors/index/404');
+        }
+        if (!$this->canViewSalaryAdvance($current_user->user_id, $id_salary_advance)) {
+            redirect('salary-advance');
+        }
+        $salary_advance = $db->where('id_salary_advance', $id_salary_advance)
+            ->objectBuilder()
+            ->getOne('salary_advance');
+        $applicant = $db->where('user_id', $salary_advance->user_id)
+            ->objectBuilder()
+            ->getOne('users');
+        $payload['salary_advance'] = $salary_advance;
+        $payload['applicant'] = $applicant;
         $this->view('salary-advance/single', $payload);
     }
 
@@ -77,7 +97,7 @@ class SalaryAdvance extends Controller
         $this->view('pages/start-page', $payload);
     }
 
-    public function print ($id_salary_advance)
+    public function print($id_salary_advance)
     {
         $payload['current_user'] = getUserSession();
         $payload['title'] = 'Salary Advance';
@@ -85,4 +105,12 @@ class SalaryAdvance extends Controller
         $this->view('print-salary-advance', $payload);
     }
 
+    private function all()
+    {
+        $payload = [];
+        $payload['current_user'] = $current_user = getUserSession();
+        $payload['title'] = 'Salary Advance Applications';
+        $payload['salary_advances'] = (new SalaryAdvanceModel())->get(['user_id' => $current_user->user_id]);
+        $this->view('salary-advance/all', $payload);
+    }
 }

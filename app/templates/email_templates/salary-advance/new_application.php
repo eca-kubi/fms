@@ -8,7 +8,8 @@
 $current_user = getUserSession();
 /** @var boolean $ref_number */
 /** @var string $link */
-$body = getNameJobTitleAndDepartment($current_user->user_id) . " has raised a Salary Advance application with reference number "
+/** @var boolean $applicant_is_the_recipient */
+$body = ($applicant_is_the_recipient? 'You have' : getNameJobTitleAndDepartment($current_user->user_id) . " has") . " raised a Salary Advance application with reference number "
     . $ref_number . ".<br/>Click the following link for more information: <a href='$link'>$link</a> ";
 echo <<<html
 <?xml version="1.0" encoding="UTF-8"?>

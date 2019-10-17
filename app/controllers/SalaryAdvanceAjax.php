@@ -72,15 +72,23 @@ class SalaryAdvanceAjax extends Controller
                 $hr = new User(getCurrentHR());
                 $fmgr = new User(getCurrentFgmr());
                 $gmgr = new User(getCurrentGM());
-                $data = ['ref_number' => $ref_number, 'link' => URL_ROOT . '/salary-advance/' . $ret[0]['id_salary_advance']];
-                $body = get_include_contents('email_templates/salary-advance/new_application', $data);
                 $subject = "Salary Advance Application ($ref_number)";
-                insertEmail($subject, $body, $hod->email, $hod->first_name . ' ' . $hod->last_name);
-                insertEmail($subject, $body, $hr->email, $hr->first_name . ' ' . $hr->last_name);
-                insertEmail($subject, $body, $fmgr->email, $fmgr->first_name . ' ' . $fmgr->last_name);
-                insertEmail($subject, $body, $gmgr->email, $gmgr->first_name . ' ' . $gmgr->last_name);
-              //  $remarks = get_include_contents('action_log/salary_advance_raised', $data);
-             //   insertLog($ret[0]['id_salary_advance'], ACTION_SALARY_ADVANCE_RAISED, $remarks, $current_user->user_id);
+                $data = ['ref_number' => $ref_number, 'link' => URL_ROOT . '/salary-advance/' . $ret[0]['id_salary_advance'], 'applicant_is_the_recipient' => false];
+                $body = get_include_contents('email_templates/salary-advance/new_application', $data);
+                $recipient_addresses = [$hod->email, $hr->email, $fmgr->email, $gmgr->email];
+                foreach (array_keys($recipient_addresses, $current_user->email, true) as $key) {
+                    // remove current user from email recipient address list
+                    unset($recipient_addresses[$key]);
+                }
+                foreach ($recipient_addresses as  $recipient_address) {
+                    insertEmail($subject, $body, $recipient_address);
+                }
+                $data['applicant_is_the_recipient'] = true;
+                $body = get_include_contents('email_templates/salary-advance/new_application', $data);
+                insertEmail($subject, $body, $current_user->email);
+
+                //  $remarks = get_include_contents('action_log/salary_advance_raised', $data);
+                //   insertLog($ret[0]['id_salary_advance'], ACTION_SALARY_ADVANCE_RAISED, $remarks, $current_user->user_id);
             } else {
                 $ret[0]['success'] = false;
                 $ret[0]['reason'] = 'An error occurred!';

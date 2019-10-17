@@ -56,6 +56,8 @@
 </div>
 <!-- /.content-wrapper -->
 <?php require_once APP_ROOT . '\views\includes\footer.php'; ?>
+</div>
+<!.. /.wrapper -->
 <?php require_once APP_ROOT . '\views\includes\scripts.php'; ?>
 
 <?php
@@ -937,3 +939,5 @@ $universal->select_row_id = $select_row_id;
         </span>-->
     </div>
 </script>
+</body>
+</html>

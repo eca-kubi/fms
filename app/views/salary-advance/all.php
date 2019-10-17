@@ -1,15 +1,6 @@
-<?php
-$universal = new stdClass();
-$universal->hr_comment_editable = getCurrentHR() == $current_user->user_id;
-$universal->fgmr_comment_editable = getCurrentFgmr() == $current_user->user_id;
-$universal->has_active_application = hasActiveApplication($current_user->user_id);
-/** @var int $select_row_id */
-$universal->select_row_id = $select_row_id;
-?>
 <?php require_once APP_ROOT . '\views\includes\header.php'; ?>
 <?php require_once APP_ROOT . '\views\includes\navbar.php'; ?>
 <?php require_once APP_ROOT . '\views\includes\sidebar.php'; ?>
-<input id="url_root" type="hidden" value="<?php echo URL_ROOT; ?>">
 <!-- .content-wrapper -->
 <div class="content-wrapper animated fadeInRight" style="margin-top: <?php echo NAVBAR_MT; ?>">
     <!-- .content-header-->
@@ -62,13 +53,22 @@ $universal->select_row_id = $select_row_id;
         </div>
     </section>
     <!-- /.content -->
-    <!-- footer -->
-    <?php require_once APP_ROOT . '\views\includes\footer.php'; ?>
-    <!-- footer -->
 </div>
+<!-- /.content-wrapper -->
+<?php require_once APP_ROOT . '\views\includes\footer.php'; ?>
 </div>
-<!-- /.wrapper -->
+<!.. /.wrapper -->
 <?php require_once APP_ROOT . '\views\includes\scripts.php'; ?>
+
+<?php
+$universal = new stdClass();
+$universal->currency_symbol = CURRENCY_GHS;
+$universal->hr_comment_editable = $universal->isHr = getCurrentHR() == $current_user->user_id;
+$universal->fgmr_comment_editable = $universal->isFmgr = getCurrentFgmr() == $current_user->user_id;
+/** @var int $select_row_id */
+$universal->select_row_id = $select_row_id;
+?>
+<!--suppress HtmlUnknownTarget -->
 <script>
     /*Error constants*/
     const dbg_turn_off_disable_add_button = true;
@@ -397,7 +397,7 @@ $universal->select_row_id = $select_row_id;
                     headerAttributes: {
                         "class": "title"
                     },
-                    width: 250,
+                    width: 280,
                     groupHeaderTemplate: "Amount Requested in Percentage: #= value? value + '%' : '' #",
                     aggregates: ["max", "min"],
                     format: "{0:#\\%}",
@@ -406,7 +406,7 @@ $universal->select_row_id = $select_row_id;
                 {
                     field: 'amount_requested',
                     title: 'Amount Requested in Figures',
-                    width: 250,
+                    width: 280,
                     template: function (dataItem) {
                         return "<span title='Amount Requested: " + (dataItem.amount_requested ? kendo.format('{0:c}', dataItem.amount_requested) : '') + "'>" + (dataItem.amount_requested ? kendo.format('{0:c}', dataItem.amount_requested) : '') + "</span>"
                     },

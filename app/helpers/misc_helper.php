@@ -780,7 +780,7 @@ function echoInComplete($append = '')
  * @param $recipient_name string
  * @return bool
  */
-function insertEmail($subject, $body, $recipient_address, $recipient_name)
+function insertEmail($subject, $body, $recipient_address, $recipient_name='')
 {
     $email_model = new EmailModel();
     return $email_model->add([
@@ -862,19 +862,27 @@ function getDepartmentID($user_id)
     return (new User($user_id))->department_id;
 }
 
+function isCurrentHR($user_id) {
+    return getCurrentHR() == $user_id;
+}
+
+function isCurrentFmgr($user_id) {
+    return getCurrentFgmr() == $user_id;
+}
+
 function getCurrentHR()
 {
     return
         Database::getDbh()
             ->where('prop', 'current_hr')
-            ->getValue('fms_settings', 'value');
+            ->getValue('settings', 'value');
 }
 
 function getCurrentFgmr()
 {
     return Database::getDbh()
         ->where('prop', 'current_fmgr')
-        ->getValue('fms_settings', 'value');
+        ->getValue('settings', 'value');
 }
 
 /**
