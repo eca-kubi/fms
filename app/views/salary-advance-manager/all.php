@@ -82,7 +82,7 @@ $universal->select_row_id = $select_row_id;
         });
         salaryAdvanceDataSource = new kendo.data.DataSource({
             width: 'auto',
-            pageSize: 5,
+            pageSize: 20,
             transport: {
                 read: {
                     url: URL_ROOT + "/salary-advance-manager-ajax/",
@@ -292,9 +292,9 @@ $universal->select_row_id = $select_row_id;
                         fmgr_approval: row.cells[12].value,
                         hr_approval: row.cells[8].value
                     };
-                    row.cells[5].value = dataItem.hod_approval == null? 'Pending': (dataItem.hod_approval? 'Approved': 'Rejected');
-                    row.cells[8].value = dataItem.hr_approval == null? 'Pending': (dataItem.hr_approval? 'Approved': 'Rejected');
-                    row.cells[12].value = dataItem.fmgr_approval == null? 'Pending': (dataItem.fmgr_approval? 'Approved': 'Rejected');
+                    row.cells[5].value = dataItem.hod_approval == null ? 'Pending' : (dataItem.hod_approval ? 'Approved' : 'Rejected');
+                    row.cells[8].value = dataItem.hr_approval == null ? 'Pending' : (dataItem.hr_approval ? 'Approved' : 'Rejected');
+                    row.cells[12].value = dataItem.fmgr_approval == null ? 'Pending' : (dataItem.fmgr_approval ? 'Approved' : 'Rejected');
 
                     // alternating row colors
                     if (rowIndex % 2 === 0) {
@@ -684,6 +684,7 @@ $universal->select_row_id = $select_row_id;
                 //let grid = $salaryAdvanceGrid.data('kendoGrid');
                 let grid = e.sender;
                 let data = grid.dataSource.data();
+                let dataSource = this;
                 $.each(data, function (i, row) {
                     $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["id_salary_advance"]);
                 });
@@ -696,13 +697,10 @@ $universal->select_row_id = $select_row_id;
                 filterRow.find('th.k-hierarchy-cell').next('th').attr('colspan', 2);
                 filterRow.find('input:first').attr('placeholder', 'Search...');
                 filterRow.find('input:eq(1)').attr('placeholder', 'Search...');
-                /*  if (!(universal['isHr'] || universal['isFmgr'])) {
-                      grid.hideColumn('department');
-                  }*/
 
-                let selectRow = $salaryAdvanceGrid.find(`tr[data-id-salary-advance=${universal['select_row_id']}]`);
-                grid.select(selectRow);
-                selectRow.find('.action-more-info').click();
+                if (!currentRowSelected) {
+                    selectGridRow(universal["select_row_id"], grid, dataSource, 'id_salary_advance');
+                }
             },
             detailInit: function (e) {
                 let grid = $salaryAdvanceGrid.data("kendoGrid");

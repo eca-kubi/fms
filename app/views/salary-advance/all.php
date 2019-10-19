@@ -90,7 +90,7 @@ $universal->select_row_id = $select_row_id;
         });
         // '/salary-advance-ajax/'
         salaryAdvanceDataSource = new kendo.data.DataSource({
-            pageSize: 5,
+            pageSize: 20,
             transport: {
                 read: {
                     url: URL_ROOT + "/salary-advance-ajax/",
@@ -148,7 +148,7 @@ $universal->select_row_id = $select_row_id;
                     toastSuccess('Success', 5000);
                     universal.has_active_application = e.response['has_active_application'];
                     if (universal.has_active_application) {
-                       disableGridAddButton();
+                        disableGridAddButton();
                     } else {
                         enableGridAddButton();
                     }
@@ -156,6 +156,9 @@ $universal->select_row_id = $select_row_id;
                     e.response.reason ? toastError(e.response.reason) : toastError('An error occurred!');
                     salaryAdvanceDataSource.cancelChanges();
                 }
+            },
+            change: function (e) {
+                //this.content.animate({scrollTop: this.select().position().top}, 400);
             },
             schema: {
                 model: {
@@ -295,6 +298,7 @@ $universal->select_row_id = $select_row_id;
             mobile: true,
             noRecords: true,
             navigatable: true,
+            persistSelection: true,
             toolbar: ["create", "excel"],
             excel: {
                 fileName: "Salary Advance Export.xlsx",
@@ -311,9 +315,9 @@ $universal->select_row_id = $select_row_id;
                         fmgr_approval: row.cells[12].value,
                         hr_approval: row.cells[8].value
                     };
-                    row.cells[5].value = dataItem.hod_approval == null? 'Pending': (dataItem.hod_approval? 'Approved': 'Rejected');
-                    row.cells[8].value = dataItem.hr_approval == null? 'Pending': (dataItem.hr_approval? 'Approved': 'Rejected');
-                    row.cells[12].value = dataItem.fmgr_approval == null? 'Pending': (dataItem.fmgr_approval? 'Approved': 'Rejected');
+                    row.cells[5].value = dataItem.hod_approval == null ? 'Pending' : (dataItem.hod_approval ? 'Approved' : 'Rejected');
+                    row.cells[8].value = dataItem.hr_approval == null ? 'Pending' : (dataItem.hr_approval ? 'Approved' : 'Rejected');
+                    row.cells[12].value = dataItem.fmgr_approval == null ? 'Pending' : (dataItem.fmgr_approval ? 'Approved' : 'Rejected');
 
                     // alternating row colors
                     if (rowIndex % 2 === 0) {
@@ -341,7 +345,7 @@ $universal->select_row_id = $select_row_id;
             scrollable: true,
             pageable: {
                 alwaysVisible: false,
-                pageSizes: [5, 10, 15, 20],
+                pageSizes: [20, 40 , 60, 80, 100],
                 buttonCount: 5
             },
             columns: [
@@ -687,6 +691,7 @@ $universal->select_row_id = $select_row_id;
             },
             dataBound: function (e) {
                 let grid = e.sender;
+                let dataSource = this.dataSource;
                 let data = grid.dataSource.data();
                 $.each(data, function (i, row) {
                     $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["id_salary_advance"]);
@@ -698,13 +703,12 @@ $universal->select_row_id = $select_row_id;
                 let filterRow = $salaryAdvanceGrid.find('thead tr.k-filter-row');
                 filterRow.find('th.k-hierarchy-cell').hide();
                 filterRow.find('th.k-hierarchy-cell').next('th').attr('colspan', 2);
-                const {has_active_application} = universal;
-                if (has_active_application) {
+                if (universal["has_active_application"]) {
                     //disableGridAddButton();
                 }
-                let selectRow = $salaryAdvanceGrid.find(`tr[data-id-salary-advance=${universal['select_row_id']}]`);
-                grid.select(selectRow);
-                selectRow.find('.action-more-info').click();
+                if (!currentRowSelected) {
+                    selectGridRow(universal["select_row_id"], grid, dataSource, 'id_salary_advance');
+                }
             },
             detailInit: function (e) {
                 let grid = $salaryAdvanceGrid.data("kendoGrid");
@@ -885,9 +889,9 @@ $universal->select_row_id = $select_row_id;
     function disableGridAddButton() {
         if (!dbg_turn_off_disable_add_button)
             kGridAddButton.attr('disabled', 'disabled')
-            .removeClass("k-grid-add")
-            .addClass("k-state-disabled k-grid-add-disabled")
-            .removeAttr("href");
+                .removeClass("k-grid-add")
+                .addClass("k-state-disabled k-grid-add-disabled")
+                .removeAttr("href");
     }
 
     function enableGridAddButton() {

@@ -6,6 +6,8 @@
 let URL_ROOT = '';
 let lists = [];
 let employeeDataSource;
+let currentRowSelected = false;
+let pageWithRowSelected = -1;
 let summaryTemplate = `<div class="">
         <b>Action</b>:  #= "<span class='text-center action-tools'>" +
                         "<span class='col' title='Edit'><a href='javascript:' class='text-black action-edit in-detail-row'><i class='fa fa-pencil'></i></a></span>" +
@@ -300,7 +302,7 @@ function dateRangeFilter(args) {
         change: function (e) {
             let startDate = e.sender.value(),
                 endDate = $("input.end-date", filterCell).data("kendoDatePicker").value(),
-                dataSource =$salaryAdvanceGrid.data("kendoGrid").dataSource;
+                dataSource = $salaryAdvanceGrid.data("kendoGrid").dataSource;
 
             if (startDate & endDate) {
                 let filter = {logic: "and", filters: []};
@@ -332,6 +334,48 @@ function dateRangeFilter(args) {
     });
 
 }
+
+function selectGridRow(searchedId, grid, dataSource, idField) {
+    var filters = dataSource.filter() || {};
+    var sort = dataSource.sort() || {};
+    var models = dataSource.data();
+    // We are using a Query object to get a sorted and filtered representation of the data, without paging applied, so we can search for the row on all pages
+    var query = new kendo.data.Query(models);
+    var rowNum = 0;
+    var modelToSelect = null;
+
+    models = query.filter(filters).sort(sort).data;
+    if (models.length <= 0) return;
+    // Now that we have an accurate representation of data, let's get the item position
+    for (var i = 0; i < models.length; ++i) {
+        var model = models[i];
+        if (model[idField] == searchedId) {
+            modelToSelect = model;
+            rowNum = i;
+            break;
+        }
+    }
+
+    // If you have persistSelection = true and want to clear all existing selections first, uncomment the next line
+    // grid._selectedIds = {};
+
+    // Now go to the page holding the record and select the row
+    let currentPageSize = dataSource.pageSize();
+    let pageWithRow = pageWithRowSelected = parseInt((rowNum / currentPageSize)) + 1; // pages are one-based
+    if (!currentRowSelected) {
+        currentRowSelected = true;
+        dataSource.page(pageWithRowSelected);
+    }
+    var row = grid.element.find("tr[data-uid='" + modelToSelect.uid + "']");
+    if (row.length > 0) {
+        grid.select(row);
+
+        // Scroll to the item to ensure it is visible
+        grid.content.scrollTop(grid.select().position().top);
+        grid.expandRow(row);
+    }
+}
+
 /*
 function parseHtml(s) {
     return (new DOMParser()).parseFromString(s, 'text/html').body.innerHTML;

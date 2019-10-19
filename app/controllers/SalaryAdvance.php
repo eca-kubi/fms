@@ -36,7 +36,7 @@ class SalaryAdvance extends Controller
         return $db->where('user_id', $user_id)->where('id_salary_advance', $id_salary_advance)->has('salary_advance') || isCurrentGM($user_id) || isCurrentHR($user_id) || isCurrentFmgr($user_id) || isCurrentManager($applicant->department_id, $user_id);
     }
 
-    public function single($id_salary_advance)
+    public function single($id_salary_advance = null)
     {
         $payload = [];
         $db = Database::getDbh();
@@ -56,7 +56,8 @@ class SalaryAdvance extends Controller
             ->getOne('users');
         $payload['salary_advance'] = $salary_advance;
         $payload['applicant'] = $applicant;
-        $this->view('salary-advance/single', $payload);
+        $payload['select_row_id'] = $id_salary_advance;
+        $this->view('salary-advance/all', $payload);
     }
 
     public function new()
