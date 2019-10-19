@@ -33,7 +33,8 @@ class SalaryAdvance extends Controller
             ->objectBuilder()
             ->getOne('salary_advance');
         $applicant = new User($salary_advance->user_id);
-        return $db->where('user_id', $user_id)->where('id_salary_advance', $id_salary_advance)->has('salary_advance') || isCurrentGM($user_id) || isCurrentHR($user_id) || isCurrentFmgr($user_id) || isCurrentManager($applicant->department_id, $user_id);
+        return $applicant->user_id == $user_id;
+        //return $db->where('user_id', $user_id)->where('id_salary_advance', $id_salary_advance)->has('salary_advance') || isCurrentGM($user_id) || isCurrentHR($user_id) || isCurrentFmgr($user_id) || isCurrentManager($applicant->department_id, $user_id);
     }
 
     public function single($id_salary_advance = null)

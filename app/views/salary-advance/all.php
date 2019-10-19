@@ -717,6 +717,8 @@ $universal->select_row_id = $select_row_id;
                 e.detailRow.find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + dataItem["id_salary_advance"]);
                 $(".print-it").printPage();
             },
+            detailExpand: onDetailExpand,
+            detailCollapse: onDetailCollapse,
             beforeEdit: function (e) {
                 e.model.fields["percentage"].editable = e.model.fields['amount_requested'].editable = !Boolean(e.model.hod_approval || e.model.fmgr_approval || e.model.hr_approval);
             },
@@ -877,7 +879,9 @@ $universal->select_row_id = $select_row_id;
             if (this.options.selectable !== false)
                 return this.select()[0];
             return null;
-        }
+        };
+
+        $salaryAdvanceGrid.data("kendoGrid").bind("dataBound", onDataBound)
     });
 
     toggleAmountRequested = function () {

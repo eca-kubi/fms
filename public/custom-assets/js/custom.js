@@ -376,6 +376,52 @@ function selectGridRow(searchedId, grid, dataSource, idField) {
     }
 }
 
+function onDataBound(e){
+
+    var items = localStorage['expanded'];
+    var grid = this;
+    if(items){
+        items = JSON.parse(items);
+        items.forEach(function(x){
+            var item = grid.dataSource.view().find(function(y){
+                return y.id_salary_advance == x;
+            });
+
+            if(item){
+                var row = $('#'+grid.element.attr('id') + ' tr[data-uid="'+item.uid+'"]')
+                grid.expandRow(row);
+            }
+        })
+    }
+}
+
+function onDetailExpand(e){
+    var item = this.dataItem(e.masterRow);
+
+    var items = localStorage['expanded'];
+
+    if(items){
+        items = JSON.parse(items);
+
+    }else{
+        items = [];
+    }
+
+    items.push(item.id_salary_advance);
+    localStorage['expanded'] = JSON.stringify(items);
+}
+
+function onDetailCollapse(e){
+    var item = this.dataItem(e.masterRow);
+    var items =JSON.parse(localStorage['expanded']);
+
+    items = items.filter(function(x){
+        return x != item.id_salary_advance;
+    });
+
+    localStorage['expanded'] = JSON.stringify(items);
+}
+
 /*
 function parseHtml(s) {
     return (new DOMParser()).parseFromString(s, 'text/html').body.innerHTML;

@@ -1240,7 +1240,7 @@ function prepPostData($section, $cms_form_id = '')
     return $form_model;
 }
 
-function isCurrentManager($department_id, $user_id)
+function isCurrentManagerForDepartment($department_id, $user_id)
 {
     return getCurrentManager($department_id) === $user_id;
 }
@@ -1251,7 +1251,7 @@ function canUploadFile($cms_form_id)
     $current_user = getUserSession();
     return $form_model->originator_id === $current_user->user_id
         || $form_model->project_leader_id === $current_user->user_id
-        || isCurrentManager($form_model->department_id, $current_user->user_id);
+        || isCurrentManagerForDepartment($form_model->department_id, $current_user->user_id);
 }
 
 /**
@@ -1309,13 +1309,34 @@ function getActionList()
 function isAdmin($user_id)
 {
     $user_role = (new User($user_id))->role;
-    return in_array($user_role, ADMIN);
+    return $user_role == ROLE_MANAGER;
+}
+
+function isManager($user_id)
+{
+    $user_role = (new User($user_id))->role;
+    return $user_role == ROLE_SUPERINTENDENT;
+}
+
+function isCurrentManager($user_id) {
+    $db = Database::getDbh();
+    return $db->where('current_manager', $user_id)->has('departments');
+}
+
+function isITAdmin($user_id) {
+
 }
 
 function isSecretary($user_id)
 {
-    return Database::getDbh()->where('user_id', $user_id)
-        ->has('salary_advance_secretary');
+    $user_role = (new User($user_id))->role;
+    return $user_role == ROLE_SECRETARY;
+}
+
+function isSuperintendent($user_id)
+{
+    $user_role = (new User($user_id))->role;
+    return in_array($user_role, ADMIN);
 }
 
 function getMembersAssignedToSecretary($user_id)

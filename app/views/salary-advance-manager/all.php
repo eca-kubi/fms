@@ -323,6 +323,7 @@ $universal->select_row_id = $select_row_id;
             height: 520,
             resizable: true,
             scrollable: true,
+            persistSelection: true,
             pageable: {
                 alwaysVisible: false,
                 pageSizes: [5, 10, 15, 20],
@@ -684,7 +685,7 @@ $universal->select_row_id = $select_row_id;
                 //let grid = $salaryAdvanceGrid.data('kendoGrid');
                 let grid = e.sender;
                 let data = grid.dataSource.data();
-                let dataSource = this;
+                let dataSource = grid.dataSource;
                 $.each(data, function (i, row) {
                     $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["id_salary_advance"]);
                 });
@@ -709,6 +710,8 @@ $universal->select_row_id = $select_row_id;
                 e.detailRow.find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + dataItem["id_salary_advance"]);
                 $(".print-it").printPage();
             },
+            detailExpand: onDetailExpand,
+            detailCollapse: onDetailCollapse,
             beforeEdit: function (e) {
                 window.grid_uid = e.model.uid; // uid of current editing row
                 // Editability
@@ -919,6 +922,8 @@ $universal->select_row_id = $select_row_id;
             let row = $(this).closest("tr");
             row.find('.k-hierarchy-cell>a').click();
         });
+
+        $salaryAdvanceGrid.data("kendoGrid").bind("dataBound", onDataBound);
     });
 
 </script>
