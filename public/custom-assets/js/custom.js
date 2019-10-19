@@ -8,12 +8,13 @@ let lists = [];
 let employeeDataSource;
 let currentRowSelected = false;
 let pageWithRowSelected = -1;
+let expandedRows = [];
 let summaryTemplate = `<div class="">
         <b>Action</b>:  #= "<span class='text-center action-tools'>" +
-                        "<span class='col' title='Edit'><a href='javascript:' class='text-black action-edit in-detail-row'><i class='fa fa-pencil'></i></a></span>" +
-                        "<span class='col d-none' title='Delete'><a href='javascript:' class='text-danger action-delete in-detail-row'><i class='fas fa-trash-alt'></i></a></span>" +
-                        "<span class='col d-none' title='More Info'><a href='javascript:' class='text-primary action-more-info in-detail-row'><i class='fas fa-info-circle'></i></a></span>" +
-                        "<span class='col' title='Print'><a href='\\\\#' class='text-primary action-print print-it in-detail-row' target='_blank'><i class='fas fa-print'></i></a></span>" +
+                        "<span class='col' title=''><a href='javascript:' class='action-edit badge badge-success btn k-button text-black in-detail-row border'><i class='k-icon k-i-edit'></i>Review</a></span>" +
+                        "<span class='col d-none' title=''><a href='javascript:' class='text-danger action-delete in-detail-row'><i class='fas fa-trash-alt'></i></a></span>" +
+                        "<span class='col d-none' title=''><a href='javascript:' class='action-more-info in-detail-row'><i class='fas fa-info-circle'></i></a></span>" +
+                        "<span class='col' title=''><a href='\\\\#' class='text-black action-print print-it in-detail-row badge badge-primary btn k-button border' target='_blank'><i class='k-icon k-i-printer'></i>Print</a></span>" +
                         "</span>"# </br>
         <b>Date Raised</b>: #= kendo.toString(kendo.parseDate(date_raised), 'dddd dd MMM, yyyy') #</br>
         #=amount_requested? '<b>Amount Requested</b>: ' + kendo.format('{0:c}', amount_requested) + '</br>' : ''#
@@ -378,7 +379,7 @@ function selectGridRow(searchedId, grid, dataSource, idField) {
 
 function onDataBound(e){
 
-    var items = localStorage['expanded'];
+    var items = expandedRows['expanded'];
     var grid = this;
     if(items){
         items = JSON.parse(items);
@@ -398,7 +399,7 @@ function onDataBound(e){
 function onDetailExpand(e){
     var item = this.dataItem(e.masterRow);
 
-    var items = localStorage['expanded'];
+    var items = expandedRows['expanded'];
 
     if(items){
         items = JSON.parse(items);
@@ -408,18 +409,18 @@ function onDetailExpand(e){
     }
 
     items.push(item.id_salary_advance);
-    localStorage['expanded'] = JSON.stringify(items);
+    expandedRows['expanded'] = JSON.stringify(items);
 }
 
 function onDetailCollapse(e){
     var item = this.dataItem(e.masterRow);
-    var items =JSON.parse(localStorage['expanded']);
+    var items =JSON.parse(expandedRows['expanded']);
 
     items = items.filter(function(x){
         return x != item.id_salary_advance;
     });
 
-    localStorage['expanded'] = JSON.stringify(items);
+    expandedRows['expanded'] = JSON.stringify(items);
 }
 
 /*

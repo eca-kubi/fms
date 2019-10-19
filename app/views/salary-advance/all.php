@@ -670,15 +670,18 @@ $universal->select_row_id = $select_row_id;
                 },
                 {
                     template: "<span class='text-center action-tools'>" +
-                        "<span class='col' title='Edit'><a href='javascript:' class='text-black action-edit'><i class='fa fa-pencil'></i></a></span>" +
-                        "<span class='col d-none' title='Delete'><a href='javascript:' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span>" +
-                        "<span class='col d-none' title='More Info'><a href='javascript:' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
-                        "<span class='col' title='Print'><a href='\\#' class='text-primary action-print print-it' target='_blank'><i class='fas fa-print'></i></a></span>" +
+                        "<span class='col' title=''><a href='javascript:' class='action-edit badge badge-success btn k-button text-black border'><i class='k-icon k-i-edit'></i>Review</a></span>" +
+                        "<span class='col d-none' title=''><a href='javascript:' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span>" +
+                        "<span class='col d-none' title=''><a href='javascript:' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
+                        "<span class='col' title=''><a href='\\#' class='text-black action-print print-it badge badge-primary btn k-button border' target='_blank'><i class='k-icon k-i-printer'></i>Print</a></span>" +
                         "</span>",
-                    width: 100,
+                    width: 250,
                     title: "Action",
                     headerAttributes: {
                         "class": "title"
+                    },
+                    attributes: {
+                        class: 'action'
                     },
                     /*locked: true,
                     lockable: true*/
@@ -790,7 +793,7 @@ $universal->select_row_id = $select_row_id;
 
         kGridAddButton = $('.k-grid-add');
         $salaryAdvanceTooltip = $salaryAdvanceGrid.kendoTooltip({
-            filter: "td:not('.k-detail-cell')", //this filter selects the second column's cells
+            filter: "td:not('.k-detail-cell'):not('.action')", //this filter selects the second column's cells
             position: "top",
             content: function (e) {
                 // hide popup as default action
