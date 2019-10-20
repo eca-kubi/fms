@@ -19,15 +19,15 @@ let summaryTemplate = `<div class="">
         <b>Date Raised</b>: #= kendo.toString(kendo.parseDate(date_raised), 'dddd dd MMM, yyyy') #</br>
         #=amount_requested? '<b>Amount Requested</b>: ' + kendo.format('{0:c}', amount_requested) + '</br>' : ''#
         #=percentage? '<b>Amount Requested</b>: ' + percentage + '% of Salary</br>' : '' #
-        <b>Approved by HoD?</b> #= hod_approval? 'Yes' : 'No' #</br>
+        <b>HoD Approval: </b> #= hod_approval == null? '<i class="text-yellow fa fa-warning"></i> <span> Pending</span>' : (hod_approval? '<i class="text-success fa fa-check"></i><span> Approved</span>' : '<i class="text-danger fa fa-warning"></i><span> Rejected</span>') #</br>
         #=hod_approval_date? '<b>HoD Approval Date: </b>' + kendo.toString(kendo.parseDate(hod_approval_date), 'dddd dd MMM, yyyy')+'</br>': '' #
-        <b>Approved by HR? </b> #= hr_approval? 'Yes' : 'No' # </br>
+        <b>HR Approval </b>: #= hr_approval == null? '<i class="text-yellow fa fa-warning"></i> <span> Pending</span>' : (hr_approval? '<i class="text-success fa fa-check"></i><span> Approved</span>' : '<i class="text-danger fa fa-warning"></i><span> Rejected</span>')  # </br>
         #=hr_approval_date? '<b>HR Approval Date: </b>' + kendo.toString(kendo.parseDate(hr_approval_date), 'dddd dd MMM, yyyy')+'</br>': '' #
-        <b >Amount Payable </b>: #= amount_payable? kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_payable)) : 'Pending' #</br>
-        <b>Approved by Finance Manager? </b> #= fmgr_approval? 'Yes' : 'No' # </br>
+        #= hr_approval? '<b >Amount Payable</b>:' + kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_payable)) + '</br>' : '' #
+        <b>Finance Manager Approval </b>: #= fmgr_approval == null? '<i class="text-yellow fa fa-warning"></i> <span> Pending</span>' : (fmgr_approval? '<i class="text-success fa fa-check"></i><span> Approved</span>' : '<i class="text-danger fa fa-warning"></i><span> Rejected</span>')  # </br>
         #=fmgr_approval_date? '<b>Finance Mgr. Approval Date: </b>' + kendo.toString(kendo.parseDate(fmgr_approval_date), 'dddd dd MMM, yyyy')+'</br>': '' #
-        <b>Amount Approved </b>: #= amount_approved? kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_approved)) : 'Pending' #</br>
-        <b>Amount Received </b>: #= amount_received? kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_received)) : 'Pending' #</br>
+        #= fmgr_approval? '<b>Amount Approved </b>' + kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_approved)) + '</br>' : '' #
+        #= received_by? '<b>Amount Received </b>:' +  kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_received)) + '</br>' : '' #
         #=date_received? '<b>Date Received: </b>' + kendo.toString(kendo.parseDate(date_received), 'dddd dd MMM, yyyy')+'</br>': '' #
         #=received_by? '<b>Received by: </b>' + received_by  +'</br>': '' #
     </div>`;

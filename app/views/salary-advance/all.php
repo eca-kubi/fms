@@ -58,6 +58,7 @@
 <?php require_once APP_ROOT . '\views\includes\footer.php'; ?>
 </div>
 <!.. /.wrapper -->
+<?php require_once APP_ROOT . '\templates\x-kendo-templates\x-kendo-templates.php'; ?>
 <?php require_once APP_ROOT . '\views\includes\scripts.php'; ?>
 
 <?php
@@ -345,7 +346,7 @@ $universal->select_row_id = $select_row_id;
             scrollable: true,
             pageable: {
                 alwaysVisible: false,
-                pageSizes: [20, 40 , 60, 80, 100],
+                pageSizes: [20, 40, 60, 80, 100],
                 buttonCount: 5
             },
             columns: [
@@ -687,7 +688,7 @@ $universal->select_row_id = $select_row_id;
                     lockable: true*/
                 },
             ],
-            detailTemplate: kendo.template(summaryTemplate),
+            detailTemplate: kendo.template($("#detailTemplate").html()),
             dataSource: salaryAdvanceDataSource,
             dataBinding: function () {
                 //let no = (this.dataSource.page() - 1) * this.dataSource.pageSize();
@@ -709,7 +710,7 @@ $universal->select_row_id = $select_row_id;
                 if (universal["has_active_application"]) {
                     //disableGridAddButton();
                 }
-                if (!currentRowSelected) {
+                if (!currentRowSelected && universal['select_row_id']) {
                     selectGridRow(universal["select_row_id"], grid, dataSource, 'id_salary_advance');
                 }
             },

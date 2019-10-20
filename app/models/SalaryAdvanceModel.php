@@ -21,6 +21,7 @@ class SalaryAdvanceModel
     public $hod_approval;
     public $hr_approval;
     public $fmgr_approval;
+    public $reference_num;
     /**
      * @var MysqliDb
      */

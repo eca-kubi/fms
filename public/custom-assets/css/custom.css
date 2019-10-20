@@ -38,6 +38,15 @@ html:hover {
     background: transparent;
     !* optional: just make scrollbar invisible *!
 }*/
+.salary-advance-details label
+{
+    display:inline-block;
+    width:250px;
+    padding-right: 10px;
+    text-align: right;
+    font-style:normal;
+    font-weight:bold;
+}
 th.title {
     font-weight: bold !important;
 }
