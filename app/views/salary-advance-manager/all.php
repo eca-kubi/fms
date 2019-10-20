@@ -58,6 +58,7 @@
 <?php require_once APP_ROOT . '\views\includes\footer.php'; ?>
 </div>
 <!.. /.wrapper -->
+<?php require_once APP_ROOT . '\templates\x-kendo-templates\x-kendo-templates.php'; ?>
 <?php require_once APP_ROOT . '\views\includes\scripts.php'; ?>
 
 <?php
@@ -710,8 +711,11 @@ $universal->select_row_id = $select_row_id;
                 let grid = $salaryAdvanceGrid.data("kendoGrid");
                 let masterRow = e.detailRow.prev('tr.k-master-row');
                 let dataItem = grid.dataItem(masterRow);
+                let colSize = e.sender.content.find('colgroup col').length;
                 e.detailRow.find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + dataItem["id_salary_advance"]);
                 $(".print-it").printPage();
+                e.detailRow.find('.k-hierarchy-cell').hide();
+                e.detailCell.attr('colspan', colSize);
             },
             detailExpand: onDetailExpand,
             detailCollapse: onDetailCollapse,
