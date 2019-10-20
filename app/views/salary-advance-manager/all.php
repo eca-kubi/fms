@@ -680,7 +680,7 @@ $universal->select_row_id = $select_row_id;
                     lockable: true*/
                 },
             ],
-            detailTemplate: kendo.template(summaryTemplate),
+            detailTemplate: kendo.template($("#detailTemplate").html()),
             dataSource: salaryAdvanceDataSource,
             dataBinding: function () {
                 //let no = (this.dataSource.page() - 1) * this.dataSource.pageSize();
@@ -703,7 +703,7 @@ $universal->select_row_id = $select_row_id;
                 filterRow.find('input:first').attr('placeholder', 'Search...');
                 filterRow.find('input:eq(1)').attr('placeholder', 'Search...');
 
-                if (!currentRowSelected) {
+                if (!currentRowSelected && universal['select_row_id']) {
                     selectGridRow(universal["select_row_id"], grid, dataSource, 'id_salary_advance');
                 }
             },
