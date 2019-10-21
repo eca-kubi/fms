@@ -308,7 +308,11 @@ $universal->select_row_id = $select_row_id;
             },
             editable: 'popup',
             save: function (e) {
-                console.log('update');
+                let extRadioButtonGroup = e.container.find("[data-role=extradiobuttongroup]");
+                if (extRadioButtonGroup.data("kendoExtRadioButtonGroup").value() == null) {
+                    e.preventDefault();
+                    extRadioButtonGroup.data("kendoTooltip").show(extRadioButtonGroup);
+                }
             },
             filterable: {
                 extra: false,
@@ -420,7 +424,7 @@ $universal->select_row_id = $select_row_id;
                     title: 'HoD Approval',
                     editor: approvalEditor,
                     template: function (dataItem) {
-                        return "<span title='HoD Approved: " + (dataItem.hod_approval === null ? 'Pending' : dataItem.hod_approval ? 'Yes' : 'No') + "'>" + (dataItem.hod_approval === null ? 'Pending' : dataItem.hod_approval ? 'Yes' : 'No') + "</span>"
+                        return "<span title='HoD Approved: " + (dataItem.hod_approval === null ? 'Pending' : dataItem.hod_approval ? 'Approved' : 'Rejected') + "'>" + (dataItem.hod_approval === null ? 'Pending' : dataItem.hod_approval ? 'Approved' : 'Rejected') + "</span>"
                     },
                     headerAttributes: {
                         "class": "title"
@@ -472,7 +476,6 @@ $universal->select_row_id = $select_row_id;
                     groupHeaderTemplate: "Date Raised: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') : '' #",
                     hidden: false,
                     filterable: false
-
                 },
                 {
                     field: 'hr_approval',
@@ -797,6 +800,16 @@ $universal->select_row_id = $select_row_id;
                 amountPayableLabelField.find('.k-input').attr('data-required-msg', 'Amount Payable is required');
                 fmgrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'Finance Mgr. Comment is required!').attr('rows', '6');
                 amountApprovedLabelField.find('.k-input').attr('data-required-msg', 'Amount Approved is required');
+                let extRadioButtonGroup = e.container.find("[data-role=extradiobuttongroup]");
+                let updateButton = e.container.find('.k-grid-update');
+                let tooltip = extRadioButtonGroup.data('kendoTooltip');
+                updateButton.click(function (e) {
+                    if (extRadioButtonGroup.data('kendoExtRadioButtonGroup').value() == null) {
+                        tooltip.show(extRadioButtonGroup);
+                        e.preventDefault();
+                    }
+                });
+
             }
         });
 

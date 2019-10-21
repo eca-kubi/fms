@@ -178,7 +178,7 @@ function approvalEditor(container, options) {
         id: true, name: "Approve"
     }, {
         id: false, name: "Reject",
-    }];
+    } ];
 // Initialize the kendoExtRadioButtonGroup.
     let radioButtonGroup = $(`<div id='approvalRadioButtonGroup_${options.field}'></div>`)
         .appendTo(container)
@@ -195,18 +195,47 @@ function approvalEditor(container, options) {
                 let value = e.dataItem.id === true;
                 let checkedInp = this.element.find('.k-radio:checked');
                 dataItem.set(options.field, value);
+                //$salaryAdvanceGrid.data('kendoGrid').dataSource.sync();
                 /*if (!checkedInp.prop("checked")) {
                     checkedInp.prop('checked',  true);
                 }*/
                 // grid.refresh();
                 // kendoFastReDrawRow(grid, row, dataItem);
+                e.sender.element.data("kendoTooltip").hide();
             },
             dataBound: function () {
                 //console.log("Event: dataBound");
             }
         }).data("kendoExtRadioButtonGroup");
-
-    radioButtonGroup.value(Boolean(model[options.field]));
+    $(`#approvalRadioButtonGroup_${options.field}`).kendoTooltip({
+        content: "<span><i class='k-icon k-i-warning'></i> This field is required! </span>",
+        showOn: "",
+        animation: {
+            open: {
+                effects: "none"
+            },
+            close: {
+                effects: "none"
+            }
+        },
+        autoHide: false,
+        hide: function (e) {
+            var tooltip = this;
+            if (radioButtonGroup.value() == null) {
+                setTimeout(function(){
+                    tooltip.show();
+                },2);
+            }
+        },
+        show: function (e) {
+            this.popup.wrapper.find('.k-tooltip-button').hide();
+        }
+    });
+    if (model[options.field] == null) {
+        radioButtonGroup.value(null);
+    } else {
+        radioButtonGroup.value(Boolean(model[options.field]));
+    }
 }
 
 toastError = function f(message) {

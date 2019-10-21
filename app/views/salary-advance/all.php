@@ -428,7 +428,7 @@ $universal->select_row_id = $select_row_id;
                     title: 'HoD Approval',
                     editor: approvalEditor,
                     template: function (dataItem) {
-                        return "<span title='HoD Approved: " + (dataItem.hod_approval === null ? 'Pending' : dataItem.hod_approval ? 'Yes' : 'No') + "'>" + (dataItem.hod_approval === null ? 'Pending' : dataItem.hod_approval ? 'Yes' : 'No') + "</span>"
+                        return "<span title='HoD Approved: " + (dataItem.hod_approval === null ? 'Pending' : dataItem.hod_approval ? 'Approved' : 'Rejected') + "'>" + (dataItem.hod_approval === null ? 'Pending' : dataItem.hod_approval ? 'Approved' : 'Rejected') + "</span>"
                     },
                     headerAttributes: {
                         "class": "title"
