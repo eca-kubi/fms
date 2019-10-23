@@ -383,7 +383,7 @@ let clearDateFilter = function(){
         let filters = dataSource.filter()? dataSource.filter().filters : [];
     for (let i=0; i<filter.filters.length; i++) {
         let filterObj = filter[i];
-        if (filterObj.hasOwnProperty(field)) {
+        if (filterObj.field == field) {
             filters.splice(i, 1);
         }
     }
@@ -396,7 +396,7 @@ let lastDayOfMonth =  moment().endOf('month').format('YYYY-MM-DD');*/
     let kClearButton = filterCell.find(".k-button[title=Clear]").attr("id", `${field}_ClearButton`);
     kClearButton.on("click", function (e) {
         let dateInputs = $(this).siblings('.k-datepicker').find('.k-input');
-        dataSource.filter([]);
+        //dataSource.filter([]);
         //$salaryAdvanceGrid.data("kendoGrid").trigger("filter");
         clearDateFilter();
         triggerDateFilterEvent();
