@@ -417,7 +417,7 @@ let lastDayOfMonth =  moment().endOf('month').format('YYYY-MM-DD');*/
     }));
     let kStartDate = $(".start-date", filterCell).kendoDatePicker({
         value: field== "date_raised"? firstDayOfMonth : null,
-       // max: field == "date_raised"? firstDayOfMonth : defaultCalendar.max(),
+       max: field == "date_raised"? firstDayOfMonth : defaultCalendar.max(),
         change: function (e) {
             let startDate = e.sender.value(),
                 endDate = $("input.end-date", filterCell).data("kendoDatePicker").value();
@@ -434,7 +434,7 @@ let lastDayOfMonth =  moment().endOf('month').format('YYYY-MM-DD');*/
 
     let kEndDate = $(".end-date", filterCell).kendoDatePicker({
         value: field== "date_raised"? lastDayOfMonth: null,
-        //min: field == "date_raised"? lastDayOfMonth : defaultCalendar.min(),
+        min: field == "date_raised"? lastDayOfMonth : defaultCalendar.min(),
         change: function (e) {
             let startDate = $("input.start-date", filterCell).data("kendoDatePicker").value(),
                 endDate = e.sender.value();
