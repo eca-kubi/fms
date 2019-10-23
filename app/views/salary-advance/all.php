@@ -731,6 +731,10 @@ $universal->select_row_id = $select_row_id;
                 if (!currentRowSelected && universal['select_row_id']) {
                     selectGridRow(universal["select_row_id"], grid, dataSource, 'id_salary_advance');
                 }
+                if (!firstLoadDone) {
+                    firstLoadDone = true;
+                 //   grid.dataSource.filter([]);
+                }
             },
             detailInit: function (e) {
                 let grid = $salaryAdvanceGrid.data("kendoGrid");
