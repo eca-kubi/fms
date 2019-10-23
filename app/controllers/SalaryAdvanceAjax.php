@@ -75,6 +75,8 @@ class SalaryAdvanceAjax extends Controller
                 $subject = "Salary Advance Application ($ref_number)";
                 $data = ['ref_number' => $ref_number, 'link' => URL_ROOT . '/salary-advance/' . $ret[0]['id_salary_advance'], 'applicant_is_the_recipient' => false];
                 $body = get_include_contents('email_templates/salary-advance/new_application', $data);
+                $data['body'] = $body;
+                $email = get_include_contents('email_templates/salary-advance/main', $data);
                 $recipient_addresses = [$hod->email, $hr->email, $fmgr->email, $gmgr->email];
                 foreach (array_keys($recipient_addresses, $current_user->email, true) as $key) {
                     // remove current user from email recipient address list

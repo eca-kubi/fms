@@ -91,6 +91,7 @@ $universal->select_row_id = $select_row_id;
         });
         // '/salary-advance-ajax/'
         salaryAdvanceDataSource = new kendo.data.DataSource({
+            filter: [{field: "date_raised", operator: "gte", value: new Date(firstDayOfMonth)}, {field: 'date_raised', operator: "lte", value: new Date(lastDayOfMonth)}],
             pageSize: 20,
             transport: {
                 read: {
@@ -295,6 +296,13 @@ $universal->select_row_id = $select_row_id;
                             defaultValue: true
                         },
                     }
+                },
+                parse: function(data) {
+                    $.each(data, function(idx, elem) {
+                        elem.date_raised =  moment(elem.date_raised).format("YYYY-MM-DD");
+                        elem.date_received = moment(elem.date_received).format("YYYY-MM-DD");
+                    });
+                    return data;
                 }
             }
         });
@@ -384,10 +392,10 @@ $universal->select_row_id = $select_row_id;
                 {
                     field: 'date_raised',
                     title: 'Date Raised',
-                    template: function (dataItem) {
+                    /*template: function (dataItem) {
                         let date = kendo.toString(kendo.parseDate(dataItem.date_raised), 'dddd dd MMM, yyyy');
                         return "<span>" + date + "</span>";
-                    },
+                    },*/
                     headerAttributes: {
                         "class": "title"
                     },
@@ -397,7 +405,8 @@ $universal->select_row_id = $select_row_id;
                         cell: {
                             template: dateRangeFilter
                         }
-                    }
+                    },
+                    format: "{0:dddd dd MMM, yyyy}"
                 },
                 {
                     field: 'percentage',
@@ -919,7 +928,10 @@ $universal->select_row_id = $select_row_id;
             return null;
         };
 
-        $salaryAdvanceGrid.data("kendoGrid").bind("dataBound", onDataBound)
+        $salaryAdvanceGrid.data("kendoGrid").bind("dataBound", onDataBound);
+        $salaryAdvanceGrid.data("kendoGrid").bind("filter", function (e) {
+            toggleDateFilterBtn(e)
+        });
     });
 
     toggleAmountRequested = function () {

@@ -160,7 +160,7 @@ $universal->select_row_id = $select_row_id;
                             nullable: true,
                             validation: { //set validation rules
                                 min: 0,
-                                //required: true
+                                required: true
                             }
                         },
                         hod_comment: {
@@ -180,11 +180,12 @@ $universal->select_row_id = $select_row_id;
                             editable: false
                         },
                         hr_approval: {
-                            type: 'boolean',
-                            editable: false,
                             nullable: true,
+                            type: 'boolean',
+                            editable: false
                         },
                         hod_approval: {
+                            nullable: true,
                             type: 'boolean',
                             editable: false
                         },
@@ -193,12 +194,13 @@ $universal->select_row_id = $select_row_id;
                             editable: false
                         },
                         fmgr_approval: {
+                            nullable: true,
                             type: 'boolean',
                             editable: false
-
                         },
                         amount_payable: {
                             type: 'number',
+                            nullable: true,
                             validation: { //set validation rules
                                 required: true,
                                 min: '0'
@@ -206,6 +208,7 @@ $universal->select_row_id = $select_row_id;
                             editable: false
                         },
                         amount_approved: {
+                            nullable: true,
                             type: 'number',
                             validation: { //set validation rules
                                 required: true,
@@ -214,6 +217,7 @@ $universal->select_row_id = $select_row_id;
                             editable: false
                         },
                         received_by: {
+                            nullable: true,
                             type: 'string',
                             editable: false
                         },
@@ -227,7 +231,8 @@ $universal->select_row_id = $select_row_id;
                         },
                         date_received: {
                             type: 'date',
-                            editable: false
+                            editable: false,
+                            nullable: true
                         },
                         department_ref: {
                             editable: false
@@ -250,7 +255,7 @@ $universal->select_row_id = $select_row_id;
                         },
                         raised_by_id: {type: "number"},
                         amount_received: {
-                            type: "number", editable: false
+                            type: "number", editable: false, nullable: true,
                         },
                         percentage: {
                             type: "number",
@@ -267,6 +272,13 @@ $universal->select_row_id = $select_row_id;
                             defaultValue: true
                         },
                     }
+                },
+                parse: function(data) {
+                    $.each(data, function(idx, elem) {
+                        elem.date_raised =  moment(elem.date_raised).format("YYYY-MM-DD");
+                        elem.date_received = moment(elem.date_received).format("YYYY-MM-DD");
+                    });
+                    return data;
                 }
             }
         });
@@ -278,6 +290,9 @@ $universal->select_row_id = $select_row_id;
             noRecords: true,
             navigatable: true,
             toolbar: kendo.template($('#toolbarTemplate').html()),
+            filter: function (e) {
+                toggleDateFilterBtn(e);
+            },
             excel: {
                 fileName: "Salary Advance Export.xlsx",
                 //proxyURL: "https://demos.telerik.com/kendo-ui/service/export",
@@ -309,10 +324,14 @@ $universal->select_row_id = $select_row_id;
             editable: 'popup',
             save: function (e) {
                 let extRadioButtonGroup = e.container.find("[data-role=extradiobuttongroup]");
-                if (extRadioButtonGroup.data("kendoExtRadioButtonGroup").value() == null) {
-                    e.preventDefault();
-                    extRadioButtonGroup.data("kendoTooltip").show(extRadioButtonGroup);
-                }
+                extRadioButtonGroup.each(function (index) {
+                    let element = $(this);
+                    let tooltip = element.data('kendoTooltip');
+                    if (element.data("kendoExtRadioButtonGroup").value() == null) {
+                        e.preventDefault();
+                       tooltip.show(element);
+                    }
+                });
             },
             filterable: {
                 extra: false,
@@ -376,7 +395,7 @@ $universal->select_row_id = $select_row_id;
                     title: 'Date Raised',
                     template: function (dataItem) {
                         let date = kendo.toString(kendo.parseDate(dataItem.date_raised), 'dddd dd MMM, yyyy');
-                        return "<span title='Date Raised: " + date + "'>" + date + "</span>";
+                        return "<span>" + date + "</span>";
                     },
                     headerAttributes: {
                         "class": "title"
@@ -393,12 +412,12 @@ $universal->select_row_id = $select_row_id;
                     field: 'percentage',
                     title: 'Amount Requested in Percentage',
                     template: function (dataItem) {
-                        return "<span title='Amount Requested in Percentage: " + (dataItem.percentage ? kendo.toString(dataItem.percentage, '#\\%') : '') + "'>" + (dataItem.percentage ? kendo.toString(dataItem.percentage, '#\\%') : '') + "</span>"
+                        return "<span>" + (dataItem.percentage ? kendo.toString(dataItem.percentage, '#\\%') : '') + "</span>"
                     },
                     headerAttributes: {
                         "class": "title"
                     },
-                    width: 250,
+                    width: 280,
                     groupHeaderTemplate: "Amount Requested in Percentage: #= value? value + '%' : '' #",
                     aggregates: ["max", "min"],
                     format: "{0:#\\%}",
@@ -407,9 +426,9 @@ $universal->select_row_id = $select_row_id;
                 {
                     field: 'amount_requested',
                     title: 'Amount Requested in Figures',
-                    width: 250,
+                    width: 280,
                     template: function (dataItem) {
-                        return "<span title='Amount Requested: " + (dataItem.amount_requested ? kendo.format('{0:c}', dataItem.amount_requested) : '') + "'>" + (dataItem.amount_requested ? kendo.format('{0:c}', dataItem.amount_requested) : '') + "</span>"
+                        return "<span>" + (dataItem.amount_requested ? kendo.format('{0:c}', dataItem.amount_requested) : '') + "</span>"
                     },
                     headerAttributes: {
                         "class": "title"
@@ -424,7 +443,7 @@ $universal->select_row_id = $select_row_id;
                     title: 'HoD Approval',
                     editor: approvalEditor,
                     template: function (dataItem) {
-                        return "<span title='HoD Approved: " + (dataItem.hod_approval === null ? 'Pending' : dataItem.hod_approval ? 'Approved' : 'Rejected') + "'>" + (dataItem.hod_approval === null ? 'Pending' : dataItem.hod_approval ? 'Approved' : 'Rejected') + "</span>"
+                        return "<span>" + (dataItem.hod_approval === null ? '<i class="fa fa-warning text-yellow"></i>  Pending' : dataItem.hod_approval ? '<i class="fa fa-check text-success"></i> Approved' : '<i class="fa fa-warning text-danger"></i> Rejected') + "</span>"
                     },
                     headerAttributes: {
                         "class": "title"
@@ -432,16 +451,6 @@ $universal->select_row_id = $select_row_id;
                     width: 200,
                     groupHeaderTemplate: "HoD Approved: #= value? 'Yes' : 'No' # | Total: #= count #",
                     aggregates: ["count"],
-                    /*filterable:{
-                        ui: function(element){
-                            element.kendoDropDownList({
-                                dataSource: [{ value: 1, text: "Approved" }, { value: 0, text: "Rejected" }],
-                                //optionLabel: "--Select--",
-                                dataTextField: "text",
-                                dataValueField: "value",
-                            });
-                        }
-                    }*/
                     filterable: false
                 },
                 {
@@ -457,7 +466,7 @@ $universal->select_row_id = $select_row_id;
                     },
                     template: function (dataItem) {
                         let hod_comment = dataItem.hod_comment ? dataItem.hod_comment : '';
-                        return "<span title='HoD Comment: " + hod_comment + "'>" + hod_comment + "</span>"
+                        return "<span>" + hod_comment + "</span>"
                     },
                     width: 200,
                     filterable: false
@@ -470,19 +479,20 @@ $universal->select_row_id = $select_row_id;
                     },
                     template: function (dataItem) {
                         let date = dataItem.hod_approval_date ? kendo.toString(kendo.parseDate(dataItem.hod_approval_date), 'dddd dd MMM, yyyy') : '';
-                        return "<span title='HoD Approval Date: " + date + "'>" + date + "</span>";
+                        return "<span>" + date + "</span>";
                     },
                     width: 200,
                     groupHeaderTemplate: "Date Raised: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') : '' #",
                     hidden: false,
                     filterable: false
+
                 },
                 {
                     field: 'hr_approval',
                     title: 'HR Approval',
                     editor: approvalEditor,
                     template: function (dataItem) {
-                        return "<span title='HR Approved: " + (dataItem.hr_approval === null ? 'Pending' : dataItem.hr_approval ? 'Yes' : 'No') + "'>" + (dataItem.hr_approval === null ? 'Pending' : dataItem.hr_approval ? 'Yes' : 'No') + "</span>"
+                        return "<span>" + (dataItem.hr_approval === null ? '<i class="fa fa-warning text-yellow"></i>  Pending' : dataItem.hr_approval ? '<i class="fa fa-check text-success"></i> Approved' : '<i class="fa fa-warning text-danger"></i> Rejected') + "</span>"
                     },
                     headerAttributes: {
                         "class": "title"
@@ -506,7 +516,7 @@ $universal->select_row_id = $select_row_id;
                     },
                     template: function (dataItem) {
                         let hr_comment = dataItem.hr_comment ? dataItem.hr_comment : '';
-                        return `<span title='HR Comment: ${hr_comment}'>${hr_comment}</span>`
+                        return `<span>${hr_comment}</span>`
                     },
                     width: 200,
                     filterable: false
@@ -516,7 +526,8 @@ $universal->select_row_id = $select_row_id;
                     field: 'amount_payable',
                     title: 'Amount Payable',
                     template: function (dataItem) {
-                        return "<span title='Amount Payable: " + (kendo.format('{0:c}', dataItem.amount_payable)) + "'>" + (kendo.format('{0:c}', dataItem.amount_payable)) + "</span>"
+                        if (dataItem.amount_payable == null) return "";
+                        return "<span>" + (kendo.format('{0:c}', dataItem.amount_payable)) + "</span>"
                     },
                     format: "{0:c}",
                     headerAttributes: {
@@ -536,7 +547,7 @@ $universal->select_row_id = $select_row_id;
                     },
                     template: function (dataItem) {
                         let date = dataItem.hr_approval_date ? kendo.toString(kendo.parseDate(dataItem.hr_approval_date), 'dddd dd MMM, yyyy') : '';
-                        return "<span title='HR Approval Date: " + date + "'>" + date + "</span>";
+                        return "<span>" + date + "</span>";
                     },
                     width: 200,
                     groupHeaderTemplate: "HR Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') : '' #",
@@ -549,7 +560,7 @@ $universal->select_row_id = $select_row_id;
                     title: 'Fin. Mgr. Approval',
                     editor: approvalEditor,
                     template: function (dataItem) {
-                        return "<span title='Approved by Finance Mgr.: " + (dataItem.fmgr_approval === null ? 'Pending' : dataItem.fmgr_approval ? 'Yes' : 'No') + "'>" + (dataItem.fmgr_approval === null ? 'Pending' : dataItem.fmgr_approval ? 'Yes' : 'No') + "</span>"
+                        return "<span>" + (dataItem.fmgr_approval === null ? '<i class="fa fa-warning text-yellow"></i>  Pending' : dataItem.fmgr_approval ? '<i class="fa fa-check text-success"></i> Approved' : '<i class="fa fa-warning text-danger"></i> Rejected') + "</span>"
                     },
                     headerAttributes: {
                         "class": "title"
@@ -574,7 +585,7 @@ $universal->select_row_id = $select_row_id;
                     width: 200,
                     template: function (dataItem) {
                         let fmgr_comment = dataItem.fmgr_comment ? dataItem.fmgr_comment : '';
-                        return "<span title='Finance Mgr. Comment: " + fmgr_comment + "'>" + fmgr_comment + "</span>"
+                        return "<span>" + fmgr_comment + "</span>"
                     },
                     filterable: false
 
@@ -583,7 +594,8 @@ $universal->select_row_id = $select_row_id;
                     field: 'amount_approved',
                     title: 'Amount Approved',
                     template: function (dataItem) {
-                        return "<span title='Amount Approved: " + (kendo.format('{0:c}', dataItem.amount_approved)) + "'>" + (kendo.format('{0:c}', dataItem.amount_approved)) + "</span>"
+                        if (dataItem.amount_approved == null) return "";
+                        return "<span>" + (kendo.format('{0:c}', dataItem.amount_approved)) + "</span>"
                     },
                     headerAttributes: {
                         "class": "title"
@@ -593,6 +605,7 @@ $universal->select_row_id = $select_row_id;
                     format: "{0:c}",
                     width: 200,
                     filterable: false
+
                 },
                 {
                     field: 'fmgr_approval_date',
@@ -602,7 +615,7 @@ $universal->select_row_id = $select_row_id;
                     },
                     template: function (dataItem) {
                         let date = dataItem.fmgr_approval_date ? kendo.toString(kendo.parseDate(dataItem.fmgr_approval_date), 'dddd dd MMM, yyyy') : '';
-                        return "<span title='Finance Mgr. Approval Date: " + date + "'>" + date + "</span>";
+                        return "<span>" + date + "</span>";
                     },
                     width: 200,
                     groupHeaderTemplate: "Finance Mgr. Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') : '' #",
@@ -614,7 +627,8 @@ $universal->select_row_id = $select_row_id;
                     field: 'amount_received',
                     title: 'Amount Received',
                     template: function (dataItem) {
-                        return "<span title='Amount Received: " + kendo.format('{0:c}', dataItem.amount_received) + "'>" + kendo.format('{0:c}', dataItem.amount_received) + "</span>";
+                        if (dataItem.amount_received == null) return "";
+                        return "<span>" + kendo.format('{0:c}', dataItem.amount_received) + "</span>";
 
                         // return dataItem.amount_received ? "<span title='Amount Received: " + kendo.format('{0:c}', dataItem.amount_received) + "'>" + kendo.format('{0:c}', dataItem.amount_received) + "</span>" : "<span title='0' " + universal.currency_symbol + ">0" + universal.currency_symbol + "</span>"
                     },
@@ -634,7 +648,7 @@ $universal->select_row_id = $select_row_id;
                     title: 'Received By',
                     hidden: false,
                     template: function (dataItem) {
-                        return dataItem.received_by ? "<span title='Received by: " + dataItem.received_by + "'>" + dataItem.received_by + "</span>" : "<span title='Pending'>Pending</span>"
+                        return dataItem.received_by ? "<span>" + dataItem.received_by + "</span>" : ""
                     },
                     headerAttributes: {
                         "class": "title"
@@ -650,7 +664,7 @@ $universal->select_row_id = $select_row_id;
                     hidden: false,
                     template: function (dataItem) {
                         let date = dataItem.date_received ? kendo.toString(kendo.parseDate(dataItem.date_received), 'dddd dd MMM, yyyy') : '';
-                        return "<span title='Date Received: " + date + "'>" + date + "</span>";
+                        return "<span>" + date + "</span>";
                     },
                     headerAttributes: {
                         "class": "title"
@@ -665,10 +679,10 @@ $universal->select_row_id = $select_row_id;
                 },
                 {
                     template: "<span class='text-center action-tools'>" +
-                        "<span class='col' title='Review'><a href='javascript:' class='text-black action-edit btn k-button badge badge-success  border'><i class='k-icon k-i-edit'></i>Review</a></span>" +
+                        "<span class='col' title=''><a href='javascript:' class='action-edit badge badge-success btn k-button text-black border'><i class='k-icon k-i-edit'></i>Review</a></span>" +
                         "<span class='col d-none' title=''><a href='javascript:' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span>" +
                         "<span class='col d-none' title=''><a href='javascript:' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
-                        "<span class='col' title='Print'><a href='\\#' class='text-black action-print print-it badge badge-primary btn k-button border' target='_blank'><i class='k-icon k-i-printer'></i>Print</a></span>" +
+                        "<span class='col' title=''><a href='\\#' class='text-black action-print print-it badge badge-primary btn k-button border' target='_blank'><i class='k-icon k-i-printer'></i>Print</a></span>" +
                         "</span>",
                     width: 250,
                     title: "Action",
@@ -728,7 +742,7 @@ $universal->select_row_id = $select_row_id;
                 e.model.fields.percentage.editable = !e.model.fmgr_approval && universal['isFmgr'];*/
                 e.model.fields.amount_requested.editable = false;
                 e.model.fields.percentage.editable = false;
-                e.model.fields.hod_comment.editable = Boolean(e.model["hod_comment_editable"]);
+                e.model.fields.hod_comment.editable = e.model.hod_approval == null;
                 e.model.fields.hod_approval.editable = e.model["hod_approval_editable"] && e.model.hod_approval == null;
                 e.model.fields.amount_payable.editable = universal['isHr'] && !Boolean(e.model.hr_approval);
                 e.model.fields.hr_approval.editable = universal['isHr'] && !Boolean(e.model.hr_approval_date);
@@ -800,26 +814,35 @@ $universal->select_row_id = $select_row_id;
                 fmgrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'Finance Mgr. Comment is required!').attr('rows', '6');
                 amountApprovedLabelField.find('.k-input').attr('data-required-msg', 'Amount Approved is required');
                 let extRadioButtonGroup = e.container.find("[data-role=extradiobuttongroup]");
-                let updateButton = e.container.find('.k-grid-update');
-                let tooltip = extRadioButtonGroup.data('kendoTooltip');
-                updateButton.click(function (e) {
-                    if (extRadioButtonGroup.data('kendoExtRadioButtonGroup').value() == null) {
-                        tooltip.show(extRadioButtonGroup);
-                        e.preventDefault();
-                    }
+                    let updateButton = e.container.find('.k-grid-update');
+                extRadioButtonGroup.each(function (index) {
+                    let element = $(this);
+                    let tooltip = element.data('kendoTooltip');
+                    updateButton.click(function (e) {
+                        if (element.data('kendoExtRadioButtonGroup').value() == null) {
+                            tooltip.show(element);
+                            e.preventDefault();
+                        }
+                    });
                 });
 
+                var title = $(e.container).parent().find(".k-window-title");
+                var update = $(e.container).parent().find(".k-grid-update");
+                var cancel = $(e.container).parent().find(".k-grid-cancel");
+                $(title).text('');
+                $(update).html('<span class="k-icon k-i-check"></span>OK');
+                $(cancel).html('<span class="k-icon k-i-cancel"></span>Cancel');
             }
         });
 
-        $salaryAdvanceGrid.data('kendoGrid').thead.kendoTooltip({
+/*        $salaryAdvanceGrid.data('kendoGrid').thead.kendoTooltip({
             filter: "th.title",
             position: 'top',
             content: function (e) {
                 let target = e.target; // element for which the tooltip is shown
                 return $(target).text();
             }
-        });
+        });*/
 
         $salaryAdvanceGrid.find('#department').kendoDropDownList({
             dataSource: new kendo.data.DataSource({
@@ -860,7 +883,7 @@ $universal->select_row_id = $select_row_id;
         });
 
         $salaryAdvanceTooltip = $salaryAdvanceGrid.kendoTooltip({
-            filter: "td:not('.k-detail-cell'):not('.action')", //this filter selects the second column's cells
+            filter: "td.comment", //this filter selects the second column's cells
             position: "top",
             content: function (e) {
                 // hide popup as default action
@@ -943,6 +966,9 @@ $universal->select_row_id = $select_row_id;
         });
 
         $salaryAdvanceGrid.data("kendoGrid").bind("dataBound", onDataBound);
+        $salaryAdvanceGrid.data("kendoGrid").bind("filter", function (e) {
+            toggleDateFilterBtn(e)
+        });
     });
 
 </script>

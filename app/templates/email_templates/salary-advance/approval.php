@@ -8,5 +8,7 @@
 $current_user = getUserSession();
 /** @var boolean $approval */
 /** @var string $link */
+/** @var string $ref_num */
 $body = concatNameWithUserId($current_user->user_id) . " has " . ($approval? "approved" : "rejected") .
-    " your Salary Advance application. <br>Click the following link for more information: <a href='$link'>$link</a> ";
+    " your Salary Advance application with reference number " . $ref_num . ". <br>Click the following link for more information: <a href='$link'>$link</a> ";
+echo $body;

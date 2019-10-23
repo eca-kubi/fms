@@ -7,8 +7,12 @@ let URL_ROOT = '';
 let lists = [];
 let employeeDataSource;
 let currentRowSelected = false;
+let firstLoadDone = false;
 let pageWithRowSelected = -1;
 let expandedRows = [];
+let firstDayOfMonth = moment().startOf('month').format('YYYY-MM-DD');
+let lastDayOfMonth =  moment().endOf('month').format('YYYY-MM-DD');
+let kDefaultCalendar;
 let summaryTemplate = `<div class="">
         <b>Action</b>:  #= "<span class='text-center action-tools'>" +
                         "<span class='col' title=''><a href='javascript:' class='action-edit badge badge-success btn k-button text-black in-detail-row border'><i class='k-icon k-i-edit'></i>Review</a></span>" +
@@ -69,7 +73,9 @@ $(document).ready(function () {
         if (this.options.selectable !== false)
             return this.select()[0];
         return null;
-    }
+    };
+
+    kDefaultCalendar = $("<input id='kDefaultCalendar' class='k-default-calendar' type='date'>").kendoCalendar();
 });
 
 window.addEventListener("load", function () {
@@ -324,44 +330,71 @@ function kendoFastReDrawRow(grid, row, dItem) {
 function dateRangeFilter(args) {
     let filterCell = args.element.parents(".k-filtercell");
     let field = filterCell.attr('data-field');
+    let dataSource = $salaryAdvanceGrid.data("kendoGrid").dataSource;
+    function filterDate(startDate, endDate) {
+        let grid = $salaryAdvanceGrid.data("kendoGrid");
+        let filter = {logic: "and", filters: []};
+        filter.filters.push({field: field, operator: "gte", value: startDate});
+        filter.filters.push({field: field, operator: "lte", value: endDate});
+        grid.dataSource.filter(filter);
+        let filterEvent = $.Event('filter');
+        filterEvent.field = field;
+        filterEvent.filter = filter;
+        filterEvent.sender = $salaryAdvanceGrid;
+        grid.trigger('filter', filterEvent);
+    }
+/*let firstDayOfMonth = moment().startOf('month').format('YYYY-MM-DD');
+let lastDayOfMonth =  moment().endOf('month').format('YYYY-MM-DD');*/
     //let clearButton = $('<button type="button" class="k-button k-button-icon" title="Clear" aria-label="Clear" data-bind="visible:operatorVisible" style=""><span class="k-icon k-i-filter-clear"></span></button>')
     filterCell.empty();
-    filterCell.html('<span style="display:flex; justify-content:center;"><span>From:</span><input  class="start-date"  placeholder="mm/dd/yyyy"/><span>To:</span><input  class="end-date"  placeholder="mm/dd/yyyy"/></span>');
-
-    $(".start-date", filterCell).kendoDatePicker({
+    filterCell.html('<span class="pr-5" style="display:flex; justify-content:center;"><span>From:</span><input  class="start-date" /><span>To:</span><input  class="end-date"/> <button type="button" class="k-button k-button-icon" title="Clear" aria-label="Clear"  style=""><span class="k-icon k-i-filter-clear"></span></button></span>');
+    let kClearButton = filterCell.find(".k-button[title=Clear]").attr("id", `${field}_ClearButton`);
+    kClearButton.on("click", function (e) {
+        dataSource.filter([]);
+        $salaryAdvanceGrid.data("kendoGrid").trigger("filter");
+        //kClearButton.addClass("d-none");
+    });
+    let vModel = kendo.bind(kClearButton, kendo.Observable({
+        toggleDateFilter: toggleDateFilterBtn
+    }));
+    let kStartDate = $(".start-date", filterCell).kendoDatePicker({
+        value: firstDayOfMonth,
         change: function (e) {
             let startDate = e.sender.value(),
-                endDate = $("input.end-date", filterCell).data("kendoDatePicker").value(),
-                dataSource = $salaryAdvanceGrid.data("kendoGrid").dataSource;
-
-            if (startDate & endDate) {
-                let filter = {logic: "and", filters: []};
-                filter.filters.push({field: field, operator: "gte", value: startDate});
-                filter.filters.push({field: field, operator: "lte", value: endDate});
-                dataSource.filter(filter);
+                endDate = $("input.end-date", filterCell).data("kendoDatePicker").value();
+            if (startDate == null) {
+                $("input.end-date", filterCell).data("kendoDatePicker").min( kDefaultCalendar.data("kendoCalendar").min());
             }
-        }
+            if (startDate && endDate) {
+                filterDate(startDate, endDate)
+            }
+        },
+        dateInput: true
     });
 
-    $(".end-date", filterCell).kendoDatePicker({
+    let kEndDate = $(".end-date", filterCell).kendoDatePicker({
+        value: lastDayOfMonth,
         change: function (e) {
             let startDate = $("input.start-date", filterCell).data("kendoDatePicker").value(),
-                endDate = e.sender.value(),
-                dataSource = $salaryAdvanceGrid.data("kendoGrid").dataSource;
-
-            if (startDate & endDate) {
-                let filter = {logic: "and", filters: []};
-                filter.filters.push({field: field, operator: "gte", value: startDate});
-                filter.filters.push({field: field, operator: "lte", value: endDate});
-                dataSource.filter(filter);
-                /*let filterEvent = $.Event('filter');
-                filterEvent.field = field;
-                filterEvent.filter = filter;
-                filterEvent.sender = $salaryAdvanceGrid;
-                $salaryAdvanceGrid.data('kendoGrid').trigger('filter', filterEvent);*/
+                endDate = e.sender.value();
+            if (endDate == null) {
+                $("input.start-date", filterCell).data("kendoDatePicker").max(  kDefaultCalendar.data("kendoCalendar").max());
             }
-        }
+
+            if (startDate && endDate) {
+                filterDate(startDate, endDate);
+            }
+        },
+        dateInput: true
     });
+    kStartDate.data('kendoDatePicker').bind("change", function (e) {
+        kEndDate.data('kendoDatePicker').min(kStartDate.data('kendoDatePicker').value());
+    });
+    kEndDate.data('kendoDatePicker').bind("change", function (e) {
+        kStartDate.data('kendoDatePicker').max(kEndDate.data('kendoDatePicker').value());
+    });
+
+    //kStartDate.data('kendoDatePicker').trigger("change");
 
 }
 
@@ -418,11 +451,22 @@ function onDataBound(e){
             });
 
             if(item){
-                var row = $('#'+grid.element.attr('id') + ' tr[data-uid="'+item.uid+'"]')
+                var row = $('#'+grid.element.attr('id') + ' tr[data-uid="'+item.uid+'"]');
                 grid.expandRow(row);
             }
         })
     }
+
+    // filter on load with date_raised
+  /*  if (!firstLoadDone) {
+        firstLoadDone = true;
+        let firstDayOfMonth = moment().startOf('month').format('YYYY-MM-DD');
+        let lastDayOfMonth =  moment().endOf('month').format('YYYY-MM-DD');
+        let filter = {logic: "and", filters: []};
+        filter.filters.push({field: 'date_raised', operator: "gte", value: new Date(firstDayOfMonth)});
+        filter.filters.push({field: 'date_raised', operator: "lte", value: new Date(lastDayOfMonth)});
+        grid.dataSource.filter(filter);
+    }*/
 }
 
 function onDetailExpand(e){
@@ -450,6 +494,31 @@ function onDetailCollapse(e){
     });
 
     expandedRows['expanded'] = JSON.stringify(items);
+}
+
+function toggleDateFilterBtn(e) {
+    let defaultCalendar = kDefaultCalendar.data("kendoCalendar");
+    let kClearButtons = $('[id*="_ClearButton"]');
+    let field = e.field;
+    let kClearButton = $("#" + e.field + "_ClearButton");
+    let resetDatePickers = function (dateInputs) {
+        dateInputs.each(function (index, element) {
+            let datePicker = $(this).data("kendoDatePicker");
+            datePicker.value(null);
+            datePicker.min(defaultCalendar.min());
+            datePicker.max(defaultCalendar.max());
+        });
+    };
+    if (e.filter == null) {
+        kClearButtons.addClass("d-none");
+        let dateInputs = kClearButtons.siblings('.k-datepicker').find('.k-input');
+        resetDatePickers(dateInputs);
+    } else {
+        let kClearButtonX = kClearButtons.not("[id*="+ field + "]");
+        let dateInputs = kClearButtonX.siblings('.k-datepicker').find('.k-input');
+        resetDatePickers(dateInputs);
+        kClearButton.removeClass("d-none");
+    }
 }
 
 /*
