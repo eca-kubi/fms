@@ -370,7 +370,7 @@ function dateRangeFilter(args) {
 
     let resetDatePickers = function (dateInputs) {
         dateInputs.each(function (index, element) {
-            let datePicker = $(this).data("kendoDatePicker");
+            let datePicker = $(this).data("kendoDateInput");
             datePicker.value(null);
             datePicker.min(defaultCalendar.min());
             datePicker.max(defaultCalendar.max());
