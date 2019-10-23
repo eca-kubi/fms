@@ -331,18 +331,63 @@ function dateRangeFilter(args) {
     let filterCell = args.element.parents(".k-filtercell");
     let field = filterCell.attr('data-field');
     let dataSource = $salaryAdvanceGrid.data("kendoGrid").dataSource;
-    function filterDate(startDate, endDate) {
-        let grid = $salaryAdvanceGrid.data("kendoGrid");
-        let filter = {logic: "and", filters: []};
-        filter.filters.push({field: field, operator: "gte", value: startDate});
-        filter.filters.push({field: field, operator: "lte", value: endDate});
-        grid.dataSource.filter(filter);
+    let grid = $salaryAdvanceGrid.data("kendoGrid");
+    let filter = {logic: "and", filters: []};
+    let defaultCalendar = kDefaultCalendar.data("kendoCalendar");
+    let triggerDateFilterEvent = function (filter) {
         let filterEvent = $.Event('filter');
         filterEvent.field = field;
         filterEvent.filter = filter;
         filterEvent.sender = $salaryAdvanceGrid;
         grid.trigger('filter', filterEvent);
+    };
+
+    let resetDatePickers = function (dateInputs) {
+        dateInputs.each(function (index, element) {
+            let datePicker = $(this).data("kendoDatePicker");
+            datePicker.value(null);
+            datePicker.min(defaultCalendar.min());
+            datePicker.max(defaultCalendar.max());
+        });
+    };
+    function filterDate(startDate, endDate) {
+        let grid = $salaryAdvanceGrid.data("kendoGrid");
+        let filter = {logic: "and", filters: grid.dataSource.filter()? grid.dataSource.filter().filters : []};
+        if (filter.filters.length > 0) {
+            for (let i=0; i<filter.filters.length; i++) {
+                let filterObj = filter.filters[i];
+                if (filterObj.field == field) {
+                    if ( filterObj.operator == "gte") {
+                        filterObj.value = startDate;
+                    } else {
+                        filterObj.value = endDate
+                    }
+                }
+            }
+        } else {
+            filter.filters.push({field: field, operator: "gte", value: startDate});
+            filter.filters.push({field: field, operator: "lte", value: endDate});
+        }
+
+      /*  let hasField = filter.filters.find(function (filterObj) {
+            return filterObj.hasOwnProperty(field);
+        });
+        if (!hasField) {
+            filter.filters.push({field: field, operator: "gte", value: startDate});
+            filter.filters.push({field: field, operator: "lte", value: endDate});
+        }*/
+        grid.dataSource.filter(filter);
+        triggerDateFilterEvent(filter);
     }
+let clearDateFilter = function(){
+        let filters = dataSource.filter()? dataSource.filter().filters : [];
+    for (let i=0; i<filter.filters.length; i++) {
+        let filterObj = filter[i];
+        if (filterObj.hasOwnProperty(field)) {
+            filters.splice(i, 1);
+        }
+    }
+};
 /*let firstDayOfMonth = moment().startOf('month').format('YYYY-MM-DD');
 let lastDayOfMonth =  moment().endOf('month').format('YYYY-MM-DD');*/
     //let clearButton = $('<button type="button" class="k-button k-button-icon" title="Clear" aria-label="Clear" data-bind="visible:operatorVisible" style=""><span class="k-icon k-i-filter-clear"></span></button>')
@@ -350,10 +395,15 @@ let lastDayOfMonth =  moment().endOf('month').format('YYYY-MM-DD');*/
     filterCell.html('<span class="pr-5" style="display:flex; justify-content:center;"><span>From:</span><input  class="start-date" /><span>To:</span><input  class="end-date"/> <button type="button" class="k-button k-button-icon" title="Clear" aria-label="Clear"  style=""><span class="k-icon k-i-filter-clear"></span></button></span>');
     let kClearButton = filterCell.find(".k-button[title=Clear]").attr("id", `${field}_ClearButton`);
     kClearButton.on("click", function (e) {
+        let dateInputs = $(this).siblings('.k-datepicker').find('.k-input');
         dataSource.filter([]);
-        $salaryAdvanceGrid.data("kendoGrid").trigger("filter");
+        //$salaryAdvanceGrid.data("kendoGrid").trigger("filter");
+        clearDateFilter();
+        triggerDateFilterEvent();
+        resetDatePickers(dateInputs);
         //kClearButton.addClass("d-none");
     });
+
     let vModel = kendo.bind(kClearButton, kendo.Observable({
         toggleDateFilter: toggleDateFilterBtn
     }));
@@ -497,27 +547,18 @@ function onDetailCollapse(e){
 }
 
 function toggleDateFilterBtn(e) {
-    let defaultCalendar = kDefaultCalendar.data("kendoCalendar");
     let kClearButtons = $('[id*="_ClearButton"]');
     let field = e.field;
     let kClearButton = $("#" + e.field + "_ClearButton");
-    let resetDatePickers = function (dateInputs) {
-        dateInputs.each(function (index, element) {
-            let datePicker = $(this).data("kendoDatePicker");
-            datePicker.value(null);
-            datePicker.min(defaultCalendar.min());
-            datePicker.max(defaultCalendar.max());
-        });
-    };
     if (e.filter == null) {
-        kClearButtons.addClass("d-none");
-        let dateInputs = kClearButtons.siblings('.k-datepicker').find('.k-input');
-        resetDatePickers(dateInputs);
+        //kClearButtons.addClass("d-none");
+
+        //resetDatePickers(dateInputs);
     } else {
         let kClearButtonX = kClearButtons.not("[id*="+ field + "]");
         let dateInputs = kClearButtonX.siblings('.k-datepicker').find('.k-input');
-        resetDatePickers(dateInputs);
-        kClearButton.removeClass("d-none");
+        //resetDatePickers(dateInputs);
+        //kClearButton.removeClass("d-none");
     }
 }
 
