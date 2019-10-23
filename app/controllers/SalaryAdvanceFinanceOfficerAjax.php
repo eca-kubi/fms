@@ -55,7 +55,7 @@ class SalaryAdvanceFinanceOfficerAjax extends Controller
             $data['raised_by_id'] = getUserSession()->user_id;
             $data['department_id'] = $_POST['department_id'];
             $data['amount_requested'] = $_POST['amount_requested'];
-            $data['department_ref'] = genDeptRef($current_user->department_id);
+            $data['department_ref'] = genDeptRef($current_user->department_id,);
             $data['raised_by_secretary'] = true;
             $ret = Database::getDbh()->insert('salary_advance', $data);
             if ($ret) {

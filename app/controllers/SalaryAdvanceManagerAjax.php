@@ -20,39 +20,20 @@ class SalaryAdvanceManagerAjax extends Controller
             $db->where("id_salary_advance", $id_salary_advance);
             if ($db->has('salary_advance')) {
                 $record = $db->get('salary_advance');
-                $transformed_record = $this->transformArrayData($record);
+                $transformed_record = transformArrayData($record);
                 echo json_encode($transformed_record);
             }
         } else {
             if (isCurrentHR($current_user->user_id) || isCurrentFmgr($current_user->user_id) || isCurrentGM($current_user->user_id)) {
                 $records = $db->where('user_id', $current_user->user_id, '!=')->orderBy('date_raised')->where('deleted', false)->get('salary_advance');
-                $transformed_records = $this->transformArrayData($records);
+                $transformed_records = transformArrayData($records);
                 echo json_encode($transformed_records);
-            } else {
+            } else if (isCurrentManager($current_user->user_id)) {
                 $records = $db->where('user_id', $current_user->user_id, '!=')->orderBy('date_raised')->where('deleted', false)->where('department_id', $current_user->department_id)->get('salary_advance');
-                $transformed_records = $this->transformArrayData($records);
+                $transformed_records = transformArrayData($records);
                 echo json_encode($transformed_records);
             }
         }
-    }
-
-    private function transformArrayData($ret)
-    {
-        $current_user = getUserSession();
-        foreach ($ret as $key => &$value) {
-            $employee = new stdClass();
-            $employee->name = concatNameWithUserId($value['user_id']);
-            $employee->user_id = $value['user_id'];
-            $employee->department = getDepartment((new User($value['user_id']))->department_id);
-            $value['department'] = $employee->department;
-            $value['employee'] = $employee;
-            unset($value['password']);
-            $value['hod_comment_editable'] = $value['hod_approval_editable'] = isCurrentManagerForDepartment($value['department_id'], $current_user->user_id);
-            $value['hr_comment_editable'] = $value['hr_approval_editable'] = isCurrentHR($current_user->user_id);
-            $value['gm_comment_editable'] = $value['gm_approval_editable'] = isCurrentGM($current_user->user_id);
-            $value['fmgr_comment_editable'] = $value['fmgr_approval_editable'] = isCurrentFmgr($current_user->user_id);
-        }
-        return $ret;
     }
 
     public function isCommentEditable($mgr, $param) {
@@ -114,11 +95,11 @@ class SalaryAdvanceManagerAjax extends Controller
                 $record_updated = $db->update('salary_advance', $post_data);
                 if ($record_updated) {
                     $updated_record = $db->getOne('salary_advance');
-                    $transformed_record = $this->transformArrayData($updated_record);
+                    $transformed_record = transformArrayData($updated_record);
                     $transformed_record[0]['success'] = true;
                     echo json_encode($transformed_record);
                 } else {
-                    $transformed_record = $this->transformArrayData($old_record);
+                    $transformed_record = transformArrayData($old_record);
                     $transformed_record[0]['success'] = false;
                     $transformed_record[0]['reason'] = 'The record failed to update.';
                     echo json_encode($transformed_record);

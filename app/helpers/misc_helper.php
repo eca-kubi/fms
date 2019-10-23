@@ -887,6 +887,37 @@ function getCurrentFgmr()
 
 /**
  * @param $user_id
+ * @param $id_salary_advance
+ * @return bool
+ */
+function isTheApplicant($user_id, $id_salary_advance)
+{
+    $db = Database::getDbh();
+    $salary_advance = $db->where('id_salary_advance', $id_salary_advance)->objectBuilder()->getOne('salary_advance');
+    return $salary_advance->user_id == $user_id;
+}
+
+
+ function transformArrayData($ret)
+{
+    $current_user = getUserSession();
+    foreach ($ret as $key => &$value) {
+        $employee = new stdClass();
+        $employee->name = concatNameWithUserId($value['user_id']);
+        $employee->user_id = $value['user_id'];
+        $employee->department = getDepartment((new User($value['user_id']))->department_id);
+        $value['department'] = $employee->department;
+        $value['employee'] = $employee;
+        unset($value['password']);
+        $value['hod_comment_editable'] = $value['hod_approval_editable'] = isCurrentManagerForDepartment($value['department_id'], $current_user->user_id);
+        $value['hr_comment_editable'] = $value['hr_approval_editable'] = isCurrentHR($current_user->user_id);
+        $value['gm_comment_editable'] = $value['gm_approval_editable'] = isCurrentGM($current_user->user_id);
+        $value['fmgr_comment_editable'] = $value['fmgr_approval_editable'] = isCurrentFmgr($current_user->user_id);
+    }
+    return $ret;
+}
+/**
+ * @param $user_id
  * @return string
  */
 function getJobTitle($user_id)
@@ -928,12 +959,11 @@ function inDelimiteredString($needle, $delimiter, $delimetered_string)
     return in_array($needle, $arr);
 }
 
-function genDeptRef($department_id)
+function genDeptRef($department_id, $table)
 {
     $db = Database::getDbh();
     $ref = '';
-    $ret = $db->where('department_id', $department_id)
-        ->get('salary_advance');
+    $ret = $db->where('department_id', $department_id)->get($table);
     $department = new Department($department_id);
     $short_name = $department->short_name;
     $count = count($ret) + 1 . "";

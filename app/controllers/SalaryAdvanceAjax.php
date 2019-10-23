@@ -15,24 +15,27 @@ class SalaryAdvanceAjax extends Controller
 
     public function index()
     {
-        $current_user = getUserSession();
         $db = Database::getDbh();
-        $ret = [];
+        $current_user = getUserSession();
         if (isset($_GET['id_salary_advance'])) {
-            $ret = SalaryAdvanceModel::get(['id_salary_advance' => $_GET['id_salary_advance']]);
+            $id_salary_advance = $_GET['id_salary_advance'];
+            $db->where("id_salary_advance", $id_salary_advance)->where('deleted', false);
+            if ($db->has('salary_advance')) {
+                $record = $db->get('salary_advance');
+                $transformed_record = transformArrayData($record);
+                echo json_encode($transformed_record);
+            }
         } else {
-            $ret = $db->where('user_id', $current_user->user_id)
-                ->orderBy('date_raised')
-                ->where('deleted', false)
-                ->get('salary_advance');
+            $records = $db->where('user_id', $current_user->user_id)->orderBy('date_raised')->where('deleted', false)->get('salary_advance');
+            $transformed_records = transformArrayData($records);
+            echo json_encode($transformed_records);
         }
-        //$ret = $this->transformArrayData($ret);
-        echo json_encode($ret);
     }
 
     public function Create()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $db = Database::getDbh();
             $current_user = getUserSession();
             $link = '';
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
@@ -51,29 +54,25 @@ class SalaryAdvanceAjax extends Controller
                 'percentage' => $_POST['percentage'],
                 'user_id' => $current_user->user_id,
                 'department_id' => $current_user->department_id,
-                'department_ref' => genDeptRef($current_user->department_id)
+                'department_ref' => genDeptRef($current_user->department_id, 'salary_advance')
             ];
             if ($data['amount_requested_is_percentage']) {
-                //unset($data['amount_requested']);
                 $data['amount_requested'] = null;
             } else {
-                //unset($data['percentage']);
                 $data['percentage'] = null;
             }
-            $ret = Database::getDbh()->insert('salary_advance', $data);
-            if ($ret) {
-                $ret = Database::getDbh()->where('id_salary_advance', $ret)
-                    ->get('salary_advance');
-                //$ret = $this->transformArrayData($ret);
-                $ret[0]['success'] = true;
-                $ret[0]['has_active_application'] = hasActiveApplication($current_user->user_id);
-                $ref_number = genDeptRef($current_user->department_id);
+            $record_added_id = $db->insert('salary_advance', $data);
+            if ($record_added_id) {
+                $new_record = $db->where('id_salary_advance', $record_added_id)->get('salary_advance');
+                $new_record[0]['success'] = true;
+                $new_record[0]['has_active_application'] = hasActiveApplication($current_user->user_id);
+                $ref_number = genDeptRef($current_user->department_id, 'salary_advance');
                 $hod = new User(getCurrentManager($current_user->department_id));
                 $hr = new User(getCurrentHR());
                 $fmgr = new User(getCurrentFgmr());
                 $gmgr = new User(getCurrentGM());
                 $subject = "Salary Advance Application ($ref_number)";
-                $data = ['ref_number' => $ref_number, 'link' => URL_ROOT . '/salary-advance/' . $ret[0]['id_salary_advance'], 'applicant_is_the_recipient' => false];
+                $data = ['ref_number' => $ref_number, 'link' => URL_ROOT . '/salary-advance/' . $new_record[0]['id_salary_advance'], 'applicant_is_the_recipient' => false];
                 $body = get_include_contents('email_templates/salary-advance/new_application', $data);
                 $data['body'] = $body;
                 $email = get_include_contents('email_templates/salary-advance/main', $data);
@@ -88,18 +87,14 @@ class SalaryAdvanceAjax extends Controller
                 $data['applicant_is_the_recipient'] = true;
                 $body = get_include_contents('email_templates/salary-advance/new_application', $data);
                 insertEmail($subject, $body, $current_user->email);
-
-                //  $remarks = get_include_contents('action_log/salary_advance_raised', $data);
-                //   insertLog($ret[0]['id_salary_advance'], ACTION_SALARY_ADVANCE_RAISED, $remarks, $current_user->user_id);
+                echo json_encode($new_record);
             } else {
                 $ret[0]['success'] = false;
-                $ret[0]['reason'] = 'An error occurred!';
-                $ret['errors'] = ['message' => 'An error occured!', 'code' => ERROR_UNSPECIFIED_ERROR];
+                $ret[0]['reason'] = 'Failed to add record.';
+                $ret['errors'] = ['message' => 'Failed to add record.', 'code' => ERROR_UNSPECIFIED_ERROR];
                 $ret['has_active_application'] = hasActiveApplication($current_user->user_id);
                 echo json_encode($ret);
-                return;
             }
-            echo json_encode($ret);
         }
     }
 

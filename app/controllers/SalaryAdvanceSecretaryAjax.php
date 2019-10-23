@@ -64,7 +64,7 @@ class SalaryAdvanceSecretaryAjax extends Controller
                 'percentage' => $_POST['percentage'],
                 'user_id' =>$_POST['user_id'],
                 'department_id' => $_POST['department_id'],
-                'department_ref' => genDeptRef((new User($_POST['user_id']))->department_id),
+                'department_ref' => genDeptRef((new User($_POST['user_id']))->department_id,),
                 'raised_by_secretary' => true
             ];
             if ($data['amount_requested_is_percentage']) {
