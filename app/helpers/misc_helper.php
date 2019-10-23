@@ -898,14 +898,14 @@ function isTheApplicant($user_id, $id_salary_advance)
 }
 
 
- function transformArrayData($ret)
+ function transformArrayData(array $ret)
 {
     $current_user = getUserSession();
     foreach ($ret as $key => &$value) {
         $employee = new stdClass();
         $employee->name = concatNameWithUserId($value['user_id']);
         $employee->user_id = $value['user_id'];
-        $employee->department = getDepartment((new User($value['user_id']))->department_id);
+        $employee->department = getDepartment($value['department_id']);
         $value['department'] = $employee->department;
         $value['employee'] = $employee;
         unset($value['password']);

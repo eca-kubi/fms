@@ -59,7 +59,6 @@ class SalaryAdvanceManagerAjax extends Controller
      */
     public function Update()
     {
-        $hod_remarks = $hr_remarks = $fmgr_remarks = '';
         $db = Database::getDbh();
         $post_data = [];
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -70,36 +69,76 @@ class SalaryAdvanceManagerAjax extends Controller
             $db->where("id_salary_advance", $id_salary_advance);
             if ($db->has('salary_advance')) {
                 // Salary Advance Update
-                $old_record = $db->getOne('salary_advance');
-                $applicant = new User($applicant->user_id);
-                if (isCurrentManagerForDepartment($old_record->department_id, $current_user->user_id)) {
+                $old_record = $db->where("id_salary_advance", $id_salary_advance)->getOne('salary_advance');
+                $applicant = new User($old_record['user_id']);
+                $ref_number = genDeptRef($old_record['department_id'], 'salary_advance');
+                $subject = "Salary Advance Application ($ref_number)";
+                $data = ['ref_number' => $ref_number, 'link' => URL_ROOT . '/salary-advance-manager/' . $old_record['id_salary_advance']];
+                if (isCurrentManagerForDepartment($old_record['department_id'], $current_user->user_id)) {
                     // Head of Department
-                    $post_data['hod_approval'] =  $_POST['hod_approval'];
+                    $post_data['hod_approval'] =  $_POST['hod_approval'] === 'true' ? true : false;
                     $post_data['hod_comment'] = $_POST['hod_comment'];
+                    $post_data['hod_id'] = $current_user->user_id;
+                    $post_data['hod_approval_date'] = now();
                 } elseif (isCurrentHR($current_user->user_id)) {
                     // HR
-                    $post_data['hr_approval'] =  $_POST['hr_approval'];
+                    $post_data['hr_approval'] =  $_POST['hr_approval']=== 'true' ? true : false;
                     $post_data['hr_comment'] = $_POST['hr_comment'];
                     $post_data['amount_payable'] =  $_POST['amount_payable'];
+                    $post_data['hr_id'] = $current_user->user_id;
+                    $post_data['hr_approval_date'] = now();
                 } elseif (isCurrentGM($current_user->user_id)) {
                     // GM
-                    $post_data['gm_approval'] =  $_POST['gm_approval'];
+                    $post_data['gm_approval'] =  $_POST['gm_approval'] === 'true' ? true : false;
                     $post_data['gm_comment'] = $_POST['gm_comment'];
+                    $post_data['gm_id'] = $current_user->user_id;
+                    $post_data['gm_approval_date'] = now();
                 }
                 elseif (isCurrentFmgr($current_user->user_id)) {
                     // Fmgr
-                    $post_data['fmgr_approval'] =  $_POST['fmgr_approval'];
+                    $post_data['fmgr_approval'] =  $_POST['fmgr_approval'] === 'true' ? true : false;
                     $post_data['fmgr_comment'] = $_POST['fmgr_comment'];
                     $post_data['amount_approved'] = $_POST['amount_approved'];
+                    $post_data['fmgr_id'] = $current_user->user_id;
+                    $post_data['fmgr_approval_date'] = now();
                 }
-                $record_updated = $db->update('salary_advance', $post_data);
+                $record_updated = $db->where("id_salary_advance", $id_salary_advance)->update('salary_advance', $post_data);
                 if ($record_updated) {
-                    $updated_record = $db->getOne('salary_advance');
-                    $transformed_record = transformArrayData($updated_record);
+                    $updated_record = $db->where("id_salary_advance", $id_salary_advance)->getOne('salary_advance');
+                    if (isCurrentManagerForDepartment($updated_record['department_id'], $current_user->user_id)) {
+                        $data['approval'] =  $post_data['hod_approval'];
+                        $data['comment'] = $post_data['hod_comment'];
+                        $body = get_include_contents('email_templates/salary-advance/approval', $data);
+                        $data['body'] = $body;
+                        $email = get_include_contents('email_templates/salary-advance/main', $data);
+                        insertEmail($subject, $email, $applicant->email);
+                    } elseif (isCurrentHR($current_user->user_id)) {
+                        $data['approval'] =  $post_data['hr_approval'];
+                        $data['comment'] = $post_data['hr_comment'];
+                        $body = get_include_contents('email_templates/salary-advance/approval', $data);
+                        $data['body'] = $body;
+                        $email = get_include_contents('email_templates/salary-advance/main', $data);
+                        insertEmail($subject, $email, $applicant->email);
+                    } elseif (isCurrentGM($current_user->user_id)) {
+                        $data['approval'] =  $post_data['gm_approval'];
+                        $data['comment'] = $post_data['gm_comment'];
+                        $body = get_include_contents('email_templates/salary-advance/approval', $data);
+                        $data['body'] = $body;
+                        $email = get_include_contents('email_templates/salary-advance/main', $data);
+                        insertEmail($subject, $email, $applicant->email);
+                    } elseif (isCurrentFmgr($current_user->user_id)) {
+                        $data['approval'] =  $post_data['fmgr_approval'];
+                        $data['comment'] = $post_data['fmgr_comment'];
+                        $body = get_include_contents('email_templates/salary-advance/approval', $data);
+                        $data['body'] = $body;
+                        $email = get_include_contents('email_templates/salary-advance/main', $data);
+                        insertEmail($subject, $email, $applicant->email);
+                    }
+                    $transformed_record = transformArrayData([$updated_record]);
                     $transformed_record[0]['success'] = true;
                     echo json_encode($transformed_record);
                 } else {
-                    $transformed_record = transformArrayData($old_record);
+                    $transformed_record = transformArrayData([$old_record]);
                     $transformed_record[0]['success'] = false;
                     $transformed_record[0]['reason'] = 'The record failed to update.';
                     echo json_encode($transformed_record);
