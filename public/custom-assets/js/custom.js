@@ -348,7 +348,7 @@ function filterDate(startDate, endDate, field) {
           filter.filters.push({field: field, operator: "lte", value: endDate});
       }*/
     grid.dataSource.filter(filter);
-    triggerDateFilterEvent(filter, field);
+   // triggerDateFilterEvent(filter, field);
 }
 
 let triggerDateFilterEvent = function (filter, field) {
@@ -414,7 +414,7 @@ let lastDayOfMonth =  moment().endOf('month').format('YYYY-MM-DD');*/
         toggleDateFilter: toggleDateFilterBtn
     }));
     let kStartDate = $(".start-date", filterCell).kendoDatePicker({
-        value: firstDayOfMonth,
+        value: field== "date_raised"? firstDayOfMonth : null,
         change: function (e) {
             let startDate = e.sender.value(),
                 endDate = $("input.end-date", filterCell).data("kendoDatePicker").value();
@@ -429,7 +429,7 @@ let lastDayOfMonth =  moment().endOf('month').format('YYYY-MM-DD');*/
     });
 
     let kEndDate = $(".end-date", filterCell).kendoDatePicker({
-        value: lastDayOfMonth,
+        value: field== "date_raised"? lastDayOfMonth: null,
         change: function (e) {
             let startDate = $("input.start-date", filterCell).data("kendoDatePicker").value(),
                 endDate = e.sender.value();

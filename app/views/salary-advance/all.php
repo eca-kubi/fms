@@ -733,7 +733,7 @@ $universal->select_row_id = $select_row_id;
                 }
                 if (!firstLoadDone) {
                     firstLoadDone = true;
-                 //   grid.dataSource.filter([]);
+                    filterDate(new Date(firstDayOfMonth), new Date(lastDayOfMonth), "date_raised");
                 }
             },
             detailInit: function (e) {

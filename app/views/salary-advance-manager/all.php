@@ -291,6 +291,7 @@ $universal->select_row_id = $select_row_id;
             navigatable: true,
             toolbar: kendo.template($('#toolbarTemplate').html()),
             filter: function (e) {
+                console.log('filter');
                 toggleDateFilterBtn(e);
             },
             excel: {
@@ -721,6 +722,10 @@ $universal->select_row_id = $select_row_id;
 
                 if (!currentRowSelected && universal['select_row_id']) {
                     selectGridRow(universal["select_row_id"], grid, dataSource, 'id_salary_advance');
+                }
+                if (!firstLoadDone) {
+                    firstLoadDone = true;
+                    filterDate(new Date(firstDayOfMonth), new Date(lastDayOfMonth), "date_raised");
                 }
             },
             detailInit: function (e) {
