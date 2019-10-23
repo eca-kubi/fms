@@ -13,38 +13,33 @@ class SalaryAdvanceManagerAjax extends Controller
     public function index()
     {
         // Get posts
-        $current_user = getUserSession();
-        $fmgr = getCurrentFgmr();
-        $hr = getCurrentHR();
         $db = Database::getDbh();
-        $ret = [];
+        $current_user = getUserSession();
         if (isset($_GET['id_salary_advance'])) {
-            $ret = SalaryAdvanceModel::get(['id_salary_advance' => $_GET['id_salary_advance']]);
+            $id_salary_advance = $_GET['id_salary_advance'];
+            $db->where("id_salary_advance", $id_salary_advance);
+            if ($db->has('salary_advance')) {
+                $record = $db->get('salary_advance');
+                $transformed_record = $this->transformArrayData($record);
+                echo json_encode($transformed_record);
+            }
         } else {
-            if ($current_user->user_id == $hr || $current_user->user_id == $fmgr) {
-                $ret = $db->where('user_id', $current_user->user_id, '!=')
-                    ->orderBy('date_raised')
-                    ->where('deleted', false)
-                    ->get('salary_advance');
+            if (isCurrentHR($current_user->user_id) || isCurrentFmgr($current_user->user_id) || isCurrentGM($current_user->user_id)) {
+                $records = $db->where('user_id', $current_user->user_id, '!=')->orderBy('date_raised')->where('deleted', false)->get('salary_advance');
+                $transformed_records = $this->transformArrayData($records);
+                echo json_encode($transformed_records);
             } else {
-                $ret = $db->where('user_id', $current_user->user_id, '!=')
-                    ->orderBy('date_raised')
-                    ->where('deleted', false)
-                    ->where('department_id', $current_user->department_id)
-                    ->get('salary_advance');
+                $records = $db->where('user_id', $current_user->user_id, '!=')->orderBy('date_raised')->where('deleted', false)->where('department_id', $current_user->department_id)->get('salary_advance');
+                $transformed_records = $this->transformArrayData($records);
+                echo json_encode($transformed_records);
             }
         }
-        $ret = $this->transformArrayData($ret);
-        echo json_encode($ret);
     }
 
     private function transformArrayData($ret)
     {
         $current_user = getUserSession();
-        $fmgr = getCurrentFgmr();
-        $hr = getCurrentHR();
         foreach ($ret as $key => &$value) {
-            $hod = getCurrentManager($value['department_id']);
             $employee = new stdClass();
             $employee->name = concatNameWithUserId($value['user_id']);
             $employee->user_id = $value['user_id'];
@@ -52,29 +47,10 @@ class SalaryAdvanceManagerAjax extends Controller
             $value['department'] = $employee->department;
             $value['employee'] = $employee;
             unset($value['password']);
-            if ($hod == $current_user->user_id) {
-                $value['hod_comment_editable'] = true;
-                $value['hod_approval_editable'] = true;
-            } else {
-                $value['hod_comment_editable'] = false;
-                $value['hod_approval_editable'] = false;
-            }
-            if ($hr == $current_user->user_id && $value['hod_approval']) {
-                $value['hr_comment_editable'] = true;
-                $value['hr_approval_editable'] = true;
-            } else {
-                $value['hr_comment_editable'] = false;
-                $value['hr_approval_editable'] = false;
-            }
-            if ($fmgr == $current_user->user_id && $value['hr_approval']) {
-                $value['fmgr_comment_editable'] = true;
-                $value['fmgr_approval_editable'] = true;
-                $value['amount_requested_editable'] = true;
-            } else {
-                $value['fmgr_comment_editable'] = false;
-                $value['fmgr_approval_editable'] = false;
-                $value['amount_requested_editable'] = false;
-            }
+            $value['hod_comment_editable'] = $value['hod_approval_editable'] = isCurrentManagerForDepartment($value['department_id'], $current_user->user_id);
+            $value['hr_comment_editable'] = $value['hr_approval_editable'] = isCurrentHR($current_user->user_id);
+            $value['gm_comment_editable'] = $value['gm_approval_editable'] = isCurrentGM($current_user->user_id);
+            $value['fmgr_comment_editable'] = $value['fmgr_approval_editable'] = isCurrentFmgr($current_user->user_id);
         }
         return $ret;
     }
@@ -103,67 +79,51 @@ class SalaryAdvanceManagerAjax extends Controller
     public function Update()
     {
         $hod_remarks = $hr_remarks = $fmgr_remarks = '';
+        $db = Database::getDbh();
+        $post_data = [];
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Sanitize POST array
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             $current_user = getUserSession();
             $id_salary_advance = $_POST['id_salary_advance'];
-            $old_ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
-                ->getOne('salary_advance');
-            $data['department_ref'] = $old_ret['department_ref'];
-            if ($_POST['hod_comment_editable'] === 'true') {
-                $data['hod_approval'] = $_POST['hod_approval'] === 'false' ? false : true;
-                $data['hod_comment'] = $_POST['hod_comment'];
-                if (!$old_ret['hod_approval_date']) {
-                    $data['hod_approval_date'] = now();
+            $db->where("id_salary_advance", $id_salary_advance);
+            if ($db->has('salary_advance')) {
+                // Salary Advance Update
+                $old_record = $db->getOne('salary_advance');
+                $applicant = new User($applicant->user_id);
+                if (isCurrentManagerForDepartment($old_record->department_id, $current_user->user_id)) {
+                    // Head of Department
+                    $post_data['hod_approval'] =  $_POST['hod_approval'];
+                    $post_data['hod_comment'] = $_POST['hod_comment'];
+                } elseif (isCurrentHR($current_user->user_id)) {
+                    // HR
+                    $post_data['hr_approval'] =  $_POST['hr_approval'];
+                    $post_data['hr_comment'] = $_POST['hr_comment'];
+                    $post_data['amount_payable'] =  $_POST['amount_payable'];
+                } elseif (isCurrentGM($current_user->user_id)) {
+                    // GM
+                    $post_data['gm_approval'] =  $_POST['gm_approval'];
+                    $post_data['gm_comment'] = $_POST['gm_comment'];
                 }
-                if (!$old_ret['hod_id']) {
-                    $data['hod_id'] = $current_user->user_id;
+                elseif (isCurrentFmgr($current_user->user_id)) {
+                    // Fmgr
+                    $post_data['fmgr_approval'] =  $_POST['fmgr_approval'];
+                    $post_data['fmgr_comment'] = $_POST['fmgr_comment'];
+                    $post_data['amount_approved'] = $_POST['amount_approved'];
                 }
-                $hod_remarks = get_include_contents('action_log/salary_advance_review_by_hod', $data);
-            } else if ($_POST['hr_comment_editable'] === 'true') {
-                $data['hr_approval'] = $_POST['hr_approval'] === 'false' ? false : true;
-                $data['hr_comment'] = $_POST['hr_comment'];
-                $data['amount_payable'] = $_POST['amount_payable'];
-                if (!$old_ret['hr_id']) {
-                    $data['hr_id'] = $current_user->user_id;
+                $record_updated = $db->update('salary_advance', $post_data);
+                if ($record_updated) {
+                    $updated_record = $db->getOne('salary_advance');
+                    $transformed_record = $this->transformArrayData($updated_record);
+                    $transformed_record[0]['success'] = true;
+                    echo json_encode($transformed_record);
+                } else {
+                    $transformed_record = $this->transformArrayData($old_record);
+                    $transformed_record[0]['success'] = false;
+                    $transformed_record[0]['reason'] = 'The record failed to update.';
+                    echo json_encode($transformed_record);
                 }
-                if (!$old_ret['hr_approval_date']) {
-                    $data['hr_approval_date'] = now();
-                }
-                $hr_remarks = get_include_contents('action_log/salary_advance_review_by_hr', $data);
-            } else if ($_POST['fmgr_comment_editable'] === 'true') {
-                $data['fmgr_approval'] = $_POST['fmgr_approval'] === 'false' ? false : true;
-                $data['fmgr_comment'] = $_POST['fmgr_comment'];
-                $data['amount_approved'] = $_POST['amount_approved'];
-                if (!$old_ret['fmgr_id']) {
-                    $data['fmgr_id'] = $current_user->user_id;
-                }
-                if (!$old_ret['fmgr_approval_date']) {
-                    $data['fmgr_approval_date'] = now();
-                }
-                $fmgr_remarks = get_include_contents('action_log/salary_advance_review_by_fmgr', $data);
             }
-            $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
-                ->update('salary_advance', $data);
-            if ($ret) {
-                if (!empty($hr_remarks)) {
-                    insertLog($id_salary_advance, ACTION_SALARY_ADVANCE_UPDATE, $hr_remarks, $current_user->user_id);
-                } elseif (!empty($hod_remarks)) {
-                    insertLog($id_salary_advance, ACTION_SALARY_ADVANCE_UPDATE, $hod_remarks, $current_user->user_id);
-                } elseif (!empty($fmgr_remarks)) {
-                    insertLog($id_salary_advance, ACTION_SALARY_ADVANCE_UPDATE, $fmgr_remarks, $current_user->user_id);
-                }
-                $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
-                    ->get('salary_advance');
-                $ret = $this->transformArrayData($ret);
-                $ret[0]['success'] = true;
-            } else {
-                $ret = $this->transformArrayData([$old_ret]);
-                $ret[0]['success'] = false;
-                $ret[0]['reason'] = 'An error occured!';
-            }
-            echo json_encode($ret);
         }
     }
 
