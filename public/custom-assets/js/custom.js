@@ -372,6 +372,7 @@ function dateRangeFilter(args) {
         dateInputs.each(function (index, element) {
             let datePicker = $(this).data("kendoDateInput");
             datePicker.value(null);
+            datePicker = $(this).data("kendoDatePicker");
             datePicker.min(defaultCalendar.min());
             datePicker.max(defaultCalendar.max());
         });
@@ -391,9 +392,9 @@ let clearDateFilter = function(){
 let lastDayOfMonth =  moment().endOf('month').format('YYYY-MM-DD');*/
     //let clearButton = $('<button type="button" class="k-button k-button-icon" title="Clear" aria-label="Clear" data-bind="visible:operatorVisible" style=""><span class="k-icon k-i-filter-clear"></span></button>')
     filterCell.empty();
-    filterCell.html('<span class="pr-5" style="display:flex; justify-content:center;"><span>From:</span><input  class="start-date" /><span>To:</span><input  class="end-date"/> <button type="button" class="k-button k-button-icon" title="Clear" aria-label="Clear"  style=""><span class="k-icon k-i-filter-clear"></span></button></span>');
+    filterCell.html('<span class="pr-5" style="display:flex; justify-content:center;"><span>From:</span><input  class="start-date" /><span>To:</span><input  class="end-date"/> <button type="button" class="k-button k-button-icon d-none" title="Clear" aria-label="Clear"  style=""><span class="k-icon k-i-filter-clear"></span></button></span>');
     let kClearButton = filterCell.find(".k-button[title=Clear]").attr("id", `${field}_ClearButton`);
-
+   $("#date_raised_ClearButton").removeClass("d-none");
     kClearButton.on("click", function (e) {
         let dateInputs = $(this).siblings('.k-datepicker').find('.k-input');
         //dataSource.filter([]);
@@ -407,6 +408,7 @@ let lastDayOfMonth =  moment().endOf('month').format('YYYY-MM-DD');*/
         }
         //triggerDateFilterEvent(filter, field);
         resetDatePickers(dateInputs);
+        $(this).addClass("d-none");
         //kClearButton.addClass("d-none");
     });
 
@@ -415,6 +417,7 @@ let lastDayOfMonth =  moment().endOf('month').format('YYYY-MM-DD');*/
     }));
     let kStartDate = $(".start-date", filterCell).kendoDatePicker({
         value: field== "date_raised"? firstDayOfMonth : null,
+       // max: field == "date_raised"? firstDayOfMonth : defaultCalendar.max(),
         change: function (e) {
             let startDate = e.sender.value(),
                 endDate = $("input.end-date", filterCell).data("kendoDatePicker").value();
@@ -423,6 +426,7 @@ let lastDayOfMonth =  moment().endOf('month').format('YYYY-MM-DD');*/
             }
             if (startDate && endDate) {
                 filterDate(startDate, endDate, field)
+                $("#" + field + "_ClearButton").removeClass("d-none");
             }
         },
         dateInput: true
@@ -430,6 +434,7 @@ let lastDayOfMonth =  moment().endOf('month').format('YYYY-MM-DD');*/
 
     let kEndDate = $(".end-date", filterCell).kendoDatePicker({
         value: field== "date_raised"? lastDayOfMonth: null,
+        //min: field == "date_raised"? lastDayOfMonth : defaultCalendar.min(),
         change: function (e) {
             let startDate = $("input.start-date", filterCell).data("kendoDatePicker").value(),
                 endDate = e.sender.value();
@@ -439,6 +444,7 @@ let lastDayOfMonth =  moment().endOf('month').format('YYYY-MM-DD');*/
 
             if (startDate && endDate) {
                 filterDate(startDate, endDate, field);
+                $("#" + field + "_ClearButton").removeClass("d-none");
             }
         },
         dateInput: true
