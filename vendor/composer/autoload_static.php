@@ -11,6 +11,10 @@ class ComposerStaticInitce12422853a0d0be982bc81f335c70b6
     );
 
     public static $prefixLengthsPsr4 = array (
+        'V' => 
+        array (
+            'VariableAnalysis\\' => 17,
+        ),
         'S' => 
         array (
             'Symfony\\Polyfill\\Mbstring\\' => 26,
@@ -42,6 +46,10 @@ class ComposerStaticInitce12422853a0d0be982bc81f335c70b6
     );
 
     public static $prefixDirsPsr4 = array (
+        'VariableAnalysis\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/sirbrillig/phpcs-variable-analysis/VariableAnalysis',
+        ),
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',

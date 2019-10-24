@@ -108,6 +108,7 @@ __Supported languages so far:__
 ```nl_NL``` Dutch  
 ```en_GB``` English (British)  
 ```en_US``` English (American)  
+```fi_FI``` Finnish  
 ```fr_FR``` French (Europe)  
 ```de_DE``` German (Germany)  
 ```hu_HU``` Hungarian    
@@ -121,7 +122,7 @@ __Supported languages so far:__
 ```pt_PT``` Portuguese (Portugal)  
 ```ru_RU``` Russian (Basic version)  
 ```es_ES``` Spanish (Europe)  
-```se_SV``` Swedish  
+```sv_SE``` Swedish  
 ```uk_UA``` Ukrainian  
 ```th_TH``` Thai  
 ```tr_TR``` Turkish  
@@ -412,7 +413,13 @@ You can now run through the result and put it formatted into a drop-down field o
 
 -------------------------------------------------
 
-# Changelog
+# Change Log
+
+### 1.30.0
+ - added:
+    - Finish locale
+ - fixed:
+    - Swedish locale
 
 ### 1.29.0
  - updated Italian locale

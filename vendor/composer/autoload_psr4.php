@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'VariableAnalysis\\' => array($vendorDir . '/sirbrillig/phpcs-variable-analysis/VariableAnalysis'),
     'Symfony\\Polyfill\\Mbstring\\' => array($vendorDir . '/symfony/polyfill-mbstring'),
     'SMSGatewayMe\\Client\\' => array($vendorDir . '/smsgatewayme/client/lib'),
     'Respect\\Validation\\' => array($vendorDir . '/respect/validation/library'),

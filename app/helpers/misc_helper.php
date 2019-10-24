@@ -897,7 +897,6 @@ function isTheApplicant($user_id, $id_salary_advance)
     return $salary_advance->user_id == $user_id;
 }
 
-
  function transformArrayData(array $ret)
 {
     $current_user = getUserSession();

@@ -9,7 +9,9 @@
     "ext-json": "*",
     "alexistm/simple-json-php": "^5.0",
     "ext-zip": "*",
-    "tecnickcom/tcpdf": "^6.2"
+    "tecnickcom/tcpdf": "^6.2",
+    "squizlabs/php_codesniffer": "3.5.1",
+    "sirbrillig/phpcs-variable-analysis": "v2.7.0"
   },
   "repositories": [
     {
@@ -20,5 +22,8 @@
       "type": "git",
       "url": "https://github.com/smsgatewayme/client-php.git"
     }
-  ]
+  ],
+  "scripts": {
+    "phpcs": "phpcs --standard=phpcs.xml"
+  }
 }

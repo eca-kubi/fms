@@ -71,23 +71,23 @@ class SalaryAdvanceAjax extends Controller
                 $hr = new User(getCurrentHR());
                 $fmgr = new User(getCurrentFgmr());
                 $gmgr = new User(getCurrentGM());
+                // Send email to HoD
                 $subject = "Salary Advance Application ($ref_number)";
-                $data = ['ref_number' => $ref_number, 'link' => URL_ROOT . '/salary-advance-manager/index/' . $new_record[0]['id_salary_advance'], 'applicant_is_the_recipient' => false];
-                $body = get_include_contents('email_templates/salary-advance/new_application', $data);
+                $data = ['ref_number' => $ref_number, 'link' => URL_ROOT . '/salary-advance-manager/index/' . $new_record[0]['id_salary_advance']];
+                $body = get_include_contents('email_templates/salary-advance/new_application_notify_hod', $data);
                 $data['body'] = $body;
                 $email = get_include_contents('email_templates/salary-advance/main', $data);
-                $recipient_addresses = [$hod->email];
-                foreach (array_keys($recipient_addresses, $current_user->email, true) as $key) {
-                    // remove current user from email recipient address list
-                    unset($recipient_addresses[$key]);
+                // If HoD is the applicant no need to send email
+                if ($hod->email !== $current_user->email) {
+                    insertEmail($subject, $email, $hod->email);
                 }
-                foreach ($recipient_addresses as  $recipient_address) {
-                    insertEmail($subject, $body, $recipient_address);
-                }
+                // Notify applicant
                 $data['applicant_is_the_recipient'] = true;
-                $data['link'] =  URL_ROOT . '/salary-advance/index/' . $new_record[0]['id_salary_advance'];
-                $body = get_include_contents('email_templates/salary-advance/new_application', $data);
-                insertEmail($subject, $body, $current_user->email);
+                $data['link'] = URL_ROOT . '/salary-advance/index/' . $new_record[0]['id_salary_advance'];
+                $body = get_include_contents('email_templates/salary-advance/new_application_notify_applicant', $data);
+                $data['body'] = $body;
+                $email = get_include_contents('email_templates/salary-advance/main', $data);
+                insertEmail($subject, $email, $current_user->email);
                 echo json_encode($new_record);
             } else {
                 $ret[0]['success'] = false;
