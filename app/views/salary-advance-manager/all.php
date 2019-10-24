@@ -333,7 +333,7 @@ $universal->select_row_id = $select_row_id;
             },
             columnMenu: false,
             sortable: true,
-            groupable: false,
+            groupable: true,
             height: 520,
             resizable: true,
             scrollable: true,
