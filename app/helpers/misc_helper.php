@@ -869,7 +869,6 @@ function isCurrentHR($user_id) {
 function isCurrentFmgr($user_id) {
     return getCurrentFgmr() == $user_id;
 }
-
 function getCurrentHR()
 {
     return
