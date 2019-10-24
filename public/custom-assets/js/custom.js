@@ -482,7 +482,7 @@ function selectGridRow(searchedId, grid, dataSource, idField) {
             break;
         }
     }
-
+if (!modelToSelect) return // The row was not found in the current table model
     // If you have persistSelection = true and want to clear all existing selections first, uncomment the next line
     // grid._selectedIds = {};
 

@@ -85,7 +85,7 @@ $salary_advance = $payload['salary_advance'];
                                 of <?php echo CURRENCY_GHS . number_format($salary_advance->amount_approved, 2); ?> of
                                 my basic salary as
                                 advance against the month of <u><?php try {
-                                        echo (new \Moment\Moment($salary_advance->date_received))->addMonths(1)->format('MMMM', new \Moment\CustomFormats\MomentJs());
+                                        echo (new \Moment\Moment($salary_advance->date_raised))->addMonths(1)->format('MMMM', new \Moment\CustomFormats\MomentJs());
                                     } catch (Exception $e) {
                                     } ?></u></p>
                         </div>

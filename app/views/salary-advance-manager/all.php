@@ -115,30 +115,19 @@ $universal->select_row_id = $select_row_id;
                      }
                  }*/
             },
-            error: function (e) {
-                //console.log("error event handler", e.errors[0]);
-                toastError(e.errors[0]);
-                salaryAdvanceDataSource.cancelChanges();
-            },
-            requestEnd: function (e) {
-                /*if (e.type === 'read' && e.response) {
-                    let grid = $salaryAdvanceGrid.data('kendoGrid');
-                }*/
-                if (e.type === 'update' && !e.response[0].success) {
-                    e.response[0].reason ? toastError(e.response[0].reason) : toastError('An error occurred!');
-                } else if (e.type === 'update' && e.response[0].success) {
-                    toastSuccess('Success', 5000);
-                }
-                if (e.type === 'create' && e.response[0].success) {
-                    toastSuccess('Success', 5000);
-                }
-                if (e.type === 'destroy' && e.response[0].success) {
-                    toastSuccess('Success', 5000);
-                } else if (e.type === 'destroy' && !e.response[0].success) {
-                    //e.response[0].reason ? toastError(e.response[0].reason) : toastError('An error occurred!');
-                    //salaryAdvanceDataSource.cancelChanges();
-                }
-            },
+                error: function (e) {
+                    if (e.errors[0]['code'] === ERROR_AN_APPLICATION_ALREADY_EXISTS) {
+                        // Disable Grid Add Button
+                        disableGridAddButton();
+                    }
+                    toastError(e.errors[0]['message']);
+                    salaryAdvanceDataSource.cancelChanges();
+                },
+                requestEnd: function (e) {
+                    if (e.type === 'update' && e.response.length > 0 || e.type=== 'create' && e.response.length > 0) {
+                        toastSuccess('Success', 5000);
+                    }
+                },
             schema: {
                 model: {
                     id: "id_salary_advance",

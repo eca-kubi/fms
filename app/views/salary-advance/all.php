@@ -115,7 +115,6 @@ $universal->select_row_id = $select_row_id;
                     dataType: 'json'
                 },
                 errors: function (response) {
-                    //console.log("errors as function", response.errors[0]);
                     return response.errors;
                 }
                 /* parameterMap: function (options, operation) {
@@ -125,38 +124,16 @@ $universal->select_row_id = $select_row_id;
                  }*/
             },
             error: function (e) {
-                if (e.errors['code'] === ERROR_AN_APPLICATION_ALREADY_EXISTS) {
+                if (e.errors[0]['code'] === ERROR_AN_APPLICATION_ALREADY_EXISTS) {
                     // Disable Grid Add Button
                     disableGridAddButton();
                 }
-                toastError(e.errors['message']);
+                toastError(e.errors[0]['message']);
                 salaryAdvanceDataSource.cancelChanges();
             },
             requestEnd: function (e) {
-                if (e.type === 'update' && !e.response[0].success) {
-                    e.response[0].reason ? toastError(e.response[0].reason) : toastError('An error occurred!');
-                } else if (e.type === 'update' && e.response[0].success) {
+                if (e.type === 'update' && e.response.length > 0 || e.type=== 'create' && e.response.length > 0) {
                     toastSuccess('Success', 5000);
-                }
-                if (e.type === 'create' && e.response[0].success) {
-                    toastSuccess('Success', 5000);
-                    if (e.response[0]['has_active_application']) {
-                        disableGridAddButton();
-                    } else {
-                        enableGridAddButton();
-                    }
-                }
-                if (e.type === 'destroy' && e.response.success) {
-                    toastSuccess('Success', 5000);
-                    universal.has_active_application = e.response['has_active_application'];
-                    if (universal.has_active_application) {
-                        disableGridAddButton();
-                    } else {
-                        enableGridAddButton();
-                    }
-                } else if (e.type === 'destroy' && !e.response.success) {
-                    e.response.reason ? toastError(e.response.reason) : toastError('An error occurred!');
-                    salaryAdvanceDataSource.cancelChanges();
                 }
             },
             change: function (e) {

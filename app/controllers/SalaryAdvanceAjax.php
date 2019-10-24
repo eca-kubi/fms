@@ -24,9 +24,8 @@ class SalaryAdvanceAjax extends Controller
             $ret = [];
             if (hasActiveApplication($current_user->user_id)) {
                 $ret['success'] = false;
-                $ret['reason'] = 'You already have an active application for this month!';
                 $ret['has_active_application'] = true;
-                $ret['errors'] = ['message' => 'An Application is Active!', 'code' => ERROR_AN_APPLICATION_ALREADY_EXISTS];
+                $ret['errors'] = [['message' => 'You already have an active application.', 'code' => ERROR_AN_APPLICATION_ALREADY_EXISTS]];
                 echo json_encode($ret, JSON_THROW_ON_ERROR, 512);
                 return;
             }
@@ -68,10 +67,7 @@ class SalaryAdvanceAjax extends Controller
                 insertEmail($subject, $email, $current_user->email);
                 echo json_encode($new_record, JSON_THROW_ON_ERROR, 512);
             } else {
-                $ret[0]['success'] = false;
-                $ret[0]['reason'] = 'Failed to add record.';
-                $ret['errors'] = ['message' => 'Failed to add record.', 'code' => ERROR_UNSPECIFIED_ERROR];
-                $ret['has_active_application'] = hasActiveApplication($current_user->user_id);
+                $ret['errors'] = [['message' => 'Failed to add record.', 'code' => ERROR_UNSPECIFIED_ERROR]];
                 echo json_encode($ret, JSON_THROW_ON_ERROR, 512);
             }
         }
@@ -82,11 +78,10 @@ class SalaryAdvanceAjax extends Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Sanitize POST array
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-            $current_user = getUserSession();
+            getUserSession();
             $id_salary_advance = $_POST['id_salary_advance'];
             $ret = [];
-            $old_ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
-                ->getOne('salary_advance');
+            $old_ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)->getOne('salary_advance');
             if ($old_ret['hod_approval']) {
                 $old_ret['success'] = false;
                 $old_ret['reason'] = 'The HoD has already reviewed this application!';
@@ -114,18 +109,10 @@ class SalaryAdvanceAjax extends Controller
                 }
                 $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)->update('salary_advance', $data);
                 if ($ret) {
-                    //$remarks = get_include_contents('action_log/salary_advance_updated_by_employee', $data);
-                    //insertLog($id_salary_advance, ACTION_SALARY_ADVANCE_UPDATE, $remarks, $current_user->user_id);
-                    $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)
-                        ->get('salary_advance');
-                    //$ret = $this->transformArrayData($ret);
-                    $ret[0]['has_active_application'] = hasActiveApplication($current_user->user_id);
-                    $ret[0]['success'] = true;
+                    $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)->get('salary_advance');
+                    $ret = transformArrayData($ret);
                 } else {
-                    $ret[0]['success'] = false;
-                    $ret[0]['reason'] = 'An error occurred!';
-                    $ret['errors'] = ['message' => 'An error occurred!', 'code' => ERROR_UNSPECIFIED_ERROR];
-                    $ret['has_active_application'] = hasActiveApplication($current_user->user_id);
+                    $ret['errors'] = [['message' => 'Update failed!', 'code' => ERROR_UNSPECIFIED_ERROR]];
                     echo json_encode($ret, JSON_THROW_ON_ERROR, 512);
                     return;
                 }

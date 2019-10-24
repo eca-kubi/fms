@@ -130,12 +130,10 @@ class SalaryAdvanceManagerAjax extends Controller
                         insertEmail($subject, $email, $applicant->email);
                     }
                     $transformed_record = transformArrayData([$updated_record]);
-                    $transformed_record[0]['success'] = true;
                     echo json_encode($transformed_record, JSON_THROW_ON_ERROR, 512);
                 } else {
                     $transformed_record = transformArrayData([$old_record]);
-                    $transformed_record[0]['success'] = false;
-                    $transformed_record[0]['reason'] = 'The record failed to update.';
+                    $transformed_record['errors'] = [['message' => 'Update failed!', 'code' => ERROR_UNSPECIFIED_ERROR]];
                     echo json_encode($transformed_record, JSON_THROW_ON_ERROR, 512);
                 }
             }
