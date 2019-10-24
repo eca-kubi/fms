@@ -17,18 +17,13 @@ class SalaryAdvanceManager extends Controller
         if (!isLoggedIn()) {
             redirect('users/login/salary-advance-manager/index/'.$id_salary_advance);
         }
-        if (!(isCurrentManager($current_user->user_id) || isCurrentFmgr($current_user->user_id) || isCurrentHR($current_user->user_id))) {
+        if (!(isCurrentManager($current_user->user_id) || isCurrentFmgr($current_user->user_id) || isCurrentHR($current_user->user_id) || isCurrentGM($current_user->user_id))) {
             redirect('salary-advance');
         }
         if ($id_salary_advance) {
             if (!$db->where('id_salary_advance', $id_salary_advance)->has('salary_advance')) {
                 redirect('errors/index/404');
             }
-        }
-        if (getCurrentHR() == $current_user->user_id || getCurrentFgmr() == $current_user->user_id) {
-            $payload['salary_advances'] = (new SalaryAdvanceModel())->get();
-        } else {
-            $payload['salary_advances'] = (new SalaryAdvanceModel())->get(['department_id' => $current_user->department_id]);
         }
         $this->view('salary-advance-manager/all', $payload);
     }

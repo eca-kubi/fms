@@ -17,11 +17,12 @@ class SalaryAdvanceManagerAjax extends Controller
         $current_user = getUserSession();
         if (isset($_GET['id_salary_advance'])) {
             $id_salary_advance = $_GET['id_salary_advance'];
-            $db->where("id_salary_advance", $id_salary_advance);
-            if ($db->has('salary_advance')) {
-                $record = $db->get('salary_advance');
-                $transformed_record = transformArrayData($record);
-                echo json_encode($transformed_record);
+            if ($db->where("id_salary_advance", $id_salary_advance)->has('salary_advance')) {
+                $record = $db->where("id_salary_advance", $id_salary_advance)->where('deleted', false)->get('salary_advance');
+                if (isCurrentHR($current_user->user_id) || isCurrentFmgr($current_user->user_id) || isCurrentGM($current_user->user_id) || isCurrentManagerForDepartment($record->department_id, $current_user->user_id)) {
+                    $transformed_record = transformArrayData($record);
+                    echo json_encode($transformed_record);
+                }
             }
         } else {
             if (isCurrentHR($current_user->user_id) || isCurrentFmgr($current_user->user_id) || isCurrentGM($current_user->user_id)) {
@@ -29,6 +30,7 @@ class SalaryAdvanceManagerAjax extends Controller
                 $transformed_records = transformArrayData($records);
                 echo json_encode($transformed_records);
             } else if (isCurrentManager($current_user->user_id)) {
+
                 $records = $db->where('user_id', $current_user->user_id, '!=')->orderBy('date_raised')->where('deleted', false)->where('department_id', $current_user->department_id)->get('salary_advance');
                 $transformed_records = transformArrayData($records);
                 echo json_encode($transformed_records);

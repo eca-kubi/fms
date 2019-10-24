@@ -19,9 +19,9 @@ class SalaryAdvanceAjax extends Controller
         $current_user = getUserSession();
         if (isset($_GET['id_salary_advance'])) {
             $id_salary_advance = $_GET['id_salary_advance'];
-            $db->where("id_salary_advance", $id_salary_advance)->where('deleted', false);
+            $db->where("id_salary_advance", $id_salary_advance)->where('user_id', $current_user->user_id)->where('deleted', false);
             if ($db->has('salary_advance')) {
-                $record = $db->get('salary_advance');
+                $record = $db->where("id_salary_advance", $id_salary_advance)->where('user_id', $current_user->user_id)->where('deleted', false)->get('salary_advance');
                 $transformed_record = transformArrayData($record);
                 echo json_encode($transformed_record);
             }
