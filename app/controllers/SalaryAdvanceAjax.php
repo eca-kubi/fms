@@ -72,11 +72,11 @@ class SalaryAdvanceAjax extends Controller
                 $fmgr = new User(getCurrentFgmr());
                 $gmgr = new User(getCurrentGM());
                 $subject = "Salary Advance Application ($ref_number)";
-                $data = ['ref_number' => $ref_number, 'link' => URL_ROOT . '/salary-advance/' . $new_record[0]['id_salary_advance'], 'applicant_is_the_recipient' => false];
+                $data = ['ref_number' => $ref_number, 'link' => URL_ROOT . '/salary-advance-manager/index/' . $new_record[0]['id_salary_advance'], 'applicant_is_the_recipient' => false];
                 $body = get_include_contents('email_templates/salary-advance/new_application', $data);
                 $data['body'] = $body;
                 $email = get_include_contents('email_templates/salary-advance/main', $data);
-                $recipient_addresses = [$hod->email, $hr->email, $fmgr->email, $gmgr->email];
+                $recipient_addresses = [$hod->email];
                 foreach (array_keys($recipient_addresses, $current_user->email, true) as $key) {
                     // remove current user from email recipient address list
                     unset($recipient_addresses[$key]);
@@ -85,6 +85,7 @@ class SalaryAdvanceAjax extends Controller
                     insertEmail($subject, $body, $recipient_address);
                 }
                 $data['applicant_is_the_recipient'] = true;
+                $data['link'] =  URL_ROOT . '/salary-advance/index/' . $new_record[0]['id_salary_advance'];
                 $body = get_include_contents('email_templates/salary-advance/new_application', $data);
                 insertEmail($subject, $body, $current_user->email);
                 echo json_encode($new_record);

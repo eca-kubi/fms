@@ -61,6 +61,9 @@ class SalaryAdvanceManagerAjax extends Controller
     {
         $db = Database::getDbh();
         $post_data = [];
+        $hr = new User(getCurrentHR());
+        $fmgr = new User(getCurrentFgmr());
+        $gm = new User(getCurrentGM());
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Sanitize POST array
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
@@ -73,7 +76,7 @@ class SalaryAdvanceManagerAjax extends Controller
                 $applicant = new User($old_record['user_id']);
                 $ref_number = genDeptRef($old_record['department_id'], 'salary_advance');
                 $subject = "Salary Advance Application ($ref_number)";
-                $data = ['ref_number' => $ref_number, 'link' => URL_ROOT . '/salary-advance-manager/' . $old_record['id_salary_advance']];
+                $data = ['ref_number' => $ref_number, 'link' => URL_ROOT . '/salary-advance/index/' . $id_salary_advance];
                 if (isCurrentManagerForDepartment($old_record['department_id'], $current_user->user_id)) {
                     // Head of Department
                     $post_data['hod_approval'] =  $_POST['hod_approval'] === 'true' ? true : false;
@@ -112,6 +115,14 @@ class SalaryAdvanceManagerAjax extends Controller
                         $data['body'] = $body;
                         $email = get_include_contents('email_templates/salary-advance/main', $data);
                         insertEmail($subject, $email, $applicant->email);
+                        // send email to the next reviewer (HR)
+                        if ($data['approval']) {
+                            $data['link'] =  URL_ROOT . '/salary-advance-manager/index/' . $id_salary_advance;
+                            $body = get_include_contents('email_templates/salary-advance/review_after_approval', $data);
+                            $data['body'] = $body;
+                            $email = get_include_contents('email_templates/salary-advance/main', $data);
+                            insertEmail($subject, $email, $hr->email);
+                        }
                     } elseif (isCurrentHR($current_user->user_id)) {
                         $data['approval'] =  $post_data['hr_approval'];
                         $data['comment'] = $post_data['hr_comment'];
@@ -119,6 +130,14 @@ class SalaryAdvanceManagerAjax extends Controller
                         $data['body'] = $body;
                         $email = get_include_contents('email_templates/salary-advance/main', $data);
                         insertEmail($subject, $email, $applicant->email);
+                        // send email to the next reviewer (GM)
+                        if ($data['approval']) {
+                            $data['link'] =  URL_ROOT . '/salary-advance-manager/index/' . $id_salary_advance;
+                            $body = get_include_contents('email_templates/salary-advance/review_after_approval', $data);
+                            $data['body'] = $body;
+                            $email = get_include_contents('email_templates/salary-advance/main', $data);
+                            insertEmail($subject, $email, $gm->email);
+                        }
                     } elseif (isCurrentGM($current_user->user_id)) {
                         $data['approval'] =  $post_data['gm_approval'];
                         $data['comment'] = $post_data['gm_comment'];
@@ -126,6 +145,14 @@ class SalaryAdvanceManagerAjax extends Controller
                         $data['body'] = $body;
                         $email = get_include_contents('email_templates/salary-advance/main', $data);
                         insertEmail($subject, $email, $applicant->email);
+                        // send email to the next reviewer (FMgr)
+                        if ($data['approval']) {
+                            $data['link'] =  URL_ROOT . '/salary-advance-manager/index/' . $id_salary_advance;
+                            $body = get_include_contents('email_templates/salary-advance/review_after_approval', $data);
+                            $data['body'] = $body;
+                            $email = get_include_contents('email_templates/salary-advance/main', $data);
+                            insertEmail($subject, $email, $fmgr->email);
+                        }
                     } elseif (isCurrentFmgr($current_user->user_id)) {
                         $data['approval'] =  $post_data['fmgr_approval'];
                         $data['comment'] = $post_data['fmgr_comment'];

@@ -747,14 +747,14 @@ $universal->select_row_id = $select_row_id;
                 e.model.fields.percentage.editable = !e.model.fmgr_approval && universal['isFmgr'];*/
                 e.model.fields.amount_requested.editable = false;
                 e.model.fields.percentage.editable = false;
-                e.model.fields.hod_comment.editable = e.model.hod_approval == null;
                 e.model.fields.hod_approval.editable = e.model["hod_approval_editable"] && e.model.hod_approval == null;
-                e.model.fields.amount_payable.editable = universal['isHr'] && !Boolean(e.model.hr_approval);
-                e.model.fields.hr_approval.editable = universal['isHr'] && !Boolean(e.model.hr_approval_date);
-                e.model.fields.hr_comment.editable = universal['isHr'] && !Boolean(e.model.hr_comment);
-                e.model.fields.amount_approved.editable = universal['isFmgr'] && !Boolean(e.model.fmgr_approval_date);
-                e.model.fields.fmgr_approval.editable = universal['isFmgr'] && !Boolean(e.model.fmgr_approval_date) && Boolean(e.model.hr_approval);
-                e.model.fields.fmgr_comment.editable = Boolean(e.model["fmgr_comment_editable"]);
+                e.model.fields.hod_comment.editable = e.model["hod_comment_editable"] && e.model.hod_approval == null;
+                e.model.fields.hr_approval.editable = universal['isHr'] && e.model.hr_approval == null;
+                e.model.fields.hr_comment.editable = universal['isHr'] && e.model.hr_approval == null;
+                e.model.fields.amount_payable.editable = universal['isHr'] && e.model.hr_approval == null;
+                e.model.fields.fmgr_approval.editable =   universal['isFmgr'] && e.model.fmgr_approval == null;
+                e.model.fields.fmgr_comment.editable = universal['isFmgr'] && e.model.fmgr_approval == null;
+                e.model.fields.amount_approved.editable = universal['isFmgr'] && e.model.hr_approval == null;
             },
             edit: function (e) {
                 let nameLabelField = e.container.find('.k-edit-label:eq(0), .k-edit-field:eq(0)');
