@@ -6,23 +6,13 @@ class SalaryAdvanceAjax extends Controller
     {
         $db = Database::getDbh();
         $current_user = getUserSession();
-        if (isset($_GET['id_salary_advance'])) {
-            $id_salary_advance = $_GET['id_salary_advance'];
-            $db->where('id_salary_advance', $id_salary_advance)->where('user_id', $current_user->user_id)->where('deleted', false);
-            if ($db->has('salary_advance')) {
-                $record = $db->where('id_salary_advance', $id_salary_advance)->where('user_id', $current_user->user_id)->where('deleted', false)->get('salary_advance');
-                $transformed_record = transformArrayData($record);
-                echo json_encode($transformed_record, JSON_THROW_ON_ERROR, 512);
-            }
-        } else {
-            $records = [];
-            try {
-                $records = $db->where('user_id', $current_user->user_id)->orderBy('date_raised')->where('deleted', false)->get('salary_advance');
-            } catch (Exception $e) {
-            }
-            $transformed_records = transformArrayData($records);
-            echo json_encode($transformed_records, JSON_THROW_ON_ERROR, 512);
+        $records = [];
+        try {
+            $records = $db->where('user_id', $current_user->user_id)->orderBy('date_raised')->where('deleted', false)->get('salary_advance');
+        } catch (Exception $e) {
         }
+        $transformed_records = transformArrayData($records);
+        echo json_encode($transformed_records, JSON_THROW_ON_ERROR, 512);
     }
 
     public function Create(): void
@@ -31,15 +21,15 @@ class SalaryAdvanceAjax extends Controller
             $db = Database::getDbh();
             $current_user = getUserSession();
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-            $ret = [];/*
+            $ret = [];
             if (hasActiveApplication($current_user->user_id)) {
                 $ret['success'] = false;
                 $ret['reason'] = 'You already have an active application for this month!';
                 $ret['has_active_application'] = true;
                 $ret['errors'] = ['message' => 'An Application is Active!', 'code' => ERROR_AN_APPLICATION_ALREADY_EXISTS];
-                echo json_encode($ret);
+                echo json_encode($ret, JSON_THROW_ON_ERROR, 512);
                 return;
-            }*/
+            }
             $data = [
                 'amount_requested_is_percentage' => $_POST['amount_requested_is_percentage'] === 'true',
                 'amount_requested' => $_POST['amount_requested'] ?: null,
@@ -187,45 +177,4 @@ class SalaryAdvanceAjax extends Controller
         }
         echo json_encode($ret, JSON_THROW_ON_ERROR, 512);
     }
-
-    /*    private function transformArrayData($ret)
-        {
-            $current_user = getUserSession();
-            $fmgr = getCurrentFgmr();
-            $hr = getCurrentHR();
-            foreach ($ret as $key => &$value) {
-                $hod = getCurrentManager($value['department_id']);
-                $employee = new stdClass();
-                $employee->name = concatNameWithUserId($value['user_id']);
-                $employee->user_id = $value['user_id'];
-                $employee->department = getDepartment($value['user_id']);
-                $value['department'] = $employee->department;
-                $value['employee'] = $employee;
-                unset($value['password']);
-                if ($hod == $current_user->user_id) {
-                    $value['hod_comment_editable'] = true;
-                    $value['hod_approval_editable'] = true;
-                } else {
-                    $value['hod_comment_editable'] = false;
-                    $value['hod_approval_editable'] = false;
-                }
-                if ($hr == $current_user->user_id && $value['hod_approval']) {
-                    $value['hr_comment_editable'] = true;
-                    $value['hr_approval_editable'] = true;
-                } else {
-                    $value['hr_comment_editable'] = false;
-                    $value['hr_approval_editable'] = false;
-                }
-                if ($fmgr == $current_user->user_id && $value['hr_approval']) {
-                    $value['fmgr_comment_editable'] = true;
-                    $value['fmgr_approval_editable'] = true;
-                    $value['amount_requested_editable'] = true;
-                } else {
-                    $value['fmgr_comment_editable'] = false;
-                    $value['fmgr_approval_editable'] = false;
-                    $value['amount_requested_editable'] = false;
-                }
-            }
-            return $ret;
-        }*/
 }
