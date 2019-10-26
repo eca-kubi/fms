@@ -35,6 +35,7 @@ let summaryTemplate = `<div class="">
         #=date_received? '<b>Date Received: </b>' + kendo.toString(kendo.parseDate(date_received), 'dddd dd MMM, yyyy')+'</br>': '' #
         #=received_by? '<b>Received by: </b>' + received_by  +'</br>': '' #
     </div>`;
+let gridGuids = [];
 $(document).ready(function () {
     jQuery.fx.off = true;
     URL_ROOT = $('#url_root').val();
@@ -52,7 +53,6 @@ $(document).ready(function () {
         let $this = $(e.currentTarget);
         $this.find('input[type=text]:first').focus();
     });
-
     //$('form[data-toggle=validator] input[type=text]:not([readonly]):first').focus();
 
     $(window).resize(function () {
@@ -106,15 +106,8 @@ window.addEventListener("load", function () {
 });
 
 function dropDownEditor(container, options) {
-    $('<input id="employeeDropDownList"  required name="' + options.field + '" data-bind="value:name" data-required-msg="Employee is required!"/>')
+    $('<input id="employeeDropDownList"  required name="' + options.field + '" data-bind="value:name" data-bind="text:name" data-required-msg="Please select an employee!"/>')
         .appendTo(container)
-        .on('change', function () {
-            console.log('');
-            //let option = options;
-            //let contain = container;
-            //options.model.department = options.model.employee.department;
-            // options.model.name = options.model.employee.name;
-        })
         .kendoDropDownList({
             dataTextField: "employee.name",
             dataValueField: "employee.user_id",
@@ -127,43 +120,44 @@ function dropDownEditor(container, options) {
                 },
                 group: {field: 'department_short_name'}
             },
-            dataBound: function () {
+            dataBound: function (e) {
                 let kDropDownList = $("#employeeDropDownList").data("kendoDropDownList");
+                let grid = $salaryAdvanceGrid.data('kendoGrid');
                 let data = kDropDownList.dataSource.data();
-                //Iterate over the dataItems and search for a value.
-                for (let x = 0; x < data.length; x++) {
-                    if (data[x].has_active_application) {
-                        //removes item
-                        kDropDownList.dataSource.remove(data[x]);
-                        //selects first item
-                        //kDropDownList.select(0);
+                let model = grid.dataSource.getByUid(grid_uid);
+                let models = grid.dataSource.data();
+
+                e.sender.select(function (dataItem) {
+                    return dataItem.name === model.name;
+                });
+
+
+              /*  if (model.isNew()) {
+                    for (let x = 0; x < data.length; x++) {
+                        models.foreach(function (m) {
+                            if (m.name === data['x'].name) {
+
+                            }
+                            Object.values(m).includes(data[x]);
+                        });
+
+                        if (data[x].has_active_application) {
+                            kDropDownList.dataSource.remove(data[x]);
+                        }
                     }
-                }
+                }*/
+            },
+            change: function (e) {
+                let dropDownList = this;
+                let dataItem = dropDownList.dataItem(dropDownList.selectedIndex - 1);
+                let model = salaryAdvanceDataSource.getByUid(grid_uid);
+                gridGuids[grid_uid] = grid_uid;
             },
             filter: "contains",
             suggest: true,
-            select: function (e) {
-                //console.log('select')
-            },
-            change: function (e) {
-                let grid = $salaryAdvanceGrid["data"]('kendoGrid');
-                let model = grid.dataSource.getByUid(grid_uid);
-                let selectedIndex = e.sender.selectedIndex;
-                if (selectedIndex) {
-                    let data = e.sender.dataSource.at(selectedIndex - 1);
-                    model.user_id = data.user_id;
-                    model.department = data.department;
-                    model.department_id = data.department_id;
-                }
-                //grid.refresh();
-                //console.log('change');
-            },
-            close: function (e) {
-                //console.log('close')
-            },
             optionLabel: "Select an Employee",
-            //index: 1
         });
+    container.append('<span class="k-invalid-msg" data-for="name"></span>')
 }
 
 function textAreaEditor(container, options) {

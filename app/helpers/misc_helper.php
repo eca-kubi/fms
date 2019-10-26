@@ -1,4 +1,4 @@
-<?php /** @noinspection ALL */
+<?php
 function arrToObj($arr)
 {
     return json_decode(json_encode($arr));
@@ -780,7 +780,7 @@ function echoInComplete($append = '')
  * @param $recipient_name string
  * @return bool
  */
-function insertEmail($subject, $body, $recipient_address, $recipient_name='')
+function insertEmail($subject, $body, $recipient_address, $recipient_name = '')
 {
     $email_model = new EmailModel();
     return $email_model->add([
@@ -862,13 +862,16 @@ function getDepartmentID($user_id)
     return (new User($user_id))->department_id;
 }
 
-function isCurrentHR($user_id) {
+function isCurrentHR($user_id)
+{
     return getCurrentHR() == $user_id;
 }
 
-function isCurrentFmgr($user_id) {
+function isCurrentFmgr($user_id)
+{
     return getCurrentFgmr() == $user_id;
 }
+
 function getCurrentHR()
 {
     return
@@ -896,7 +899,7 @@ function isTheApplicant($user_id, $id_salary_advance)
     return $salary_advance->user_id == $user_id;
 }
 
- function transformArrayData(array $ret)
+function transformArrayData(array $ret)
 {
     $current_user = getUserSession();
     foreach ($ret as $key => &$value) {
@@ -914,6 +917,7 @@ function isTheApplicant($user_id, $id_salary_advance)
     }
     return $ret;
 }
+
 /**
  * @param $user_id
  * @return string
@@ -1053,18 +1057,6 @@ function getDepartmentMembers($department_id)
         ->get('users');
 }
 
-function script($content)
-{
-    echo <<<heredoc
-<script>
-$(
-    $content
-);
-</script>
-heredoc;
-
-}
-
 function setReminder($cms_form_id, $interval, $limit)
 {
     $ret = false;
@@ -1108,18 +1100,16 @@ function getUnrespondedDeptStatus($cms_form_id)
         ->get('impact_ass_status');
 }
 
-function get_include_contents($filename, $variablesToMakeLocal)
+function get_include_contents($filename, $variablesToMakeLocal) : string
 {
-    extract($variablesToMakeLocal);
+    extract($variablesToMakeLocal, EXTR_OVERWRITE);
     $file = APP_ROOT . "/templates/$filename.php";
     if (is_file($file)) {
         ob_start();
         require($file);
-        $body = ob_get_clean();
-        return $body;
-    } else {
-        return "";
+        return ob_get_clean();
     }
+    return '';
 }
 
 function getRemindersPending()
@@ -1346,38 +1336,46 @@ function isManager($user_id)
     return $user_role == ROLE_SUPERINTENDENT;
 }
 
-function isCurrentManager($user_id) {
+function isCurrentManager($user_id)
+{
     $db = Database::getDbh();
     return $db->where('current_manager', $user_id)->has('departments');
 }
 
-function isITAdmin($user_id) {
+function isITAdmin($user_id)
+{
 
 }
 
 function isSecretary($user_id)
 {
     $user_role = (new User($user_id))->role;
-    return $user_role == ROLE_SECRETARY;
+    return $user_role === ROLE_SECRETARY;
 }
+
+function isAssignedAsSecretary($user_id)
+{
+    $db = Database::getDbh();
+    return $db->where('user_id', $user_id)->has('assigned_as_secretary');
+}
+
 
 function isSuperintendent($user_id)
 {
     $user_role = (new User($user_id))->role;
-    return in_array($user_role, ADMIN);
+    return in_array($user_role, ADMIN, true);
 }
 
-function getMembersAssignedToSecretary($user_id)
+function getMembersAssignedToSecretary($user_id) : array
 {
     $db = Database::getDbh();
-    $ret = $db->where('user_id', $user_id)
-        ->get('salary_advance_secretary');
-    foreach ($ret as $item) {
-        $db->orWhere('department_id', $item['department_assigned']);
+    $department_members = [];
+    $department_id = $db->where('user_id', $user_id)->getValue('assigned_as_secretary', 'department_id');
+    try {
+        $department_members = $db->where('department_id', $department_id)->orderBy('first_name', 'ASC')->get('users');
+    } catch (Exception $e) {
     }
-    return $db->orderBy('first_name', 'ASC')
-        ->get('users');
-
+    return $department_members;
 }
 
 function getSalaryAdvanceBySecretary($user_id)

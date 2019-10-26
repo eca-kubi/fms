@@ -79,4 +79,4 @@
 <script src="http://kendo.cdn.telerik.com/2019.2.514/js/jszip.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/jQuery-printPage/jquery.printPage.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/bundle.js?<?php echo microtime(); ?>"></script>
-<script src="<?php echo URL_ROOT; ?>/public/custom-assets/js/custom.js?<?php echo  microtime(); ?>"></script>
+<script src="<?php echo URL_ROOT; ?>/public/custom-assets/js/custom.js?<?php //echo  microtime(); ?>"></script>

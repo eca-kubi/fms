@@ -17,6 +17,6 @@ class SalaryAdvanceManager extends Controller
         if ($id_salary_advance && !$db->where('id_salary_advance', $id_salary_advance)->has('salary_advance')) {
             redirect('errors/index/404');
         }
-        $this->view('salary-advance-manager/all', $payload);
+        $this->view('salary-advance-manager/index', $payload);
     }
 }

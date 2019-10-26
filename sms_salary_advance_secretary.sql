@@ -6,5 +6,5 @@ create table salary_advance_secretary
     department_assigned int null
 );
 
-INSERT INTO sms.salary_advance_secretary (id, user_id, department_assigned) VALUES (1, 26, 10);
-INSERT INTO sms.salary_advance_secretary (id, user_id, department_assigned) VALUES (2, 28, 13);
+INSERT INTO sms.assigned_as_secretary (id, user_id, department_id) VALUES (1, 26, 10);
+INSERT INTO sms.assigned_as_secretary (id, user_id, department_id) VALUES (2, 28, 13);

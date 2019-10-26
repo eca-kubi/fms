@@ -1,36 +1,13 @@
-<?php /** @noinspection ALL */
-
-use Simple\json;
+<?php
 
 class EmployeesAjax extends Controller
 {
-    /**
-     * ActionLists constructor.
-     */
-    public function __construct()
+    public function index(): void
     {
-        parent::__construct();
-        /* if (!isLoggedIn()) {
-             redirect('users/login');
-         }*/
-    }
-
-    public function index()
-    {
-        // Get posts
         $current_user = getUserSession();
         $db = Database::getDbh();
-        $ret = [];
-        if (isset($_GET['user_id'])) {
-            $ret = User::get(['user_id' => $_GET['user_id']]);
-        } else {
-            if (isSecretary($current_user->user_id)) {
-                $ret = getMembersAssignedToSecretary($current_user->user_id);
-            } else{
-                $ret = $db->orderBy('first_name', 'ASC')->get('users');
-            }
-        }
-        foreach ($ret as $key => &$value) {
+        $department_members = getMembersAssignedToSecretary($current_user->user_id);
+        foreach ($department_members as $key => &$value) {
             if (hasActiveApplication($value['user_id'])) {
                $value['has_active_application'] = true;
             }
@@ -45,21 +22,7 @@ class EmployeesAjax extends Controller
             $value['department'] = $employee->department;
             unset($value['password']);
         }
-        echo json_encode($ret);
-    }
-
-    public function Create()
-    {
-    }
-
-    /**
-     * @param $id_salary_advance
-     */
-    public function Update($id_salary_advance)
-    {
-    }
-
-    public function Destroy()
-    {
+        unset($value);
+        echo json_encode($department_members, JSON_THROW_ON_ERROR, 512);
     }
 }

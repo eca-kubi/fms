@@ -56,11 +56,13 @@ const ACTION_SALARY_ADVANCE_DELETED= 'Salary Advance Deleted';
 const STATUS_PENDING_HR_APPROVAL = 'Pending HR Approval';
 const STATUS_PENDING_FMGR_APPROVAL = 'Pending Financial Manager Approval';
 const STATUS_PENDING_HOD_APPROVAL = 'Pending HoD Approval';
+const STATUS_IMPACT_ASSESSMENT_RESPONSE_PENDING = ' Impact Assessment Response Pending';
 const CURRENCY_GHS = "GH₵";
 const ADMIN = [
     'Superintendent',
     'Manager'
 ];
+const DB_TABLES = ['assigned_as_secretary'];
 const ROLE_SECRETARY = 'Secretary';
 
 include_once(APP_ROOT . '/helpers/error_codes.php');
