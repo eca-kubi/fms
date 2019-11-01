@@ -38,6 +38,16 @@ html:hover {
     background: transparent;
     !* optional: just make scrollbar invisible *!
 }*/
+
+
+td.action {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -7.5px;
+    margin-left: -7.5px;
+    padding-bottom: 0.25rem !important;
+}
+
 .salary-advance-details label
 {
     display:inline-block;

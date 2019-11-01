@@ -26,13 +26,12 @@ class User
     public $can_change_gm;
     public $default_password;
     public $can_change_dept_mgr;
-    private $db;
+    public $basic_salary;
 
     public function __construct($user_id = '')
     {
-        $this->db = Database::getDbh();
         if (!empty($user_id)) {
-            $ret = $this->db->where('user_id', $user_id)
+            $ret = Database::getDbh()->where('user_id', $user_id)
                 ->objectBuilder()
                 ->get('users');
             foreach ($ret as $row) {
@@ -68,7 +67,7 @@ class User
         return false;
     }
 
-    public static function get(array $where = null)
+    public static function get(array $where = null): array
     {
         $db = Database::getDbh();
         if (!empty($where)) {
@@ -76,7 +75,6 @@ class User
                 $db->where($col, $value);
             }
         }
-        return $db->objectBuilder()
-            ->get('users');
+        return $db->objectBuilder()->get('users');
     }
 }

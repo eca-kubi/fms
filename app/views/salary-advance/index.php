@@ -68,11 +68,12 @@ $universal->hr_comment_editable = $universal->isHr = getCurrentHR() === $current
 $universal->fgmr_comment_editable = $universal->isFmgr = getCurrentFgmr() === $current_user->user_id;
 /** @var int|null $select_row_id */
 $universal->select_row_id = $select_row_id;
+$universal->has_active_application = hasActiveApplication($current_user->user_id);
 ?>
 <!--suppress HtmlUnknownTarget -->
 <script>
     /*Error constants*/
-    const dbg_turn_off_disable_add_button = true;
+    const dbg_turn_off_disable_add_button = false;
     const ERROR_UNSPECIFIED_ERROR = 'E_1000';
     const ERROR_AN_APPLICATION_ALREADY_EXISTS = 'E_1001';
     const ERROR_APPLICATION_ALREADY_REVIEWED = 'E_1002';
@@ -262,6 +263,10 @@ $universal->select_row_id = $select_row_id;
                             type: 'boolean',
                             defaultValue: true
                         },
+                        basic_salary: {
+                            type: "number",
+                            defaultValue: 1000.00
+                        }
                     }
                 },
                 parse: function(data) {
@@ -281,7 +286,7 @@ $universal->select_row_id = $select_row_id;
             noRecords: true,
             navigatable: true,
             persistSelection: true,
-            toolbar: [{ name: "create", text: "Request Salary Advance"},  {name: "excel"} ],
+            toolbar: [{ name: "create", text: "Request Salary Advance", iconClass: "k-icon k-i-add text-primary"},  {name: "excel", iconClass: "text-primary", template: $("#exportToExcel").html()} ],
             excel: {
                 fileName: "Salary Advance Export.xlsx",
                 //proxyURL: "https://demos.telerik.com/kendo-ui/service/export",
@@ -325,6 +330,7 @@ $universal->select_row_id = $select_row_id;
             height: 520,
             resizable: true,
             scrollable: true,
+            columnResizeHandleWidth: 30,
             pageable: {
                 alwaysVisible: false,
                 pageSizes: [20, 40, 60, 80, 100],
@@ -332,13 +338,22 @@ $universal->select_row_id = $select_row_id;
             },
             columns: [
                 {
+                    attributes: {class: "action"},
+                    command: [{
+                        name: "edit", text: "Edit", iconClass: {edit: "k-icon k-i-edit"}, className: "badge badge-success btn k-button text-black border"},
+                        {name: "print", template: $("#printButton").html()}],
+                    headerAttributes: {class: "title"},
+                    title: "Action",
+                    width: 190
+                },
+                {
                     field: 'date_raised',
                     title: 'Date Raised',
                     headerAttributes: {
                         "class": "title"
                     },
                     width: 450,
-                    groupHeaderTemplate: "Date Raised: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') #",
+                    groupHeaderTemplate: "Date Raised: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') #",
                     filterable: {
                         cell: {
                             template: dateRangeFilter
@@ -348,30 +363,30 @@ $universal->select_row_id = $select_row_id;
                 },
                 {
                     field: 'percentage',
-                    title: 'Amount Requested in Percentage',
+                    title: 'Amount in Percentage',
                     template: function (dataItem) {
                         return "<span>" + (dataItem.percentage ? kendo.toString(dataItem.percentage, '#\\%') : '') + "</span>"
                     },
                     headerAttributes: {
                         "class": "title"
                     },
-                    width: 280,
-                    groupHeaderTemplate: "Amount Requested in Percentage: #= value? value + '%' : '' #",
+                    width: 250,
+                    groupHeaderTemplate: "Amount in Percentage: #= value? value + '%' : '' #",
                     aggregates: ["max", "min"],
                     format: "{0:#\\%}",
                     filterable: false
                 },
                 {
                     field: 'amount_requested',
-                    title: 'Amount Requested in Figures',
-                    width: 280,
+                    title: 'Amount in Figures',
+                    width: 250,
                     template: function (dataItem) {
                         return "<span>" + (dataItem.amount_requested ? kendo.format('{0:c}', dataItem.amount_requested) : '') + "</span>"
                     },
                     headerAttributes: {
                         "class": "title"
                     },
-                    groupHeaderTemplate: "Amount Requested in Figures: #=  value ? kendo.format('{0:c}', value) : ''#",
+                    groupHeaderTemplate: "Amount in Figures: #=  value ? kendo.format('{0:c}', value) : ''#",
                     aggregates: ["max", "min", "count"],
                     format: "{0:c}",
                     filterable: false
@@ -430,7 +445,7 @@ $universal->select_row_id = $select_row_id;
                         return "<span>" + date + "</span>";
                     },
                     width: 200,
-                    groupHeaderTemplate: "Date Raised: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') : '' #",
+                    groupHeaderTemplate: "Date Raised: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : '' #",
                     hidden: false,
                     filterable: false
 
@@ -498,7 +513,7 @@ $universal->select_row_id = $select_row_id;
                         return "<span>" + date + "</span>";
                     },
                     width: 200,
-                    groupHeaderTemplate: "HR Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') : '' #",
+                    groupHeaderTemplate: "HR Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : '' #",
                     hidden: false,
                     filterable: false
 
@@ -566,7 +581,7 @@ $universal->select_row_id = $select_row_id;
                         return "<span>" + date + "</span>";
                     },
                     width: 200,
-                    groupHeaderTemplate: "Finance Mgr. Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') : '' #",
+                    groupHeaderTemplate: "Finance Mgr. Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : '' #",
                     hidden: false,
                     filterable: false
 
@@ -624,24 +639,6 @@ $universal->select_row_id = $select_row_id;
                             template: dateRangeFilter
                         }
                     }
-                },
-                {
-                    template: "<span class='text-center action-tools'>" +
-                        "<span class='col' title=''><a href='javascript:' class='action-edit badge badge-success btn k-button text-black border'><i class='k-icon k-i-edit'></i>Review</a></span>" +
-                        "<span class='col d-none' title=''><a href='javascript:' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span>" +
-                        "<span class='col d-none' title=''><a href='javascript:' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
-                        "<span class='col' title=''><a href='\\#' class='text-black action-print print-it badge badge-primary btn k-button border' target='_blank'><i class='k-icon k-i-printer'></i>Print</a></span>" +
-                        "</span>",
-                    width: 250,
-                    title: "Action",
-                    headerAttributes: {
-                        "class": "title"
-                    },
-                    attributes: {
-                        class: 'action'
-                    },
-                    /*locked: true,
-                    lockable: true*/
                 }
             ],
             detailTemplate: kendo.template($("#detailTemplate").html()),
@@ -664,7 +661,7 @@ $universal->select_row_id = $select_row_id;
                 filterRow.find('th.k-hierarchy-cell').hide();
                 filterRow.find('th.k-hierarchy-cell').next('th').attr('colspan', 2);
                 if (universal["has_active_application"]) {
-                    //disableGridAddButton();
+                    disableGridAddButton();
                 }
                 if (!currentRowSelected && universal['select_row_id']) {
                     selectGridRow(universal["select_row_id"], grid, dataSource, 'id_salary_advance');
@@ -768,9 +765,9 @@ $universal->select_row_id = $select_row_id;
                     percentageLabelField.toggle(true);
                 }
 
-                var title = $(e.container).parent().find(".k-window-title");
-                var update = $(e.container).parent().find(".k-grid-update");
-                var cancel = $(e.container).parent().find(".k-grid-cancel");
+                let title = $(e.container).parent().find(".k-window-title");
+                let update = $(e.container).parent().find(".k-grid-update");
+                let cancel = $(e.container).parent().find(".k-grid-cancel");
                 $(title).text('');
                 $(update).html('<span class="k-icon k-i-check"></span>OK');
                 $(cancel).html('<span class="k-icon k-i-cancel"></span>Cancel');
@@ -815,7 +812,6 @@ $universal->select_row_id = $select_row_id;
             } else {
                 currentRow = grid.currentRow();
             }
-            let dataItem = grid.dataItem(currentRow);
             grid.editRow(currentRow);
             let actionTools = target.parent('.action-tools');
             actionTools.html("<span class='col'><a href='#' class='text-success action-confirm-edit'><i class='fa fa-check'></i></a></span>" +
@@ -885,13 +881,14 @@ $universal->select_row_id = $select_row_id;
     function disableGridAddButton() {
         if (!dbg_turn_off_disable_add_button)
             kGridAddButton.attr('disabled', 'disabled')
+                .attr("title", "You have an active salary advance request for this month!")
                 .removeClass("k-grid-add")
                 .addClass("k-state-disabled k-grid-add-disabled")
                 .removeAttr("href");
     }
 
     function enableGridAddButton() {
-        kGridAddButton.removeAttr('disabled')
+        kGridAddButton.removeAttr('disabled').removeAttr("title")
             .addClass('k-grid-add')
             .removeClass('k-state-disabled k-grid-add-disabled')
             .attr('href', '#');

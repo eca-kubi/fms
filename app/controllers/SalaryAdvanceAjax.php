@@ -65,7 +65,7 @@ class SalaryAdvanceAjax extends Controller
                 $data['body'] = $body;
                 $email = get_include_contents('email_templates/salary-advance/main', $data);
                 insertEmail($subject, $email, $current_user->email);
-                echo json_encode($new_record, JSON_THROW_ON_ERROR, 512);
+                echo json_encode(transformArrayData($new_record), JSON_THROW_ON_ERROR, 512);
             } else {
                 $ret['errors'] = [['message' => 'Failed to add record.', 'code' => ERROR_UNSPECIFIED_ERROR]];
                 echo json_encode($ret, JSON_THROW_ON_ERROR, 512);
@@ -125,6 +125,7 @@ class SalaryAdvanceAjax extends Controller
     {
         $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         $current_user = getUserSession();
+        $db = Database::getDbh();
         $ret = [];
         $old_ret = Database::getDbh()->where('id_salary_advance', $_POST['id_salary_advance'])
             ->getOne('salary_advance');
@@ -144,7 +145,7 @@ class SalaryAdvanceAjax extends Controller
             $ret[] = $old_ret;
             $ret['errors'] = ['message' => 'HR has already reviewed this application!', 'code' => ERROR_APPLICATION_ALREADY_REVIEWED];
         } else {
-            $ret = Database::getDbh()->where('id_salary_advance', $_POST['id_salary_advance'])
+            $ret = $db->where('id_salary_advance', $_POST['id_salary_advance'])
                 ->update('salary_advance', ['deleted' => true]);
             $data['department_ref'] = Database::getDbh()->where('id_salary_advance', $_POST['id_salary_advance'])
                 ->getValue('salary_advance', 'department_ref');

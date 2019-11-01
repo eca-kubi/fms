@@ -26,26 +26,6 @@ class SalaryAdvanceFinanceOfficerAjax extends Controller
         echo json_encode($salary_advances);
     }
 
-    private function transformArrayData($ret)
-    {
-        $current_user = getUserSession();
-        $fmgr = getCurrentFgmr();
-        $hr = getCurrentHR();
-        foreach ($ret as $key => &$value) {
-            $hod = getCurrentManager($value['department_id']);
-            $employee = new stdClass();
-            $employee->user_id = $value['user_id'];
-            $employee->name = concatNameWithUserId($value['user_id']);
-            $employee->department = getDepartment((new User($value['user_id']))->department_id);
-            $value['employee'] = $employee;
-            $value['name'] = $employee->name;
-            $value['department'] = $employee->department;
-            $value['raised_by'] = $value['raised_by_id'] ? concatNameWithUserId($value['raised_by_id']) : "";
-            unset($value['password']);
-        }
-        return $ret;
-    }
-
     public function Create()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {

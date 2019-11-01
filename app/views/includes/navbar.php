@@ -86,7 +86,7 @@
                     <?php
                     $user = getUserSession();
                     $initials = $user->first_name[0] . $user->last_name[0];
-                    if ($user->profile_pic == DEFAULT_PROFILE_PIC) {
+                    if ($user->profile_pic === DEFAULT_PROFILE_PIC) {
                         $name = $user->first_name . ' ' . $user->last_name;
                         $src = PROFILE_PIC_DIR . $user->profile_pic . '?' . microtime();
                         echo "<img  alt='<?php echo $initials ?>' avatar=\"$name\" src=\"$src\" class=\"user-image img-size-32 img-fluid img-circle d-inline-block\" >";
@@ -105,7 +105,7 @@
                     <li class="user-body">
                         <div class="col fa p-2">
                             <?php
-                            if ($user->profile_pic == DEFAULT_PROFILE_PIC) {
+                            if ($user->profile_pic === DEFAULT_PROFILE_PIC) {
                                 $initials = $user->first_name[0] . $user->last_name[0];
                                 $name = $user->first_name . ' ' . $user->last_name;
                                 echo "<img alt='<?php echo $initials ?>' class=\"user-image img-size-32 img-fluid img-circle d-inline-block \" avatar=\"$name\" >";
@@ -259,7 +259,8 @@
                         </li>
                     </ul>
                 </li>
-                <?php if ($current_user->role == ROLE_SECRETARY || $current_user->role == ROLE_MANAGER || $current_user->role == ROLE_SUPERINTENDENT || isFinanceOfficer($current_user->user_id)) { ?>
+                <?php $is_secretary = isAssignedAsSecretary($current_user->user_id);  $is_current_manager = isCurrentManager($current_user->user_id)?>
+                <?php if ($is_secretary || $is_current_manager) { ?>
                     <li class="nav-item dropdown fa  mx-2">
                         <a class="nav-link dropdown-item text-warning dropdown-toggle btn border-0 text-bold flat"
                            data-toggle="dropdown">
@@ -271,12 +272,12 @@
                             <li><a class="dropdown-item"
                                    href="<?php echo site_url('salary-advance') ?>">User</a>
                             </li>
-                            <?php if ($current_user->role == ROLE_SECRETARY) { ?>
+                            <?php if ($is_secretary) { ?>
                                 <li><a class="dropdown-item"
-                                       href="<?php echo site_url('salary-advance-secretary') ?>">Secretary</a>
+                                       href="<?php echo site_url('salary-advance/bulk-requests') ?>">Secretary</a>
                                 </li>
                             <?php } ?>
-                            <?php if ($current_user->role == ROLE_MANAGER || $current_user->role == ROLE_SUPERINTENDENT) { ?>
+                            <?php if ($is_current_manager) { ?>
                                 <li class="dropdown-divider"></li>
                                 <li>
                                     <a class="dropdown-item" href="<?php echo site_url('salary-advance-manager') ?>">
@@ -284,19 +285,21 @@
                                     </a>
                                 </li>
                             <?php } ?>
-                            <?php if (isFinanceOfficer($current_user->user_id)) { ?>
-                                <li class="dropdown-divider"></li>
-                                <li>
-                                    <a class="dropdown-item" href="<?php echo site_url('salary-advance-finance-officer') ?>">
-                                        Finance Officer
-                                    </a>
-                                </li>
-                            <?php } ?>
-
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown fa mx-2">
+                        <a class="nav-link dropdown-item text-warning dropdown-toggle btn border-0 text-bold flat" data-toggle="dropdown">
+                            <i class="k-icon k-i-aggregate-fields"></i>
+                            Bulk Requests
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownId" style="position:absolute">
+                            <li class="<?php echo $is_secretary? : 'd-none' ?>"><a class="dropdown-item" href="<?php echo site_url('salary-advance/new-bulk-request') ?>">Create Bulk Request</a>
+                            </li>
+                            <li><a class="dropdown-item" href="<?php echo site_url('salary-advance/bulk-requests') ?>">View Bulk Requests</a>
+                            </li>
                         </ul>
                     </li>
                 <?php } ?>
-
             </ul>
         </div>
     </nav>

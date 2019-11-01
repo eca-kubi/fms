@@ -1,12 +1,12 @@
-<?php /** @var array $payload */
-$salary_advance = $payload['salary_advance'];
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Salary Advance</title>
-    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/w3.css"/>
+    <link rel="stylesheet" href="<?php use Moment\CustomFormats\MomentJs;
+    use Moment\Moment;
+
+    echo URL_ROOT; ?>/public/assets/css/w3.css"/>
     <link rel="stylesheet" media="all" href="<?php echo URL_ROOT; ?>/public/assets/css/adminlte.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/adminlte-miscellaneous.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/box-widget.css"/>
@@ -36,10 +36,11 @@ $salary_advance = $payload['salary_advance'];
         <div class="col-11">
             <h5 class="font-raleway font-weight-bold mb-0 text-uppercase h3">Salary Advance
             </h5>
-            <small class="text-bold">[<?php echo $salary_advance->department_ref; ?>]</small>
+            <small class="text-bold">[<?php /** @var SalaryAdvanceModel $salary_advance */
+                echo $salary_advance->department_ref; ?>]</small>
         </div>
         <div class="col-1">
-            <img class="img-size-64" src="<?php echo site_url("public/assets/images/adamus.jpg") ?>" alt="">
+            <img class="img-size-64" src="<?php echo site_url('public/assets/images/adamus.jpg') ?>" alt="">
         </div>
     </header>
     <!-- .content-wrapper -->
@@ -85,7 +86,7 @@ $salary_advance = $payload['salary_advance'];
                                 of <?php echo CURRENCY_GHS . number_format($salary_advance->amount_approved, 2); ?> of
                                 my basic salary as
                                 advance against the month of <u><?php try {
-                                        echo (new \Moment\Moment($salary_advance->date_raised))->addMonths(1)->format('MMMM', new \Moment\CustomFormats\MomentJs());
+                                        echo (new Moment($salary_advance->date_raised))->addMonths(1)->format('MMMM', new MomentJs());
                                     } catch (Exception $e) {
                                     } ?></u></p>
                         </div>

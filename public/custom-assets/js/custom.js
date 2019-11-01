@@ -13,6 +13,8 @@ let expandedRows = [];
 let firstDayOfMonth = moment().startOf('month').format('YYYY-MM-DD');
 let lastDayOfMonth =  moment().endOf('month').format('YYYY-MM-DD');
 let kDefaultCalendar;
+let saveActiveApplicants = true;
+let activeApplicants = [];
 let summaryTemplate = `<div class="">
         <b>Action</b>:  #= "<span class='text-center action-tools'>" +
                         "<span class='col' title=''><a href='javascript:' class='action-edit badge badge-success btn k-button text-black in-detail-row border'><i class='k-icon k-i-edit'></i>Review</a></span>" +
@@ -35,7 +37,6 @@ let summaryTemplate = `<div class="">
         #=date_received? '<b>Date Received: </b>' + kendo.toString(kendo.parseDate(date_received), 'dddd dd MMM, yyyy')+'</br>': '' #
         #=received_by? '<b>Received by: </b>' + received_by  +'</br>': '' #
     </div>`;
-let gridGuids = [];
 $(document).ready(function () {
     jQuery.fx.off = true;
     URL_ROOT = $('#url_root').val();
@@ -125,37 +126,41 @@ function dropDownEditor(container, options) {
                 let grid = $salaryAdvanceGrid.data('kendoGrid');
                 let data = kDropDownList.dataSource.data();
                 let model = grid.dataSource.getByUid(grid_uid);
-                let models = grid.dataSource.data();
 
                 e.sender.select(function (dataItem) {
                     return dataItem.name === model.name;
                 });
 
-
-              /*  if (model.isNew()) {
-                    for (let x = 0; x < data.length; x++) {
-                        models.foreach(function (m) {
-                            if (m.name === data['x'].name) {
-
-                            }
-                            Object.values(m).includes(data[x]);
-                        });
-
-                        if (data[x].has_active_application) {
-                            kDropDownList.dataSource.remove(data[x]);
-                        }
+                for (let i = 0; i < data.length; i++) {
+                    if (saveActiveApplicants && data[i]["has_active_application"]) {
+                        activeApplicants.push(data[i].name);
                     }
-                }*/
+                }
+                saveActiveApplicants = !saveActiveApplicants;
             },
-            change: function (e) {
-                let dropDownList = this;
-                let dataItem = dropDownList.dataItem(dropDownList.selectedIndex - 1);
-                let model = salaryAdvanceDataSource.getByUid(grid_uid);
-                gridGuids[grid_uid] = grid_uid;
+            select: function (e) {
+                if (e.item.hasClass("k-state-disabled")) {
+                    e.preventDefault();
+                }
+            },
+            open: function (e) {
+                let grid = $salaryAdvanceGrid.data('kendoGrid');
+                let model = grid.dataSource.getByUid(grid_uid);
+                e.sender.ul.find("li").each(function () {
+                    let li = $(this);
+                    if (bulkApplicants.includes(li.text()) && model.name !== li.text() || activeApplicants.includes(li.text())) {
+                        li.addClass("k-state-disabled cursor-disabled");
+                       li.attr("title", "This employee has already been selected or has an active application!");
+                    } else {
+                        li.removeClass("k-state-disabled cursor-disabled");
+                        li.removeAttr("title");
+                    }
+                });
             },
             filter: "contains",
             suggest: true,
             optionLabel: "Select an Employee",
+            //template: kendo.template($("#employeeDropDownListTemplate").html())
         });
     container.append('<span class="k-invalid-msg" data-for="name"></span>')
 }

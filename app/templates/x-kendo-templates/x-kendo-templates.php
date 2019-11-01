@@ -1,7 +1,12 @@
+<?php
+$current_user = getUserSession();
+$is_secretary = isAssignedAsSecretary($current_user->user_id);
+?>
+
 <script type="text/x-kendo-template" id="detailTemplate">
     <div class="salary-advance-details">
         <ul style="list-style: none">
-            <li><label>Action:</label>
+            <li class="d-none"><label>Action:</label>
                 <span class='text-center action-tools'>
                         <span><a href='javascript:' class='action-edit badge badge-success btn k-button text-black in-detail-row border'><i class='k-icon k-i-edit'></i>Review</a></span>
                         <span class='d-none'><a href='javascript:' class='text-danger action-delete in-detail-row'><i class='fas fa-trash-alt'></i></a></span>
@@ -46,10 +51,22 @@
     </div>
 </script>
 
-<script type="text/x-kendo-template" id="toolbarTemplate_Secretary">
+<script type="text/x-kendo-template" id="toolbarTemplate_Bulk_Requests">
     <div>
         <span>
-        <a role="button" class="k-button k-button-icontext k-grid-add" href="\\#"><span class="k-icon k-i-plus text-primary"></span>Request Salary Advance</a>
+        <a role="button" class="k-button k-button-icontext <?php echo $is_secretary? : 'd-none'; ?>" href="<?php echo URL_ROOT ?>\/salary-advance\/new-bulk-request"><span class="k-icon k-i-aggregate-fields text-primary"></span>New Bulk Request</a>
+        </span>
+    <span class="float-lg-right">
+        <a role="button" class="k-button k-button-icontext k-grid-excel" href="\\#">
+            <span class="k-icon k-i-file-excel text-success"></span>Export to Excel</a>
+    </span>
+    </div>
+</script>
+
+<script type="text/x-kendo-template" id="toolbarTemplate_New_Bulk_Request">
+    <div>
+        <span>
+        <a role="button" class="k-button k-button-icontext k-grid-add" href="<?php echo URL_ROOT ?>\/salary-advance\/new-bulk-request"><span class="k-icon k-i-add text-primary"></span>Append</a>
         </span>
         <span>
         <a role="button" class="k-button k-button-icontext k-grid-cancel-changes d-none" href="\\#"><span class="k-icon k-i-cancel text-warning"></span>Cancel</a>
@@ -57,7 +74,7 @@
         <span>
         <a role="button" class="k-button k-button-icontext k-grid-save-changes d-none" href="\\#"><span class="k-icon k-i-check-circle text-success"></span>Submit New Request</a>
     </span>
-    <span class="float-lg-right">
+        <span class="float-lg-right">
         <a role="button" class="k-button k-button-icontext k-grid-excel" href="\\#">
             <span class="k-icon k-i-file-excel text-success"></span>Export to Excel</a>
     </span>
@@ -98,4 +115,37 @@
             <li class="#= received_by? '' : 'd-none' #"><label>Received By:</label> <span>#= received_by#</span></li>
         </ul>
     </div>
+</script>
+
+<script  type="text/x-kendo-template" id="destroyButton">
+    <span class='col'><a class='btn btn-destroy k-grid-delete w3-hover-red k-button badge badge-danger border text-bold text-white'><i class='k-icon k-i-trash'></i> DELETE</a></span>
+</script>
+
+<script  type="text/x-kendo-template" id="printButton">
+    <span class='col'><a href='\\#' class='action-print print-it badge badge-primary btn k-button border text-bold text-white' target='_blank'><i class='k-icon k-i-printer'></i> PRINT</a></span>
+</script>
+
+<script  type="text/x-kendo-template" id="editButton">
+    <span class="col"><a class="action-edit badge badge-success btn k-button text-black border"><i class="k-icon k-i-edit"></i>Review</a></span>
+</script>
+
+<script  type="text/x-kendo-template" id="exportToExcel">
+    <span class="float-lg-right">
+        <a role="button" class="k-button k-button-icontext k-grid-excel" href="\\#">
+            <span class="k-icon k-i-file-excel text-success"></span>Export to Excel</a>
+    </span>
+</script>
+
+<script id="disabledListItem" type="text/x-kendo-template">
+    <span class="#: has_active_application ? 'k-state-disabled cursor-disabled': ''#" title="#: has_active_application ? 'This employee has an active application!': ''#">
+       #: name #
+    </span>
+</script>
+
+<script id="employeeDropDownListTemplate" type="text/x-kendo-template">
+    # if (data.has_active_application) {#
+    <span class="k-state-disabled" title="This employee has already been selected!">#: data.name#</span>
+    # } else { #
+    <span>#:data.name#</span>
+   # }#
 </script>

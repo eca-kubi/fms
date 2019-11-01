@@ -1,4 +1,9 @@
 <?php
+
+use Moment\CustomFormats\MomentJs;
+use Moment\Moment;
+use Moment\MomentException;
+
 function arrToObj($arr)
 {
     return json_decode(json_encode($arr));
@@ -651,13 +656,13 @@ function concatNameWithUserId($user_id)
 function echoDate($date, $official = false, $return = false)
 {
     try {
-        $d = (new \Moment\Moment($date))->calendar(false);
-        $t = (new \Moment\Moment($date))->format('hh:mma', new \Moment\CustomFormats\MomentJs());
+        $d = (new Moment($date))->calendar(false);
+        $t = (new Moment($date))->format('hh:mma', new MomentJs());
         if ($return) {
             return $d . ' at ' . $t;
         }
         echo $d . ' at ' . $t;
-    } catch (\Moment\MomentException $e) {
+    } catch (MomentException $e) {
     }
     return '';
 }
@@ -666,13 +671,13 @@ function echoDateOfficial($date, $official = false)
 {
     try {
         if (!$official) {
-            $d = (new \Moment\Moment($date))->calendar(false);
-            $t = (new \Moment\Moment($date))->format('hh:mm a', new \Moment\CustomFormats\MomentJs());
+            $d = (new Moment($date))->calendar(false);
+            $t = (new Moment($date))->format('hh:mm a', new MomentJs());
             return $d . ' at ' . $t;
         } else {
-            return $d = (new \Moment\Moment($date))->format('ddd, MMM D YYYY', new \Moment\CustomFormats\MomentJs());
+            return $d = (new Moment($date))->format('ddd, MMM D YYYY', new MomentJs());
         }
-    } catch (\Moment\MomentException $e) {
+    } catch (MomentException $e) {
     }
     return '';
 }
@@ -849,7 +854,6 @@ function isAllImpactAssessmentComplete($cms_form_id)
  */
 function getDepartment($department_id)
 {
-    //$user = new User($user_id);
     $department = (new Department($department_id))->department;
     if (!empty($department)) {
         return $department;
@@ -896,7 +900,7 @@ function isTheApplicant($user_id, $id_salary_advance)
 {
     $db = Database::getDbh();
     $salary_advance = $db->where('id_salary_advance', $id_salary_advance)->objectBuilder()->getOne('salary_advance');
-    return $salary_advance->user_id == $user_id;
+    return $salary_advance->user_id === $user_id;
 }
 
 function transformArrayData(array $ret)
@@ -909,6 +913,7 @@ function transformArrayData(array $ret)
         $employee->department = getDepartment($value['department_id']);
         $value['department'] = $employee->department;
         $value['employee'] = $employee;
+        $value['basic_salary'] = $current_user->basic_salary;
         unset($value['password']);
         $value['hod_comment_editable'] = $value['hod_approval_editable'] = isCurrentManagerForDepartment($value['department_id'], $current_user->user_id);
         $value['hr_comment_editable'] = $value['hr_approval_editable'] = isCurrentHR($current_user->user_id);
@@ -928,11 +933,19 @@ function getJobTitle($user_id)
 
 }
 
+function getFullName($user_id)
+{
+    $db = Database::getDbh();
+    $first_name = $db->where('user_id', $user_id)->getValue('users', 'first_name');
+    $last_name = $db->where('user_id', $user_id)->getValue('users', 'last_name');
+    return $first_name . ' ' . $last_name;
+}
+
 function getNameJobTitleAndDepartment($user_id)
 {
     $user = new User($user_id);
     return concatNameWithUserId($user_id) .
-        " - " . $user->job_title . " @ " .
+        ' from ' .
         getDepartment($user->department_id);
 }
 
@@ -957,25 +970,30 @@ function now()
 
 function inDelimiteredString($needle, $delimiter, $delimetered_string)
 {
-    $arr = explode($delimiter, $delimetered_string . "");
-    return in_array($needle, $arr);
+    $arr = explode($delimiter, $delimetered_string . '');
+    return in_array($needle, $arr, true);
 }
 
-function genDeptRef($department_id, $table)
+function genDeptRef($department_id, $table, $single=true)
 {
     $db = Database::getDbh();
-    $ref = '';
-    $ret = $db->where('department_id', $department_id)->get($table);
+    $m = new Moment();
+    $m_format = '';
+    $type = $single ? '-SGL-' : '-BLK-';
+    try {
+        $m_format =  $m->format('MMYY', new MomentJs());
+    } catch (MomentException $e) {
+    }
+    $count  = $db->where('department_id', $department_id)->getValue ($table, 'count(*)') + 1;
     $department = new Department($department_id);
     $short_name = $department->short_name;
-    $count = count($ret) + 1 . "";
-    $char_count = strlen($count);
-    if ($char_count === 1) {
-        $ref = '00' . $count;
-    } elseif ($char_count === 2) {
-        $ref = '0' . $count;
+    if (strlen($count) === 1) {
+        return $short_name . $type . $m_format .'-00'. $count;
     }
-    return $short_name . '-' . $ref;
+    if (strlen($count) === 2) {
+        return $short_name . $type . $m_format .'-0'. $count;
+    }
+    return $short_name . $type . $m_format .'-'.$count;
 }
 
 function site_url($url = '')
@@ -1201,7 +1219,7 @@ function insertEmailBulk($template_file, $recipients, $data)
     foreach ($recipients as $recipient) {
         $recipient = (array)$recipient;
         $recipient_name = concatNameWithUserId($recipient['user_id']);
-        $recipient_department = getDepartment($recipient['user_id']);
+        $recipient_department = getDepartment($recipient['department_id']);
         $data['recipient_name'] = $recipient_name;
         $data['recipient_department'] = $recipient_department;
         $data['user_id'] = $recipient['user_id'];
@@ -1333,7 +1351,7 @@ function isAdmin($user_id)
 function isManager($user_id)
 {
     $user_role = (new User($user_id))->role;
-    return $user_role == ROLE_SUPERINTENDENT;
+    return $user_role === ROLE_SUPERINTENDENT;
 }
 
 function isCurrentManager($user_id)
@@ -1385,9 +1403,12 @@ function getSalaryAdvanceBySecretary($user_id)
     foreach ($ret as $item) {
         Database::getDbh()->orWhere('department_id', $item['department_id']);
     }
-    return Database::getDbh()->where('raised_by', $user_id)
-        ->orderBy('first_name', 'ASC')
-        ->get('users');
+    try {
+        return Database::getDbh()->where('raised_by', $user_id)
+            ->orderBy('first_name', 'ASC')
+            ->get('users');
+    } catch (Exception $e) {
+    }
 }
 
 function hasActiveApplication($user_id)
