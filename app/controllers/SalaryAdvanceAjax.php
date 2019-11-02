@@ -20,7 +20,8 @@ class SalaryAdvanceAjax extends Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $db = Database::getDbh();
             $current_user = getUserSession();
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            $_POST = json_decode(file_get_contents('php://input'), true, 512, JSON_THROW_ON_ERROR);
+            $_POST = filter_var_array($_POST, FILTER_SANITIZE_STRING);
             $ret = [];
             if (hasActiveApplication($current_user->user_id)) {
                 $ret['success'] = false;
@@ -30,18 +31,18 @@ class SalaryAdvanceAjax extends Controller
                 return;
             }
             $data = [
-                'amount_requested_is_percentage' => $_POST['amount_requested_is_percentage'] === 'true',
-                'amount_requested' => $_POST['amount_requested'] ?: null,
+                'amount_requested_is_percentage' => $_POST['amount_requested_is_percentage'],
+                'amount_requested' => $_POST['amount_requested'],
                 'percentage' => $_POST['percentage'],
                 'user_id' => $current_user->user_id,
                 'department_id' => $current_user->department_id,
                 'department_ref' => genDeptRef($current_user->department_id, 'salary_advance')
             ];
-            if ($data['amount_requested_is_percentage']) {
-                $data['amount_requested'] = null;
-            } else {
-                $data['percentage'] = null;
-            }
+            /*  if ($data['amount_requested_is_percentage']) {
+                  $data['amount_requested'] = null;
+              } else {
+                  $data['percentage'] = null;
+              }*/
             $record_added_id = $db->insert('salary_advance', $data);
             if ($record_added_id) {
                 $new_record = $db->where('id_salary_advance', $record_added_id)->get('salary_advance');
@@ -76,48 +77,49 @@ class SalaryAdvanceAjax extends Controller
     public function Update(): void
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Sanitize POST array
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-            getUserSession();
+            $_POST = json_decode(file_get_contents('php://input'), true, 512, JSON_THROW_ON_ERROR);
+            $_POST = filter_var_array($_POST, FILTER_SANITIZE_STRING);
             $id_salary_advance = $_POST['id_salary_advance'];
-            $ret = [];
+            $errors = ['errors' => [['message' => '']]];
             $old_ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)->getOne('salary_advance');
             if ($old_ret['hod_approval']) {
-                $old_ret['success'] = false;
-                $old_ret['reason'] = 'The HoD has already reviewed this application!';
-                $ret[] = $old_ret;
+                $errors['errors'][0]['message'] = 'The HoD has already reviewed this application!';
+                echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
             } else if ($old_ret['fmgr_approval']) {
-                $old_ret['success'] = false;
-                $old_ret['reason'] = 'Finance manager has already reviewed this application!';
-                $ret[] = $old_ret;
+                $errors['errors'][0]['message'] = 'Finance manager has already reviewed this application!';
+                echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
+            } else if ($old_ret['gm_approval']) {
+                $errors['errors'][0]['message'] = 'General manager has already reviewed this application!';
+                echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
             } else if ($old_ret['hr_approval']) {
-                $old_ret['success'] = false;
-                $old_ret['reason'] = 'HR has already reviewed this application!';
-                $ret[] = $old_ret;
+                $errors['errors'][0]['message'] = 'HR has already reviewed this application!';
+                echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
             } else {
                 $data = [
-                    'amount_requested_is_percentage' => $_POST['amount_requested_is_percentage'] === 'true',
-                    'amount_requested' => $_POST['amount_requested'] ?: null,
+                    //'amount_requested_is_percentage' => $_POST['amount_requested_is_percentage'],
+                    'amount_requested' => $_POST['amount_requested'],
                     'percentage' => $_POST['percentage']
                 ];
-                if ($data['amount_requested_is_percentage']) {
+                /*if ($data['amount_requested_is_percentage']) {
                     //unset($data['amount_requested']);
                     $data['amount_requested'] = null;
                 } else {
                     //unset($data['percentage']);
                     $data['percentage'] = null;
-                }
+                }*/
                 $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)->update('salary_advance', $data);
                 if ($ret) {
                     $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)->get('salary_advance');
                     $ret = transformArrayData($ret);
-                } else {
-                    $ret['errors'] = [['message' => 'Update failed!', 'code' => ERROR_UNSPECIFIED_ERROR]];
                     echo json_encode($ret, JSON_THROW_ON_ERROR, 512);
+                } else {
+                    $errors['errors'][0]['message'] = 'Update failed!';
+                    echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
                     return;
                 }
             }
-            echo json_encode($ret, JSON_THROW_ON_ERROR, 512);
+        } else {
+            echo json_encode([], JSON_THROW_ON_ERROR, 512);
         }
     }
 
