@@ -652,6 +652,21 @@ $universal->basic_salary = $user->basic_salary;
                         }
                     },
                     format: "{0:dddd dd MMM, yyyy}"
+                },
+                {
+                    field: 'finance_officer_comment',
+                    title: 'Fin Officer Comment',
+                    hidden: false,
+                    editor: textAreaEditor,
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    attributes: {
+                        class: 'comment'
+                    },
+                    width: 200,
+                    nullable: true,
+                    filterable: false
                 }
             ],
             detailTemplate: kendo.template($("#detailTemplate").html()),
