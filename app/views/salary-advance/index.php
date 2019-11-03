@@ -188,6 +188,10 @@ $universal->basic_salary = $user->basic_salary;
                             type: "date",
                             editable: false
                         },
+                        gm_approval: {editable: false, nullable: true, type: "boolean"},
+                        gm_approval_date: {editable: false, nullable: true, type: "date"},
+                        gm_comment: {editable: false, type: "string"},
+                        gm_id: {type: "number"},
                         fmgr_approval: {
                             nullable: true,
                             type: 'boolean',
@@ -382,7 +386,7 @@ $universal->basic_salary = $user->basic_salary;
                     headerAttributes: {
                         "class": "title"
                     },
-                    width: 250,
+                    width: 180,
                     groupHeaderTemplate: "Amount in Percentage: #= value? value + '%' : '' #",
                     aggregates: ["max", "min"],
                     format: "{0:#\\%}",
@@ -391,7 +395,7 @@ $universal->basic_salary = $user->basic_salary;
                 {
                     field: 'amount_requested',
                     title: 'Amount in Figures',
-                    width: 250,
+                    width: 180,
                     editor: editNumberWithoutSpinners,
                     headerAttributes: {
                         "class": "title"
@@ -437,10 +441,7 @@ $universal->basic_salary = $user->basic_salary;
                     attributes: {
                         class: 'comment'
                     },
-                    template: function (dataItem) {
-                        let hod_comment = dataItem.hod_comment ? dataItem.hod_comment : '';
-                        return "<span>" + hod_comment + "</span>"
-                    },
+                    nullable: true,
                     width: 200,
                     filterable: false
                 },
@@ -450,15 +451,12 @@ $universal->basic_salary = $user->basic_salary;
                     headerAttributes: {
                         "class": "title"
                     },
-                    template: function (dataItem) {
-                        let date = dataItem.hod_approval_date ? kendo.toString(kendo.parseDate(dataItem.hod_approval_date), 'dddd dd MMM, yyyy') : '';
-                        return "<span>" + date + "</span>";
-                    },
                     width: 200,
                     groupHeaderTemplate: "Date Raised: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : '' #",
                     hidden: false,
-                    filterable: false
-
+                    filterable: false,
+                    nullable: true,
+                    format: "{0:dddd dd MMM, yyyy}",
                 },
                 {
                     field: 'hr_approval',
@@ -470,7 +468,7 @@ $universal->basic_salary = $user->basic_salary;
                     headerAttributes: {
                         "class": "title"
                     },
-                    groupHeaderTemplate: "HR Approved: #= value? 'Yes' : 'No' # |  Total: #= count #",
+                    groupHeaderTemplate: "HR Approval: #= value===null? 'Pending' : (value? 'Approved' : 'Rejected') # |  Total: #= count #",
                     aggregates: ["count"],
                     width: 200,
                     filterable: false
@@ -487,21 +485,13 @@ $universal->basic_salary = $user->basic_salary;
                     attributes: {
                         class: 'comment'
                     },
-                    template: function (dataItem) {
-                        let hr_comment = dataItem.hr_comment ? dataItem.hr_comment : '';
-                        return `<span>${hr_comment}</span>`
-                    },
                     width: 200,
-                    filterable: false
-
+                    filterable: false,
+                    nullable: true
                 },
                 {
                     field: 'amount_payable',
                     title: 'Amount Payable',
-                    template: function (dataItem) {
-                        if (dataItem.amount_payable == null) return "";
-                        return "<span>" + (kendo.format('{0:c}', dataItem.amount_payable)) + "</span>"
-                    },
                     format: "{0:c}",
                     headerAttributes: {
                         "class": "title"
@@ -509,8 +499,8 @@ $universal->basic_salary = $user->basic_salary;
                     groupHeaderTemplate: "Amount Payable: #= value?  kendo.format('{0:c}', value) : 'Pending' #",
                     aggregates: ["max", "min"],
                     width: 200,
-                    filterable: false
-
+                    filterable: false,
+                    nullable: true
                 },
                 {
                     field: 'hr_approval_date',
@@ -518,15 +508,51 @@ $universal->basic_salary = $user->basic_salary;
                     headerAttributes: {
                         "class": "title"
                     },
-                    template: function (dataItem) {
-                        let date = dataItem.hr_approval_date ? kendo.toString(kendo.parseDate(dataItem.hr_approval_date), 'dddd dd MMM, yyyy') : '';
-                        return "<span>" + date + "</span>";
-                    },
                     width: 200,
                     groupHeaderTemplate: "HR Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : '' #",
                     hidden: false,
+                    filterable: false,
+                    nullable: true,
+                    format: "{0:dddd dd MMM, yyyy}"
+                },
+                {
+                    field: 'gm_approval',
+                    title: 'GM Approval',
+                    editor: approvalEditor,
+                    template: function (dataItem) {
+                        return "<span>" + (dataItem.gm_approval === null ? '<i class="fa fa-warning text-yellow"></i>  Pending' : dataItem.gm_approval ? '<i class="fa fa-check text-success"></i> Approved' : '<i class="fa fa-warning text-danger"></i> Rejected') + "</span>"
+                    },
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    width: 200,
+                    groupHeaderTemplate: "GM Approval: #= value=== null 'Pending' : ( value? 'Approved': 'Rejected' )# | Total: #= count #",
+                    aggregates: ["count"],
                     filterable: false
-
+                },
+                {
+                    field: 'gm_comment',
+                    title: 'GM Comment',
+                    editor: textAreaEditor,
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    attributes: {
+                        class: 'comment'
+                    },
+                    width: 200,
+                    filterable: false
+                },
+                {
+                    field: 'gm_approval_date',
+                    title: 'GM Approval Date ',
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    width: 200,
+                    groupHeaderTemplate: "GM's Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : '' #",
+                    filterable: false,
+                    format: "{0:dddd dd MMM, yyyy}"
                 },
                 {
                     field: 'fmgr_approval',
@@ -539,10 +565,9 @@ $universal->basic_salary = $user->basic_salary;
                         "class": "title"
                     },
                     width: 200,
-                    groupHeaderTemplate: "Finance Manager Approved: #= value? 'Yes' : 'No' # |  Total: #=count #",
+                    groupHeaderTemplate: "Finance Manager Approval: #= value? 'Yes' : (value===null? 'Pending' : 'No') # |  Total: #=count #",
                     aggregates: ["count"],
                     filterable: false
-
                 },
                 {
                     field: 'fmgr_comment',
@@ -556,29 +581,21 @@ $universal->basic_salary = $user->basic_salary;
                         class: 'comment'
                     },
                     width: 200,
-                    template: function (dataItem) {
-                        let fmgr_comment = dataItem.fmgr_comment ? dataItem.fmgr_comment : '';
-                        return "<span>" + fmgr_comment + "</span>"
-                    },
+                    nullable: true,
                     filterable: false
-
                 },
                 {
                     field: 'amount_approved',
                     title: 'Amount Approved',
-                    template: function (dataItem) {
-                        if (dataItem.amount_approved == null) return "";
-                        return "<span>" + (kendo.format('{0:c}', dataItem.amount_approved)) + "</span>"
-                    },
+                   nullable: true,
                     headerAttributes: {
                         "class": "title"
                     },
-                    groupHeaderTemplate: "Amount Approved: #= value?  kendo.format('{0:c}', value): 'Pending' #",
+                    //groupHeaderTemplate: "Amount Approved: #= value?  kendo.format('{0:c}', value): 'Pending' #",
                     aggregates: ["max", "min"],
                     format: "{0:c}",
                     width: 200,
                     filterable: false
-
                 },
                 {
                     field: 'fmgr_approval_date',
@@ -586,25 +603,17 @@ $universal->basic_salary = $user->basic_salary;
                     headerAttributes: {
                         "class": "title"
                     },
-                    template: function (dataItem) {
-                        let date = dataItem.fmgr_approval_date ? kendo.toString(kendo.parseDate(dataItem.fmgr_approval_date), 'dddd dd MMM, yyyy') : '';
-                        return "<span>" + date + "</span>";
-                    },
                     width: 200,
                     groupHeaderTemplate: "Finance Mgr. Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : '' #",
                     hidden: false,
-                    filterable: false
-
+                    filterable: false,
+                    nullable: true,
+                    format: "{0:dddd dd MMM, yyyy}"
                 },
                 {
                     field: 'amount_received',
                     title: 'Amount Received',
-                    template: function (dataItem) {
-                        if (dataItem.amount_received == null) return "";
-                        return "<span>" + kendo.format('{0:c}', dataItem.amount_received) + "</span>";
-
-                        // return dataItem.amount_received ? "<span title='Amount Received: " + kendo.format('{0:c}', dataItem.amount_received) + "'>" + kendo.format('{0:c}', dataItem.amount_received) + "</span>" : "<span title='0' " + universal.currency_symbol + ">0" + universal.currency_symbol + "</span>"
-                    },
+                   nullable: true,
                     attributes: {
                         class: 'amount_received'
                     },
@@ -614,31 +623,24 @@ $universal->basic_salary = $user->basic_salary;
                     width: 200,
                     groupHeaderTemplate: "Amount Received: #: kendo.format('{0:c}', value) #",
                     filterable: false
-
                 },
                 {
                     field: 'received_by',
                     title: 'Received By',
                     hidden: false,
-                    template: function (dataItem) {
-                        return dataItem.received_by ? "<span>" + dataItem.received_by + "</span>" : ""
-                    },
+                   nullable: true,
                     headerAttributes: {
                         "class": "title"
                     },
                     width: 200,
                     groupHeaderTemplate: "Received By: #:  value #",
                     filterable: false
-
                 },
                 {
                     field: 'date_received',
                     title: 'Date Received',
                     hidden: false,
-                    template: function (dataItem) {
-                        let date = dataItem.date_received ? kendo.toString(kendo.parseDate(dataItem.date_received), 'dddd dd MMM, yyyy') : '';
-                        return "<span>" + date + "</span>";
-                    },
+                    nullable: true,
                     headerAttributes: {
                         "class": "title"
                     },
@@ -648,7 +650,8 @@ $universal->basic_salary = $user->basic_salary;
                         cell: {
                             template: dateRangeFilter
                         }
-                    }
+                    },
+                    format: "{0:dddd dd MMM, yyyy}"
                 }
             ],
             detailTemplate: kendo.template($("#detailTemplate").html()),
