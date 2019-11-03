@@ -13,7 +13,7 @@ class SalaryAdvanceSecretary extends Controller
             if (!isAssignedAsSecretary($current_user->user_id)) {
                 redirect('salary-advance/index' . $id_salary_advance);
             }
-            $this->view('salary-advance-secretary/index', $payload);
+            $this->view('salary-advance/index', $payload);
         }
     }
 }

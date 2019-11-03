@@ -15,8 +15,8 @@ $is_secretary = isAssignedAsSecretary($current_user->user_id);
                 </span>
             </li>
             <li class="d-none"><label>Date Raised:</label><span>#= kendo.toString(kendo.parseDate(date_raised), 'dddd dd MMM, yyyy') #</span></li>
-            <li class="#= amount_requested == null? 'd-none' : '' #"><label>Amount Requested:</label> <span>#= kendo.format('{0:c}', amount_requested) #</span></li>
-            <li class="#= percentage? '' : 'd-none' #"><label>Amount Requested:</label> <span>#= percentage +'% of Salary' #</span></li>
+            <li class="#= amount_requested == null? 'd-none' : '' #"><label>Amount in Figures:</label> <span>#= kendo.format('{0:c}', amount_requested) #</span></li>
+            <li class="#= percentage? '' : 'd-none' #"><label>Amount in Percentage:</label> <span>#= percentage +'% of Salary' #</span></li>
             <li><label>HoD Approval:</label><span> #= hod_approval == null? '<i class="text-yellow fa fa-warning"></i> <span> Pending</span>' : (hod_approval? '<i class="text-success fa fa-check"></i><span> Approved</span>' : '<i class="text-danger fa fa-warning"></i><span> Rejected</span>') #</span></li>
             <li class="#= hod_approval == null? 'd-none' : '' #"><label>HoD Approval Date:</label><span>#= kendo.toString(kendo.parseDate(hod_approval_date), 'dddd dd MMM, yyyy')#</span></li>
             <li class="#= hod_approval == null? 'd-none' : '' #"><label>HoD's Comment:</label><span>#= hod_comment #</span></li>
@@ -93,8 +93,8 @@ $is_secretary = isAssignedAsSecretary($current_user->user_id);
                 </span>
             </li>
             <li class="d-none"><label>Date Raised:</label><span>#= kendo.toString(kendo.parseDate(date_raised), 'dddd dd MMM, yyyy') #</span></li>
-            <li class="#= amount_requested == null? 'd-none' : '' #"><label>Amount Requested:</label> <span>#= kendo.format('{0:c}', amount_requested) #</span></li>
-            <li class="#= percentage? '' : 'd-none' #"><label>Amount Requested:</label> <span>#= percentage +'% of Salary' #</span></li>
+            <li class="#= amount_requested == null? 'd-none' : '' #"><label>Amount in Figures:</label> <span>#= kendo.format('{0:c}', amount_requested) #</span></li>
+            <li class="#= percentage? '' : 'd-none' #"><label>Amount in Percentage:</label> <span>#= percentage +'% of Salary' #</span></li>
             <li><label>HoD Approval:</label><span> #= hod_approval == null? '<i class="text-yellow fa fa-warning"></i> <span> Pending</span>' : (hod_approval? '<i class="text-success fa fa-check"></i><span> Approved</span>' : '<i class="text-danger fa fa-warning"></i><span> Rejected</span>') #</span></li>
             <li class="#= hod_approval == null? 'd-none' : '' #"><label>HoD Approval Date:</label><span>#= kendo.toString(kendo.parseDate(hod_approval_date), 'dddd dd MMM, yyyy')#</span></li>
             <li class="#= hod_approval == null? 'd-none' : '' #"><label>HoD's Comment:</label><span>#= hod_comment #</span></li>
@@ -106,9 +106,9 @@ $is_secretary = isAssignedAsSecretary($current_user->user_id);
             <li class="#= gm_approval == null? 'd-none' : '' #"><label>GM Approval Date:</label><span>#= kendo.toString(kendo.parseDate(gm_approval_date), 'dddd dd MMM, yyyy') #</span></li>
             <li class="#= gm_approval == null? 'd-none' : '' #"><label>GM's Comment:</label><span>#= gm_comment #</span></li>
 
-            <li><label>Finance Manager Approval:</label><span> #= fmgr_approval == null? '<i class="text-yellow fa fa-warning"></i> <span> Pending</span>' : (fmgr_approval? '<i class="text-success fa fa-check"></i><span> Approved</span>' : '<i class="text-danger fa fa-warning"></i><span> Rejected</span>') #</span></li>
-            <li class="#= fmgr_approval == null? 'd-none' : '' #"><label>Finance Manager Approval Date:</label><span>#=  kendo.toString(kendo.parseDate(fmgr_approval_date), 'dddd dd MMM, yyyy')#</span></li>
-            <li class="#= fmgr_approval == null? 'd-none' : '' #"><label>Finance Mgr's Comment:</label><span>#= fmgr_comment #</span></li>
+            <li><label>Fin Mgr Approval:</label><span> #= fmgr_approval == null? '<i class="text-yellow fa fa-warning"></i> <span> Pending</span>' : (fmgr_approval? '<i class="text-success fa fa-check"></i><span> Approved</span>' : '<i class="text-danger fa fa-warning"></i><span> Rejected</span>') #</span></li>
+            <li class="#= fmgr_approval == null? 'd-none' : '' #"><label>Fin Mgr Approval Date:</label><span>#=  kendo.toString(kendo.parseDate(fmgr_approval_date), 'dddd dd MMM, yyyy')#</span></li>
+            <li class="#= fmgr_approval == null? 'd-none' : '' #"><label>Fin Mgr's Comment:</label><span>#= fmgr_comment #</span></li>
             <li class="#= fmgr_approval == null? 'd-none' : '' #"><label>Amount Approved:</label> <span>#= kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_approved)) #</span></li>
             <li class="#= received_by? '' : 'd-none' #"><label>Amount Received:</label><span>#=  kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_received)) #</span></li>
             <li class="#= received_by? '' : 'd-none' #"><label>Date Received:</label> <span>#= kendo.toString(kendo.parseDate(date_received), 'dddd dd MMM,  yyyy')#</span></li>

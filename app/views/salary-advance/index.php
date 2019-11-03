@@ -699,7 +699,8 @@ $universal->basic_salary = $user->basic_salary;
             beforeEdit: function (e) {
                 window.grid_uid = e.model.uid; // uid of current editing row
                 let grid = $salaryAdvanceGrid.data("kendoGrid");
-                /* e.model.fields["percentage"].editable  = e.model.hod_approval == null && e.model.hr_approval == null && e.model.fmgr_approval == null;
+                e.model.fields["percentage"].editable  = e.model.hod_approval == null && e.model.hr_approval == null && e.model.fmgr_approval == null;
+                /*
                  e.model.amount_requested = parseFloat((e.model.percentage / 100) * e.model.basic_salary).toFixed(2);
                  e.model.dirty = true;
                  e.model.dirtyFields["amount_requested"] = true;
@@ -806,6 +807,19 @@ $universal->basic_salary = $user->basic_salary;
                       amountRequestedLabelField.toggle(true);
                       percentageLabelField.toggle(true);
                   }*/
+                e.container.data('kendoWindow').bind('activate', function () {
+                    if (e.model.fields.percentage.editable) {
+                        amountRequestedPercentageNumericTextBox.focus();
+                    }
+                });
+
+                e.container.data('kendoWindow').bind('deactivate', function () {
+                    let data = $salaryAdvanceGrid.getKendoGrid().dataSource.data();
+                    $.each(data, function (i, row) {
+                        $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["id_salary_advance"]);
+                    });
+                    $(".print-it").printPage();
+                });
 
                 let title = $(e.container).parent().find(".k-window-title");
                 let update = $(e.container).parent().find(".k-grid-update");

@@ -595,5 +595,5 @@ function isFinanceOfficer($user_id)
 {
     return Database::getDbh()->where('value', $user_id)
         ->where('prop', 'finance_officer')
-        ->has('fms_settings');
+        ->has('settings');
 }

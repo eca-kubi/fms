@@ -75,7 +75,7 @@ $universal->isGM = isCurrentGM($current_user->user_id);
 $universal->currentDepartment = $current_user->department;
 $universal->currentDepartmentID = $current_user->department_id;
 $universal->isCurrentManager = isCurrentManager($current_user->user_id);
-
+$universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
 ?>
 <script>
     let universal = JSON.parse(`<?php echo json_encode($universal, JSON_THROW_ON_ERROR, 512); ?>`);
@@ -113,6 +113,7 @@ $universal->isCurrentManager = isCurrentManager($current_user->user_id);
                     dataType: 'json'
                 },
                 parameterMap: function (data, type) {
+                    if(type !== "read")
                     return JSON.stringify(data);
                 },
                 errors: function (response) {
@@ -128,7 +129,7 @@ $universal->isCurrentManager = isCurrentManager($current_user->user_id);
                     toastSuccess('Success', 5000);
                 }
             },
-            change: function (e) {
+            change: function () {
                 if (this.hasChanges()) {
                     $('.k-grid-cancel-changes, .k-grid-save-changes').removeClass('d-none');
                 }
@@ -191,7 +192,9 @@ $universal->isCurrentManager = isCurrentManager($current_user->user_id);
                         raised_by_id: {type: "number"},
                         raised_by_secretary: {type: "boolean"},
                         received_by: {editable: false, nullable: true, type: "string"},
-                        user_id: {type: "number"}
+                        user_id: {type: "number"},
+                        finance_officer_id: {type: "number", nullable: true},
+                        finance_officer_comment: {type: "string", editable: false}
                     }
                 },
                 parse: function (data) {
@@ -251,6 +254,14 @@ $universal->isCurrentManager = isCurrentManager($current_user->user_id);
                         e.preventDefault();
                         tooltip.show(element);
                     }
+                });
+            },
+            cancel: function (e) {
+                let extRadioButtonGroup = e.container.find("[data-role=extradiobuttongroup]");
+                extRadioButtonGroup.each(function () {
+                    let element = $(this);
+                    let tooltip = element.data('kendoTooltip');
+                    tooltip.destroy();
                 });
             },
             filterable: {
@@ -635,11 +646,11 @@ $universal->isCurrentManager = isCurrentManager($current_user->user_id);
                 }
             },
             detailInit: function (e) {
-                let grid = $salaryAdvanceGrid.data("kendoGrid");
-                let masterRow = e.detailRow.prev('tr.k-master-row');
-                let dataItem = grid.dataItem(masterRow);
+                //let grid = $salaryAdvanceGrid.data("kendoGrid");
+                //let masterRow = e.detailRow.prev('tr.k-master-row');
+                //let dataItem = grid.dataItem(masterRow);
                 let colSize = e.sender.content.find('colgroup col').length;
-                $(".print-it").printPage();
+               // $(".print-it").printPage();
                 e.detailRow.find('.k-hierarchy-cell').hide();
                 e.detailCell.attr('colspan', colSize);
             },
@@ -649,9 +660,13 @@ $universal->isCurrentManager = isCurrentManager($current_user->user_id);
                 window.grid_uid = e.model.uid; // uid of current editing row
                 e.model.fields["percentage"].editable = (universal["isSecretary"] && e.model.hod_approval === null) || (universal["isFmgr"] && e.model.fmgr_approval === null);
                 e.model.fields["hod_approval"].editable = universal["isCurrentManager"] && (e.model.hod_approval === null);
+                e.model.fields["hod_comment"].editable = universal["isCurrentManager"] && e.model.hod_approval === null;
                 e.model.fields["hr_approval"].editable = universal["isHR"] && (e.model.hr_approval === null) && e.model.hod_approval !== null;
+                e.model.fields["hr_comment"].editable = universal["isHr"] && e.model.hr_approval === null && e.model.hod_approval !== null;
                 e.model.fields["gm_approval"].editable = universal["isGM"] && (e.model.gm_approval === null) && e.model.hr_approval !== null;
+                e.model.fields["gm_comment"].editable = universal["isGM"] && (e.model.gm_approval === null) && e.model.hr_approval !== null;
                 e.model.fields["fmgr_approval"].editable = universal["isFmgr"] && (e.model.fmgr_approval === null) && e.model.gm_approval !== null;
+                e.model.fields["fmgr_comment"].editable = universal["isFmgr"] && (e.model.fmgr_approval === null) && e.model.gm_approval !== null;
             },
             edit: function (e) {
                 e.container.find(".k-edit-label, .k-edit-field").addClass("pt-2").toggle(false);
@@ -659,22 +674,81 @@ $universal->isCurrentManager = isCurrentManager($current_user->user_id);
                 let departmentLabelField = e.container.find(".k-edit-label:eq(1), .k-edit-field:eq(1)");
                 let requestNumberLabelField = e.container.find(".k-edit-label:eq(2), .k-edit-field:eq(2)");
                 let percentageLabelField = e.container.find(".k-edit-label:eq(3), .k-edit-field:eq(3)");
+                let amountRequestedLabelField = e.container.find(".k-edit-label:eq(4), .k-edit-field:eq(4)");
                 let hodApprovalLabelField = e.container.find(".k-edit-label:eq(6), .k-edit-field:eq(6)");
+                let hodCommentLabelField = e.container.find(".k-edit-label:eq(7), .k-edit-field:eq(7)");
+                let hodApprovalDateLabelField = e.container.find(".k-edit-label:eq(8), .k-edit-field:eq(8)");
                 let hrApprovalLabelField = e.container.find(".k-edit-label:eq(9), .k-edit-field:eq(9)");
+                let hrCommentLabelField = e.container.find(".k-edit-label:eq(10), .k-edit-field:eq(10)");
                 let amountPayableLabelField = e.container.find(".k-edit-label:eq(11), .k-edit-field:eq(11)");
+                let hrApprovalDateLabelField = e.container.find(".k-edit-label:eq(12), .k-edit-field:eq(12)");
                 let gmApprovalLabelField = e.container.find(".k-edit-label:eq(13), .k-edit-field:eq(13)");
+                let gmCommentLabelField = e.container.find(".k-edit-label:eq(14), .k-edit-field:eq(14)");
+                let gmApprovalDateLabelField = e.container.find(".k-edit-label:eq(15), .k-edit-field:eq(15)");
                 let fmgrApprovalLabelField = e.container.find(".k-edit-label:eq(16), .k-edit-field:eq(16)");
+                let fmgrCommentLabelField = e.container.find(".k-edit-label:eq(17), .k-edit-field:eq(17)");
+                let amountApprovedLabelField = e.container.find(".k-edit-label:eq(18), .k-edit-field:eq(18)");
+                let fmgrApprovalDateLabelField = e.container.find(".k-edit-label:eq(19), .k-edit-field:eq(19)");
+                let amountReceivedLabelField = e.container.find('.k-edit-label:eq(20), .k-edit-field:eq(20)');
+                let receivedByLabelField = e.container.find('.k-edit-label:eq(21), .k-edit-field:eq(21)');
+                let dateReceivedLabelField = e.container.find('.k-edit-label:eq(22), .k-edit-field:eq(22)');
 
                 nameLabelField.toggle();
+                departmentLabelField.toggle();
                 requestNumberLabelField.toggle();
                 percentageLabelField.toggle();
-                departmentLabelField.toggle();
-                if (!universal["isSecretary"]) {
-                    hodApprovalLabelField.toggle();
-                    hrApprovalLabelField.toggle();
-                    gmApprovalLabelField.toggle();
-                    fmgrApprovalLabelField.toggle();
-                }
+                amountRequestedLabelField.toggle();
+                hodApprovalLabelField.toggle();
+                hrApprovalLabelField.toggle();
+                gmApprovalLabelField.toggle();
+                fmgrApprovalLabelField.toggle();
+
+                amountPayableLabelField.toggle(Boolean(e.model.hr_approval));
+                amountApprovedLabelField.toggle(Boolean(e.model.fmgr_approval));
+                hodCommentLabelField.toggle(e.model.hod_approval !== null || universal["isCurrentManager"]);
+                hrCommentLabelField.toggle(e.model.hr_approval !== null || (e.model.hod_approval !== null && universal["isHr"]));
+                gmCommentLabelField.toggle(e.model.gm_approval !== null || (e.model.hr_approval !== null && universal["isGm"]));
+                fmgrCommentLabelField.toggle(e.model.fmgr_approval !== null || (e.model.gm_approval !== null && universal["isFmgr"]));
+                receivedByLabelField.toggle(e.model.received_by !== null || universal["isFinanceOfficer"]);
+                amountReceivedLabelField.toggle(e.model.received_by !== null || universal["isFinanceOfficer"]);
+                dateReceivedLabelField.toggle(e.model.date_received !== null || universal["isFinanceOfficer"]);
+                hodCommentLabelField.find('.k-textbox').attr('data-required-msg', 'HoD Comment is required!').attr('rows', '6');
+                hrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'HR Comment is required!').attr('rows', '6');
+                amountPayableLabelField.find('.k-input').attr('data-required-msg', 'Amount Payable is required!');
+                gmCommentLabelField.find('.k-textbox').attr('data-required-msg', 'GM Comment is required!').attr('rows', '6');
+                fmgrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'Fin Mgr Comment is required!').attr('rows', '6');
+                amountApprovedLabelField.find('.k-input').attr('data-required-msg', 'Amount Approved is required!');
+                amountReceivedLabelField.find('.k-input').attr('data-required-msg', 'Amount Received is required!');
+                receivedByLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');
+
+                let extRadioButtonGroup = e.container.find("[data-role=extradiobuttongroup]");
+                let updateButton = e.container.find('.k-grid-update');
+                extRadioButtonGroup.each(function () {
+                    let element = $(this);
+                    let tooltip = element.data('kendoTooltip');
+                    updateButton.click(function (e) {
+                        if (element.data('kendoExtRadioButtonGroup').value() == null) {
+                            tooltip.show(element);
+                            e.preventDefault();
+                        }
+                    });
+                });
+
+                let title = $(e.container).parent().find(".k-window-title");
+                let update = $(e.container).parent().find(".k-grid-update");
+                let cancel = $(e.container).parent().find(".k-grid-cancel");
+                $(title).text('');
+                $(update).html('<span class="k-icon k-i-check"></span>OK');
+                $(cancel).html('<span class="k-icon k-i-cancel"></span>Cancel');
+
+                e.container.data('kendoWindow').bind('deactivate', function () {
+                    let data = $salaryAdvanceGrid.getKendoGrid().dataSource.data();
+                    $.each(data, function (i, row) {
+                        $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["id_salary_advance"]);
+                    });
+                    $(".print-it").printPage();
+                });
+
             }
         });
 

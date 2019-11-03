@@ -6,7 +6,7 @@ class SalaryAdvanceManagerAjax extends Controller
     {
         $db = Database::getDbh();
         $current_user = getUserSession();
-      if (isCurrentHR($current_user->user_id) || isCurrentFmgr($current_user->user_id) || isCurrentGM($current_user->user_id)) {
+      if (isCurrentHR($current_user->user_id) || isCurrentFmgr($current_user->user_id) || isCurrentGM($current_user->user_id) || isFinanceOfficer($current_user->user_id)) {
             $records = [];
             try {
                 $records = $db->where('user_id', $current_user->user_id, '!=')->orderBy('date_raised')->where('deleted', false)->get('salary_advance');
