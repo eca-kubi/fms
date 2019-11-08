@@ -714,7 +714,7 @@ $universal->basic_salary = $user->basic_salary;
             beforeEdit: function (e) {
                 window.grid_uid = e.model.uid; // uid of current editing row
                 let grid = $salaryAdvanceGrid.data("kendoGrid");
-                e.model.fields["percentage"].editable  = e.model.hod_approval == null && e.model.hr_approval == null && e.model.fmgr_approval == null;
+                e.model.fields["amount_requested"].editable  = e.model.hod_approval == null && e.model.hr_approval == null && e.model.fmgr_approval == null;
                 /*
                  e.model.amount_requested = parseFloat((e.model.percentage / 100) * e.model.basic_salary).toFixed(2);
                  e.model.dirty = true;
@@ -743,7 +743,6 @@ $universal->basic_salary = $user->basic_salary;
                 // Toggle visibility off for all editor fields and labels
                 e.container.find('.k-edit-label, .k-edit-field').addClass("pt-2").toggle(false);
                 amountRequestedLabelField.toggle(true);
-                percentageLabelField.toggle(true);
                 amountRequestedLabelField.find('input').attr('min', '0');
                 percentageLabelField.find('input').attr('min', 10).attr('max', 30).attr('data-min-msg', 'Amount Requested must be at least 10% of net salary!').attr('data-max-msg', 'Amount Requested must not exceed 30% of net salary!');
                 percentageLabelField.find('.k-input').attr('data-required-msg', 'A percentage is required!');
