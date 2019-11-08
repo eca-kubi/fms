@@ -26,12 +26,16 @@ class SalaryAdvance extends Controller
         }
         $current_user =  $payload['current_user'] = getUserSession();
 
-        if (!(isCurrentManager($current_user->user_id) || isAssignedAsSecretary($current_user->user_id))) {
+        if (!(isCurrentManager($current_user->user_id) || isAssignedAsSecretary($current_user->user_id) || isFinanceOfficer($current_user->user_id))) {
             redirect('salary-advance/index');
         }
         $payload['title'] = 'Bulk Salary Advance Applications';
         $payload['bulk_request_number'] = $bulk_request_number;
-        $this->view('salary-advance/bulk_requests', $payload);
+        if ($bulk_request_number) {
+            $this->view('salary-advance/update_bulk_requests', $payload);
+        } else {
+            $this->view('salary-advance/bulk_requests', $payload);
+        }
     }
 
     public function newBulkRequest() : void

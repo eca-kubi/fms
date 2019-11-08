@@ -21,7 +21,7 @@ class SalaryAdvanceNewBulkRequestsAjax extends Controller
         foreach ($models as $model) {
             $insertID = $db->insert('salary_advance', ['user_id' => $model['user_id'], 'percentage'=> $model['percentage'], 'raised_by_id' => $current_user->user_id,
                 'department_id' => $current_user->department_id, 'is_bulk_request' => $model['is_bulk_request'], 'raised_by_secretary' => $model['raised_by_secretary'],
-                'bulk_request_number' => $model['bulk_request_number']]);
+                'bulk_request_number' => $model['bulk_request_number'], 'date_raised' => now(), 'amount_requested' => $model['amount_requested']]);
             if ($insertID) {
                 $insertIDs[] = $insertID;
                 $user_ids[] = $model['user_id'];

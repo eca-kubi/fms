@@ -1,4 +1,5 @@
 <?php
+
 class SalaryAdvanceBulkRequestsAjax extends Controller
 {
     public function index($bulk_request_number = null): void
@@ -6,31 +7,45 @@ class SalaryAdvanceBulkRequestsAjax extends Controller
         $db = Database::getDbh();
         $current_user = getUserSession();
         $is_assigned_as_secretary = isAssignedAsSecretary($current_user->user_id);
+        $is_finance_officer = isFinanceOfficer($current_user->user_id);
         $is_hr = isCurrentHR($current_user->user_id);
         $is_gm = isCurrentGM($current_user->user_id);
         $is_fmgr = isCurrentFmgr($current_user->user_id);
         $is_hod = isCurrentManager($current_user->user_id);
         $bulk_requests = [];
-        if ($bulk_request_number) {
-            try {
-                $bulk_requests = $db->where('bulk_request_number', $bulk_request_number)->where('department_id', $current_user->department_id)
-                    ->where('deleted', false)->orderBy('date_raised', 'DESC')->get('salary_advance');
-            } catch (Exception $e) {
-            }
-        } elseif (!$bulk_request_number && ($is_assigned_as_secretary || $is_hod)){
-            try {
-                $bulk_requests = $db->where('department_id', $current_user->department_id)->where('deleted', false)
-                    ->where('is_bulk_request', true)->orderBy('date_raised', 'DESC')->get('salary_advance');
-            } catch (Exception $e) {
-            }
-        } elseif (!$bulk_request_number && ($is_gm || $is_hr || $is_fmgr )) {
-            try {
-                $bulk_requests = $db->where('deleted', false)->where('is_bulk_request', true)
-                    ->orderBy('date_raised', 'DESC')->get('salary_advance');
-            } catch (Exception $e) {
+        if ($is_hod || $is_assigned_as_secretary || $is_finance_officer || $is_hr || $is_gm || $is_fmgr) {
+            if ($bulk_request_number) {
+                try {
+                    if (!($is_finance_officer || $is_hr || $is_gm || $is_fmgr)) {
+                        $bulk_requests = $db->join('users u', 'u.user_id=sa.user_id', 'LEFT' )
+                            ->join('departments d', 'd.department_id=u.department_id', 'LEFT')
+                            ->where('sa.bulk_request_number', $bulk_request_number)->where('u.department_id', $current_user->department_id)
+                            ->where('sa.deleted', false)->orderBy('sa.date_raised', 'DESC')->get('salary_advance sa',null, '*, concat_ws(" ", u.first_name, u.last_name) as name, d.department, NULL as password, NULL as default_password');
+                    } else {
+                        $bulk_requests = $db->join('users u', 'u.user_id=sa.user_id', 'LEFT' )
+                            ->join('departments d', 'd.department_id=u.department_id', 'LEFT')
+                            ->where('sa.bulk_request_number', $bulk_request_number)->where('sa.deleted', false)
+                            ->orderBy('sa.date_raised', 'DESC')->get('salary_advance sa', null, '*, concat_ws(" ", u.first_name, u.last_name) as name, d.department, NULL as password, NULL as default_password');
+                    }
+                } catch (Exception $e) {
+                }
+            } else {
+                try {
+                    if (!($is_finance_officer || $is_hr || $is_gm || $is_fmgr)) {
+                        $bulk_requests = $db->join('users u', 'u.user_id=sa.raised_by_id', 'INNER')->join('departments d', 'd.department_id=sa.department_id')
+                            ->where('deleted', false)->where('sa.department_id', $current_user->department_id)
+                            ->get('salary_advance_bulk_requests sa', null, 'sa.id_salary_advance_bulk_requests as id, concat_ws(" ", u.first_name, u.last_name) as raised_by, 
+                       sa.raised_by_id, sa.bulk_request_number, sa.department_id, d.department');
+                    } else {
+                        $bulk_requests = $db->join('users u', 'u.user_id=sa.raised_by_id', 'INNER')->join('departments d', 'd.department_id=sa.department_id')
+                            ->where('deleted', false)->get('salary_advance_bulk_requests sa', null, 'sa.id_salary_advance_bulk_requests as id, concat_ws(" ", u.first_name, u.last_name) as raised_by, 
+                       sa.raised_by_id, sa.bulk_request_number, sa.department_id, d.department');
+                    }
+                } catch (Exception $e) {
+                }
             }
         }
-        echo json_encode(transformArrayData($bulk_requests), JSON_THROW_ON_ERROR, 512);
+        echo json_encode($bulk_requests, JSON_THROW_ON_ERROR, 512);
     }
 
     public function Create(): void
@@ -45,31 +60,42 @@ class SalaryAdvanceBulkRequestsAjax extends Controller
             $ret = [];
             $db = Database::getDbh();
             $current_user = getUserSession();
-            $errors = ['errors' => [['message'=> 'Update failed.']]];
-            $_POST= json_decode(file_get_contents('php://input'), true, 512, JSON_THROW_ON_ERROR);
+            $errors = ['errors' => [['message' => 'Update failed.']]];
+            $_POST = json_decode(file_get_contents('php://input'), true, 512, JSON_THROW_ON_ERROR);
             $post = filter_var_array($_POST, FILTER_SANITIZE_STRING);
-            if (isAssignedAsSecretary($current_user->user_id)) {
-                $ret = $db->where('id_salary_advance', $post['id_salary_advance'])->update('salary_advance', ['percentage' => $post['percentage']]);
-            } elseif (isCurrentManagerForDepartment($post['department_id'], $current_user->user_id)) {
-                $ret = $db->where('id_salary_advance', $post['id_salary_advance'])
-                    ->update('salary_advance', ['percentage' => $post['percentage'],
-                        'hod_approval' => $post['hod_approval'], 'hod_id' => $current_user->user_id, 'hod_comment' => $post['hod_comment'],
-                        'hod_approval_date' => $post['hod_approval_date']]);
-            }  elseif (isCurrentHR($current_user->user_id)) {
-                $ret = $db->where('id_salary_advance', $post['id_salary_advance'])
-                    ->update('salary_advance', ['percentage' => $post['percentage'],
-                        'hr_approval' => $post['hr_approval'], 'hr_id' => $current_user->user_id, 'hr_comment' => $post['hr_comment'],
-                        'hr_approval_date' => $post['hr_approval_date']]);
-            } elseif (isCurrentGM($current_user->user_id)) {
-                $ret = $db->where('id_salary_advance', $post['id_salary_advance'])
-                    ->update('salary_advance', ['percentage' => $post['percentage'],
-                        'gm_approval' => $post['gm_approval'], 'gm_id' => $current_user->user_id, 'gm_comment' => $post['gm_comment'],
-                        'gm_approval_date' => $post['gm_approval_date']]);
-            } elseif (isCurrentFmgr($current_user->user_id)) {
-                $ret = $db->where('id_salary_advance', $post['id_salary_advance'])
-                    ->update('salary_advance', ['percentage' => $post['percentage'],
-                        'fmgr_approval' => $post['fmgr_approval'], 'fmgr_id' => $current_user->user_id, 'fmgr_comment' => $post['fmgr_comment'],
-                        'fmgr_approval_date' => $post['fmgr_approval_date']]);
+            $bulk_request_number = $post['bulk_request_number'];
+            $models = $post['models'];
+            $user_ids = [];
+            foreach ($models as $model) {
+                if ($model['hod_approval'] === null) {
+                    if (isAssignedAsSecretary($current_user->user_id)) {
+                        $ret = $db->where('id_salary_advance', $model['id_salary_advance'])->update('salary_advance', ['percentage' => $model['percentage']]);
+                    } elseif (isCurrentManagerForDepartment($model['department_id'], $current_user->user_id)) {
+                        $ret = $db->where('id_salary_advance', $model['id_salary_advance'])->update('salary_advance', ['percentage' => $model['percentage'],
+                            'hod_approval' => $model['hod_approval'], 'hod_id' => $current_user->user_id, 'hod_comment' => $model['hod_comment'],
+                            'hod_approval_date' => $model['hod_approval_date']]);
+                    }
+                } elseif ($model['hr_approval'] === null && isCurrentHR($current_user->user_id)) {
+                    $ret = $db->where('id_salary_advance', $model['id_salary_advance'])->update('salary_advance', ['percentage' => $model['percentage'],
+                        'hr_approval' => $model['hr_approval'], 'hr_id' => $current_user->user_id, 'hr_comment' => $model['hr_comment'],
+                        'hr_approval_date' => now()]);
+                } elseif ($model['gm_approval'] === null && isCurrentGM($current_user->user_id)) {
+                    $ret = $db->where('id_salary_advance', $model['id_salary_advance'])->update('salary_advance', ['percentage' => $model['percentage'],
+                        'gm_approval' => $model['gm_approval'], 'gm_id' => $current_user->user_id, 'gm_comment' => $model['gm_comment'],
+                        'gm_approval_date' => now()]);
+                } elseif ($model['fmgr_approval'] === null && isCurrentFmgr($current_user->user_id)) {
+                    $ret = $db->where('id_salary_advance', $model['id_salary_advance'])->update('salary_advance', ['percentage' => $model['percentage'],
+                        'fmgr_approval' => $model['fmgr_approval'], 'fmgr_id' => $current_user->user_id, 'fmgr_comment' => $model['fmgr_comment'],
+                        'fmgr_approval_date' => now()]);
+                } elseif ($model['date_received'] === null && isFinanceOfficer($current_user->user_id)) {
+                    $ret = $db->where('id_salary_advance', $model['id_salary_advance'])->update('salary_advance',
+                        ['finance_officer_id' => $current_user->user_id,
+                            'finance_officer_comment' => $model['finance_officer_comment'], 'date_received' => now(), 'received_by' => $model['received_by'],
+                        ]);
+                }
+                if ($ret) {
+                    $user_ids[] = $model['user_id'];
+                }
             }
             if ($ret) {
                 $salary_advance = $db->where('id_salary_advance', $post['id_salary_advance'])->get('salary_advance');

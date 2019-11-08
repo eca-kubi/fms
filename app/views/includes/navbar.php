@@ -259,8 +259,9 @@
                         </li>
                     </ul>
                 </li>
-                <?php $is_secretary = isAssignedAsSecretary($current_user->user_id);  $is_current_manager = isCurrentManager($current_user->user_id)?>
-                <?php if ($is_secretary || $is_current_manager) { ?>
+                <?php $is_secretary = isAssignedAsSecretary($current_user->user_id);  $is_current_manager = isCurrentManager($current_user->user_id);
+                $is_finance_officer = isFinanceOfficer($current_user->user_id)?>
+                <?php if ($is_secretary || $is_current_manager || $is_finance_officer) { ?>
                     <li class="nav-item dropdown fa  mx-2">
                         <a class="nav-link dropdown-item text-warning dropdown-toggle btn border-0 text-bold flat"
                            data-toggle="dropdown">
@@ -282,6 +283,14 @@
                                 <li>
                                     <a class="dropdown-item" href="<?php echo site_url('salary-advance-manager') ?>">
                                         Manager
+                                    </a>
+                                </li>
+                            <?php } ?>
+                            <?php if ($is_finance_officer) { ?>
+                                <li class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="<?php echo site_url('salary-advance-manager') ?>">
+                                        Finance Officer
                                     </a>
                                 </li>
                             <?php } ?>

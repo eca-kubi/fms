@@ -11,7 +11,7 @@ class SalaryAdvanceManager extends Controller
         if (!isLoggedIn()) {
             redirect('users/login/salary-advance-manager/index/' . $id_salary_advance);
         }
-        if (!(isCurrentManager($current_user->user_id) || isCurrentFmgr($current_user->user_id) || isCurrentHR($current_user->user_id) || isCurrentGM($current_user->user_id))) {
+        if (!(isCurrentManager($current_user->user_id) || isCurrentFmgr($current_user->user_id) || isCurrentHR($current_user->user_id) || isCurrentGM($current_user->user_id) || isFinanceOfficer($current_user->user_id))) {
             redirect('salary-advance');
         }
         if ($id_salary_advance && !$db->where('id_salary_advance', $id_salary_advance)->has('salary_advance')) {

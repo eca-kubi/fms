@@ -215,7 +215,6 @@ function getDepartmentHod($department_id)
 }
 
 
-
 /**
  * @param $subject string
  * @param $body string
@@ -345,7 +344,8 @@ function getNameJobTitleAndDepartment($user_id)
         getDepartment($user->department_id);
 }
 
-function concatNameWithUserId($user_id) {
+function concatNameWithUserId($user_id)
+{
     $user = new User($user_id);
     return $user->first_name . ' ' . $user->last_name;
 }
@@ -366,26 +366,26 @@ function now()
 }
 
 
-function genDeptRef($department_id, $table, $single=true)
+function genDeptRef($department_id, $table, $single = true)
 {
     $db = Database::getDbh();
     $m = new Moment();
     $m_format = '';
     $type = $single ? '-SGL-' : '-BLK-';
     try {
-        $m_format =  $m->format('MMYY', new MomentJs());
+        $m_format = $m->format('MMYY', new MomentJs());
     } catch (MomentException $e) {
     }
-    $count  = $db->where('department_id', $department_id)->getValue ($table, 'count(*)') + 1;
+    $count = $db->where('department_id', $department_id)->getValue($table, 'count(*)') + 1;
     $department = new Department($department_id);
     $short_name = $department->short_name;
     if (strlen($count) === 1) {
-        return $short_name . $type . $m_format .'-00'. $count;
+        return $short_name . $type . $m_format . '-00' . $count;
     }
     if (strlen($count) === 2) {
-        return $short_name . $type . $m_format .'-0'. $count;
+        return $short_name . $type . $m_format . '-0' . $count;
     }
-    return $short_name . $type . $m_format .'-'.$count;
+    return $short_name . $type . $m_format . '-' . $count;
 }
 
 function site_url($url = '')
@@ -454,7 +454,7 @@ function getDepartmentMembers($department_id)
         ->get('users');
 }
 
-function get_include_contents($filename, $variablesToMakeLocal) : string
+function get_include_contents($filename, $variablesToMakeLocal): string
 {
     extract($variablesToMakeLocal, EXTR_OVERWRITE);
     $file = APP_ROOT . "/templates/$filename.php";
@@ -517,7 +517,8 @@ function isCurrentManagerForDepartment($department_id, $user_id)
     return getCurrentManager($department_id) === $user_id;
 }
 
-function getCurrentManager($department_id) {
+function getCurrentManager($department_id)
+{
     $db = Database::getDbh();
     return $db->where('department_id', $department_id)->getValue('departments', 'current_manager');
 }
@@ -572,7 +573,7 @@ function isSuperintendent($user_id)
     return in_array($user_role, ADMIN, true);
 }
 
-function getMembersAssignedToSecretary($user_id) : array
+function getMembersAssignedToSecretary($user_id): array
 {
     $db = Database::getDbh();
     $department_members = [];
@@ -596,4 +597,23 @@ function isFinanceOfficer($user_id)
     return Database::getDbh()->where('value', $user_id)
         ->where('prop', 'finance_officer')
         ->has('settings');
+}
+
+function getColsExcept($table,$remove){
+    $res =mysqli_query("SHOW COLUMNS FROM $table");
+
+    while($arr = mysqli_fetch_assoc($res)){
+        $cols[] = $arr['Field'];
+    }
+    if(is_array($remove)){
+        $newCols = array_diff($cols,$remove);
+        return "`".implode("`,`",$newCols)."`";
+    }else{
+        $length = count($cols);
+        for($i=0;$i<$length;$i++){
+            if($cols[$i] == $remove)
+                unset($cols[$i]);
+        }
+        return "`".implode("`,`",$cols)."`";
+    }
 }

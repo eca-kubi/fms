@@ -6,10 +6,11 @@ class SalaryAdvanceManagerAjax extends Controller
     {
         $db = Database::getDbh();
         $current_user = getUserSession();
-      if (isCurrentHR($current_user->user_id) || isCurrentFmgr($current_user->user_id) || isCurrentGM($current_user->user_id) || isFinanceOfficer($current_user->user_id)) {
+        if (isCurrentHR($current_user->user_id) || isCurrentFmgr($current_user->user_id) || isCurrentGM($current_user->user_id) || isFinanceOfficer($current_user->user_id)) {
             $records = [];
             try {
-                $records = $db->where('user_id', $current_user->user_id, '!=')->orderBy('date_raised')->where('deleted', false)->get('salary_advance');
+                $records = $db->where('user_id', $current_user->user_id, '!=')->orderBy('date_raised')->where('deleted', false)
+                    ->where('is_bulk_request', false)->get('salary_advance');
             } catch (Exception $e) {
             }
             $transformed_records = transformArrayData($records);
@@ -17,7 +18,8 @@ class SalaryAdvanceManagerAjax extends Controller
         } else if (isCurrentManager($current_user->user_id)) {
             $records = [];
             try {
-                $records = $db->where('user_id', $current_user->user_id, '!=')->orderBy('date_raised')->where('deleted', false)->where('department_id', $current_user->department_id)->get('salary_advance');
+                $records = $db->where('user_id', $current_user->user_id, '!=')->orderBy('date_raised')->where('deleted', false)
+                    ->where('is_bulk_request', false)->where('department_id', $current_user->department_id)->get('salary_advance');
             } catch (Exception $e) {
             }
             $transformed_records = transformArrayData($records);
@@ -55,7 +57,7 @@ class SalaryAdvanceManagerAjax extends Controller
                     // HR
                     $post_data['hr_approval'] = $_POST['hr_approval'] === 'true';
                     $post_data['hr_comment'] = $_POST['hr_comment'];
-                    $post_data['amount_payable'] =  $_POST['amount_payable'];
+                    $post_data['amount_payable'] = $_POST['amount_payable'];
                     $post_data['hr_id'] = $current_user->user_id;
                     $post_data['hr_approval_date'] = now();
                 } elseif (isCurrentGM($current_user->user_id)) {
@@ -64,8 +66,7 @@ class SalaryAdvanceManagerAjax extends Controller
                     $post_data['gm_comment'] = $_POST['gm_comment'];
                     $post_data['gm_id'] = $current_user->user_id;
                     $post_data['gm_approval_date'] = now();
-                }
-                elseif (isCurrentFmgr($current_user->user_id)) {
+                } elseif (isCurrentFmgr($current_user->user_id)) {
                     // Fmgr
                     $post_data['fmgr_approval'] = $_POST['fmgr_approval'] === 'true';
                     $post_data['fmgr_comment'] = $_POST['fmgr_comment'];
@@ -77,7 +78,7 @@ class SalaryAdvanceManagerAjax extends Controller
                 if ($record_updated) {
                     $updated_record = $db->where('id_salary_advance', $id_salary_advance)->getOne('salary_advance');
                     if (isCurrentManagerForDepartment($updated_record['department_id'], $current_user->user_id)) {
-                        $data['approval'] =  $post_data['hod_approval'];
+                        $data['approval'] = $post_data['hod_approval'];
                         $data['comment'] = $post_data['hod_comment'];
                         $body = get_include_contents('email_templates/salary-advance/approval', $data);
                         $data['body'] = $body;
@@ -85,14 +86,14 @@ class SalaryAdvanceManagerAjax extends Controller
                         insertEmail($subject, $email, $applicant->email);
                         // send email to the next reviewer (HR)
                         if ($data['approval']) {
-                            $data['link'] =  URL_ROOT . '/salary-advance-manager/index/' . $id_salary_advance;
+                            $data['link'] = URL_ROOT . '/salary-advance-manager/index/' . $id_salary_advance;
                             $body = get_include_contents('email_templates/salary-advance/review_after_approval', $data);
                             $data['body'] = $body;
                             $email = get_include_contents('email_templates/salary-advance/main', $data);
                             insertEmail($subject, $email, $hr->email);
                         }
                     } elseif (isCurrentHR($current_user->user_id)) {
-                        $data['approval'] =  $post_data['hr_approval'];
+                        $data['approval'] = $post_data['hr_approval'];
                         $data['comment'] = $post_data['hr_comment'];
                         $body = get_include_contents('email_templates/salary-advance/approval', $data);
                         $data['body'] = $body;
@@ -100,14 +101,14 @@ class SalaryAdvanceManagerAjax extends Controller
                         insertEmail($subject, $email, $applicant->email);
                         // send email to the next reviewer (GM)
                         if ($data['approval']) {
-                            $data['link'] =  URL_ROOT . '/salary-advance-manager/index/' . $id_salary_advance;
+                            $data['link'] = URL_ROOT . '/salary-advance-manager/index/' . $id_salary_advance;
                             $body = get_include_contents('email_templates/salary-advance/review_after_approval', $data);
                             $data['body'] = $body;
                             $email = get_include_contents('email_templates/salary-advance/main', $data);
                             insertEmail($subject, $email, $gm->email);
                         }
                     } elseif (isCurrentGM($current_user->user_id)) {
-                        $data['approval'] =  $post_data['gm_approval'];
+                        $data['approval'] = $post_data['gm_approval'];
                         $data['comment'] = $post_data['gm_comment'];
                         $body = get_include_contents('email_templates/salary-advance/approval', $data);
                         $data['body'] = $body;
@@ -115,14 +116,14 @@ class SalaryAdvanceManagerAjax extends Controller
                         insertEmail($subject, $email, $applicant->email);
                         // send email to the next reviewer (FMgr)
                         if ($data['approval']) {
-                            $data['link'] =  URL_ROOT . '/salary-advance-manager/index/' . $id_salary_advance;
+                            $data['link'] = URL_ROOT . '/salary-advance-manager/index/' . $id_salary_advance;
                             $body = get_include_contents('email_templates/salary-advance/review_after_approval', $data);
                             $data['body'] = $body;
                             $email = get_include_contents('email_templates/salary-advance/main', $data);
                             insertEmail($subject, $email, $fmgr->email);
                         }
                     } elseif (isCurrentFmgr($current_user->user_id)) {
-                        $data['approval'] =  $post_data['fmgr_approval'];
+                        $data['approval'] = $post_data['fmgr_approval'];
                         $data['comment'] = $post_data['fmgr_comment'];
                         $body = get_include_contents('email_templates/salary-advance/approval', $data);
                         $data['body'] = $body;

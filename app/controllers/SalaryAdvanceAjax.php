@@ -8,7 +8,9 @@ class SalaryAdvanceAjax extends Controller
         $current_user = getUserSession();
         $records = [];
         try {
-            $records = $db->where('user_id', $current_user->user_id)->orderBy('date_raised')->where('deleted', false)->get('salary_advance');
+            $records = $db->where('user_id', $current_user->user_id)->orderBy('date_raised')
+                ->where('is_bulk_request', false)
+                ->where('deleted', false)->get('salary_advance');
         } catch (Exception $e) {
         }
         $transformed_records = transformArrayData($records);
