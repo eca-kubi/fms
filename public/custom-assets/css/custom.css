@@ -443,6 +443,7 @@ a.k-link.k-state-active {
     background: #4C5B5C !important;
     color: white !important;
     border: 1px #4C5B5C !important;
+    max-width: 500px !important;
 }
 
 .k-callout-s {

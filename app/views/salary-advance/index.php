@@ -57,7 +57,7 @@
 <!-- /.content-wrapper -->
 <?php require_once APP_ROOT . '\views\includes\footer.php'; ?>
 </div>
-<!.. /.wrapper -->
+<!-- /.wrapper -->
 <?php require_once APP_ROOT . '\templates\x-kendo-templates\x-kendo-templates.php'; ?>
 <?php require_once APP_ROOT . '\views\includes\scripts.php'; ?>
 
@@ -152,10 +152,34 @@ $universal->basic_salary = $user->basic_salary;
                         },
                         amount_requested: {
                             type: 'number',
-                            validation: { //set validation rules
-                                min: 0,
-                                required: true
+                            validation: {
+                                required: function (input) {
+                                    if (input.attr("name") === "amount_requested") {
+                                        input.attr("data-required-msg", "<span class='mr-4'>Enter an amount.</span>");
+                                        return input.val() !== "";
+                                    }
+                                    return true;
+                                },
+                                min: function (input) {
+                                    if (input.attr("name") === "amount_requested") {
+                                        let grid = $salaryAdvanceGrid.getKendoGrid();
+                                        let model = grid.dataSource.getByUid(grid_uid);
+                                        input.attr("data-min-msg", "<span class='mr-4'>Amount must be more than 10% of salary.</span>");
+                                        return 0.1 * model.basic_salary <= kendo.parseFloat(input.val());
+                                    }
+                                    return true;
+                                },
+                                max: function (input) {
+                                    if (input.attr("name") === "amount_requested") {
+                                        let grid = $salaryAdvanceGrid.getKendoGrid();
+                                        let model = grid.dataSource.getByUid(grid_uid);
+                                        input.attr("data-max-msg", "<span class='mr-4'>Amount must not exceed 30% of salary.</span>");
+                                        return 0.30 * model.basic_salary >= kendo.parseFloat(input.val());
+                                    }
+                                    return true;
+                                }
                             },
+                            nullable: true,
                             editable: true
                         },
                         hod_comment: {
@@ -259,17 +283,7 @@ $universal->basic_salary = $user->basic_salary;
                             type: "number", editable: false, nullable: true,
                         },
                         percentage: {
-                            type: "number",
-                            defaultValue: 10,
-                            validation: { //set validation rules
-                                min: 10,
-                                max: 30,
-                                required: true
-                            },
-                        },
-                        amount_requested_is_percentage: {
-                            type: 'boolean',
-                            defaultValue: true
+                            type: "number", editable: false
                         },
                         basic_salary: {
                             type: "number",
@@ -390,17 +404,18 @@ $universal->basic_salary = $user->basic_salary;
                     groupHeaderTemplate: "Amount in Percentage: #= value? value + '%' : '' #",
                     aggregates: ["max", "min"],
                     format: "{0:#\\%}",
-                    filterable: false
+                    filterable: false,
+                    hidden: true
                 },
                 {
                     field: 'amount_requested',
-                    title: 'Amount in Figures',
+                    title: 'Amount Requested',
                     width: 180,
                     editor: editNumberWithoutSpinners,
                     headerAttributes: {
                         "class": "title"
                     },
-                    groupHeaderTemplate: "Amount in Figures: #=  value ? kendo.format('{0:c}', value) : ''#",
+                    groupHeaderTemplate: "Amount Requested: #=  value ? kendo.format('{0:c}', value) : ''#",
                     aggregates: ["max", "min", "count"],
                     format: "{0:c}",
                     filterable: false
@@ -587,7 +602,7 @@ $universal->basic_salary = $user->basic_salary;
                 {
                     field: 'amount_approved',
                     title: 'Amount Approved',
-                   nullable: true,
+                    nullable: true,
                     headerAttributes: {
                         "class": "title"
                     },
@@ -613,7 +628,7 @@ $universal->basic_salary = $user->basic_salary;
                 {
                     field: 'amount_received',
                     title: 'Amount Received',
-                   nullable: true,
+                    nullable: true,
                     attributes: {
                         class: 'amount_received'
                     },
@@ -628,7 +643,7 @@ $universal->basic_salary = $user->basic_salary;
                     field: 'received_by',
                     title: 'Received By',
                     hidden: false,
-                   nullable: true,
+                    nullable: true,
                     headerAttributes: {
                         "class": "title"
                     },
@@ -713,45 +728,27 @@ $universal->basic_salary = $user->basic_salary;
             detailCollapse: onDetailCollapse,
             beforeEdit: function (e) {
                 window.grid_uid = e.model.uid; // uid of current editing row
-                let grid = $salaryAdvanceGrid.data("kendoGrid");
-                e.model.fields["amount_requested"].editable  = e.model.hod_approval == null && e.model.hr_approval == null && e.model.fmgr_approval == null;
-                /*
-                 e.model.amount_requested = parseFloat((e.model.percentage / 100) * e.model.basic_salary).toFixed(2);
-                 e.model.dirty = true;
-                 e.model.dirtyFields["amount_requested"] = true;
-                 kendoFastReDrawRow(grid, grid.currentRow(), e.model);*/
+                e.model.fields["amount_requested"].editable = e.model.hod_approval === null;
             },
             edit: function (e) {
-                let percentageLabelField = e.container.find('.k-edit-label:eq(1), .k-edit-field:eq(1) ');
+                let validator = this.editable.validatable;
+                //let percentageLabelField = e.container.find('.k-edit-label:eq(1), .k-edit-field:eq(1) ');
                 let amountRequestedLabelField = e.container.find(".k-edit-label:eq(2), .k-edit-field:eq(2)");
                 let amountRequestedNumericTextBox = amountRequestedLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
-                let amountRequestedPercentageNumericTextBox = percentageLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
+                //let amountRequestedPercentageNumericTextBox = percentageLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
                 // let radioButtonGroup = $('<div class="editor-field"><input type="radio" name="toggleAmountRequested" id="percentageRadio" class="k-radio" checked="checked" > <label class="k-radio-label" for="percentageRadio" >Percentage</label><input type="radio" name="toggleAmountRequested" id="figureRadio" class="k-radio"> <label class="k-radio-label" for="figureRadio">Figure</label></div>');
-                amountRequestedPercentageNumericTextBox.bind("change", function (e) {
-                    let model = salaryAdvanceDataSource.getByUid(grid_uid);
-                    let grid = $salaryAdvanceGrid.data("kendoGrid");
-                    let amountRequested = parseFloat((this.value() / 100) * model.basic_salary).toFixed(2);
-                    amountRequestedNumericTextBox.value(amountRequested);
-                    amountRequestedNumericTextBox.trigger("change");
-                    //kendoFastReDrawRow(grid, grid.currentRow(), model)
-                });
-                amountRequestedNumericTextBox.enable(false);
-                if (e.model.isNew()) {
-                    amountRequestedNumericTextBox.value((e.model.percentage / 100) * e.model.basic_salary);
-                    amountRequestedNumericTextBox.trigger("change");
-                }
+
                 // Toggle visibility off for all editor fields and labels
                 e.container.find('.k-edit-label, .k-edit-field').addClass("pt-2").toggle(false);
                 amountRequestedLabelField.toggle(true);
-                amountRequestedLabelField.find('input').attr('min', '0');
-                percentageLabelField.find('input').attr('min', 10).attr('max', 30).attr('data-min-msg', 'Amount Requested must be at least 10% of net salary!').attr('data-max-msg', 'Amount Requested must not exceed 30% of net salary!');
-                percentageLabelField.find('.k-input').attr('data-required-msg', 'A percentage is required!');
-                e.container.data('kendoWindow').bind('activate', function () {
-                    if (e.model.fields["percentage"].editable) {
-                        amountRequestedPercentageNumericTextBox.focus();
-                    }
+                amountRequestedLabelField.find('input')
+                    .blur(function () {
+                        validator.validateInput($(this));
+                    });
+                e.container.on("keypress", ".k-input", function (e) {
+                    if(e.which === 13)
+                    $(this).blur().next("input").focus();
                 });
-
                 /*if (e.model.fields["percentage"].editable) {
                     amountRequestedLabelField.toggle(true);
                     percentageLabelField.toggle(true);
@@ -822,8 +819,8 @@ $universal->basic_salary = $user->basic_salary;
                       percentageLabelField.toggle(true);
                   }*/
                 e.container.data('kendoWindow').bind('activate', function () {
-                    if (e.model.fields.percentage.editable) {
-                        amountRequestedPercentageNumericTextBox.focus();
+                    if (e.model.fields["amount_requested"].editable) {
+                        amountRequestedNumericTextBox.focus();
                     }
                 });
 
