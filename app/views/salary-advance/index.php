@@ -155,7 +155,7 @@ $universal->basic_salary = $user->basic_salary;
                             validation: {
                                 required: function (input) {
                                     if (input.attr("name") === "amount_requested") {
-                                        input.attr("data-required-msg", "<span class='mr-4'>Enter an amount.</span>");
+                                        input.attr("data-required-msg", "Enter an amount.");
                                         return input.val() !== "";
                                     }
                                     return true;
@@ -164,7 +164,7 @@ $universal->basic_salary = $user->basic_salary;
                                     if (input.attr("name") === "amount_requested") {
                                         let grid = $salaryAdvanceGrid.getKendoGrid();
                                         let model = grid.dataSource.getByUid(grid_uid);
-                                        input.attr("data-min-msg", "<span class='mr-4'>Amount must be more than 10% of salary.</span>");
+                                        input.attr("data-min-msg", "Amount must be more than 10% of salary.");
                                         return 0.1 * model.basic_salary <= kendo.parseFloat(input.val());
                                     }
                                     return true;
@@ -173,7 +173,7 @@ $universal->basic_salary = $user->basic_salary;
                                     if (input.attr("name") === "amount_requested") {
                                         let grid = $salaryAdvanceGrid.getKendoGrid();
                                         let model = grid.dataSource.getByUid(grid_uid);
-                                        input.attr("data-max-msg", "<span class='mr-4'>Amount must not exceed 30% of salary.</span>");
+                                        input.attr("data-max-msg", "Amount must not exceed 30% of salary.");
                                         return 0.30 * model.basic_salary >= kendo.parseFloat(input.val());
                                     }
                                     return true;
@@ -375,6 +375,9 @@ $universal->basic_salary = $user->basic_salary;
                     headerAttributes: {class: "title"},
                     title: "Action",
                     width: 190
+                },
+                {
+                    name: "request_number"
                 },
                 {
                     field: 'date_raised',
@@ -737,7 +740,14 @@ $universal->basic_salary = $user->basic_salary;
                 let amountRequestedNumericTextBox = amountRequestedLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
                 //let amountRequestedPercentageNumericTextBox = percentageLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
                 // let radioButtonGroup = $('<div class="editor-field"><input type="radio" name="toggleAmountRequested" id="percentageRadio" class="k-radio" checked="checked" > <label class="k-radio-label" for="percentageRadio" >Percentage</label><input type="radio" name="toggleAmountRequested" id="figureRadio" class="k-radio"> <label class="k-radio-label" for="figureRadio">Figure</label></div>');
-
+                validator._errorTemplate = (function anonymous(data
+                ) {
+                    var $kendoOutput, $kendoHtmlEncode = kendo.htmlEncode;
+                    with (data) {
+                        $kendoOutput = '<div class="k-widget k-tooltip k-tooltip-validation mt-2"><span class="k-icon k-i-warning"> </span><span class="mr-4">' + (message) + '</span><span class="k-callout k-callout-n"></span></div>';
+                    }
+                    return $kendoOutput;
+                });
                 // Toggle visibility off for all editor fields and labels
                 e.container.find('.k-edit-label, .k-edit-field').addClass("pt-2").toggle(false);
                 amountRequestedLabelField.toggle(true);
@@ -746,8 +756,8 @@ $universal->basic_salary = $user->basic_salary;
                         validator.validateInput($(this));
                     });
                 e.container.on("keypress", ".k-input", function (e) {
-                    if(e.which === 13)
-                    $(this).blur().next("input").focus();
+                    if (e.which === 13)
+                        $(this).blur().next("input").focus();
                 });
                 /*if (e.model.fields["percentage"].editable) {
                     amountRequestedLabelField.toggle(true);

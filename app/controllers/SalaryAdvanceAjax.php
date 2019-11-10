@@ -48,8 +48,6 @@ class SalaryAdvanceAjax extends Controller
             $record_added_id = $db->insert('salary_advance', $data);
             if ($record_added_id) {
                 $new_record = $db->where('id_salary_advance', $record_added_id)->get('salary_advance');
-                $new_record[0]['success'] = true;
-                $new_record[0]['has_active_application'] = hasActiveApplication($current_user->user_id);
                 $ref_number = genDeptRef($current_user->department_id, 'salary_advance');
                 $hod = new User(getCurrentManager($current_user->department_id));
                 // Send email to HoD

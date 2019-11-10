@@ -2,17 +2,17 @@
 
 class SalaryAdvance extends Controller
 {
-    public function index($id_salary_advance = null): void
+    public function index($request_number = null): void
     {
         $db = Database::getDbh();
         if (!isLoggedIn()) {
-            redirect('users/login/salary-advance/index/' . $id_salary_advance);
+            redirect('users/login/salary-advance/index/' . $request_number);
         } else {
             $payload = [];
             $payload['current_user'] = getUserSession();
             $payload['title'] = 'Salary Advance Applications';
-            $payload['select_row_id'] = $id_salary_advance;
-            if ($id_salary_advance && !$db->where('id_salary_advance', $id_salary_advance)->has('salary_advance')) {
+            $payload['select_row_id'] = $request_number;
+            if ($request_number && !$db->where('request_number', $request_number)->has('salary_advance')) {
                 redirect('errors/index/404');
             }
             $this->view('salary-advance/index', $payload);
