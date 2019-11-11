@@ -87,9 +87,15 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
         kendo.culture().numberFormat.currency.symbol = 'GH₵';
         $salaryAdvanceGrid = $('#salary_advance');
         salaryAdvanceDataSource = new kendo.data.DataSource({
-            width: 'auto',
             pageSize: 20,
             batch: false,
+            filter: [
+                {
+                    field: "date_raised", operator: "gte", value: new Date(firstDayOfMonth)
+                },
+                {
+                    field: 'date_raised', operator: "lte", value: new Date(lastDayOfMonth)
+                }],
             transport: {
                 read: {
                     url: URL_ROOT + "/salary-advance-bulk-requests-ajax/index/" + universal["bulkRequestNumber"],
@@ -113,8 +119,8 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
                     dataType: 'json'
                 },
                 parameterMap: function (data, type) {
-                    if(type !== "read")
-                    return JSON.stringify(data);
+                    if (type !== "read")
+                        return JSON.stringify(data);
                 },
                 errors: function (response) {
                     return response.errors;
@@ -128,8 +134,6 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
                 if ((e.type === 'update' || e.type === 'create') && e.response.length > 0) {
                     toastSuccess('Success', 5000);
                 }
-            },
-            change: function (e) {
             },
             schema: {
                 model: {
@@ -194,13 +198,6 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
                         finance_officer_id: {type: "number", nullable: true},
                         finance_officer_comment: {type: "string", editable: false}
                     }
-                },
-                parse: function (data) {
-                    $.each(data, function (idx, elem) {
-                        elem.date_raised = moment(elem.date_raised).format("YYYY-MM-DD");
-                        elem.date_received = moment(elem.date_received).format("YYYY-MM-DD");
-                    });
-                    return data;
                 }
             }
         });
@@ -212,9 +209,6 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
             noRecords: true,
             navigatable: true,
             toolbar: kendo.template($('#toolbarTemplate_Bulk_Requests').html()),
-            filter: function (e) {
-                toggleDateFilterBtn(e);
-            },
             excel: {
                 fileName: "Salary Advance Export.xlsx",
                 filterable: true
@@ -263,7 +257,6 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
                 });
             },
             saveChanges: function (e) {
-
             },
             filterable: {
                 extra: false,
@@ -282,7 +275,7 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
             persistSelection: true,
             pageable: {
                 alwaysVisible: false,
-                pageSizes: [5, 10, 15, 20],
+                pageSizes: [20, 40, 60, 80, 100],
                 buttonCount: 5
             },
             columnResizeHandleWidth: 30,
@@ -317,7 +310,6 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
                     },
                     width: 260,
                     filterable: {
-                        //  ui: departmentFilter,
                         cell: {
                             showOperators: false
                         }
@@ -604,7 +596,7 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
                     field: 'date_received',
                     title: 'Date Received',
                     hidden: false,
-                   nullable: true,
+                    nullable: true,
                     headerAttributes: {
                         "class": "title"
                     },
@@ -658,7 +650,7 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
                 }
                 if (!firstLoadDone) {
                     firstLoadDone = true;
-                    filterDate(new Date(firstDayOfMonth), new Date(lastDayOfMonth), "date_raised");
+                    //filterDate(new Date(firstDayOfMonth), new Date(lastDayOfMonth), "date_raised");
                 }
             },
             detailInit: function (e) {
@@ -666,7 +658,7 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
                 //let masterRow = e.detailRow.prev('tr.k-master-row');
                 //let dataItem = grid.dataItem(masterRow);
                 let colSize = e.sender.content.find('colgroup col').length;
-               // $(".print-it").printPage();
+                // $(".print-it").printPage();
                 e.detailRow.find('.k-hierarchy-cell').hide();
                 e.detailCell.attr('colspan', colSize);
             },

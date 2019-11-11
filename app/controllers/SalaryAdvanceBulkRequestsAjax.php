@@ -36,11 +36,11 @@ class SalaryAdvanceBulkRequestsAjax extends Controller
                     if (!($is_finance_officer || $is_hr || $is_gm || $is_fmgr)) {
                         $bulk_requests = $db->join('users u', 'u.user_id=sa.raised_by_id', 'INNER')->join('departments d', 'd.department_id=sa.department_id')
                             ->where('deleted', false)->where('sa.department_id', $current_user->department_id)
-                            ->get('salary_advance_bulk_requests sa', null, 'sa.id_salary_advance_bulk_requests as id, concat_ws(" ", u.first_name, u.last_name) as raised_by, 
+                            ->get('salary_advance_bulk_requests sa', null, 'sa.id_salary_advance_bulk_requests, concat_ws(" ", u.first_name, u.last_name) as raised_by, 
                        sa.raised_by_id, sa.bulk_request_number, sa.department_id, d.department');
                     } else {
                         $bulk_requests = $db->join('users u', 'u.user_id=sa.raised_by_id', 'INNER')->join('departments d', 'd.department_id=sa.department_id')
-                            ->where('deleted', false)->get('salary_advance_bulk_requests sa', null, 'sa.id_salary_advance_bulk_requests as id, concat_ws(" ", u.first_name, u.last_name) as raised_by, 
+                            ->where('deleted', false)->get('salary_advance_bulk_requests sa', null, 'sa.id_salary_advance_bulk_requests, concat_ws(" ", u.first_name, u.last_name) as raised_by, 
                        sa.raised_by_id, sa.bulk_request_number, sa.department_id, d.department');
                     }
                 } catch (Exception $e) {

@@ -87,8 +87,14 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
         kendo.culture().numberFormat.currency.symbol = 'GH₵';
         $salaryAdvanceGrid = $('#salary_advance');
         salaryAdvanceDataSource = new kendo.data.DataSource({
-            width: 'auto',
             pageSize: 20,
+            filter: [
+                {
+                    field: "date_raised", operator: "gte", value: new Date(firstDayOfMonth)
+                },
+                {
+                    field: 'date_raised', operator: "lte", value: new Date(lastDayOfMonth)
+                }],
             batch: false,
             transport: {
                 read: {
@@ -136,7 +142,7 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
             },
             schema: {
                 model: {
-                    id: "id",
+                    id: "id_salary_advance_bulk_requests",
                     fields: {
                         /* amount_approved: {
                              editable: false,
@@ -215,9 +221,6 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
             noRecords: true,
             navigatable: true,
             toolbar: kendo.template($('#toolbarTemplate_Bulk_Requests').html()),
-            filter: function (e) {
-                toggleDateFilterBtn(e);
-            },
             excel: {
                 fileName: "Salary Advance Export - Bulk Requests.xlsx",
                 filterable: true
@@ -282,7 +285,7 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
             persistSelection: true,
             pageable: {
                 alwaysVisible: false,
-                pageSizes: [5, 10, 15, 20],
+                pageSizes: [20, 40, 60, 80, 100],
                 buttonCount: 5
             },
             columnResizeHandleWidth: 30,
@@ -672,7 +675,7 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
                  }*/
                 if (!firstLoadDone) {
                     firstLoadDone = true;
-                    filterDate(new Date(firstDayOfMonth), new Date(lastDayOfMonth), "date_raised");
+                    //filterDate(new Date(firstDayOfMonth), new Date(lastDayOfMonth), "date_raised");
                 }
             },
             /*  detailInit: function (e) {

@@ -85,20 +85,17 @@ $universal->basic_salary = $user->basic_salary;
     let salaryAdvanceDataSource;
     let $salaryAdvanceTooltip;
     $(document).ready(function () {
-        //$(document).on('click', '#percentageRadio', toggleAmountRequested);
         URL_ROOT = $('#url_root').val();
         kendo.culture().numberFormat.currency.symbol = 'GH₵';
         $salaryAdvanceGrid = $("#salary_advance");
-        $salaryAdvanceGrid.on('change', "input[name=employee]", function (e) {
-            //let select = $(this).data("kendoDropDownList");
-        });
-        // '/salary-advance-ajax/'
         salaryAdvanceDataSource = new kendo.data.DataSource({
-            filter: [{field: "date_raised", operator: "gte", value: new Date(firstDayOfMonth)}, {
-                field: 'date_raised',
-                operator: "lte",
-                value: new Date(lastDayOfMonth)
-            }],
+            filter: [
+                {
+                    field: "date_raised", operator: "gte", value: new Date(firstDayOfMonth)
+                },
+                {
+                    field: 'date_raised', operator: "lte", value: new Date(lastDayOfMonth)
+                }],
             pageSize: 20,
             transport: {
                 read: {
@@ -311,7 +308,6 @@ $universal->basic_salary = $user->basic_salary;
             }, {name: "excel", template: $("#exportToExcel").html()}],
             excel: {
                 fileName: "Salary Advance Export.xlsx",
-                //proxyURL: "https://demos.telerik.com/kendo-ui/service/export",
                 filterable: true
             },
             excelExport: function (e) {
@@ -320,13 +316,13 @@ $universal->basic_salary = $user->basic_salary;
                 for (let rowIndex = 1; rowIndex < sheet.rows.length; rowIndex++) {
                     let row = sheet.rows[rowIndex];
                     let dataItem = {
-                        hod_approval: row.cells[5].value,
-                        fmgr_approval: row.cells[12].value,
-                        hr_approval: row.cells[8].value
+                        hod_approval: row.cells[3].value,
+                        hr_approval: row.cells[6].value,
+                        fmgr_approval: row.cells[10].value
                     };
-                    row.cells[5].value = dataItem.hod_approval == null ? 'Pending' : (dataItem.hod_approval ? 'Approved' : 'Rejected');
-                    row.cells[8].value = dataItem.hr_approval == null ? 'Pending' : (dataItem.hr_approval ? 'Approved' : 'Rejected');
-                    row.cells[12].value = dataItem.fmgr_approval == null ? 'Pending' : (dataItem.fmgr_approval ? 'Approved' : 'Rejected');
+                    row.cells[3].value = dataItem.hod_approval == null ? 'Pending' : (dataItem.hod_approval ? 'Approved' : 'Rejected');
+                    row.cells[6].value = dataItem.hr_approval == null ? 'Pending' : (dataItem.hr_approval ? 'Approved' : 'Rejected');
+                    row.cells[10].value = dataItem.fmgr_approval == null ? 'Pending' : (dataItem.fmgr_approval ? 'Approved' : 'Rejected');
 
                     // alternating row colors
                     if (rowIndex % 2 === 0) {
@@ -388,7 +384,6 @@ $universal->basic_salary = $user->basic_salary;
                         "class": "title"
                     },
                     width: 450,
-                    groupHeaderTemplate: "Date Raised: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') #",
                     filterable: {
                         cell: {
                             template: dateRangeFilter
@@ -406,8 +401,6 @@ $universal->basic_salary = $user->basic_salary;
                         "class": "title"
                     },
                     width: 180,
-                    groupHeaderTemplate: "Amount in Percentage: #= value? value + '%' : '' #",
-                    aggregates: ["max", "min"],
                     format: "{0:#\\%}",
                     filterable: false,
                     hidden: true
@@ -420,8 +413,6 @@ $universal->basic_salary = $user->basic_salary;
                     headerAttributes: {
                         "class": "title"
                     },
-                    groupHeaderTemplate: "Amount Requested: #=  value ? kendo.format('{0:c}', value) : ''#",
-                    aggregates: ["max", "min", "count"],
                     format: "{0:c}",
                     filterable: false
                 },
@@ -436,8 +427,6 @@ $universal->basic_salary = $user->basic_salary;
                         "class": "title"
                     },
                     width: 200,
-                    groupHeaderTemplate: "HoD Approved: #= value===null? 'Pending' : (value? 'Approved' : 'Rejected') # | Total: #= count #",
-                    aggregates: ["count"],
                     filterable: false
                 },
                 {
@@ -462,11 +451,10 @@ $universal->basic_salary = $user->basic_salary;
                         "class": "title"
                     },
                     width: 200,
-                    groupHeaderTemplate: "Date Raised: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : '' #",
                     hidden: false,
                     filterable: false,
                     nullable: true,
-                    format: "{0:dddd dd MMM, yyyy}",
+                    format: "{0:dddd dd MMM, yyyy}"
                 },
                 {
                     field: 'hr_approval',
@@ -478,8 +466,6 @@ $universal->basic_salary = $user->basic_salary;
                     headerAttributes: {
                         "class": "title"
                     },
-                    groupHeaderTemplate: "HR Approval: #= value===null? 'Pending' : (value? 'Approved' : 'Rejected') # |  Total: #= count #",
-                    aggregates: ["count"],
                     width: 200,
                     filterable: false
 
@@ -506,8 +492,6 @@ $universal->basic_salary = $user->basic_salary;
                     headerAttributes: {
                         "class": "title"
                     },
-                    groupHeaderTemplate: "Amount Payable: #= value?  kendo.format('{0:c}', value) : 'Pending' #",
-                    aggregates: ["max", "min"],
                     width: 200,
                     filterable: false,
                     nullable: true
@@ -519,7 +503,6 @@ $universal->basic_salary = $user->basic_salary;
                         "class": "title"
                     },
                     width: 200,
-                    groupHeaderTemplate: "HR Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : '' #",
                     hidden: false,
                     filterable: false,
                     nullable: true,
@@ -536,8 +519,6 @@ $universal->basic_salary = $user->basic_salary;
                         "class": "title"
                     },
                     width: 200,
-                    groupHeaderTemplate: "GM Approval: #= value=== null 'Pending' : ( value? 'Approved': 'Rejected' )# | Total: #= count #",
-                    aggregates: ["count"],
                     filterable: false
                 },
                 {
@@ -560,7 +541,6 @@ $universal->basic_salary = $user->basic_salary;
                         "class": "title"
                     },
                     width: 200,
-                    groupHeaderTemplate: "GM's Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : '' #",
                     filterable: false,
                     format: "{0:dddd dd MMM, yyyy}"
                 },
@@ -575,8 +555,6 @@ $universal->basic_salary = $user->basic_salary;
                         "class": "title"
                     },
                     width: 200,
-                    groupHeaderTemplate: "Finance Manager Approval: #= value? 'Yes' : (value===null? 'Pending' : 'No') # |  Total: #=count #",
-                    aggregates: ["count"],
                     filterable: false
                 },
                 {
@@ -601,8 +579,6 @@ $universal->basic_salary = $user->basic_salary;
                     headerAttributes: {
                         "class": "title"
                     },
-                    //groupHeaderTemplate: "Amount Approved: #= value?  kendo.format('{0:c}', value): 'Pending' #",
-                    aggregates: ["max", "min"],
                     format: "{0:c}",
                     width: 200,
                     filterable: false
@@ -614,7 +590,6 @@ $universal->basic_salary = $user->basic_salary;
                         "class": "title"
                     },
                     width: 200,
-                    groupHeaderTemplate: "Finance Mgr. Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : '' #",
                     hidden: false,
                     filterable: false,
                     nullable: true,
@@ -631,7 +606,6 @@ $universal->basic_salary = $user->basic_salary;
                         "class": "title"
                     },
                     width: 200,
-                    groupHeaderTemplate: "Amount Received: #: kendo.format('{0:c}', value) #",
                     filterable: false
                 },
                 {
@@ -643,7 +617,6 @@ $universal->basic_salary = $user->basic_salary;
                         "class": "title"
                     },
                     width: 200,
-                    groupHeaderTemplate: "Received By: #:  value #",
                     filterable: false
                 },
                 {
@@ -655,7 +628,6 @@ $universal->basic_salary = $user->basic_salary;
                         "class": "title"
                     },
                     width: 450,
-                    groupHeaderTemplate: "Date Received: #= value? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : 'Pending' #",
                     filterable: {
                         cell: {
                             template: dateRangeFilter
@@ -681,9 +653,6 @@ $universal->basic_salary = $user->basic_salary;
             ],
             detailTemplate: kendo.template($("#detailTemplate").html()),
             dataSource: salaryAdvanceDataSource,
-            dataBinding: function () {
-                //let no = (this.dataSource.page() - 1) * this.dataSource.pageSize();
-            },
             dataBound: function (e) {
                 let grid = e.sender;
                 let dataSource = this.dataSource;
@@ -707,11 +676,11 @@ $universal->basic_salary = $user->basic_salary;
                 }
                 if (!firstLoadDone) {
                     firstLoadDone = true;
-                    filterDate(new Date(firstDayOfMonth), new Date(lastDayOfMonth), "date_raised");
-                  /*  with (universal) {
+                    //filterDate(new Date(firstDayOfMonth), new Date(lastDayOfMonth), "date_raised");
+                    with (universal) {
                         if (request_number)
                             filterString(request_number, 'request_number');
-                    }*/
+                    }
                 }
             },
             detailInit: function (e) {
