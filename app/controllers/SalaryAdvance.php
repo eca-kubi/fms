@@ -11,7 +11,7 @@ class SalaryAdvance extends Controller
             $payload = [];
             $payload['current_user'] = getUserSession();
             $payload['title'] = 'Salary Advance Applications';
-            $payload['select_row_id'] = $request_number;
+            $payload['request_number'] = $request_number;
             if ($request_number && !$db->where('request_number', $request_number)->has('salary_advance')) {
                 redirect('errors/index/404');
             }
@@ -19,10 +19,10 @@ class SalaryAdvance extends Controller
         }
     }
 
-    public function bulkRequests(string $bulk_request_number = null): void
+    public function bulkRequests(string $request_number = null): void
     {
         if (!isLoggedIn()) {
-            redirect('users/login/salary-advance/bulk-requests/' . $bulk_request_number);
+            redirect('users/login/salary-advance/bulk-requests/' . $request_number);
         }
         $current_user =  $payload['current_user'] = getUserSession();
 
@@ -30,8 +30,8 @@ class SalaryAdvance extends Controller
             redirect('salary-advance/index');
         }
         $payload['title'] = 'Bulk Salary Advance Applications';
-        $payload['bulk_request_number'] = $bulk_request_number;
-        if ($bulk_request_number) {
+        $payload['bulk_request_number'] = $request_number;
+        if ($request_number) {
             $this->view('salary-advance/update_bulk_requests', $payload);
         } else {
             $this->view('salary-advance/bulk_requests', $payload);
@@ -51,10 +51,10 @@ class SalaryAdvance extends Controller
         $this->view('salary-advance/new_bulk_request', $payload);
     }
 
-    public function print($id_salary_advance = null): void
+    public function print($request_number = null): void
     {
         $db = Database::getDbh();
-        $payload['salary_advance'] = $db->where('id_salary_advance', $id_salary_advance)->objectBuilder()->getOne('salary_advance');
+        $payload['salary_advance'] = $db->where('request_number', $request_number)->objectBuilder()->getOne('salary_advance');
         $this->view('print-salary-advance', $payload);
     }
 }

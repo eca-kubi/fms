@@ -14,7 +14,7 @@ class Users extends Controller
 
     function login($redirect_url = '')
     {
-        $payload['title'] = 'CMS Login';
+        $payload['title'] = 'FMS Login';
         $payload['redirect_url'] = $redirect_url;
         /*if (isLoggedIn()) {
             //goBack();
@@ -22,7 +22,7 @@ class Users extends Controller
                 redirect('users/choose-session');
             }
         }*/
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $payload['post'] = validatePost('login_form');
             $post = $payload['post'];
             if(!empty($post->staff_id_err) || !empty($post->password_err))   {
@@ -55,7 +55,7 @@ class Users extends Controller
 
     public function forgotPassword()
     {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             $email = isset($_POST['email']) ? $_POST['email'] : null;
             if ($email) {

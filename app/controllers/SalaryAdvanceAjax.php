@@ -8,13 +8,17 @@ class SalaryAdvanceAjax extends Controller
         $current_user = getUserSession();
         $records = [];
         try {
-            $records = $db->where('user_id', $current_user->user_id)->orderBy('date_raised')
+            $records = $db->join('users u', 'u.user_id=sa.user_id', 'LEFT')
+                ->join('departments d', 'd.department_id=u.department_id', 'LEFT')
+                ->where('u.user_id', $current_user->user_id)
+                ->where('u.department_id', $current_user->department_id)
                 ->where('is_bulk_request', false)
-                ->where('deleted', false)->get('salary_advance');
+                ->where('deleted', false)
+                ->orderBy('date_raised')
+                ->get('salary_advance sa', null, '*,  concat_ws(" ", u.first_name, u.last_name) as name, d.department, NULL as password, NULL as default_password');
         } catch (Exception $e) {
         }
-        $transformed_records = transformArrayData($records);
-        echo json_encode($transformed_records, JSON_THROW_ON_ERROR, 512);
+        echo json_encode($records, JSON_THROW_ON_ERROR, 512);
     }
 
     public function Create(): void
@@ -33,18 +37,12 @@ class SalaryAdvanceAjax extends Controller
                 return;
             }
             $data = [
-                'amount_requested_is_percentage' => $_POST['amount_requested_is_percentage'],
                 'amount_requested' => $_POST['amount_requested'],
-                'percentage' => $_POST['percentage'],
+                'percentage' => ($_POST['amount_requested']/ $current_user->basic_salary) * 100,
                 'user_id' => $current_user->user_id,
                 'department_id' => $current_user->department_id,
-                'department_ref' => genDeptRef($current_user->department_id, 'salary_advance')
+                'request_number' => genDeptRef($current_user->department_id, 'salary_advance')
             ];
-            /*  if ($data['amount_requested_is_percentage']) {
-                  $data['amount_requested'] = null;
-              } else {
-                  $data['percentage'] = null;
-              }*/
             $record_added_id = $db->insert('salary_advance', $data);
             if ($record_added_id) {
                 $new_record = $db->where('id_salary_advance', $record_added_id)->get('salary_advance');

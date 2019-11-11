@@ -17,12 +17,14 @@ class SalaryAdvanceBulkRequestsAjax extends Controller
             if ($bulk_request_number) {
                 try {
                     if (!($is_finance_officer || $is_hr || $is_gm || $is_fmgr)) {
-                        $bulk_requests = $db->join('users u', 'u.user_id=sa.user_id', 'LEFT' )
+                        $bulk_requests = $db->join('users u', 'u.user_id=sa.user_id', 'LEFT')
                             ->join('departments d', 'd.department_id=u.department_id', 'LEFT')
-                            ->where('sa.bulk_request_number', $bulk_request_number)->where('u.department_id', $current_user->department_id)
-                            ->where('sa.deleted', false)->orderBy('sa.date_raised', 'DESC')->get('salary_advance sa',null, '*, concat_ws(" ", u.first_name, u.last_name) as name, d.department, NULL as password, NULL as default_password');
+                            ->where('sa.bulk_request_number', $bulk_request_number)
+                            ->where('u.department_id', $current_user->department_id)
+                            ->where('sa.deleted', false)->orderBy('sa.date_raised', 'DESC')
+                            ->get('salary_advance sa', null, '*, concat_ws(" ", u.first_name, u.last_name) as name, d.department, NULL as password, NULL as default_password');
                     } else {
-                        $bulk_requests = $db->join('users u', 'u.user_id=sa.user_id', 'LEFT' )
+                        $bulk_requests = $db->join('users u', 'u.user_id=sa.user_id', 'LEFT')
                             ->join('departments d', 'd.department_id=u.department_id', 'LEFT')
                             ->where('sa.bulk_request_number', $bulk_request_number)->where('sa.deleted', false)
                             ->orderBy('sa.date_raised', 'DESC')->get('salary_advance sa', null, '*, concat_ws(" ", u.first_name, u.last_name) as name, d.department, NULL as password, NULL as default_password');

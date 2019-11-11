@@ -67,8 +67,8 @@ $universal = new stdClass();
 $universal->currency_symbol = CURRENCY_GHS;
 $universal->hr_comment_editable = $universal->isHr = getCurrentHR() === $current_user->user_id;
 $universal->fgmr_comment_editable = $universal->isFmgr = getCurrentFgmr() === $current_user->user_id;
-/** @var int|null $select_row_id */
-$universal->select_row_id = $select_row_id;
+/** @var int|null $request_number */
+$universal->request_number = $request_number;
 $universal->has_active_application = hasActiveApplication($current_user->user_id);
 $universal->basic_salary = $user->basic_salary;
 ?>
@@ -150,6 +150,9 @@ $universal->basic_salary = $user->basic_salary;
                             type: 'date',
                             editable: false
                         },
+                        request_number: {
+                            editable: false
+                        },
                         amount_requested: {
                             type: 'number',
                             validation: {
@@ -225,18 +228,18 @@ $universal->basic_salary = $user->basic_salary;
                         amount_payable: {
                             type: 'number',
                             nullable: true,
-                            validation: { //set validation rules
+                            validation: {
                                 required: true,
-                                min: '0'
+                                min: 0
                             },
                             editable: false
                         },
                         amount_approved: {
                             nullable: true,
                             type: 'number',
-                            validation: { //set validation rules
+                            validation: {
                                 required: true,
-                                min: '0'
+                                min: 0
                             },
                             editable: false
                         },
@@ -247,19 +250,18 @@ $universal->basic_salary = $user->basic_salary;
                         },
                         fmgr_approval_date: {
                             type: 'date',
-                            editable: false
+                            editable: false,
+                            nullable: true
                         },
                         hr_approval_date: {
                             type: 'date',
-                            editable: false
+                            editable: false,
+                            nullable: true
                         },
                         date_received: {
                             type: 'date',
                             editable: false,
                             nullable: true
-                        },
-                        department_ref: {
-                            editable: false
                         },
                         hr_id: {
                             type: 'number'
@@ -280,23 +282,17 @@ $universal->basic_salary = $user->basic_salary;
                         },
                         raised_by_id: {type: "number"},
                         amount_received: {
-                            type: "number", editable: false, nullable: true,
+                            type: "number", editable: false, nullable: true
                         },
                         percentage: {
                             type: "number", editable: false
                         },
                         basic_salary: {
                             type: "number",
-                            defaultValue: universal["basic_salary"]
+                            defaultValue: universal["basic_salary"],
+                            editable: false
                         }
                     }
-                },
-                parse: function (data) {
-                    $.each(data, function (idx, elem) {
-                        elem.date_raised = moment(elem.date_raised).format("YYYY-MM-DD");
-                        elem.date_received = moment(elem.date_received).format("YYYY-MM-DD");
-                    });
-                    return data;
                 }
             }
         });
@@ -312,7 +308,7 @@ $universal->basic_salary = $user->basic_salary;
                 name: "create",
                 text: "Request Salary Advance",
                 iconClass: "k-icon k-i-add text-primary"
-            }, {name: "excel", iconClass: "text-primary", template: $("#exportToExcel").html()}],
+            }, {name: "excel", template: $("#exportToExcel").html()}],
             excel: {
                 fileName: "Salary Advance Export.xlsx",
                 //proxyURL: "https://demos.telerik.com/kendo-ui/service/export",
@@ -377,7 +373,13 @@ $universal->basic_salary = $user->basic_salary;
                     width: 190
                 },
                 {
-                    name: "request_number"
+                    field: "request_number",
+                    title: "Request Number",
+                    width: 230,
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    filterable: {cell: {showOperators: false}},
                 },
                 {
                     field: 'date_raised',
@@ -436,16 +438,6 @@ $universal->basic_salary = $user->basic_salary;
                     width: 200,
                     groupHeaderTemplate: "HoD Approved: #= value===null? 'Pending' : (value? 'Approved' : 'Rejected') # | Total: #= count #",
                     aggregates: ["count"],
-                    /*filterable:{
-                        ui: function(element){
-                            element.kendoDropDownList({
-                                dataSource: [{ value: 1, text: "Approved" }, { value: 0, text: "Rejected" }],
-                                //optionLabel: "--Select--",
-                                dataTextField: "text",
-                                dataValueField: "value",
-                            });
-                        }
-                    }*/
                     filterable: false
                 },
                 {
@@ -697,7 +689,7 @@ $universal->basic_salary = $user->basic_salary;
                 let dataSource = this.dataSource;
                 let data = grid.dataSource.data();
                 $.each(data, function (i, row) {
-                    $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["id_salary_advance"]);
+                    $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["request_number"]);
                 });
                 $(".print-it").printPage();
                 let headingRow = $salaryAdvanceGrid.find('thead tr[role=row]');
@@ -706,15 +698,20 @@ $universal->basic_salary = $user->basic_salary;
                 let filterRow = $salaryAdvanceGrid.find('thead tr.k-filter-row');
                 filterRow.find('th.k-hierarchy-cell').hide();
                 filterRow.find('th.k-hierarchy-cell').next('th').attr('colspan', 2);
+                filterRow.find('input:first').attr('placeholder', 'Search...');
                 if (universal["has_active_application"]) {
                     disableGridAddButton();
                 }
-                if (!currentRowSelected && universal['select_row_id']) {
-                    selectGridRow(universal["select_row_id"], grid, dataSource, 'id_salary_advance');
+                if (!currentRowSelected && universal['request_number']) {
+                    selectGridRow(universal["request_number"], grid, dataSource, 'request_number');
                 }
                 if (!firstLoadDone) {
                     firstLoadDone = true;
                     filterDate(new Date(firstDayOfMonth), new Date(lastDayOfMonth), "date_raised");
+                  /*  with (universal) {
+                        if (request_number)
+                            filterString(request_number, 'request_number');
+                    }*/
                 }
             },
             detailInit: function (e) {
@@ -722,7 +719,7 @@ $universal->basic_salary = $user->basic_salary;
                 let masterRow = e.detailRow.prev('tr.k-master-row');
                 let dataItem = grid.dataItem(masterRow);
                 let colSize = e.sender.content.find('colgroup col').length;
-                e.detailRow.find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + dataItem["id_salary_advance"]);
+                e.detailRow.find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + dataItem["request_number"]);
                 $(".print-it").printPage();
                 e.detailRow.find('.k-hierarchy-cell').hide();
                 e.detailCell.attr('colspan', colSize);
@@ -736,13 +733,13 @@ $universal->basic_salary = $user->basic_salary;
             edit: function (e) {
                 let validator = this.editable.validatable;
                 //let percentageLabelField = e.container.find('.k-edit-label:eq(1), .k-edit-field:eq(1) ');
-                let amountRequestedLabelField = e.container.find(".k-edit-label:eq(2), .k-edit-field:eq(2)");
+                let amountRequestedLabelField = e.container.find(".k-edit-label:eq(3), .k-edit-field:eq(3)");
                 let amountRequestedNumericTextBox = amountRequestedLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
                 //let amountRequestedPercentageNumericTextBox = percentageLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
                 // let radioButtonGroup = $('<div class="editor-field"><input type="radio" name="toggleAmountRequested" id="percentageRadio" class="k-radio" checked="checked" > <label class="k-radio-label" for="percentageRadio" >Percentage</label><input type="radio" name="toggleAmountRequested" id="figureRadio" class="k-radio"> <label class="k-radio-label" for="figureRadio">Figure</label></div>');
                 validator._errorTemplate = (function anonymous(data
                 ) {
-                    var $kendoOutput, $kendoHtmlEncode = kendo.htmlEncode;
+                    let $kendoOutput, $kendoHtmlEncode = kendo.htmlEncode;
                     with (data) {
                         $kendoOutput = '<div class="k-widget k-tooltip k-tooltip-validation mt-2"><span class="k-icon k-i-warning"> </span><span class="mr-4">' + (message) + '</span><span class="k-callout k-callout-n"></span></div>';
                     }
@@ -751,10 +748,6 @@ $universal->basic_salary = $user->basic_salary;
                 // Toggle visibility off for all editor fields and labels
                 e.container.find('.k-edit-label, .k-edit-field').addClass("pt-2").toggle(false);
                 amountRequestedLabelField.toggle(true);
-                amountRequestedLabelField.find('input')
-                    .blur(function () {
-                        validator.validateInput($(this));
-                    });
                 e.container.on("keypress", ".k-input", function (e) {
                     if (e.which === 13)
                         $(this).blur().next("input").focus();
@@ -837,7 +830,7 @@ $universal->basic_salary = $user->basic_salary;
                 e.container.data('kendoWindow').bind('deactivate', function () {
                     let data = $salaryAdvanceGrid.getKendoGrid().dataSource.data();
                     $.each(data, function (i, row) {
-                        $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["id_salary_advance"]);
+                        $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["request_number"]);
                     });
                     $(".print-it").printPage();
                 });

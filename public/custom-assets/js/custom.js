@@ -330,24 +330,28 @@ function filterDate(startDate, endDate, field) {
     let filter = {logic: "and", filters: grid.dataSource.filter()? grid.dataSource.filter().filters : []};
     for (let i=0; i<filter.filters.length; i++) {
         let filterObj = filter.filters[i];
-        if (filterObj.field == field) {
+        if (filterObj.field === field) {
             filter.filters.splice(i, 1);
             i--;
         }
     }
     filter.filters.push({field: field, operator: "gte", value: startDate});
     filter.filters.push({field: field, operator: "lte", value: endDate});
-
-
-    /*  let hasField = filter.filters.find(function (filterObj) {
-          return filterObj.hasOwnProperty(field);
-      });
-      if (!hasField) {
-          filter.filters.push({field: field, operator: "gte", value: startDate});
-          filter.filters.push({field: field, operator: "lte", value: endDate});
-      }*/
     grid.dataSource.filter(filter);
-   // triggerDateFilterEvent(filter, field);
+}
+
+function filterString(value, field) {
+    let grid = $salaryAdvanceGrid.getKendoGrid();
+    let filter = {logic: "and", filters: grid.dataSource.filter()? grid.dataSource.filter().filters : []};
+   /* for (let i=0; i<filter.filters.length; i++) {
+        let filterObj = filter.filters[i];
+        if (filterObj.field === field) {
+            filter.filters.splice(i, 1);
+            i--;
+        }
+    }*/
+    filter.filters.push({field: field, operator: "contains", value: value});
+    grid.dataSource.filter(filter);
 }
 
 let triggerDateFilterEvent = function (filter, field) {
@@ -475,13 +479,13 @@ function selectGridRow(searchedId, grid, dataSource, idField) {
     // Now that we have an accurate representation of data, let's get the item position
     for (var i = 0; i < models.length; ++i) {
         var model = models[i];
-        if (model[idField] == searchedId) {
+        if (model[idField] === searchedId) {
             modelToSelect = model;
             rowNum = i;
             break;
         }
     }
-if (!modelToSelect) return // The row was not found in the current table model
+if (!modelToSelect) return; // The row was not found in the current table model
     // If you have persistSelection = true and want to clear all existing selections first, uncomment the next line
     // grid._selectedIds = {};
 
@@ -510,7 +514,7 @@ function onDataBound(e){
         items = JSON.parse(items);
         items.forEach(function(x){
             var item = grid.dataSource.view().find(function(y){
-                return y.id_salary_advance == x;
+                return y.request_number === x;
             });
 
             if(item){
@@ -519,17 +523,6 @@ function onDataBound(e){
             }
         })
     }
-
-    // filter on load with date_raised
-  /*  if (!firstLoadDone) {
-        firstLoadDone = true;
-        let firstDayOfMonth = moment().startOf('month').format('YYYY-MM-DD');
-        let lastDayOfMonth =  moment().endOf('month').format('YYYY-MM-DD');
-        let filter = {logic: "and", filters: []};
-        filter.filters.push({field: 'date_raised', operator: "gte", value: new Date(firstDayOfMonth)});
-        filter.filters.push({field: 'date_raised', operator: "lte", value: new Date(lastDayOfMonth)});
-        grid.dataSource.filter(filter);
-    }*/
 }
 
 function onDetailExpand(e){
@@ -544,7 +537,7 @@ function onDetailExpand(e){
         items = [];
     }
 
-    items.push(item.id_salary_advance);
+    items.push(item.request_number);
     expandedRows['expanded'] = JSON.stringify(items);
 }
 
@@ -553,7 +546,7 @@ function onDetailCollapse(e){
     var items =JSON.parse(expandedRows['expanded']);
 
     items = items.filter(function(x){
-        return x != item.id_salary_advance;
+        return x !== item.request_number;
     });
 
     expandedRows['expanded'] = JSON.stringify(items);
