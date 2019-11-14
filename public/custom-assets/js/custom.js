@@ -91,17 +91,15 @@ window.addEventListener("load", function () {
         }, 1000);
     }, 500);
 
-    let prevScrollpos = window.pageYOffset;
-
+    let prevScrollpos;
     window.onscroll = function () {
-        let navbar = $('.navbar-fixed');
-        let currentScrollPos = window.pageYOffset;
+        //let navbar = $('.navbar-fixed');
         /*if (prevScrollpos > currentScrollPos) {
             navbar.prop('style').top = "0";
         } else {
             navbar.prop('style').top = "-60px";
         }*/
-        prevScrollpos = currentScrollPos;
+        prevScrollpos = window.pageYOffset;
     };
     console.log("All resources finished loading!");
 });
@@ -176,7 +174,6 @@ function customBoolEditor(container, options) {
 }
 
 function approvalEditor(container, options) {
-    let guid = kendo.guid();
     let grid = $salaryAdvanceGrid["data"]('kendoGrid');
     let model = grid.dataSource.getByUid(grid_uid);
     let data = [{
@@ -198,7 +195,7 @@ function approvalEditor(container, options) {
                 let row = grid.tbody.find("tr[data-uid='" + grid_uid + "']");
                 let dataItem = grid.dataItem(row);
                 let value = e.dataItem.id === true;
-                let checkedInp = this.element.find('.k-radio:checked');
+                //let checkedInp = this.element.find('.k-radio:checked');
                 dataItem.set(options.field, value);
                 //$salaryAdvanceGrid.data('kendoGrid').dataSource.sync();
                 /*if (!checkedInp.prop("checked")) {
@@ -224,15 +221,15 @@ function approvalEditor(container, options) {
             }
         },
         autoHide: false,
-        hide: function (e) {
-            var tooltip = this;
+        hide: function () {
+            const tooltip = this;
             if (radioButtonGroup.value() == null) {
                 setTimeout(function(){
                     tooltip.show();
                 },2);
             }
         },
-        show: function (e) {
+        show: function () {
             this.popup.wrapper.find('.k-tooltip-button').hide();
         }
     });
@@ -284,7 +281,7 @@ function departmentFilter(element) {
     });
 }
 
-function kendoFastReDrawRow(grid, row, dItem) {
+/*function kendoFastReDrawRow(grid, row, dItem) {
     let dataItem = dItem ? dItem : grid.dataItem(row);
 
     let rowChildren = $(row).children('td[role="gridcell"]');
@@ -324,7 +321,8 @@ function kendoFastReDrawRow(grid, row, dItem) {
             }
         }
     }
-}
+}*/
+
 function filterDate(startDate, endDate, field) {
     let grid = $salaryAdvanceGrid.data("kendoGrid");
     let filter = {logic: "and", filters: grid.dataSource.filter()? grid.dataSource.filter().filters : []};
@@ -354,25 +352,25 @@ function filterString(value, field) {
     grid.dataSource.filter(filter);
 }
 
-let triggerDateFilterEvent = function (filter, field) {
+/*let triggerDateFilterEvent = function (filter, field) {
     let grid = $salaryAdvanceGrid.data("kendoGrid");
     let filterEvent = $.Event('filter');
     filterEvent.field = field;
     filterEvent.filter = filter;
     filterEvent.sender = grid;
     grid.trigger('filter', filterEvent);
-};
+};*/
 
 function dateRangeFilter(args) {
     let filterCell = args.element.parents(".k-filtercell");
     let field = filterCell.attr('data-field');
     let dataSource = $salaryAdvanceGrid.data("kendoGrid").dataSource;
     let grid = $salaryAdvanceGrid.data("kendoGrid");
-    let filter = {logic: "and", filters: grid.dataSource.filter()? grid.dataSource.filter().filters : []};
+    //let filter = {logic: "and", filters: grid.dataSource.filter()? grid.dataSource.filter().filters : []};
     let defaultCalendar = kDefaultCalendar.data("kendoCalendar");
 
     let resetDatePickers = function (dateInputs) {
-        dateInputs.each(function (index, element) {
+        dateInputs.each(function () {
             let datePicker = $(this).data("kendoDateInput");
             datePicker.value(null);
             datePicker = $(this).data("kendoDatePicker");
@@ -385,7 +383,7 @@ let clearDateFilter = function(){
         let filters = dataSource.filter()? dataSource.filter().filters : [];
     for (let i=0; i<filters.length; i++) {
         let filterObj = filters[i];
-        if (filterObj.field == field) {
+        if (filterObj.field === field) {
             filters.splice(i, 1);
             i--;
         }
@@ -398,13 +396,13 @@ let lastDayOfMonth =  moment().endOf('month').format('YYYY-MM-DD');*/
     filterCell.html('<span class="pr-5" style="display:flex; justify-content:center;"><span>From:</span><input  class="start-date" /><span>To:</span><input  class="end-date"/> <button type="button" class="k-button k-button-icon d-none" title="Clear" aria-label="Clear"  style=""><span class="k-icon k-i-filter-clear"></span></button></span>');
     let kClearButton = filterCell.find(".k-button[title=Clear]").attr("id", `${field}_ClearButton`);
    $("#date_raised_ClearButton").removeClass("d-none");
-    kClearButton.on("click", function (e) {
+    kClearButton.on("click", function () {
         let dateInputs = $(this).siblings('.k-datepicker').find('.k-input');
         //dataSource.filter([]);
         //$salaryAdvanceGrid.data("kendoGrid").trigger("filter");
         clearDateFilter();
         let filter =  {logic: "and", filters: grid.dataSource.filter()? grid.dataSource.filter().filters : []};
-        if (filter.filters.length == 0) {
+        if (filter.filters.length === 0) {
             grid.dataSource.filter([]);
         } else {
             grid.dataSource.filter(filter);
@@ -415,12 +413,9 @@ let lastDayOfMonth =  moment().endOf('month').format('YYYY-MM-DD');*/
         //kClearButton.addClass("d-none");
     });
 
-    let vModel = kendo.bind(kClearButton, kendo.Observable({
-        toggleDateFilter: toggleDateFilterBtn
-    }));
     let kStartDate = $(".start-date", filterCell).kendoDatePicker({
-        value: field== "date_raised"? firstDayOfMonth : null,
-       max: field == "date_raised"? firstDayOfMonth : defaultCalendar.max(),
+        value: field === "date_raised"? firstDayOfMonth : null,
+       max: field === "date_raised"? firstDayOfMonth : defaultCalendar.max(),
         change: function (e) {
             let startDate = e.sender.value(),
                 endDate = $("input.end-date", filterCell).data("kendoDatePicker").value();
@@ -428,7 +423,7 @@ let lastDayOfMonth =  moment().endOf('month').format('YYYY-MM-DD');*/
                 $("input.end-date", filterCell).data("kendoDatePicker").min( kDefaultCalendar.data("kendoCalendar").min());
             }
             if (startDate && endDate) {
-                filterDate(startDate, endDate, field)
+                filterDate(startDate, endDate, field);
                 $("#" + field + "_ClearButton").removeClass("d-none");
             }
         },
@@ -436,8 +431,8 @@ let lastDayOfMonth =  moment().endOf('month').format('YYYY-MM-DD');*/
     });
 
     let kEndDate = $(".end-date", filterCell).kendoDatePicker({
-        value: field== "date_raised"? lastDayOfMonth: null,
-        min: field == "date_raised"? lastDayOfMonth : defaultCalendar.min(),
+        value: field === "date_raised"? lastDayOfMonth: null,
+        min: field === "date_raised"? lastDayOfMonth : defaultCalendar.min(),
         change: function (e) {
             let startDate = $("input.start-date", filterCell).data("kendoDatePicker").value(),
                 endDate = e.sender.value();
@@ -453,11 +448,11 @@ let lastDayOfMonth =  moment().endOf('month').format('YYYY-MM-DD');*/
         dateInput: true
     });
 
-    kStartDate.data('kendoDatePicker').bind("change", function (e) {
+    kStartDate.data('kendoDatePicker').bind("change", function () {
         kEndDate.data('kendoDatePicker').min(kStartDate.data('kendoDatePicker').value());
     });
 
-    kEndDate.data('kendoDatePicker').bind("change", function (e) {
+    kEndDate.data('kendoDatePicker').bind("change", function () {
         kStartDate.data('kendoDatePicker').max(kEndDate.data('kendoDatePicker').value());
     });
 
@@ -466,19 +461,19 @@ let lastDayOfMonth =  moment().endOf('month').format('YYYY-MM-DD');*/
 }
 
 function selectGridRow(searchedId, grid, dataSource, idField) {
-    var filters = dataSource.filter() || {};
-    var sort = dataSource.sort() || {};
-    var models = dataSource.data();
+    let filters = dataSource.filter() || {};
+    let sort = dataSource.sort() || {};
+    let models = dataSource.data();
     // We are using a Query object to get a sorted and filtered representation of the data, without paging applied, so we can search for the row on all pages
-    var query = new kendo.data.Query(models);
-    var rowNum = 0;
-    var modelToSelect = null;
+    let query = new kendo.data.Query(models);
+    let rowNum = 0;
+    let modelToSelect = null;
 
     models = query.filter(filters).sort(sort).data;
     if (models.length <= 0) return;
     // Now that we have an accurate representation of data, let's get the item position
-    for (var i = 0; i < models.length; ++i) {
-        var model = models[i];
+    for (let i = 0; i < models.length; ++i) {
+        const model = models[i];
         if (model[idField] === searchedId) {
             modelToSelect = model;
             rowNum = i;
@@ -490,13 +485,13 @@ if (!modelToSelect) return; // The row was not found in the current table model
     // grid._selectedIds = {};
 
     // Now go to the page holding the record and select the row
-    let currentPageSize = dataSource.pageSize();
-    let pageWithRow = pageWithRowSelected = parseInt((rowNum / currentPageSize)) + 1; // pages are one-based
+    //let currentPageSize = dataSource.pageSize();
+    //let pageWithRow = pageWithRowSelected = parseInt((rowNum / currentPageSize)) + 1; // pages are one-based
     if (!currentRowSelected) {
         currentRowSelected = true;
         dataSource.page(pageWithRowSelected);
     }
-    var row = grid.element.find("tr[data-uid='" + modelToSelect.uid + "']");
+    const row = grid.element.find("tr[data-uid='" + modelToSelect.uid + "']");
     if (row.length > 0) {
         grid.select(row);
 
@@ -506,19 +501,19 @@ if (!modelToSelect) return; // The row was not found in the current table model
     }
 }
 
-function onDataBound(e){
+function onDataBound(){
 
-    var items = expandedRows['expanded'];
-    var grid = this;
+    let items = expandedRows['expanded'];
+    const grid = this;
     if(items){
         items = JSON.parse(items);
         items.forEach(function(x){
-            var item = grid.dataSource.view().find(function(y){
+            const item = grid.dataSource.view().find(function (y) {
                 return y.request_number === x;
             });
 
             if(item){
-                var row = $('#'+grid.element.attr('id') + ' tr[data-uid="'+item.uid+'"]');
+                const row = $('#' + grid.element.attr('id') + ' tr[data-uid="' + item.uid + '"]');
                 grid.expandRow(row);
             }
         })
@@ -526,9 +521,9 @@ function onDataBound(e){
 }
 
 function onDetailExpand(e){
-    var item = this.dataItem(e.masterRow);
+    const item = this.dataItem(e.masterRow);
 
-    var items = expandedRows['expanded'];
+    let items = expandedRows['expanded'];
 
     if(items){
         items = JSON.parse(items);
@@ -542,30 +537,14 @@ function onDetailExpand(e){
 }
 
 function onDetailCollapse(e){
-    var item = this.dataItem(e.masterRow);
-    var items =JSON.parse(expandedRows['expanded']);
+    let item = this.dataItem(e.masterRow);
+    let items =JSON.parse(expandedRows['expanded']);
 
     items = items.filter(function(x){
         return x !== item.request_number;
     });
 
     expandedRows['expanded'] = JSON.stringify(items);
-}
-
-function toggleDateFilterBtn(e) {
-    let kClearButtons = $('[id*="_ClearButton"]');
-    let field = e.field;
-    let kClearButton = $("#" + e.field + "_ClearButton");
-    if (e.filter == null) {
-        //kClearButtons.addClass("d-none");
-
-        //resetDatePickers(dateInputs);
-    } else {
-        let kClearButtonX = kClearButtons.not("[id*="+ field + "]");
-        let dateInputs = kClearButtonX.siblings('.k-datepicker').find('.k-input');
-        //resetDatePickers(dateInputs);
-        //kClearButton.removeClass("d-none");
-    }
 }
 
 function editNumberWithoutSpinners(container, options) {

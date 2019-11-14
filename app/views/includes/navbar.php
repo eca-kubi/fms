@@ -152,7 +152,7 @@
                 <li class="nav-item ml-0 ml-sm-4 text-left pr-1 border-right border-warning fa">
                     <a href="<?php echo site_url('start-page'); ?>"
                        class="ajax-link nav-link btn border-0 text-bold flat text-left font-raleway text-warning">
-                        <i class="fa fa-home ml-4"></i> DASHBOARD
+                        <i class="fal fa-home ml-4"></i> DASHBOARD
                     </a>
                 </li>
                 <li class="nav-item dropdown fa  mx-2 d-none">
@@ -261,54 +261,31 @@
                 </li>
                 <?php $is_secretary = isAssignedAsSecretary($current_user->user_id);  $is_current_manager = isCurrentManager($current_user->user_id);
                 $is_finance_officer = isFinanceOfficer($current_user->user_id)?>
-                <?php if ($is_secretary || $is_current_manager || $is_finance_officer) { ?>
+                <li class="nav-item fa  mx-2">
+                    <a class="nav-link text-warning  btn border-0 text-bold flat" href="<?php echo site_url('salary-advance') ?>">
+                        <i class="fal fa-user"></i>
+                        MY REQUESTS
+                    </a>
+                </li>
+                <?php if ($is_finance_officer || $is_current_manager || $is_secretary): ?>
                     <li class="nav-item dropdown fa  mx-2">
                         <a class="nav-link dropdown-item text-warning dropdown-toggle btn border-0 text-bold flat"
                            data-toggle="dropdown">
-                            <i class="fa fa-history"></i>
-                            Roles
+                            <i class="fal fa-users"></i>
+                            EMPLOYEE REQUESTS
                         </a>
                         <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownId"
                             style="position:absolute">
                             <li><a class="dropdown-item"
-                                   href="<?php echo site_url('salary-advance') ?>">User</a>
+                                   href="<?php echo site_url('salary-advance-manager') ?>">Single Requests</a>
                             </li>
-                            <?php if ($is_secretary) { ?>
-                                <li><a class="dropdown-item"
-                                       href="<?php echo site_url('salary-advance/bulk-requests') ?>">Secretary</a>
-                                </li>
-                            <?php } ?>
-                            <?php if ($is_current_manager) { ?>
-                                <li class="dropdown-divider"></li>
-                                <li>
-                                    <a class="dropdown-item" href="<?php echo site_url('salary-advance-manager') ?>">
-                                        Manager
-                                    </a>
-                                </li>
-                            <?php } ?>
-                            <?php if ($is_finance_officer) { ?>
-                                <li class="dropdown-divider"></li>
-                                <li>
-                                    <a class="dropdown-item" href="<?php echo site_url('salary-advance-manager') ?>">
-                                        Finance Officer
-                                    </a>
-                                </li>
-                            <?php } ?>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown fa mx-2">
-                        <a class="nav-link dropdown-item text-warning dropdown-toggle btn border-0 text-bold flat" data-toggle="dropdown">
-                            <i class="k-icon k-i-aggregate-fields"></i>
-                            Bulk Requests
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownId" style="position:absolute">
-                            <li class="<?php echo $is_secretary? : 'd-none' ?>"><a class="dropdown-item" href="<?php echo site_url('salary-advance/new-bulk-request') ?>">Create Bulk Request</a>
-                            </li>
-                            <li><a class="dropdown-item" href="<?php echo site_url('salary-advance/bulk-requests') ?>">View Bulk Requests</a>
+                            <li class="dropdown-divider"></li>
+                            <li><a class="dropdown-item"
+                                   href="<?php echo site_url('salary-advance/bulk-requests') ?>">Bulk Requests</a>
                             </li>
                         </ul>
                     </li>
-                <?php } ?>
+                <?php endif ?>
             </ul>
         </div>
     </nav>

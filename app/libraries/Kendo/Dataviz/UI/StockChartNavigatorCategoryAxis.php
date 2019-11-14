@@ -1,3 +1,4 @@
+
 <?php
 
 namespace Kendo\Dataviz\UI;

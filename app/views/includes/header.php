@@ -24,10 +24,9 @@
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/kendo/kendo.bootstrap.min.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/kendo/kendo.default.min.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/fonts.css"/>
-    <link rel="stylesheet" media="all" href="<?php echo URL_ROOT; ?>/public/assets/css/font-awesome-free/css/all.css"/>
-    <link rel="stylesheet" media="all" href="<?php echo URL_ROOT; ?>/public/assets/css/font-awesome-pro/css/all.css"/>
+    <link rel="stylesheet" media="all" href="<?php echo URL_ROOT; ?>/public/assets/css/font-awesome-pro/css/all.min.css"/>
     <link rel="stylesheet" media="all"
-          href="<?php echo URL_ROOT; ?>/public/assets/css/font-awesome-free/css/v4-shims.min.css"/>
+          href="<?php echo URL_ROOT; ?>/public/assets/css/font-awesome-pro/css/v4-shims.min.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT ?>/public/assets/css/shards.min.css">
 
     <link rel="stylesheet"

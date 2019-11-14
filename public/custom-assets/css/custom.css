@@ -435,6 +435,10 @@ html {
     -ms-overflow-style: none;
 }
 
+.navbar-nav  a{
+    font-size: .9375rem!important;
+}
+
 a.k-link.k-state-active {
     background: transparent !important;
 }

@@ -4,6 +4,7 @@ class SalaryAdvance extends Controller
 {
     public function index($request_number = null): void
     {
+        currentUrl($_SERVER);
         $db = Database::getDbh();
         if (!isLoggedIn()) {
             redirect('users/login/salary-advance/index/' . $request_number);
@@ -12,6 +13,7 @@ class SalaryAdvance extends Controller
             $payload['current_user'] = getUserSession();
             $payload['title'] = 'Salary Advance Applications';
             $payload['request_number'] = $request_number;
+            $payload['role'] = ROLE_USER;
             if ($request_number && !$db->where('request_number', $request_number)->has('salary_advance')) {
                 redirect('errors/index/404');
             }
