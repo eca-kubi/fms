@@ -15,28 +15,6 @@ let lastDayOfMonth = moment().endOf('month').format('YYYY-MM-DD');
 let kDefaultCalendar;
 let saveActiveApplicants = true;
 let activeApplicants = [];
-let summaryTemplate = `<div class="">
-        <b>Action</b>:  #= "<span class='text-center action-tools'>" +
-                        "<span class='col' title=''><a href='javascript:' class='action-edit badge badge-success btn k-button text-black in-detail-row border'><i class='k-icon k-i-edit'></i>Review</a></span>" +
-                        "<span class='col d-none' title=''><a href='javascript:' class='text-danger action-delete in-detail-row'><i class='fas fa-trash-alt'></i></a></span>" +
-                        "<span class='col d-none' title=''><a href='javascript:' class='action-more-info in-detail-row'><i class='fas fa-info-circle'></i></a></span>" +
-                        "<span class='col' title=''><a href='\\\\#' class='text-black action-print print-it in-detail-row badge badge-primary btn k-button border' target='_blank'><i class='k-icon k-i-printer'></i>Print</a></span>" +
-                        "</span>"# </br>
-        <b>Date Raised</b>: #= kendo.toString(kendo.parseDate(date_raised), 'dddd dd MMM, yyyy') #</br>
-        #=amount_requested? '<b>Amount Requested</b>: ' + kendo.format('{0:c}', amount_requested) + '</br>' : ''#
-        #=percentage? '<b>Amount Requested</b>: ' + percentage + '% of Salary</br>' : '' #
-        <b>HoD Approval: </b> #= hod_approval == null? '<i class="text-yellow fa fa-warning"></i> <span> Pending</span>' : (hod_approval? '<i class="text-success fa fa-check"></i><span> Approved</span>' : '<i class="text-danger fa fa-warning"></i><span> Rejected</span>') #</br>
-        #=hod_approval_date? '<b>HoD Approval Date: </b>' + kendo.toString(kendo.parseDate(hod_approval_date), 'dddd dd MMM, yyyy')+'</br>': '' #
-        <b>HR Approval </b>: #= hr_approval == null? '<i class="text-yellow fa fa-warning"></i> <span> Pending</span>' : (hr_approval? '<i class="text-success fa fa-check"></i><span> Approved</span>' : '<i class="text-danger fa fa-warning"></i><span> Rejected</span>')  # </br>
-        #=hr_approval_date? '<b>HR Approval Date: </b>' + kendo.toString(kendo.parseDate(hr_approval_date), 'dddd dd MMM, yyyy')+'</br>': '' #
-        #= hr_approval? '<b >Amount Payable</b>:' + kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_payable)) + '</br>' : '' #
-        <b>Finance Manager Approval </b>: #= fmgr_approval == null? '<i class="text-yellow fa fa-warning"></i> <span> Pending</span>' : (fmgr_approval? '<i class="text-success fa fa-check"></i><span> Approved</span>' : '<i class="text-danger fa fa-warning"></i><span> Rejected</span>')  # </br>
-        #=fmgr_approval_date? '<b>Finance Mgr. Approval Date: </b>' + kendo.toString(kendo.parseDate(fmgr_approval_date), 'dddd dd MMM, yyyy')+'</br>': '' #
-        #= fmgr_approval? '<b>Amount Approved </b>' + kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_approved)) + '</br>' : '' #
-        #= received_by? '<b>Amount Received </b>:' +  kendo.toString('GH₵ ' + kendo.format('{0:n}', amount_received)) + '</br>' : '' #
-        #=date_received? '<b>Date Received: </b>' + kendo.toString(kendo.parseDate(date_received), 'dddd dd MMM, yyyy')+'</br>': '' #
-        #=received_by? '<b>Received by: </b>' + received_by  +'</br>': '' #
-    </div>`;
 $(document).ready(function () {
     jQuery.fx.off = true;
     URL_ROOT = $('#url_root').val();
@@ -83,15 +61,8 @@ window.addEventListener("load", function () {
         setTimeout(function () {
             $.unblockUI();
             $('.blockable').unblock({message: null});
-            /*$('body').scrollTo('.box', 1000, {offset: -150})
-                .scrollTo('#box', 1000, {offset: -150});*/
         }, 1000);
     }, 500);
-
-    let prevScrollpos;
-    window.onscroll = function () {
-        prevScrollpos = window.pageYOffset;
-    };
     console.log("All resources finished loading!");
 });
 

@@ -122,9 +122,6 @@
                 }
             },
             error: function (e) {
-                if (e.errors[0]['code'] === ERROR_AN_APPLICATION_ALREADY_EXISTS) {
-                    disableGridAddButton();
-                }
                 this.cancelChanges();
                 toastError(e.errors[0]['message']);
             },
@@ -150,10 +147,7 @@
                         amount_requested: {
                             type: 'number',
                             nullable: true,
-                            validation: {
-                                min: 0,
-                                required: true
-                            }
+                            editable: false
                         },
                         hod_comment: {
                             type: 'string',
@@ -188,7 +182,7 @@
                         gm_approval: {editable: false, nullable: true, type: "boolean"},
                         gm_approval_date: {editable: false, nullable: true, type: "date"},
                         gm_comment: {editable: false, type: "string"},
-                        gm_id: {type: "number"},
+                        gm_id: {type: "number", editable: false},
                         fmgr_approval: {
                             nullable: true,
                             type: 'boolean',
@@ -231,37 +225,36 @@
                             nullable: true
                         },
                         hr_id: {
-                            type: 'number'
+                            type: 'number', editable: false
                         },
                         hod_id: {
-                            type: 'number'
+                            type: 'number', editable: false
                         },
                         fmgr_id: {
-                            type: 'number'
+                            type: 'number', editable: false
                         },
                         raised_by_secretary: {
-                            type: 'boolean'
+                            type: 'boolean', editable: false
                         },
-                        user_id: {type: 'number'},
+                        user_id: {type: 'number', editable: false},
                         department_id: {
                             type: 'number', editable: false
                         },
-                        raised_by_id: {type: "number"},
+                        raised_by_id: {type: "number", editable: false},
                         amount_received: {
-                            type: "number", editable: false, nullable: true,
+                            type: "number", editable: false, nullable: true
                         },
                         percentage: {
                             type: "number",
                             editable: false
                         },
                         amount_requested_is_percentage: {
-                            type: 'boolean',
-                            defaultValue: true
+                            type: 'boolean', editable: false
                         },
                         basic_salary: {
-                            type: "number"
+                            type: "number", editable: false
                         },
-                        finance_officer_id: {type: "number", nullable: true},
+                        finance_officer_id: {type: "number", nullable: true, editable: false},
                         finance_officer_comment: {type: "string", editable: false}
                     }
                 }
@@ -593,8 +586,6 @@
                     headerAttributes: {
                         "class": "title"
                     },
-                    groupHeaderTemplate: "Amount Approved: #= value?  kendo.format('{0:c}', value): 'Pending' #",
-                    aggregates: ["max", "min"],
                     format: "{0:c}",
                     width: 200,
                     filterable: false
@@ -623,7 +614,6 @@
                         "class": "title"
                     },
                     width: 200,
-                    groupHeaderTemplate: "Amount Received: #: kendo.format('{0:c}', value) #",
                     filterable: false,
                     format: "{0:c}"
                 },
@@ -697,7 +687,8 @@
                 }
                 if (!firstLoadDone) {
                     firstLoadDone = true;
-                    filterDate(new Date(firstDayOfMonth), new Date(lastDayOfMonth), "date_raised");
+                    if (universal.requestNumber)
+                        filterString(universal.requestNumber, 'request_number');
                 }
             },
             detailInit: function (e) {
@@ -737,8 +728,6 @@
 
                 e.container.find('.k-edit-label, .k-edit-field').addClass("pt-2").toggle(false);
 
-                // e.container.find('.k-edit-field .k-checkbox').parent().removeClass('pt-2');
-                // Toggleability
                 nameLabelField.toggle();
                 departmentLabelField.toggle();
                 percentageLabelField.toggle();
@@ -798,44 +787,6 @@
             }
         });
 
-        $salaryAdvanceGrid.find('#department').kendoDropDownList({
-            dataSource: new kendo.data.DataSource({
-                transport: {
-                    read: {
-                        url: URL_ROOT + '/departments-ajax/',
-                        dataType: "json"
-                    }
-                }
-            }),
-            filter: "contains",
-            optionLabel: "All",
-            change: function () {
-                let value = this.value();
-                if (value) {
-                    $salaryAdvanceGrid.data("kendoGrid").dataSource.filter({
-                        field: "department",
-                        operator: "eq",
-                        value: this.value()
-                    });
-                } else {
-                    $salaryAdvanceGrid.data("kendoGrid").dataSource.filter({});
-                }
-            }
-        });
-
-        $salaryAdvanceGrid.find('#names').keyup(function () {
-            $salaryAdvanceGrid.data("kendoGrid").dataSource.filter({
-                logic: "or",
-                filters: [
-                    {
-                        field: "name",
-                        operator: "contains",
-                        value: $(this).val()
-                    },
-                ]
-            });
-        });
-
         $salaryAdvanceTooltip = $salaryAdvanceGrid.kendoTooltip({
             filter: "td.comment",
             position: "top",
@@ -846,70 +797,6 @@
                 return text;
             }
         }).data("kendoTooltip");
-
-        /*       $salaryAdvanceGrid.on("click", ".action-edit", function (e) {
-                   let grid = $salaryAdvanceGrid.data("kendoGrid");
-                   let target = $(e.currentTarget);
-                   let currentRow;
-                   if (target.hasClass('in-detail-row')) {
-                       currentRow = target.closest('tr.k-detail-row').prev('tr.k-master-row');
-                   } else {
-                       currentRow = grid.currentRow();
-                   }
-                   let dataItem = grid.dataItem(currentRow);
-                   let errorMsg = '';
-                   if (dataItem['hod_approval_editable'] || (dataItem['hr_approval_editable'] && dataItem.hod_approval) || (dataItem['fmgr_approval_editable'] && dataItem.hr_approval)) {
-                   } else {
-                       if (!dataItem.hod_approval) {
-                           errorMsg = 'HoD must approve it first!'
-                       } else if (!dataItem.hr_approval) {
-                           errorMsg = 'HR must approve it first!'
-                       }
-                       e.preventDefault();
-                       $.toast({
-                           // heading: '<u>Information</u>',
-                           text: '<b class="text-bold"><i class="fa fa-warning text-warning"></i> <span>' + errorMsg + ' </span></b>',
-                           //icon: 'warning',
-                           loader: false,        // Change it to false to disable loader
-                           loaderBg: '#9EC600',  // To change the background
-                           position: 'top-center',
-                           stack: 1,
-                           hideAfter: false
-                       });
-                   }
-               });
-
-               $salaryAdvanceGrid.on("click", ".action-cancel-edit", function () {
-                   //let row = $(this).closest("tr");
-                   let $this = $(this);
-                   let actionTools = $this.closest('.action-tools');
-                   actionTools.html("<span class='col' title='Edit'><a href='#' class='text-black action-edit'><i class='fa fa-pencil'></i></a></span>" +
-                       "<span class='col' title='Delete'><a href='#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span>" +
-                       "<span class='col' title='More Info'><a href='#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
-                       "</span>");
-                   $salaryAdvanceGrid.data("kendoGrid").cancelChanges();
-               });
-
-               $salaryAdvanceGrid.on("click", ".action-confirm-edit", function () {
-                   //let row = $(this).closest("tr");
-                   let $this = $(this);
-                   let actionTools = $this.closest('.action-tools');
-                   actionTools.html("<span class='col' title='Edit'><a href='#' class='text-black action-edit'><i class='fa fa-pencil'></i></a></span>" +
-                       "<span class='col' title='Delete'><a href='#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span>" +
-                       "<span class='col' title='More Info'><a href='#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
-                       "</span>");
-                   $salaryAdvanceGrid.data("kendoGrid").saveChanges();
-               });
-
-               $salaryAdvanceGrid.on("click", ".action-delete", function () {
-                   let row = $(this).closest("tr");
-                   $salaryAdvanceGrid.data("kendoGrid").removeRow(row);
-               });
-
-               $salaryAdvanceGrid.on("click", ".action-more-info", function () {
-                   let row = $(this).closest("tr");
-                   row.find('.k-hierarchy-cell>a').click();
-               });*/
 
         $salaryAdvanceGrid.data("kendoGrid").bind("dataBound", onDataBound);
     });

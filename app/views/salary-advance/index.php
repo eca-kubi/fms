@@ -77,9 +77,8 @@
         isManager: Boolean("<?php echo isCurrentManager($current_user->user_id) ?>"),
         requestNumber: "<?php echo $request_number ?>"
     };
-    const dbg_turn_off_disable_add_button = false;
+    const DEBUG_MODE = false;
     const ERROR_UNSPECIFIED_ERROR = 'E_1000';
-    const ERROR_AN_APPLICATION_ALREADY_EXISTS = 'E_1001';
     const ERROR_APPLICATION_ALREADY_REVIEWED = 'E_1002';
     let kGridAddButton;
     let $salaryAdvanceGrid;
@@ -216,7 +215,7 @@
                         gm_approval: {editable: false, nullable: true, type: "boolean"},
                         gm_approval_date: {editable: false, nullable: true, type: "date"},
                         gm_comment: {editable: false, type: "string"},
-                        gm_id: {type: "number"},
+                        gm_id: {type: "number", editable: false},
                         fmgr_approval: {
                             nullable: true,
                             type: 'boolean',
@@ -287,7 +286,7 @@
                         },
                         basic_salary: {
                             type: "number",
-                            defaultValue: universal["basic_salary"],
+                            defaultValue: universal.basicSalary,
                             editable: false
                         }
                     }
@@ -678,7 +677,6 @@
                     }
                     if (!firstLoadDone) {
                         firstLoadDone = true;
-                        //filterDate(new Date(firstDayOfMonth), new Date(lastDayOfMonth), "date_raised");
                         if (requestNumber)
                             filterString(requestNumber, 'request_number');
                     }
@@ -920,7 +918,7 @@
 
     function disableGridAddButton() {
         let errorMessage = moment() > moment(10, "DD") ? "Applications cannot be accepted after 10 days into the month! <br> <span>Please try again next month.</span>" : "You have an active salary advance request for this month!";
-        if (!dbg_turn_off_disable_add_button)
+        if (!DEBUG_MODE)
             kGridAddButton.attr('disabled', 'disabled')
                 .attr("title", errorMessage)
                 .removeClass("k-grid-add")
