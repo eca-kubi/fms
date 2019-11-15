@@ -3,16 +3,7 @@ class Users extends Controller
 {
     private $payload;
     private $db;
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->payload = [];
-        $this->db = Database::getDbh();
-    }
-
-
-    function login($redirect_url = '')
+    public function login($redirect_url = '')
     {
         $payload['title'] = 'FMS Login';
         $payload['redirect_url'] = $redirect_url;
@@ -53,11 +44,12 @@ class Users extends Controller
         }
     }
 
-    public function forgotPassword()
+    public function forgotPassword(): void
     {
+        $db = Database::getDbh();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-            $email = isset($_POST['email']) ? $_POST['email'] : null;
+            $email = $_POST['email'] ?? null;
             if ($email) {
                 /*if (v::email()->validate($email)) {
 
@@ -65,13 +57,9 @@ class Users extends Controller
                     flash('flash', 'The email is incorrect.', 'text-danger alert');
                     redirect('users/login');
                 }*/
-                $ret = $this->db
-                    ->where('email', $email)
-                    ->getOne('users');
+                $ret = $db->where('email', $email)->getOne('users');
                 if ($ret) {
-                    $ret = $this->db
-                        ->where('email', $email)
-                        ->getOne('users');
+                    $ret = $db->where('email', $email)->getOne('users');
                     $salt = 'archangel';
                     $md5_email = md5($ret['email'] . $salt);
                     $pass = md5($ret['password'] . $salt);
@@ -86,7 +74,7 @@ class Users extends Controller
                     if (insertEmail($subject, $body, $email, $recipient)) {
                         flash('flash', 'We have sent a link to your email for you to reset your password.', 'text-success alert text-sm');
                     };
-                    $this->db->onDuplicate(['secret_token' => $pass, 'email_hashed' => $md5_email])
+                    $db->onDuplicate(['secret_token' => $pass, 'email_hashed' => $md5_email])
                         ->insert('password_reset', [
                             'email' => $email,
                             'secret_token' => $pass,
@@ -115,34 +103,32 @@ class Users extends Controller
         redirect('users/login');
     }
 
-    public function resetPassword($email_hashed = '', $secret_token = '')
+    public function resetPassword($email_hashed = '', $secret_token = ''): void
     {
-        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-            if (!empty($email_hashed) && !empty($secret_token)) {
-                if ($this->db->where('email_hashed', $email_hashed)
-                    ->where('secret_token', $secret_token)
-                    ->has('password_reset')) {
-                    $ret = $this->db->getOne('password_reset', 'expiry, email');
-                    if ($ret['expiry'] > date('Y-m-d')) {
-                        redirect('users/new-password/' . $email_hashed . '/' . $secret_token);
-                    } else {
-                        flash('flash', 'The link has expired!', 'alert text-danger');
-                        redirect('users/login');
-                    }
+        $db = Database::getDbh();
+        if (($_SERVER['REQUEST_METHOD'] === 'GET') && !empty($email_hashed) && !empty($secret_token) && $db->where('email_hashed', $email_hashed)
+                ->where('secret_token', $secret_token)
+                ->has('password_reset')) {
+                $ret = $db->getOne('password_reset', 'expiry, email');
+                if ($ret['expiry'] > date('Y-m-d')) {
+                    redirect('users/new-password/' . $email_hashed . '/' . $secret_token);
+                } else {
+                    flash('flash', 'The link has expired!', 'alert text-danger');
+                    redirect('users/login');
                 }
             }
-        }
         redirect('users/login');
     }
 
-    public function newPassword($email_hashed = '', $secret_token = '')
+    public function newPassword($email_hashed = '', $secret_token = ''): void
     {
         $salt = 'archangel';
+        $db = Database::getDbh();
         if (!empty($email_hashed) && !empty($secret_token)) {
-            if ($this->db->where('email_hashed', $email_hashed)
+            if ($db->where('email_hashed', $email_hashed)
                 ->where('secret_token', $secret_token)
                 ->has('password_reset')) {
-                $ret = $this->db->getOne('password_reset', 'expiry, email, secret_token, email_hashed');
+                $ret = $db->getOne('password_reset', 'expiry, email, secret_token, email_hashed');
                 $payload = [
                     'post' => $ret,
                     'title' => 'Change Management System - New Password'
@@ -158,29 +144,25 @@ class Users extends Controller
                 flash('flash', 'The link has expired or does not exist!', 'alert text-danger text-sm');
             }
         }
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!empty($_POST['email'])) {
-                $user_id = $this->db
-                    ->where('email', $_POST['email'])
-                    ->getValue('users', 'user_id');
+                $user_id = $db->where('email', $_POST['email'])->getValue('users', 'user_id');
                 $email = $_POST['email'];
                 $md5_email = md5($_POST['email'] . $salt);
-                if ($this->db->where('email', $_POST['email'])
-                    ->where('email_hashed', $md5_email)
-                    ->get('password_reset')) {
+                if ($db->where('email', $_POST['email'])->where('email_hashed', $md5_email)->get('password_reset')) {
                     $password = $_POST['password'];
                     $confirm_password = $_POST['confirm_password'];
                     if (!empty($password) && !empty($confirm_password) && $password === $confirm_password) {
                         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-                        if ($this->db->where('email', $email)->update('users', ['password' => $hashed_password])) {
-                            $this->db->where('email', $email)
+                        if ($db->where('email', $email)->update('users', ['password' => $hashed_password])) {
+                            $db->where('email', $email)
                                 ->delete('password_reset');
                             flash('flash', 'Password changed successfully. Please login with your new password!', 'alert text-success text-sm');
-                            setActionLog([
+                           /* setActionLog([
                                 'action' => ACTION_PASSWORD_RESET,
                                 'performed_by' => $user_id,
                                 'remarks' => 'Password reset by ' . concatNameWithUserId($user_id)
-                            ]);
+                            ]);*/
                             redirect('users/login');
                         }
                     } else {
@@ -194,14 +176,14 @@ class Users extends Controller
         redirect('users/login');
     }
 
-    public function changePassword()
+    public function changePassword(): void
     {
         $user = new User (getUserSession()->user_id);
         $db = Database::getDbh();
         $data = array();
         $method = the_method();
         $flash = "flash_$method";
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $current_password = $_POST['current_password'];
             $new_password = $_POST['password'];
             $confirm = $_POST['confirm_password'];
@@ -235,7 +217,7 @@ class Users extends Controller
         goBack();
     }
 
-    public function profile($user_id = null)
+    public function profile($user_id = null): void
     {
         $post = array();
         $user = getUserSession();
@@ -264,12 +246,13 @@ class Users extends Controller
         $this->view('users/profile', $this->payload);
     }
 
-    public function logout()
+    public function logout(): void
     {
         logout();
     }
 
-    public function chooseSession(){
+    public function chooseSession(): void
+    {
         $payload = [
             'title' => 'Choose Session',
             'current_user' => getUserSession()

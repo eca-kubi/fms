@@ -62,23 +62,22 @@
 <?php require_once APP_ROOT . '\views\includes\scripts.php'; ?>
 
 <?php
-$universal = new stdClass();
-$universal->currency_symbol = CURRENCY_GHS;
-$universal->hr_comment_editable = $universal->isHr = getCurrentHR() === $current_user->user_id;
-$universal->fgmr_comment_editable = $universal->isFmgr = getCurrentFgmr() === $current_user->user_id;
-/** @var string $bulk_request_number */
-$universal->bulkRequestNumber = $bulk_request_number ?: '';
-$universal->isSecretary = isAssignedAsSecretary($current_user->user_id);
-$universal->isHR = isCurrentHR($current_user->user_id);
-$universal->isFmgr = isCurrentFmgr($current_user->user_id);
-$universal->isGM = isCurrentGM($current_user->user_id);
-$universal->currentDepartment = $current_user->department;
-$universal->currentDepartmentID = $current_user->department_id;
-$universal->isCurrentManager = isCurrentManager($current_user->user_id);
-$universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
+/** @var string $request_number */
 ?>
 <script>
-    let universal = JSON.parse(`<?php echo json_encode($universal, JSON_THROW_ON_ERROR, 512); ?>`);
+    let universal = {
+        basicSalary: "<?php echo $current_user->basic_salary; ?>",
+        currencySymbol: "<?php echo CURRENCY_GHS; ?>",
+        currentDepartment: "<?php echo $current_user->department ?>",
+        currentDepartmentID: "<?php echo $current_user->department_id; ?>",
+        hasActiveApplication: "<?php echo hasActiveApplication($current_user->user_id) ?>",
+        isFinanceOfficer: Boolean("<?php echo isFinanceOfficer($current_user->user_id); ?>"),
+        isHr: Boolean("<?php echo isCurrentHR($current_user->user_id) ?>"),
+        isFmgr: Boolean("<?php echo isCurrentFmgr($current_user->user_id) ?>"),
+        isGM: Boolean("<?php echo isCurrentGM($current_user->user_id) ?>"),
+        isManager: Boolean("<?php echo isCurrentManager($current_user->user_id) ?>"),
+        requestNumber: "<?php echo $request_number ?>"
+    };
     let $salaryAdvanceGrid;
     let salaryAdvanceDataSource;
     const ERROR_AN_APPLICATION_ALREADY_EXISTS = 'E_1001';
@@ -98,9 +97,9 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
                 }],
             transport: {
                 read: {
-                    url: URL_ROOT + "/salary-advance-bulk-requests-ajax/index/" + universal["bulkRequestNumber"],
+                    url: URL_ROOT + "/salary-advance-bulk-requests-ajax/index/" + universal.requestNumber,
                     dataType: "json",
-                    data: {bulk_request_number: universal["bulkRequestNumber"]}
+                    data: {request_number: universal.requestNumber}
                 },
                 update: {
                     url: URL_ROOT + "/salary-advance-bulk-requests-ajax/update/",
@@ -159,7 +158,7 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
                             validation: {min: 0, required: true}
                         },
                         basic_salary: {editable: false, type: "number"},
-                        bulk_request_number: {nullable: true, type: "string", editable: false},
+                        request_number: {nullable: true, type: "string", editable: false},
                         date_raised: {editable: false, type: "date"},
                         date_received: {editable: false, nullable: true, type: "date"},
                         department: {editable: false, type: "string"},
@@ -319,7 +318,7 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
                 {
                     title: "Request Number",
                     width: 250,
-                    field: "bulk_request_number",
+                    field: "request_number",
                     filterable: {cell: {showOperators: false}},
                     headerAttributes: {class: "title"}
                 },

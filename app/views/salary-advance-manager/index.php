@@ -57,36 +57,39 @@
 <!-- /.content-wrapper -->
 <?php require_once APP_ROOT . '\views\includes\footer.php'; ?>
 </div>
-<!.. /.wrapper -->
+<!-- /.wrapper -->
 <?php require_once APP_ROOT . '\templates\x-kendo-templates\x-kendo-templates.php'; ?>
 <?php require_once APP_ROOT . '\views\includes\scripts.php'; ?>
 
 <?php
-$universal = new stdClass();
-$universal->currency_symbol = CURRENCY_GHS;
-$universal->hr_comment_editable = $universal->isHr = getCurrentHR() === $current_user->user_id;
-$universal->fgmr_comment_editable = $universal->isFmgr = getCurrentFgmr() === $current_user->user_id;
-/** @var int $select_row_id */
-$universal->select_row_id = $select_row_id;
-$universal->isGm = isCurrentGM($current_user->user_id);
-$universal->currentDepartment = $current_user->department;
-$universal->currentDepartmentID = $current_user->department_id;
-$universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
+/** @var string $request_number */
 ?>
-<!--suppress HtmlUnknownTarget -->
 <script>
-    let universal = JSON.parse(`<?php echo json_encode($universal, JSON_THROW_ON_ERROR, 512); ?>`);
+    let universal = {
+        requestNumber: "<?php echo $request_number ?>",
+        currencySymbol: "<?php echo CURRENCY_GHS; ?>",
+        currentDepartment: "<?php echo $current_user->department; ?>",
+        currentDepartmentID: <?php echo $current_user->department_id; ?>,
+        isFinanceOfficer: Boolean("<?php echo isFinanceOfficer($current_user->user_id); ?>"),
+        isHr: Boolean("<?php echo isCurrentHR($current_user->user_id) ?>"),
+        isFmgr: Boolean("<?php echo isCurrentFmgr($current_user->user_id) ?>"),
+        isGM: Boolean("<?php echo isCurrentGM($current_user->user_id) ?>"),
+        isManager: Boolean("<?php echo isCurrentManager($current_user->user_id) ?>")
+    };
     let $salaryAdvanceGrid;
     let salaryAdvanceDataSource;
     $(document).ready(function () {
         URL_ROOT = $('#url_root').val();
         kendo.culture().numberFormat.currency.symbol = 'GH₵';
         $salaryAdvanceGrid = $('#salary_advance');
-        $salaryAdvanceGrid.on('change', "input[name=employee]", function (e) {
-            //let select = $(this).data("kendoDropDownList");
-        });
         salaryAdvanceDataSource = new kendo.data.DataSource({
-            width: 'auto',
+            filter: [
+                {
+                    field: "date_raised", operator: "gte", value: new Date(firstDayOfMonth)
+                },
+                {
+                    field: 'date_raised', operator: "lte", value: new Date(lastDayOfMonth)
+                }],
             pageSize: 20,
             transport: {
                 read: {
@@ -134,12 +137,11 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
                 model: {
                     id: "id_salary_advance",
                     fields: {
-                        name: {
-                            editable: false,
-                            from: "employee.name"
+                        request_number: {
+                            editable: false
                         },
-                        employee: {
-                            defaultValue: {}
+                        name: {
+                            editable: false
                         },
                         date_raised: {
                             type: 'date',
@@ -228,9 +230,6 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
                             editable: false,
                             nullable: true
                         },
-                        department_ref: {
-                            editable: false
-                        },
                         hr_id: {
                             type: 'number'
                         },
@@ -253,12 +252,7 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
                         },
                         percentage: {
                             type: "number",
-                            nullable: true,
-                            validation: {
-                                min: 10,
-                                max: 30,
-                                required: true
-                            },
+                            editable: false
                         },
                         amount_requested_is_percentage: {
                             type: 'boolean',
@@ -270,13 +264,6 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
                         finance_officer_id: {type: "number", nullable: true},
                         finance_officer_comment: {type: "string", editable: false}
                     }
-                },
-                parse: function (data) {
-                    $.each(data, function (idx, elem) {
-                        elem.date_raised = moment(elem.date_raised).format("YYYY-MM-DD");
-                        elem.date_received = moment(elem.date_received).format("YYYY-MM-DD");
-                    });
-                    return data;
                 }
             }
         });
@@ -287,13 +274,9 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
             mobile: true,
             noRecords: true,
             navigatable: true,
-            toolbar: kendo.template($('#toolbarTemplate').html()),
-            filter: function (e) {
-                toggleDateFilterBtn(e);
-            },
+            toolbar: [{name: "excel", template: $("#exportToExcel").html()}],
             excel: {
                 fileName: "Salary Advance Export.xlsx",
-                //proxyURL: "https://demos.telerik.com/kendo-ui/service/export",
                 filterable: true
             },
             excelExport: function (e) {
@@ -327,7 +310,7 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
                     let tooltip = element.data('kendoTooltip');
                     if (element.data("kendoExtRadioButtonGroup").value() == null) {
                         e.preventDefault();
-                       tooltip.show(element);
+                        tooltip.show(element);
                     }
                 });
             },
@@ -362,24 +345,34 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
             columnResizeHandleWidth: 30,
             columns: [
                 {
-                    command: [{
-                        name: "edit",
-                        text: "Edit",
-                        iconClass: {edit: "k-icon k-i-edit"},
-                        className: "badge badge-success btn k-button text-black border"
-                    },
-                        {name: "print", template: $("#printButton").html()}],
+                    command: [
+                        {
+                            name: "edit",
+                            text: "Edit",
+                            iconClass: {edit: "k-icon k-i-edit"},
+                            className: "badge badge-success btn k-button text-black border"
+                        },
+                        {name: "print", template: $("#printButton").html()}
+                    ],
                     headerAttributes: {class: "title"},
                     title: "Action",
                     width: 190
                 },
                 {
-                    editor: dropDownEditor,
+                    field: "request_number",
+                    title: "Request Number",
+                    width: 230,
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    filterable: {cell: {showOperators: false}},
+                },
+                {
                     field: "name",
                     filterable: {cell: {showOperators: false}},
                     headerAttributes: {class: "title"},
                     title: "Employee",
-                    width: 250
+                    width: 290
                 },
                 {
                     field: 'department',
@@ -396,25 +389,18 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
                     headerAttributes: {
                         class: "title"
                     },
-                    template: function (dataItem) {
-                        return "<span>" + (dataItem.percentage ? kendo.toString(dataItem.percentage, '#\\%') : '') + "</span>"
-                    },
                     width: 180,
-                    //groupHeaderTemplate: "Amount in Percentage: #= value? value + '%' : '' #",
-                    aggregates: ["max", "min"],
                     format: "{0:#\\%}",
-                    filterable: false
+                    filterable: false,
+                    hidden: true
                 },
                 {
                     field: 'amount_requested',
                     title: 'Amount in Figures',
                     width: 180,
-                    editor: editNumberWithoutSpinners,
                     headerAttributes: {
                         "class": "title"
                     },
-                    //groupHeaderTemplate: "Amount in Figures: #=  value ? kendo.format('{0:c}', value) : ''#",
-                    aggregates: ["max", "min", "count"],
                     format: "{0:c}",
                     filterable: false,
                 },
@@ -441,7 +427,7 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
                         "class": "title"
                     },
                     width: 200,
-                    groupHeaderTemplate: "HoD Approved: #= value===null? 'Pending' : (value? 'Approved' : 'Rejected') # | Total: #= count #",
+                    groupHeaderTemplate: "HoD Approval: #= value===null? 'Pending' : (value? 'Approved' : 'Rejected') # | Total: #= count #",
                     aggregates: ["count"],
                     filterable: false
                 },
@@ -581,7 +567,7 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
                         "class": "title"
                     },
                     width: 200,
-                    groupHeaderTemplate: "Fin Mgr Approval: #= value? 'Yes' : (value===null? 'Pending' : 'No') # |  Total: #=count #",
+                    groupHeaderTemplate: "Fin Mgr Approval: #= value? 'Approved' : (value===null? 'Pending' : 'Rejected') # |  Total: #=count #",
                     aggregates: ["count"],
                     filterable: false
                 },
@@ -688,16 +674,12 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
             ],
             detailTemplate: kendo.template($("#detailTemplate").html()),
             dataSource: salaryAdvanceDataSource,
-            dataBinding: function () {
-                //let no = (this.dataSource.page() - 1) * this.dataSource.pageSize();
-            },
             dataBound: function (e) {
-                //let grid = $salaryAdvanceGrid.data('kendoGrid');
                 let grid = e.sender;
                 let data = grid.dataSource.data();
                 let dataSource = grid.dataSource;
                 $.each(data, function (i, row) {
-                    $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["id_salary_advance"]);
+                    $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["request_number"]);
                 });
                 $(".print-it").printPage();
                 let headingRow = $salaryAdvanceGrid.find('thead tr[role=row]');
@@ -708,9 +690,10 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
                 filterRow.find('th.k-hierarchy-cell').next('th').attr('colspan', 2);
                 filterRow.find('input:first').attr('placeholder', 'Search...');
                 filterRow.find('input:eq(1)').attr('placeholder', 'Search...');
+                filterRow.find('input:eq(2)').attr('placeholder', 'Search...');
 
-                if (!currentRowSelected && universal['select_row_id']) {
-                    selectGridRow(universal["select_row_id"], grid, dataSource, 'id_salary_advance');
+                if (!currentRowSelected && universal.requestNumber) {
+                    selectGridRow(universal.requestNumber, grid, dataSource, 'request_number');
                 }
                 if (!firstLoadDone) {
                     firstLoadDone = true;
@@ -718,12 +701,7 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
                 }
             },
             detailInit: function (e) {
-                //let grid = $salaryAdvanceGrid.data("kendoGrid");
-                //let masterRow = e.detailRow.prev('tr.k-master-row');
-                //let dataItem = grid.dataItem(masterRow);
                 let colSize = e.sender.content.find('colgroup col').length;
-                //e.detailRow.find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + dataItem["id_salary_advance"]);
-               // $(".print-it").printPage();
                 e.detailRow.find('.k-hierarchy-cell').hide();
                 e.detailCell.attr('colspan', colSize);
             },
@@ -731,50 +709,35 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
             detailCollapse: onDetailCollapse,
             beforeEdit: function (e) {
                 window.grid_uid = e.model.uid; // uid of current editing row
-                // Editability
-                /*e.model.fields.amount_requested.editable = !e.model.fmgr_approval && universal['isFmgr'];
-                e.model.fields.percentage.editable = !e.model.fmgr_approval && universal['isFmgr'];*/
                 e.model.fields.amount_requested.editable = false;
                 e.model.fields.percentage.editable = false;
-                e.model.fields.hod_approval.editable = e.model["hod_approval_editable"] && e.model.hod_approval == null;
-                e.model.fields.hod_comment.editable = e.model["hod_comment_editable"] && e.model.hod_approval == null;
-                e.model.fields.hr_approval.editable = universal['isHr'] && e.model.hr_approval == null;
-                e.model.fields.hr_comment.editable = universal['isHr'] && e.model.hr_approval == null;
-                e.model.fields.amount_payable.editable = universal['isHr'] && e.model.hr_approval == null;
-                e.model.fields.fmgr_approval.editable = universal['isFmgr'] && e.model.fmgr_approval == null;
-                e.model.fields.fmgr_comment.editable = universal['isFmgr'] && e.model.fmgr_approval == null;
-                e.model.fields.amount_approved.editable = universal['isFmgr'] && e.model.hr_approval == null;
+                e.model.fields.hod_comment.editable = e.model.fields.hod_approval.editable = e.model.hod_approval === null && e.model.department_id === universal.currentDepartmentID;
+                e.model.fields.amount_payable.editable = e.model.fields.hr_comment.editable = e.model.fields.hr_approval.editable = universal.isHr && e.model.hr_approval === null && (e.model.hod_approval !== null || e.model.department_id === universal.currentDepartmentID);
+                e.model.fields.gm_approval.editable = e.model.fields.gm_comment.editable = e.model.gm_approval === null && e.model.hr_approval !== null;
+                e.model.fields.amount_approved.editable = e.model.fields.fmgr_comment.editable = e.model.fields.fmgr_approval.editable = universal.isFmgr && e.model.fmgr_approval === null && e.model.gm_approval !== null;
             },
             edit: function (e) {
-                let nameLabelField = e.container.find('.k-edit-label:eq(0), .k-edit-field:eq(0)');
-                let departmentLabelField = e.container.find('.k-edit-label:eq(1), .k-edit-field:eq(1)');
-                let percentageLabelField = e.container.find('.k-edit-label:eq(2), .k-edit-field:eq(2)');
-                let amountRequestedLabelField = e.container.find('.k-edit-label:eq(3), .k-edit-field:eq(3)');
-                let hodApprovalLabelField = e.container.find('.k-edit-label:eq(5), .k-edit-field:eq(5)');
-                let hodCommentLabelField = e.container.find('.k-edit-label:eq(6), .k-edit-field:eq(6)');
-                let hrApprovalLabelField = e.container.find('.k-edit-label:eq(8), .k-edit-field:eq(8)');
-                let hrCommentLabelField = e.container.find('.k-edit-label:eq(9), .k-edit-field:eq(9)');
-                let amountPayableLabelField = e.container.find('.k-edit-label:eq(10), .k-edit-field:eq(10)');
-                let gmApprovalLabelField = e.container.find('.k-edit-label:eq(12), .k-edit-field:eq(12)');
-                let gmCommentLabelField = e.container.find('.k-edit-label:eq(13), .k-edit-field:eq(13)');
-                let fmgrApprovalLabelField = e.container.find('.k-edit-label:eq(15), .k-edit-field:eq(15)');
-                let fmgrCommentLabelField = e.container.find('.k-edit-label:eq(16), .k-edit-field:eq(16)');
-                let amountApprovedLabelField = e.container.find('.k-edit-label:eq(17), .k-edit-field:eq(17)');
-                let amountReceivedLabelField = e.container.find('.k-edit-label:eq(19), .k-edit-field:eq(19)');
-                let receivedByLabelField = e.container.find('.k-edit-label:eq(20), .k-edit-field:eq(20)');
-                let dateReceivedLabelField = e.container.find('.k-edit-label:eq(21), .k-edit-field:eq(21)');
+                let nameLabelField = e.container.find('.k-edit-label:eq(1), .k-edit-field:eq(1)');
+                let departmentLabelField = e.container.find('.k-edit-label:eq(2), .k-edit-field:eq(2)');
+                let percentageLabelField = e.container.find('.k-edit-label:eq(3), .k-edit-field:eq(3)');
+                let amountRequestedLabelField = e.container.find('.k-edit-label:eq(4), .k-edit-field:eq(4)');
+                let hodApprovalLabelField = e.container.find('.k-edit-label:eq(6), .k-edit-field:eq(6)');
+                let hodCommentLabelField = e.container.find('.k-edit-label:eq(7), .k-edit-field:eq(7)');
+                let hrApprovalLabelField = e.container.find('.k-edit-label:eq(9), .k-edit-field:eq(9)');
+                let hrCommentLabelField = e.container.find('.k-edit-label:eq(10), .k-edit-field:eq(10)');
+                let amountPayableLabelField = e.container.find('.k-edit-label:eq(11), .k-edit-field:eq(11)');
+                let gmApprovalLabelField = e.container.find('.k-edit-label:eq(13), .k-edit-field:eq(13)');
+                let gmCommentLabelField = e.container.find('.k-edit-label:eq(14), .k-edit-field:eq(14)');
+                let fmgrApprovalLabelField = e.container.find('.k-edit-label:eq(16), .k-edit-field:eq(16)');
+                let fmgrCommentLabelField = e.container.find('.k-edit-label:eq(17), .k-edit-field:eq(17)');
+                let amountApprovedLabelField = e.container.find('.k-edit-label:eq(18), .k-edit-field:eq(18)');
+                let amountReceivedLabelField = e.container.find('.k-edit-label:eq(20), .k-edit-field:eq(20)');
+                let receivedByLabelField = e.container.find('.k-edit-label:eq(21), .k-edit-field:eq(21)');
+                let dateReceivedLabelField = e.container.find('.k-edit-label:eq(22), .k-edit-field:eq(22)');
 
-                /* let amountRequestedNumericTextBox = amountRequestedLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
-                 let amountRequestedPercentageNumericTextBox = percentageLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
-                 let amountPayableNumericTextBox = amountPayableLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
-                 let radioButtonGroup = $('<div class="k-edit-field"><input type="radio" name="toggleAmountRequested" id="percentageRadio" class="k-radio" checked="checked" > <label class="k-radio-label" for="percentageRadio" >Percentage</label><input type="radio" name="toggleAmountRequested" id="figureRadio" class="k-radio"> <label class="k-radio-label" for="figureRadio">Figure</label></div>');
- */
-                // Hod Approval RadiobuttonGroup initialisation
-                //e.container.find("#approvalRadioButtonGroup" + "_hod_approval").find()
-                // Toggle visibility off for all editor fields and labels
                 e.container.find('.k-edit-label, .k-edit-field').addClass("pt-2").toggle(false);
 
-               // e.container.find('.k-edit-field .k-checkbox').parent().removeClass('pt-2');
+                // e.container.find('.k-edit-field .k-checkbox').parent().removeClass('pt-2');
                 // Toggleability
                 nameLabelField.toggle();
                 departmentLabelField.toggle();
@@ -795,17 +758,6 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
                 amountReceivedLabelField.toggle(e.model.received_by !== null || universal["isFinanceOfficer"]);
                 dateReceivedLabelField.toggle(e.model.date_received !== null || universal["isFinanceOfficer"]);
 
-               /* // Edit Labels
-                if (!e.model.fields.amount_requested.editable /!*|| !universal['isFmgr']*!/) {
-                    // This Label means Amount Requested and Percentage fields will not be edited
-                    percentageLabelField.find('label').html('Amount Requested <br><small class="text-danger text-bold">(10% to 30% of Salary)</small>');
-                    amountRequestedLabelField.find('label').html('Amount Requested <br> <small class="text-danger text-bold" ></small>');
-                } else {
-                    // Editing is enabled
-                    percentageLabelField.find('label').html('Amount Requested <br><small class="text-danger text-bold">Enter as Percentage (10% - 30%)</small>');
-                    amountRequestedLabelField.find('label').html('Amount Requested <br> <small class="text-danger text-bold" > Enter as Figure</small>');
-                }
-*/
                 // Validations
                 hodCommentLabelField.find('.k-textbox').attr('data-required-msg', 'HoD Comment is required!').attr('rows', '6');
                 hrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'HR Comment is required!').attr('rows', '6');
@@ -829,12 +781,6 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
                     });
                 });
 
-              /*  e.container.data('kendoWindow').bind('activate', function () {
-                    if (e.model.fields.percentage.editable) {
-                        amountRequestedPercentageNumericTextBox.focus();
-                    }
-                });*/
-
                 e.container.data('kendoWindow').bind('deactivate', function () {
                     let data = $salaryAdvanceGrid.getKendoGrid().dataSource.data();
                     $.each(data, function (i, row) {
@@ -851,15 +797,6 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
                 $(cancel).html('<span class="k-icon k-i-cancel"></span>Cancel');
             }
         });
-
-        /*        $salaryAdvanceGrid.data('kendoGrid').thead.kendoTooltip({
-                    filter: "th.title",
-                    position: 'top',
-                    content: function (e) {
-                        let target = e.target; // element for which the tooltip is shown
-                        return $(target).text();
-                    }
-                });*/
 
         $salaryAdvanceGrid.find('#department').kendoDropDownList({
             dataSource: new kendo.data.DataSource({
@@ -900,10 +837,9 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
         });
 
         $salaryAdvanceTooltip = $salaryAdvanceGrid.kendoTooltip({
-            filter: "td.comment", //this filter selects the second column's cells
+            filter: "td.comment",
             position: "top",
             content: function (e) {
-                // hide popup as default action
                 e.sender.popup.element.css("visibility", "hidden");
                 let text = $(e.target).text();
                 if (text) e.sender.popup.element.css("visibility", "visible");
@@ -911,98 +847,73 @@ $universal->isFinanceOfficer = isFinanceOfficer($current_user->user_id);
             }
         }).data("kendoTooltip");
 
-        $salaryAdvanceGrid.on("click", ".action-edit", function (e) {
-            let grid = $salaryAdvanceGrid.data("kendoGrid");
-            let target = $(e.currentTarget);
-            let currentRow;
-            if (target.hasClass('in-detail-row')) {
-                currentRow = target.closest('tr.k-detail-row').prev('tr.k-master-row');
-            } else {
-                currentRow = grid.currentRow();
-            }
-            let dataItem = grid.dataItem(currentRow);
-            let errorMsg = '';
-            if (dataItem['hod_approval_editable'] || (dataItem['hr_approval_editable'] && dataItem.hod_approval) || (dataItem['fmgr_approval_editable'] && dataItem.hr_approval)) {
-                /*let row = $(this).closest("tr.k-master-row");
-                let $this = $(this);
-                let actionTools = $this.closest('.action-tools');*/
-                grid.editRow(currentRow);
-                /*actionTools.html("<span class='col'><a href='#' class='text-success action-confirm-edit'><i class='fa fa-check'></i></a></span>" +
-                    "<span class='col'><a href='#' class='text-black action-cancel-edit'><i class='k-icon k-i-cancel'></i></a></span>");
-*/
-            } else {
-                if (!dataItem.hod_approval) {
-                    errorMsg = 'HoD must approve it first!'
-                } else if (!dataItem.hr_approval) {
-                    errorMsg = 'HR must approve it first!'
-                }
-                e.preventDefault();
-                $.toast({
-                    // heading: '<u>Information</u>',
-                    text: '<b class="text-bold"><i class="fa fa-warning text-warning"></i> <span>' + errorMsg + ' </span></b>',
-                    //icon: 'warning',
-                    loader: false,        // Change it to false to disable loader
-                    loaderBg: '#9EC600',  // To change the background
-                    position: 'top-center',
-                    stack: 1,
-                    hideAfter: false
-                });
-            }
-        });
+        /*       $salaryAdvanceGrid.on("click", ".action-edit", function (e) {
+                   let grid = $salaryAdvanceGrid.data("kendoGrid");
+                   let target = $(e.currentTarget);
+                   let currentRow;
+                   if (target.hasClass('in-detail-row')) {
+                       currentRow = target.closest('tr.k-detail-row').prev('tr.k-master-row');
+                   } else {
+                       currentRow = grid.currentRow();
+                   }
+                   let dataItem = grid.dataItem(currentRow);
+                   let errorMsg = '';
+                   if (dataItem['hod_approval_editable'] || (dataItem['hr_approval_editable'] && dataItem.hod_approval) || (dataItem['fmgr_approval_editable'] && dataItem.hr_approval)) {
+                   } else {
+                       if (!dataItem.hod_approval) {
+                           errorMsg = 'HoD must approve it first!'
+                       } else if (!dataItem.hr_approval) {
+                           errorMsg = 'HR must approve it first!'
+                       }
+                       e.preventDefault();
+                       $.toast({
+                           // heading: '<u>Information</u>',
+                           text: '<b class="text-bold"><i class="fa fa-warning text-warning"></i> <span>' + errorMsg + ' </span></b>',
+                           //icon: 'warning',
+                           loader: false,        // Change it to false to disable loader
+                           loaderBg: '#9EC600',  // To change the background
+                           position: 'top-center',
+                           stack: 1,
+                           hideAfter: false
+                       });
+                   }
+               });
 
-        $salaryAdvanceGrid.on("click", ".action-cancel-edit", function () {
-            //let row = $(this).closest("tr");
-            let $this = $(this);
-            let actionTools = $this.closest('.action-tools');
-            actionTools.html("<span class='col' title='Edit'><a href='#' class='text-black action-edit'><i class='fa fa-pencil'></i></a></span>" +
-                "<span class='col' title='Delete'><a href='#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span>" +
-                "<span class='col' title='More Info'><a href='#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
-                "</span>");
-            $salaryAdvanceGrid.data("kendoGrid").cancelChanges();
-        });
+               $salaryAdvanceGrid.on("click", ".action-cancel-edit", function () {
+                   //let row = $(this).closest("tr");
+                   let $this = $(this);
+                   let actionTools = $this.closest('.action-tools');
+                   actionTools.html("<span class='col' title='Edit'><a href='#' class='text-black action-edit'><i class='fa fa-pencil'></i></a></span>" +
+                       "<span class='col' title='Delete'><a href='#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span>" +
+                       "<span class='col' title='More Info'><a href='#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
+                       "</span>");
+                   $salaryAdvanceGrid.data("kendoGrid").cancelChanges();
+               });
 
-        $salaryAdvanceGrid.on("click", ".action-confirm-edit", function () {
-            //let row = $(this).closest("tr");
-            let $this = $(this);
-            let actionTools = $this.closest('.action-tools');
-            actionTools.html("<span class='col' title='Edit'><a href='#' class='text-black action-edit'><i class='fa fa-pencil'></i></a></span>" +
-                "<span class='col' title='Delete'><a href='#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span>" +
-                "<span class='col' title='More Info'><a href='#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
-                "</span>");
-            $salaryAdvanceGrid.data("kendoGrid").saveChanges();
-        });
+               $salaryAdvanceGrid.on("click", ".action-confirm-edit", function () {
+                   //let row = $(this).closest("tr");
+                   let $this = $(this);
+                   let actionTools = $this.closest('.action-tools');
+                   actionTools.html("<span class='col' title='Edit'><a href='#' class='text-black action-edit'><i class='fa fa-pencil'></i></a></span>" +
+                       "<span class='col' title='Delete'><a href='#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span>" +
+                       "<span class='col' title='More Info'><a href='#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
+                       "</span>");
+                   $salaryAdvanceGrid.data("kendoGrid").saveChanges();
+               });
 
-        $salaryAdvanceGrid.on("click", ".action-delete", function () {
-            let row = $(this).closest("tr");
-            $salaryAdvanceGrid.data("kendoGrid").removeRow(row);
-        });
+               $salaryAdvanceGrid.on("click", ".action-delete", function () {
+                   let row = $(this).closest("tr");
+                   $salaryAdvanceGrid.data("kendoGrid").removeRow(row);
+               });
 
-        $salaryAdvanceGrid.on("click", ".action-more-info", function () {
-            let row = $(this).closest("tr");
-            row.find('.k-hierarchy-cell>a').click();
-        });
+               $salaryAdvanceGrid.on("click", ".action-more-info", function () {
+                   let row = $(this).closest("tr");
+                   row.find('.k-hierarchy-cell>a').click();
+               });*/
 
         $salaryAdvanceGrid.data("kendoGrid").bind("dataBound", onDataBound);
-        $salaryAdvanceGrid.data("kendoGrid").bind("filter", function (e) {
-            toggleDateFilterBtn(e)
-        });
     });
 
-</script>
-<script type="text/x-kendo-template" id="toolbarTemplate">
-    <div class="row">
-    <span><a role="button" class="k-button k-button-icontext k-grid-excel" href="\\#"><span
-                    class="k-icon k-i-file-excel"></span>Export to Excel</a></span>
-        <!--<span class="toolbar-department-filter mx-1" title="Filter by Department">
-            <label class="category-label mt-2 mt-sm-0" for="department">Search by Department</label>
-            <input type="search" id="department" style="width: 150px"/>
-        </span>
-        <span class="toolbar-name-filter mx-1">
-            <label class="category-label mt-2 mt-sm-0" for="names">Search by Names</label>
-            <input type="search" id="names" class="border p-2 bg-gray-light"
-                   style="width: 150px; border-radius: 3px!important;"/>
-        </span>-->
-    </div>
 </script>
 </body>
 </html>

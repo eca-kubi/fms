@@ -99,11 +99,8 @@ function removeEmptyVal($value)
     return $value;
 }
 
-function isCurrentGM($user_id = '')
+function isCurrentGM(string $user_id)
 {
-    if (empty($user_id)) {
-        $user_id = getUserSession()->user_id;
-    }
     return $user_id === getCurrentGM();
 }
 
@@ -142,7 +139,7 @@ function concatWith(string $symbol, $symbolForLastElem, array $array)
 function genEmailSubject($id_salary_advance)
 {
     $salary_advance = new SalaryAdvanceModel($id_salary_advance);
-    $ref = $salary_advance->department_ref;
+    $ref = $salary_advance->request_number;
     return "Salary Advance - [$ref]";
 }
 
@@ -170,7 +167,7 @@ if (!function_exists('array_key_last')) {
     }
 }
 
-function echoDate($date, $official = false, $return = false)
+function echoDate($date, $return = false)
 {
     try {
         $d = (new Moment($date))->calendar(false);
@@ -233,12 +230,9 @@ function insertEmail($subject, $body, $recipient_address, $recipient_name = '')
     ]);
 }
 
-/**
- * @return int gm user_id
- */
-function getCurrentGM(): int
+function getCurrentGM()
 {
-    return (new SettingsModel())->getValue('current_gm');
+    return Database::getDbh()->where('prop', 'current_gm')->getValue('settings', 'value');
 }
 
 function its_logged_in_user($user_id)
@@ -260,12 +254,12 @@ function getDepartment($department_id)
     return 'N/A';
 }
 
-function isCurrentHR($user_id)
+function isCurrentHR(string $user_id)
 {
     return getCurrentHR() === $user_id;
 }
 
-function isCurrentFmgr($user_id)
+function isCurrentFmgr(string $user_id)
 {
     return getCurrentFgmr() === $user_id;
 }
@@ -393,7 +387,7 @@ function site_url($url = '')
     return URL_ROOT . '/' . $url;
 }
 
-function modal($modal, $payload = [])
+function modal($modal)
 {
     // todo: extract payload
     //extract($payload);
@@ -512,7 +506,7 @@ function array_unique_multidim_array($array, $key)
     return $temp_array;
 }
 
-function isCurrentManagerForDepartment($department_id, $user_id)
+function isCurrentManagerForDepartment(string $department_id, string $user_id)
 {
     return getCurrentManager($department_id) === $user_id;
 }
@@ -532,18 +526,18 @@ function getCurrentManager($department_id)
  */
 function array_filter_multidim_by_obj_prop($array, $prop, $filterBy, $fn)
 {
-    return array_filter($array, function ($value) use ($prop, $filterBy, $fn) {
+    return array_filter($array, static function ($value) use ($prop, $filterBy, $fn) {
         if (is_object($value)) {
             $a = $value->$prop;
         } else {
-            $a = $value["$prop"];
+            $a = $value[(string)$prop];
         }
         $b = $filterBy;
         return $fn($a, $b);
     });
 }
 
-function isCurrentManager($user_id)
+function isCurrentManager(string $user_id)
 {
     $db = Database::getDbh();
     return $db->where('current_manager', $user_id)->has('departments');
@@ -594,28 +588,7 @@ function hasActiveApplication($user_id)
 
 function isFinanceOfficer($user_id)
 {
-    return Database::getDbh()->where('value', $user_id)
-        ->where('prop', 'finance_officer')
-        ->has('settings');
-}
-
-function getColsExcept($table,$remove){
-    $res =mysqli_query("SHOW COLUMNS FROM $table");
-
-    while($arr = mysqli_fetch_assoc($res)){
-        $cols[] = $arr['Field'];
-    }
-    if(is_array($remove)){
-        $newCols = array_diff($cols,$remove);
-        return "`".implode("`,`",$newCols)."`";
-    }else{
-        $length = count($cols);
-        for($i=0;$i<$length;$i++){
-            if($cols[$i] === $remove)
-                unset($cols[$i]);
-        }
-        return "`".implode("`,`",$cols)."`";
-    }
+    return Database::getDbh()->where('value', $user_id)->where('prop', 'finance_officer')->has('settings');
 }
 
 /* Get the HTTP(S) URL of the current page.
@@ -623,12 +596,13 @@ function getColsExcept($table,$remove){
  * @param $server The $_SERVER superglobals array.
  * @return string The URL.
  */
-function currentUrl($server){
+function currentUrl($server)
+{
     //Figure out whether we are using http or https.
     $http = 'http';
     //If HTTPS is present in our $_SERVER array, the URL should
     //start with https:// instead of http://
-    if(isset($server['HTTPS'])){
+    if (isset($server['HTTPS'])) {
         $http = 'https';
     }
     //Get the HTTP_HOST.
@@ -637,5 +611,5 @@ function currentUrl($server){
     $requestUri = $server['REQUEST_URI'];
     //Finally, construct the full URL.
     //Use the function htmlentities to prevent XSS attacks.
-    return $http . '://' . htmlentities($host)  . htmlentities($requestUri);
+    return $http . '://' . htmlentities($host) . htmlentities($requestUri);
 }

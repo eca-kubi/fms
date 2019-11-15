@@ -6,24 +6,32 @@ class SalaryAdvanceManagerAjax extends Controller
     {
         $db = Database::getDbh();
         $current_user = getUserSession();
-        if (isCurrentHR($current_user->user_id) || isCurrentFmgr($current_user->user_id) || isCurrentGM($current_user->user_id) || isFinanceOfficer($current_user->user_id)) {
+        if (!(isCurrentHR($current_user->user_id) || isCurrentFmgr($current_user->user_id) || isCurrentGM($current_user->user_id) || isFinanceOfficer($current_user->user_id))) {
             $records = [];
             try {
-                $records = $db->where('user_id', $current_user->user_id, '!=')->orderBy('date_raised')->where('deleted', false)
-                    ->where('is_bulk_request', false)->get('salary_advance');
+                $records = $db->join('users u', 'u.user_id=sa.user_id', 'LEFT')
+                    ->join('departments d', 'd.department_id=u.department_id', 'LEFT')
+                    ->where('u.user_id', $current_user->user_id, '!=')
+                    ->where('u.department_id', $current_user->department_id)
+                    ->where('is_bulk_request', false)
+                    ->where('deleted', false)
+                    ->orderBy('date_raised')
+                    ->get('salary_advance sa', null, '*,  concat_ws(" ", u.first_name, u.last_name) as name, d.department, NULL as password, NULL as default_password');
             } catch (Exception $e) {
             }
-            $transformed_records = transformArrayData($records);
-            echo json_encode($transformed_records, JSON_THROW_ON_ERROR, 512);
-        } else if (isCurrentManager($current_user->user_id)) {
+            echo json_encode($records, JSON_THROW_ON_ERROR, 512);
+        } else {
             $records = [];
             try {
-                $records = $db->where('user_id', $current_user->user_id, '!=')->orderBy('date_raised')->where('deleted', false)
-                    ->where('is_bulk_request', false)->where('department_id', $current_user->department_id)->get('salary_advance');
+                $records = $db->join('users u', 'u.user_id=sa.user_id', 'LEFT')
+                    ->join('departments d', 'd.department_id=u.department_id', 'LEFT')
+                    ->where('is_bulk_request', false)
+                    ->where('deleted', false)
+                    ->orderBy('date_raised')
+                    ->get('salary_advance sa', null, '*,  concat_ws(" ", u.first_name, u.last_name) as name, d.department, NULL as password, NULL as default_password');
             } catch (Exception $e) {
             }
-            $transformed_records = transformArrayData($records);
-            echo json_encode($transformed_records, JSON_THROW_ON_ERROR, 512);
+            echo json_encode($records, JSON_THROW_ON_ERROR, 512);
         }
     }
 

@@ -88,9 +88,9 @@
                     $initials = $user->first_name[0] . $user->last_name[0];
                     if ($user->profile_pic === DEFAULT_PROFILE_PIC) {
                         $name = $user->first_name . ' ' . $user->last_name;
-                        $src = PROFILE_PIC_DIR . $user->profile_pic . '?' . microtime();
-                        echo "<img  alt='<?php echo $initials ?>' avatar=\"$name\" src=\"$src\" class=\"user-image img-size-32 img-fluid img-circle d-inline-block\" >";
-                    } else { ?>
+                        $src = PROFILE_PIC_DIR . $user->profile_pic . '?' . microtime(); ?>
+                        <img alt="<?php echo $initials ?>" class="user-image img-size-32 img-fluid img-circle d-inline-block" avatar="<?php echo $name; ?>">
+                  <?php  } else { ?>
                         <img src="<?php echo PROFILE_PIC_DIR . $user->profile_pic . '?' . microtime(); ?>"
                              class="user-image img-size-32 img-fluid img-circle d-inline-block"
                              alt="<?php echo $initials; ?>" /><?php } ?>
@@ -103,13 +103,13 @@
                     <li class="user-header"></li>
                     <!-- Menu Body -->
                     <li class="user-body">
-                        <div class="col fa p-2">
+                        <div class="col p-2">
                             <?php
                             if ($user->profile_pic === DEFAULT_PROFILE_PIC) {
                                 $initials = $user->first_name[0] . $user->last_name[0];
-                                $name = $user->first_name . ' ' . $user->last_name;
-                                echo "<img alt='<?php echo $initials ?>' class=\"user-image img-size-32 img-fluid img-circle d-inline-block \" avatar=\"$name\" >";
-                            } else { ?>
+                                $name = $user->first_name . ' ' . $user->last_name; ?>
+                                 <img alt="<?php echo $initials ?>" class="user-image img-size-32 img-fluid img-circle d-inline-block" avatar="<?php echo $name; ?>">
+                          <?php  } else { ?>
                                 <img src="<?php echo PROFILE_PIC_DIR . $user->profile_pic . '?' . microtime(); ?>"
                                      class="user-image img-size-32 img-fluid img-circle d-inline-block"
                                      alt="<?php echo $initials; ?>" /><?php } ?>
@@ -261,14 +261,14 @@
                 </li>
                 <?php $is_secretary = isAssignedAsSecretary($current_user->user_id);  $is_current_manager = isCurrentManager($current_user->user_id);
                 $is_finance_officer = isFinanceOfficer($current_user->user_id)?>
-                <li class="nav-item fa  mx-2">
+                <li class="nav-item  mx-2">
                     <a class="nav-link text-warning  btn border-0 text-bold flat" href="<?php echo site_url('salary-advance') ?>">
                         <i class="fal fa-user"></i>
                         MY REQUESTS
                     </a>
                 </li>
                 <?php if ($is_finance_officer || $is_current_manager || $is_secretary): ?>
-                    <li class="nav-item dropdown fa  mx-2">
+                    <li class="nav-item dropdown  mx-2">
                         <a class="nav-link dropdown-item text-warning dropdown-toggle btn border-0 text-bold flat"
                            data-toggle="dropdown">
                             <i class="fal fa-users"></i>

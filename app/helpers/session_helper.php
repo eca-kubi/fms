@@ -36,9 +36,7 @@ function flash($name = 'flash', $message = '', $class = 'alert alert-success ale
         </div>
         </div>
 alert;
-            unset($_SESSION[$name]);
-            unset($_SESSION[$name . '_class']);
-            unset($_SESSION[$name . '_dismissible_button']);
+            unset($_SESSION[$name], $_SESSION[$name . '_class'], $_SESSION[$name . '_dismissible_button']);
         }
     }
 }
@@ -48,9 +46,8 @@ function isLoggedIn()
 {
     if (isset($_SESSION['logged_in_user'])) {
         return true;
-    } else {
-        return false;
     }
+    return false;
 }
 
 function getRole()
@@ -59,16 +56,12 @@ function getRole()
 }
 
 /**
- * Summary of getUserSession
- * @return User|bool
+ *
+ * @return User | array
  */
 function getUserSession()
 {
-    if (isset($_SESSION['logged_in_user'])) {
-        return $_SESSION['logged_in_user'];
-    } else {
-        return false;
-    }
+    return $_SESSION['logged_in_user'] ?? [];
 }
 
 function createUserSession($u)

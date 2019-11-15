@@ -23,7 +23,6 @@
         text-transform: capitalize;
     }
 </style>
-</head>
 <!-- .content-wrapper -->
 <div class="content-wrapper animated fadeInRight" style="margin-top: <?php echo NAVBAR_MT; ?>">
     <!-- .content-header-->
@@ -76,7 +75,7 @@
                                     <?php
                                     /** @var array $payload */
                                     $full_name = $payload['post']->first_name . ' ' . $payload['post']->last_name;
-                                    if ($payload['post']->profile_pic == DEFAULT_PROFILE_PIC) {
+                                    if ($payload['post']->profile_pic === DEFAULT_PROFILE_PIC) {
                                         $initials = $payload['post']->first_name[0] . $payload['post']->last_name[0];
                                         echo "<img avatar=\"$full_name\" class=\"img-fluid p-1 img-thumbnail img-size-32\" alt=\"$initials\" >";
                                     } else { ?>
@@ -102,49 +101,49 @@
                                         </thead>
                                         <tbody>
                                         <tr>
-                                            <td scope="row">Name:</td>
+                                            <td>Name:</td>
                                             <td>
                                                 <?php echo $payload['post']->first_name . ' ' . $payload['post']->last_name; ?>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td scope="row">Staff Number (ID):</td>
+                                            <td>Staff Number (ID):</td>
                                             <td>
                                                 <?php echo strtoupper($payload['post']->staff_id); ?>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td scope="row">Department:</td>
+                                            <td>Department:</td>
                                             <td>
                                                 <?php echo $payload['post']->department; ?>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td scope="row">Position:</td>
+                                            <td>Position:</td>
                                             <td>
                                                 <?php echo $payload['post']->job_title; ?>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td scope="row">Staff Category:</td>
+                                            <td>Staff Category:</td>
                                             <td>
                                                 <?php echo $payload['post']->staff_category; ?>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td scope="row">Email:</td>
+                                            <td>Email:</td>
                                             <td class="text-lowercase">
                                                 <?php echo $payload['post']->email; ?>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td scope="row">Mobile Number:</td>
+                                            <td>Mobile Number:</td>
                                             <td>
                                                 <?php echo $payload['post']->phone_number; ?>
                                             </td>
                                         </tr>
                                         <tr class="d-none">
-                                            <td scope="row">Managers</td>
+                                            <td>Managers</td>
                                             <td>
                                                 <?php
                                                 echo $payload['mgrs'];
@@ -153,7 +152,7 @@
                                         </tr>
 
                                         <tr class="">
-                                            <td scope="row">Password</td>
+                                            <td>Password</td>
                                             <td>
                                                 <a href="#change_password_modal" data-toggle="modal">Set New
                                                     Password</a>
@@ -181,3 +180,6 @@
 </div>
 <!-- /.content-wrapper -->
 <?php require_once APP_ROOT . '\views\includes\footer.php'; ?>
+<?php require_once APP_ROOT . '\views\includes\scripts.php'; ?>
+</body>
+</html>

@@ -60,26 +60,27 @@
 <!-- /.wrapper -->
 <?php require_once APP_ROOT . '\templates\x-kendo-templates\x-kendo-templates.php'; ?>
 <?php require_once APP_ROOT . '\views\includes\scripts.php'; ?>
-
 <?php
-$user = new User($current_user->user_id);
-$universal = new stdClass();
-$universal->currency_symbol = CURRENCY_GHS;
-$universal->hr_comment_editable = $universal->isHr = getCurrentHR() === $current_user->user_id;
-$universal->fgmr_comment_editable = $universal->isFmgr = getCurrentFgmr() === $current_user->user_id;
-/** @var int|null $request_number */
-$universal->request_number = $request_number;
-$universal->has_active_application = hasActiveApplication($current_user->user_id);
-$universal->basic_salary = $user->basic_salary;
+/** @var string $request_number */
 ?>
-<!--suppress HtmlUnknownTarget -->
 <script>
-    /*Error constants*/
-    const dbg_turn_off_disable_add_button = true;
+    let universal = {
+        basicSalary: "<?php echo $current_user->basic_salary; ?>",
+        currencySymbol: "<?php echo CURRENCY_GHS; ?>",
+        currentDepartment: "<?php echo $current_user->department ?>",
+        currentDepartmentID: <?php echo $current_user->department_id; ?>,
+        hasActiveApplication: "<?php echo hasActiveApplication($current_user->user_id) ?>",
+        isFinanceOfficer: Boolean("<?php echo isFinanceOfficer($current_user->user_id); ?>"),
+        isHr: Boolean("<?php echo isCurrentHR($current_user->user_id) ?>"),
+        isFmgr: Boolean("<?php echo isCurrentFmgr($current_user->user_id) ?>"),
+        isGM: Boolean("<?php echo isCurrentGM($current_user->user_id) ?>"),
+        isManager: Boolean("<?php echo isCurrentManager($current_user->user_id) ?>"),
+        requestNumber: "<?php echo $request_number ?>"
+    };
+    const dbg_turn_off_disable_add_button = false;
     const ERROR_UNSPECIFIED_ERROR = 'E_1000';
     const ERROR_AN_APPLICATION_ALREADY_EXISTS = 'E_1001';
     const ERROR_APPLICATION_ALREADY_REVIEWED = 'E_1002';
-    let universal = JSON.parse(`<?php echo json_encode($universal, JSON_THROW_ON_ERROR, 512); ?>`);
     let kGridAddButton;
     let $salaryAdvanceGrid;
     let salaryAdvanceDataSource;
@@ -446,7 +447,7 @@ $universal->basic_salary = $user->basic_salary;
                 },
                 {
                     field: 'hod_approval_date',
-                    title: 'HoD. Approval Date ',
+                    title: 'HoD Approval Date ',
                     headerAttributes: {
                         "class": "title"
                     },
@@ -498,7 +499,7 @@ $universal->basic_salary = $user->basic_salary;
                 },
                 {
                     field: 'hr_approval_date',
-                    title: 'HR. Approval Date ',
+                    title: 'HR Approval Date ',
                     headerAttributes: {
                         "class": "title"
                     },
@@ -546,7 +547,7 @@ $universal->basic_salary = $user->basic_salary;
                 },
                 {
                     field: 'fmgr_approval',
-                    title: 'Fin. Mgr. Approval',
+                    title: 'Fin Mgr Approval',
                     editor: approvalEditor,
                     template: function (dataItem) {
                         return "<span>" + (dataItem.fmgr_approval === null ? '<i class="fa fa-warning text-yellow"></i>  Pending' : dataItem.fmgr_approval ? '<i class="fa fa-check text-success"></i> Approved' : '<i class="fa fa-warning text-danger"></i> Rejected') + "</span>"
@@ -559,7 +560,7 @@ $universal->basic_salary = $user->basic_salary;
                 },
                 {
                     field: 'fmgr_comment',
-                    title: 'Fin. Mgr. Comment',
+                    title: 'Fin Mgr Comment',
                     hidden: false,
                     editor: textAreaEditor,
                     headerAttributes: {
@@ -585,7 +586,7 @@ $universal->basic_salary = $user->basic_salary;
                 },
                 {
                     field: 'fmgr_approval_date',
-                    title: 'Fin. Mgr. Approval Date ',
+                    title: 'Fin Mgr Approval Date ',
                     headerAttributes: {
                         "class": "title"
                     },
@@ -668,18 +669,18 @@ $universal->basic_salary = $user->basic_salary;
                 filterRow.find('th.k-hierarchy-cell').hide();
                 filterRow.find('th.k-hierarchy-cell').next('th').attr('colspan', 2);
                 filterRow.find('input:first').attr('placeholder', 'Search...');
-                if (universal["has_active_application"]) {
-                    disableGridAddButton();
-                }
-                if (!currentRowSelected && universal['request_number']) {
-                    selectGridRow(universal["request_number"], grid, dataSource, 'request_number');
-                }
-                if (!firstLoadDone) {
-                    firstLoadDone = true;
-                    //filterDate(new Date(firstDayOfMonth), new Date(lastDayOfMonth), "date_raised");
-                    with (universal) {
-                        if (request_number)
-                            filterString(request_number, 'request_number');
+                with (universal) {
+                    if (hasActiveApplication) {
+                        disableGridAddButton();
+                    }
+                    if (!currentRowSelected && requestNumber) {
+                        selectGridRow(requestNumber, grid, dataSource, 'request_number');
+                    }
+                    if (!firstLoadDone) {
+                        firstLoadDone = true;
+                        //filterDate(new Date(firstDayOfMonth), new Date(lastDayOfMonth), "date_raised");
+                        if (requestNumber)
+                            filterString(requestNumber, 'request_number');
                     }
                 }
             },
@@ -890,7 +891,7 @@ $universal->basic_salary = $user->basic_salary;
         });
 
         $salaryAdvanceGrid.on('click', '.k-grid-add-disabled', function () {
-            toastError("You already have an active salary advance application for the month of " + moment()["format"]("MMMM") + "!");
+            toastError($(this).attr("title"));
         });
 
         kendo.ui.Grid.fn["currentRow"] = function () {
@@ -906,9 +907,9 @@ $universal->basic_salary = $user->basic_salary;
         };
 
         $salaryAdvanceGrid.data("kendoGrid").bind("dataBound", onDataBound);
-        $salaryAdvanceGrid.data("kendoGrid").bind("filter", function (e) {
+        /*$salaryAdvanceGrid.data("kendoGrid").bind("filter", function (e) {
             toggleDateFilterBtn(e)
-        });
+        });*/
     });
 
     toggleAmountRequested = function () {
@@ -918,9 +919,10 @@ $universal->basic_salary = $user->basic_salary;
     };
 
     function disableGridAddButton() {
+        let errorMessage = moment() > moment(10, "DD") ? "Applications cannot be accepted after 10 days into the month! <br> <span>Please try again next month.</span>" : "You have an active salary advance request for this month!";
         if (!dbg_turn_off_disable_add_button)
             kGridAddButton.attr('disabled', 'disabled')
-                .attr("title", "You have an active salary advance request for this month!")
+                .attr("title", errorMessage)
                 .removeClass("k-grid-add")
                 .addClass("k-state-disabled k-grid-add-disabled")
                 .removeAttr("href");

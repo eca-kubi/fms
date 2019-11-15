@@ -2,7 +2,7 @@
 
 class SalaryAdvanceBulkRequestsAjax extends Controller
 {
-    public function index($bulk_request_number = null): void
+    public function index($request_number = null): void
     {
         $db = Database::getDbh();
         $current_user = getUserSession();
@@ -14,19 +14,19 @@ class SalaryAdvanceBulkRequestsAjax extends Controller
         $is_hod = isCurrentManager($current_user->user_id);
         $bulk_requests = [];
         if ($is_hod || $is_assigned_as_secretary || $is_finance_officer || $is_hr || $is_gm || $is_fmgr) {
-            if ($bulk_request_number) {
+            if ($request_number) {
                 try {
                     if (!($is_finance_officer || $is_hr || $is_gm || $is_fmgr)) {
                         $bulk_requests = $db->join('users u', 'u.user_id=sa.user_id', 'LEFT')
                             ->join('departments d', 'd.department_id=u.department_id', 'LEFT')
-                            ->where('sa.bulk_request_number', $bulk_request_number)
+                            ->where('sa.request_number', $request_number)
                             ->where('u.department_id', $current_user->department_id)
                             ->where('sa.deleted', false)->orderBy('sa.date_raised', 'DESC')
                             ->get('salary_advance sa', null, '*, concat_ws(" ", u.first_name, u.last_name) as name, d.department, NULL as password, NULL as default_password');
                     } else {
                         $bulk_requests = $db->join('users u', 'u.user_id=sa.user_id', 'LEFT')
                             ->join('departments d', 'd.department_id=u.department_id', 'LEFT')
-                            ->where('sa.bulk_request_number', $bulk_request_number)->where('sa.deleted', false)
+                            ->where('sa.request_number', $request_number)->where('sa.deleted', false)
                             ->orderBy('sa.date_raised', 'DESC')->get('salary_advance sa', null, '*, concat_ws(" ", u.first_name, u.last_name) as name, d.department, NULL as password, NULL as default_password');
                     }
                 } catch (Exception $e) {
@@ -37,11 +37,11 @@ class SalaryAdvanceBulkRequestsAjax extends Controller
                         $bulk_requests = $db->join('users u', 'u.user_id=sa.raised_by_id', 'INNER')->join('departments d', 'd.department_id=sa.department_id')
                             ->where('deleted', false)->where('sa.department_id', $current_user->department_id)
                             ->get('salary_advance_bulk_requests sa', null, 'sa.id_salary_advance_bulk_requests, concat_ws(" ", u.first_name, u.last_name) as raised_by, 
-                       sa.raised_by_id, sa.bulk_request_number, sa.department_id, d.department');
+                       sa.raised_by_id, sa.request_number, sa.department_id, d.department');
                     } else {
                         $bulk_requests = $db->join('users u', 'u.user_id=sa.raised_by_id', 'INNER')->join('departments d', 'd.department_id=sa.department_id')
                             ->where('deleted', false)->get('salary_advance_bulk_requests sa', null, 'sa.id_salary_advance_bulk_requests, concat_ws(" ", u.first_name, u.last_name) as raised_by, 
-                       sa.raised_by_id, sa.bulk_request_number, sa.department_id, d.department');
+                       sa.raised_by_id, sa.request_number, sa.department_id, d.department');
                     }
                 } catch (Exception $e) {
                 }
@@ -65,7 +65,7 @@ class SalaryAdvanceBulkRequestsAjax extends Controller
             $errors = ['errors' => [['message' => 'Update failed.']]];
             $_POST = json_decode(file_get_contents('php://input'), true, 512, JSON_THROW_ON_ERROR);
             $post = filter_var_array($_POST, FILTER_SANITIZE_STRING);
-            $bulk_request_number = $post['bulk_request_number'];
+            $request_number = $post['request_number'];
             $models = $post['models'];
             $user_ids = [];
             foreach ($models as $model) {

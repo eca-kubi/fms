@@ -32,7 +32,7 @@ class SalaryAdvance extends Controller
             redirect('salary-advance/index');
         }
         $payload['title'] = 'Bulk Salary Advance Applications';
-        $payload['bulk_request_number'] = $request_number;
+        $payload['request_number'] = $request_number;
         if ($request_number) {
             $this->view('salary-advance/update_bulk_requests', $payload);
         } else {

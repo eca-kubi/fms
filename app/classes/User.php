@@ -1,13 +1,8 @@
 <?php
 
 /**
- * User short summary.
- *
- * User description.
- *
  * @version 1.0
  * @author UNCLE CHARLES
- * @var Department department
  */
 class User
 {
@@ -15,29 +10,25 @@ class User
     public $last_name;
     public $staff_id;
     public $user_id;
-    public $password;
     public $role;
     public $email;
     public $profile_pic;
     public $job_title;
     public $department;
     public $department_id;
-    public $can_assess_impact;
-    public $can_change_gm;
-    public $default_password;
-    public $can_change_dept_mgr;
     public $basic_salary;
 
     public function __construct($user_id = '')
     {
         if (!empty($user_id)) {
-            $ret = Database::getDbh()->where('user_id', $user_id)
-                ->objectBuilder()
-                ->get('users');
-            foreach ($ret as $row) {
+            try {
+                $row = Database::getDbh()->where('user_id', $user_id)
+                    ->join('departments d', 'd.department_id=u.department_id', 'LEFT')
+                    ->objectBuilder()->getOne('users u', '*, concat_ws(" ", u.first_name, u.last_name) as name');
                 foreach ($row as $var => $value) {
                     $this->$var = $value;
                 }
+            } catch (Exception $e) {
             }
         }
     }
