@@ -83,13 +83,13 @@
         kendo.culture().numberFormat.currency.symbol = 'GH₵';
         $salaryAdvanceGrid = $('#salary_advance');
         salaryAdvanceDataSource = new kendo.data.DataSource({
-            filter: [
-                {
-                    field: "date_raised", operator: "gte", value: new Date(firstDayOfMonth)
-                },
-                {
-                    field: 'date_raised', operator: "lte", value: new Date(lastDayOfMonth)
-                }],
+            /* filter: [
+                 {
+                     field: "date_raised", operator: "gte", value: new Date(firstDayOfMonth)
+                 },
+                 {
+                     field: 'date_raised', operator: "lte", value: new Date(lastDayOfMonth)
+                 }],*/
             pageSize: 20,
             transport: {
                 read: {
@@ -179,7 +179,11 @@
                             type: "date",
                             editable: false
                         },
-                        gm_approval: {editable: false, nullable: true, type: "boolean"},
+                        gm_approval: {
+                            editable: false,
+                            nullable: true,
+                            type: "boolean"
+                        },
                         gm_approval_date: {editable: false, nullable: true, type: "date"},
                         gm_comment: {editable: false, type: "string"},
                         gm_id: {type: "number", editable: false},
@@ -279,12 +283,14 @@
                     let row = sheet.rows[rowIndex];
                     let dataItem = {
                         hod_approval: row.cells[5].value,
-                        fmgr_approval: row.cells[12].value,
-                        hr_approval: row.cells[8].value
+                        hr_approval: row.cells[8].value,
+                        gm_approval: row.cells[12].value,
+                        fmgr_approval: row.cells[15].value
                     };
                     row.cells[5].value = dataItem.hod_approval == null ? 'Pending' : (dataItem.hod_approval ? 'Approved' : 'Rejected');
                     row.cells[8].value = dataItem.hr_approval == null ? 'Pending' : (dataItem.hr_approval ? 'Approved' : 'Rejected');
-                    row.cells[12].value = dataItem.fmgr_approval == null ? 'Pending' : (dataItem.fmgr_approval ? 'Approved' : 'Rejected');
+                    row.cells[12].value = dataItem.gm_approval == null ? 'Pending' : (dataItem.gm_approval ? 'Approved' : 'Rejected');
+                    row.cells[15].value = dataItem.fmgr_approval == null ? 'Pending' : (dataItem.fmgr_approval ? 'Approved' : 'Rejected');
 
                     // alternating row colors
                     if (rowIndex % 2 === 0) {
@@ -381,6 +387,9 @@
                     title: 'Amount in Percentage',
                     headerAttributes: {
                         class: "title"
+                    },
+                    template: function (dataItem) {
+                        return "<span>" + (dataItem.percentage ? kendo.toString(dataItem.percentage, '#\\%') : '') + "</span>"
                     },
                     width: 180,
                     format: "{0:#\\%}",
@@ -519,7 +528,7 @@
                         "class": "title"
                     },
                     width: 200,
-                    groupHeaderTemplate: "GM Approval: #= value=== null 'Pending' : ( value? 'Approved': 'Rejected' )# | Total: #= count #",
+                    groupHeaderTemplate: "GM Approval: #= value=== null? 'Pending' : ( value? 'Approved': 'Rejected' )# | Total: #= count #",
                     aggregates: ["count"],
                     filterable: false
                 },
@@ -638,7 +647,7 @@
                         "class": "title"
                     },
                     width: 450,
-                    groupHeaderTemplate: "Date Received: #= value? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : 'Pending' #",
+                    groupHeaderTemplate: "Date Received: #= value? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : '' #",
                     filterable: {
                         cell: {
                             template: dateRangeFilter
@@ -706,6 +715,7 @@
                 e.model.fields.amount_payable.editable = e.model.fields.hr_comment.editable = e.model.fields.hr_approval.editable = universal.isHr && e.model.hr_approval === null && (e.model.hod_approval !== null || e.model.department_id === universal.currentDepartmentID);
                 e.model.fields.gm_approval.editable = e.model.fields.gm_comment.editable = e.model.gm_approval === null && e.model.hr_approval !== null;
                 e.model.fields.amount_approved.editable = e.model.fields.fmgr_comment.editable = e.model.fields.fmgr_approval.editable = universal.isFmgr && e.model.fmgr_approval === null && e.model.gm_approval !== null;
+                e.model.fields.received_by.editable = e.model.fields.amount_received.editable = e.model.fmgr_approval;
             },
             edit: function (e) {
                 let nameLabelField = e.container.find('.k-edit-label:eq(1), .k-edit-field:eq(1)');
@@ -730,7 +740,6 @@
 
                 nameLabelField.toggle();
                 departmentLabelField.toggle();
-                percentageLabelField.toggle();
                 amountRequestedLabelField.toggle();
                 hodApprovalLabelField.toggle();
                 hrApprovalLabelField.toggle();
@@ -739,22 +748,22 @@
 
                 amountPayableLabelField.toggle(Boolean(e.model.hr_approval));
                 amountApprovedLabelField.toggle(Boolean(e.model.fmgr_approval));
-                hodCommentLabelField.toggle(e.model.hod_approval !== null || e.model.department_id === universal["currentDepartmentID"]);
-                hrCommentLabelField.toggle(e.model.hr_approval !== null || (e.model.hod_approval !== null && universal["isHr"]));
-                gmCommentLabelField.toggle(e.model.gm_approval !== null || (e.model.hr_approval !== null && universal["isGm"]));
-                fmgrCommentLabelField.toggle(e.model.fmgr_approval !== null || (e.model.gm_approval !== null && universal["isFmgr"]));
-                receivedByLabelField.toggle(e.model.received_by !== null || universal["isFinanceOfficer"]);
-                amountReceivedLabelField.toggle(e.model.received_by !== null || universal["isFinanceOfficer"]);
-                dateReceivedLabelField.toggle(e.model.date_received !== null || universal["isFinanceOfficer"]);
+                hodCommentLabelField.toggle(e.model.fields.hod_approval.editable || e.model.hod_comment !== null);
+                hrCommentLabelField.toggle(e.model.fields.hr_approval.editable || e.model.hr_comment !== null);
+                gmCommentLabelField.toggle(e.model.fields.gm_approval.editable || e.model.gm_comment !== null);
+                fmgrCommentLabelField.toggle(e.model.fields.fmgr_approval.editable || e.model.fmgr_comment !== null);
+                receivedByLabelField.toggle(e.model.fields.received_by.editable || e.model.received_by !== null);
+                amountReceivedLabelField.toggle(e.model.fields.amount_received.editable || e.model.received_by !== null);
+                dateReceivedLabelField.toggle(e.model.date_received !== null);
 
                 // Validations
-                hodCommentLabelField.find('.k-textbox').attr('data-required-msg', 'HoD Comment is required!').attr('rows', '6');
-                hrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'HR Comment is required!').attr('rows', '6');
-                amountPayableLabelField.find('.k-input').attr('data-required-msg', 'Amount Payable is required!');
-                gmCommentLabelField.find('.k-textbox').attr('data-required-msg', 'GM Comment is required!').attr('rows', '6');
-                fmgrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'Fin Mgr Comment is required!').attr('rows', '6');
-                amountApprovedLabelField.find('.k-input').attr('data-required-msg', 'Amount Approved is required!');
-                amountReceivedLabelField.find('.k-input').attr('data-required-msg', 'Amount Received is required!');
+                hodCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');
+                hrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');
+                amountPayableLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');
+                gmCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');
+                fmgrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');
+                amountApprovedLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');
+                amountReceivedLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');
                 receivedByLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');
 
                 let extRadioButtonGroup = e.container.find("[data-role=extradiobuttongroup]");
@@ -773,7 +782,7 @@
                 e.container.data('kendoWindow').bind('deactivate', function () {
                     let data = $salaryAdvanceGrid.getKendoGrid().dataSource.data();
                     $.each(data, function (i, row) {
-                        $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["id_salary_advance"]);
+                        $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["request_number"]);
                     });
                     $(".print-it").printPage();
                 });

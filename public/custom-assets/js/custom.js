@@ -125,7 +125,7 @@ function dropDownEditor(container, options) {
 }
 
 function textAreaEditor(container, options) {
-    $('<textarea class="k-textbox" name="' + options.field + '" style="width:100%;height:100%;"  rows="6" required/>').appendTo(container);
+    $('<textarea class="k-textbox" name="' + options.field + '" style="width:100%;height:100%;"  rows="3" required/>').appendTo(container);
 }
 
 function customBoolEditor(container, options) {
@@ -318,11 +318,11 @@ function dateRangeFilter(args) {
 
     let resetDatePickers = function (dateInputs) {
         dateInputs.each(function () {
-            let datePicker = $(this).data("kendoDateInput");
-            datePicker.value(null);
-            datePicker = $(this).data("kendoDatePicker");
+            let datePicker = $(this).data("kendoDatePicker");
             datePicker.min(defaultCalendar.min());
             datePicker.max(defaultCalendar.max());
+            datePicker.value(null);
+            $(this).data("kendoDateInput").value(null);
         });
     };
 
@@ -339,7 +339,6 @@ function dateRangeFilter(args) {
     filterCell.empty();
     filterCell.html('<span class="pr-5" style="display:flex; justify-content:center;"><span>From:</span><input  class="start-date" /><span>To:</span><input  class="end-date"/> <button type="button" class="k-button k-button-icon d-none" title="Clear" aria-label="Clear"  style=""><span class="k-icon k-i-filter-clear"></span></button></span>');
     let kClearButton = filterCell.find(".k-button[title=Clear]").attr("id", `${field}_ClearButton`);
-    $("#date_raised_ClearButton").removeClass("d-none");
     kClearButton.on("click", function () {
         let dateInputs = $(this).siblings('.k-datepicker').find('.k-input');
         clearDateFilter();
@@ -354,13 +353,13 @@ function dateRangeFilter(args) {
     });
 
     let kStartDate = $(".start-date", filterCell).kendoDatePicker({
-        value: field === "date_raised" ? firstDayOfMonth : null,
-        max: field === "date_raised" ? firstDayOfMonth : defaultCalendar.max(),
         change: function (e) {
             let startDate = e.sender.value(),
                 endDate = $("input.end-date", filterCell).data("kendoDatePicker").value();
             if (startDate == null) {
                 $("input.end-date", filterCell).data("kendoDatePicker").min(kDefaultCalendar.data("kendoCalendar").min());
+            } else {
+                $("input.end-date", filterCell).data('kendoDatePicker').min($("input.start-date", filterCell).data('kendoDatePicker').value());
             }
             if (startDate && endDate) {
                 filterDate(startDate, endDate, field);
@@ -371,29 +370,20 @@ function dateRangeFilter(args) {
     });
 
     let kEndDate = $(".end-date", filterCell).kendoDatePicker({
-        value: field === "date_raised" ? lastDayOfMonth : null,
-        min: field === "date_raised" ? lastDayOfMonth : defaultCalendar.min(),
         change: function (e) {
             let startDate = $("input.start-date", filterCell).data("kendoDatePicker").value(),
                 endDate = e.sender.value();
             if (endDate == null) {
                 $("input.start-date", filterCell).data("kendoDatePicker").max(kDefaultCalendar.data("kendoCalendar").max());
+            } else {
+                $("input.start-date", filterCell).data('kendoDatePicker').max($("input.end-date", filterCell).data('kendoDatePicker').value());
             }
-
             if (startDate && endDate) {
                 filterDate(startDate, endDate, field);
                 $("#" + field + "_ClearButton").removeClass("d-none");
             }
         },
         dateInput: true
-    });
-
-    kStartDate.data('kendoDatePicker').bind("change", function () {
-        kEndDate.data('kendoDatePicker').min(kStartDate.data('kendoDatePicker').value());
-    });
-
-    kEndDate.data('kendoDatePicker').bind("change", function () {
-        kStartDate.data('kendoDatePicker').max(kEndDate.data('kendoDatePicker').value());
     });
 }
 
@@ -494,4 +484,18 @@ function editNumberWithoutSpinners(container, options) {
             spinners: false,
             min: 0
         });
+}
+
+function refreshGrid() {
+    let grid = $salaryAdvanceGrid.data("kendoGrid");
+    let expanded = $.map(grid.tbody.children(":has(> .k-hierarchy-cell .k-i-collapse)"), function (row) {
+        return $(row).data("uid");
+    });
+
+    grid.one("dataBound", function () {
+        grid.expandRow(grid.tbody.children().filter(function (idx, row) {
+            return $.inArray($(row).data("uid"), expanded) >= 0;
+        }));
+    });
+    grid.refresh();
 }

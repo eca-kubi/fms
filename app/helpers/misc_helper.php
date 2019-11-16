@@ -230,6 +230,9 @@ function insertEmail($subject, $body, $recipient_address, $recipient_name = '')
     ]);
 }
 
+/**
+ * @return string $id
+ */
 function getCurrentGM()
 {
     return Database::getDbh()->where('prop', 'current_gm')->getValue('settings', 'value');
@@ -582,8 +585,12 @@ function getMembersAssignedToSecretary($user_id): array
 
 function hasActiveApplication($user_id)
 {
-    $ret = Database::getDbh()->rawQuery("SELECT COUNT(*) total from salary_advance WHERE user_id = $user_id AND deleted = false AND YEAR(date_raised) = YEAR(CURRENT_DATE()) AND MONTH(date_raised) = MONTH(CURRENT_DATE())");
-    return $ret[0]['total'];
+    // $ret = Database::getDbh()->rawQuery("SELECT COUNT(*) total from salary_advance WHERE user_id = $user_id AND deleted = false AND YEAR(date_raised) = YEAR(CURRENT_DATE()) AND MONTH(date_raised) = MONTH(CURRENT_DATE())");
+    return Database::getDbh()->where('user_id', $user_id)
+        ->where('deleted', false)
+        ->where('YEAR(date_raised) = YEAR(CURRENT_DATE())')
+        ->where('MONTH(date_raised) = MONTH(CURRENT_DATE())')
+        ->has('salary_advance');
 }
 
 function isFinanceOfficer($user_id)
@@ -612,4 +619,71 @@ function currentUrl($server)
     //Finally, construct the full URL.
     //Use the function htmlentities to prevent XSS attacks.
     return $http . '://' . htmlentities($host) . htmlentities($requestUri);
+}
+
+/**
+ * @param string $user_id
+ * @param string $request_number
+ * @param bool $deleted
+ * @param bool $is_bulk_request
+ * @return array
+ */
+function getSalaryAdvance($user_id = '', $request_number = '', $deleted = false, $is_bulk_request = false)
+{
+    $db = Database::getDbh();
+    $records = [];
+    $user_id = $user_id ?: getUserSession()->user_id;
+    $current_user = new User($user_id);
+    try {
+        if ($request_number) {
+            $records = $db->join('users u', 'u.user_id=sa.user_id', 'LEFT')
+                ->join('departments d', 'd.department_id=u.department_id', 'LEFT')
+                ->where('u.user_id', $current_user->user_id)
+                ->where('is_bulk_request', $is_bulk_request)
+                ->where('request_number', $request_number)
+                ->where('deleted', $deleted)
+                ->orderBy('date_raised')
+                ->get('salary_advance sa', null, '*,  concat_ws(" ", u.first_name, u.last_name) as name, d.department, NULL as password, NULL as default_password');
+        } else {
+            $records = $db->join('users u', 'u.user_id=sa.user_id', 'LEFT')
+                ->join('departments d', 'd.department_id=u.department_id', 'LEFT')
+                ->where('u.user_id', $current_user->user_id)
+                ->where('is_bulk_request', $is_bulk_request)
+                ->where('deleted', $deleted)
+                ->orderBy('date_raised')
+                ->get('salary_advance sa', null, '*,  concat_ws(" ", u.first_name, u.last_name) as name, d.department, NULL as password, NULL as default_password');
+        }
+    } catch (Exception $e) {
+    }
+    return $records;
+}
+
+/**
+ * @param string $department_id
+ * @return array
+ */
+function getSalaryAdvanceFromDepartments($department_id = '')
+{
+    $db = Database::getDbh();
+    $records = [];
+    try {
+        if ($department_id) {
+            $records = $db->join('users u', 'u.user_id=sa.user_id', 'LEFT')
+                ->join('departments d', 'd.department_id=u.department_id', 'LEFT')
+                ->where('u.department_id', $department_id)
+                ->where('is_bulk_request', false)
+                ->where('deleted', false)
+                ->orderBy('date_raised')
+                ->get('salary_advance sa', null, '*,  concat_ws(" ", u.first_name, u.last_name) as name, d.department, NULL as password, NULL as default_password');
+        } else {
+            $records = $db->join('users u', 'u.user_id=sa.user_id', 'LEFT')
+                ->join('departments d', 'd.department_id=u.department_id', 'LEFT')
+                ->where('is_bulk_request', false)
+                ->where('deleted', false)
+                ->orderBy('date_raised')
+                ->get('salary_advance sa', null, '*,  concat_ws(" ", u.first_name, u.last_name) as name, d.department, NULL as password, NULL as default_password');
+        }
+    } catch (Exception $e) {
+    }
+    return $records;
 }

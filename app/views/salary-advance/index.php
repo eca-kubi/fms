@@ -69,7 +69,7 @@
         currencySymbol: "<?php echo CURRENCY_GHS; ?>",
         currentDepartment: "<?php echo $current_user->department ?>",
         currentDepartmentID: <?php echo $current_user->department_id; ?>,
-        hasActiveApplication: "<?php echo hasActiveApplication($current_user->user_id) ?>",
+        hasActiveApplication: Boolean("<?php echo hasActiveApplication($current_user->user_id) ?>"),
         isFinanceOfficer: Boolean("<?php echo isFinanceOfficer($current_user->user_id); ?>"),
         isHr: Boolean("<?php echo isCurrentHR($current_user->user_id) ?>"),
         isFmgr: Boolean("<?php echo isCurrentFmgr($current_user->user_id) ?>"),
@@ -89,13 +89,13 @@
         kendo.culture().numberFormat.currency.symbol = 'GH₵';
         $salaryAdvanceGrid = $("#salary_advance");
         salaryAdvanceDataSource = new kendo.data.DataSource({
-            filter: [
+            /*filter: [
                 {
                     field: "date_raised", operator: "gte", value: new Date(firstDayOfMonth)
                 },
                 {
                     field: 'date_raised', operator: "lte", value: new Date(lastDayOfMonth)
-                }],
+                }],*/
             pageSize: 20,
             transport: {
                 read: {
@@ -138,6 +138,9 @@
                 if (e.type === 'update' && e.response.length > 0 || e.type === 'create' && e.response.length > 0) {
                     toastSuccess('Success', 5000);
                 }
+                $.get(URL_ROOT + "/salary-advance-ajax/has-active-salary-advance").done(function (hasActiveSalaryAdvance) {
+                    universal.hasActiveApplication = hasActiveSalaryAdvance
+                });
             },
             schema: {
                 model: {
@@ -318,12 +321,13 @@
                     let dataItem = {
                         hod_approval: row.cells[3].value,
                         hr_approval: row.cells[6].value,
-                        fmgr_approval: row.cells[10].value
+                        gm_approval: row.cells[10].value,
+                        fmgr_approval: row.cells[13].value
                     };
                     row.cells[3].value = dataItem.hod_approval == null ? 'Pending' : (dataItem.hod_approval ? 'Approved' : 'Rejected');
                     row.cells[6].value = dataItem.hr_approval == null ? 'Pending' : (dataItem.hr_approval ? 'Approved' : 'Rejected');
-                    row.cells[10].value = dataItem.fmgr_approval == null ? 'Pending' : (dataItem.fmgr_approval ? 'Approved' : 'Rejected');
-
+                    row.cells[10].value = dataItem.gm_approval == null ? 'Pending' : (dataItem.gm_approval ? 'Approved' : 'Rejected');
+                    row.cells[13].value = dataItem.fmgr_approval == null ? 'Pending' : (dataItem.fmgr_approval ? 'Approved' : 'Rejected');
                     // alternating row colors
                     if (rowIndex % 2 === 0) {
                         let row = sheet.rows[rowIndex];
@@ -889,7 +893,7 @@
         });
 
         $salaryAdvanceGrid.on('click', '.k-grid-add-disabled', function () {
-            toastError($(this).attr("title"));
+            toastError($(this).attr("data-title"));
         });
 
         kendo.ui.Grid.fn["currentRow"] = function () {
@@ -917,10 +921,11 @@
     };
 
     function disableGridAddButton() {
-        let errorMessage = moment() > moment(10, "DD") ? "Applications cannot be accepted after 10 days into the month! <br> <span>Please try again next month.</span>" : "You have an active salary advance request for this month!";
+        let errorMessage = moment() > moment(30, "DD") ? "Applications cannot be accepted after 10 days into the month! <br> <span>Please try again next month.</span>" : "You have an active salary advance request for this month!";
         if (!DEBUG_MODE)
             kGridAddButton.attr('disabled', 'disabled')
-                .attr("title", errorMessage)
+                .attr("data-title", errorMessage)
+                .attr('title', moment() > moment(30, "DD") ? "Applications cannot be accepted after 10 days into the month! Please try again next month." : "You have an active salary advance request for this month!")
                 .removeClass("k-grid-add")
                 .addClass("k-state-disabled k-grid-add-disabled")
                 .removeAttr("href");

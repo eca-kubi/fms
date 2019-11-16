@@ -267,7 +267,7 @@
                         MY REQUESTS
                     </a>
                 </li>
-                <?php if ($is_finance_officer || $is_current_manager || $is_secretary): ?>
+                <?php if ($is_finance_officer || $is_current_manager): ?>
                     <li class="nav-item dropdown  mx-2">
                         <a class="nav-link dropdown-item text-warning dropdown-toggle btn border-0 text-bold flat"
                            data-toggle="dropdown">
@@ -282,6 +282,25 @@
                             <li class="dropdown-divider"></li>
                             <li><a class="dropdown-item"
                                    href="<?php echo site_url('salary-advance/bulk-requests') ?>">Bulk Requests</a>
+                            </li>
+                        </ul>
+                    </li>
+                <?php endif ?>
+                <?php if ($is_secretary): ?>
+                    <li class="nav-item dropdown  mx-2">
+                        <a class="nav-link dropdown-item text-warning dropdown-toggle btn border-0 text-bold flat"
+                           data-toggle="dropdown">
+                            <i class="fal fa-users"></i>
+                            BULK REQUESTS
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownId"
+                            style="position:absolute">
+                            <li><a class="dropdown-item"
+                                   href="<?php echo site_url('salary-advance/new-bulk-request') ?>">New Bulk Request</a>
+                            </li>
+                            <li class="dropdown-divider"></li>
+                            <li><a class="dropdown-item"
+                                   href="<?php echo site_url('salary-advance/bulk-requests') ?>">View Bulk Requests</a>
                             </li>
                         </ul>
                     </li>

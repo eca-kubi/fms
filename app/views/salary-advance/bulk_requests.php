@@ -57,7 +57,7 @@
 <!-- /.content-wrapper -->
 <?php require_once APP_ROOT . '\views\includes\footer.php'; ?>
 </div>
-<!.. /.wrapper -->
+<!-- /.wrapper -->
 <?php require_once APP_ROOT . '\templates\x-kendo-templates\x-kendo-templates.php'; ?>
 <?php require_once APP_ROOT . '\views\includes\scripts.php'; ?>
 

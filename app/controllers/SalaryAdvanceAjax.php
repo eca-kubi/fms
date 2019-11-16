@@ -4,21 +4,7 @@ class SalaryAdvanceAjax extends Controller
 {
     public function index(): void
     {
-        $db = Database::getDbh();
-        $current_user = getUserSession();
-        $records = [];
-        try {
-            $records = $db->join('users u', 'u.user_id=sa.user_id', 'LEFT')
-                ->join('departments d', 'd.department_id=u.department_id', 'LEFT')
-                ->where('u.user_id', $current_user->user_id)
-                ->where('u.department_id', $current_user->department_id)
-                ->where('is_bulk_request', false)
-                ->where('deleted', false)
-                ->orderBy('date_raised')
-                ->get('salary_advance sa', null, '*,  concat_ws(" ", u.first_name, u.last_name) as name, d.department, NULL as password, NULL as default_password');
-        } catch (Exception $e) {
-        }
-        echo json_encode($records, JSON_THROW_ON_ERROR, 512);
+        echo json_encode(getSalaryAdvance(), JSON_THROW_ON_ERROR, 512);
     }
 
     public function Create(): void
@@ -36,35 +22,33 @@ class SalaryAdvanceAjax extends Controller
                 echo json_encode($ret, JSON_THROW_ON_ERROR, 512);
                 return;
             }
+            $request_number = genDeptRef($current_user->department_id, 'salary_advance');
             $data = [
                 'amount_requested' => $_POST['amount_requested'],
-                'percentage' => ($_POST['amount_requested']/ $current_user->basic_salary) * 100,
+                'percentage' => ($_POST['amount_requested'] / $current_user->basic_salary) * 100,
                 'user_id' => $current_user->user_id,
                 'department_id' => $current_user->department_id,
-                'request_number' => genDeptRef($current_user->department_id, 'salary_advance')
+                'request_number' => $request_number
             ];
             $record_added_id = $db->insert('salary_advance', $data);
             if ($record_added_id) {
-                $new_record = $db->where('id_salary_advance', $record_added_id)->get('salary_advance');
-                $ref_number = genDeptRef($current_user->department_id, 'salary_advance');
                 $hod = new User(getCurrentManager($current_user->department_id));
                 // Send email to HoD
-                $subject = "Salary Advance Application ($ref_number)";
-                $data = ['ref_number' => $ref_number, 'link' => URL_ROOT . '/salary-advance-manager/index/' . $new_record[0]['id_salary_advance']];
+                $subject = "Salary Advance Application ($request_number)";
+                $data = ['ref_number' => $request_number, 'link' => URL_ROOT . '/salary-advance-manager/index/' . $request_number];
                 $body = get_include_contents('email_templates/salary-advance/new_application_notify_hod', $data);
                 $data['body'] = $body;
                 $email = get_include_contents('email_templates/salary-advance/main', $data);
-                // If HoD is the applicant no need to send email
-                if ($hod->email !== $current_user->email) {
+                if ($current_user->user_id !== $hod->user_id) {
                     insertEmail($subject, $email, $hod->email);
                 }
-                // Notify applicant
-                $data['link'] = URL_ROOT . '/salary-advance/index/' . $new_record[0]['id_salary_advance'];
+                // Send email to Applicant
+                $data['link'] = URL_ROOT . '/salary-advance/index/' . $request_number;
                 $body = get_include_contents('email_templates/salary-advance/new_application_notify_applicant', $data);
                 $data['body'] = $body;
                 $email = get_include_contents('email_templates/salary-advance/main', $data);
                 insertEmail($subject, $email, $current_user->email);
-                echo json_encode(transformArrayData($new_record), JSON_THROW_ON_ERROR, 512);
+                echo json_encode(getSalaryAdvance($current_user->user_id, $request_number), JSON_THROW_ON_ERROR, 512);
             } else {
                 $ret['errors'] = [['message' => 'Failed to add record.', 'code' => ERROR_UNSPECIFIED_ERROR]];
                 echo json_encode($ret, JSON_THROW_ON_ERROR, 512);
@@ -94,17 +78,9 @@ class SalaryAdvanceAjax extends Controller
                 echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
             } else {
                 $data = [
-                    //'amount_requested_is_percentage' => $_POST['amount_requested_is_percentage'],
                     'amount_requested' => $_POST['amount_requested'],
-                    'percentage' => $_POST['percentage']
+                    'percentage' => ($_POST['amount_requested'] / getUserSession()->basic_salary) * 100,
                 ];
-                /*if ($data['amount_requested_is_percentage']) {
-                    //unset($data['amount_requested']);
-                    $data['amount_requested'] = null;
-                } else {
-                    //unset($data['percentage']);
-                    $data['percentage'] = null;
-                }*/
                 $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)->update('salary_advance', $data);
                 if ($ret) {
                     $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)->get('salary_advance');
@@ -165,4 +141,10 @@ class SalaryAdvanceAjax extends Controller
         }
         echo json_encode($ret, JSON_THROW_ON_ERROR, 512);
     }
+
+    public function hasActiveSalaryAdvance(): void
+    {
+        echo json_encode(hasActiveApplication(getUserSession()->user_id), JSON_THROW_ON_ERROR, 512);
+    }
 }
+
