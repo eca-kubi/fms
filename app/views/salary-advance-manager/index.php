@@ -122,7 +122,12 @@
                 }
             },
             error: function (e) {
-                this.cancelChanges();
+                salaryAdvanceDataSource.cancelChanges();
+                salaryAdvanceDataSource.read();
+                if (e.status === "parsererror") {
+                    toastError("Some required assets on this page failed to load");
+                    return;
+                }
                 toastError(e.errors[0]['message']);
             },
             requestEnd: function (e) {
@@ -346,10 +351,16 @@
                 {
                     command: [
                         {
-                            name: "edit",
+                            name: "custom_edit",
                             text: "Edit",
                             iconClass: {edit: "k-icon k-i-edit"},
-                            className: "badge badge-success btn k-button text-black border"
+                            className: "badge badge-success btn k-button text-black border k-grid-custom-edit",
+                            click: function (e) {
+                                let grid = $salaryAdvanceGrid.getKendoGrid();
+                                salaryAdvanceDataSource.read().then(function () {
+                                    grid.editRow(grid.currentRow());
+                                });
+                            }
                         },
                         {name: "print", template: $("#printButton").html()}
                     ],

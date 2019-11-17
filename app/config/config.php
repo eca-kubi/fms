@@ -65,4 +65,6 @@ const ADMIN = [
 const DB_TABLES = ['assigned_as_secretary'];
 const ROLE_SECRETARY = 'Secretary';
 const ROLE_USER = 'User';
+const MIN_PERCENTAGE = 10;
+const MAX_PERCENTAGE = 30;
 include_once(APP_ROOT . '/helpers/error_codes.php');

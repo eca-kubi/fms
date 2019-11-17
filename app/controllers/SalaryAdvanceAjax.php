@@ -59,37 +59,46 @@ class SalaryAdvanceAjax extends Controller
     public function Update(): void
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $current_user = getUserSession();
+            $db = Database::getDbh();
+            $errors = ['errors' => [['message' => '']]];
             $_POST = json_decode(file_get_contents('php://input'), true, 512, JSON_THROW_ON_ERROR);
             $_POST = filter_var_array($_POST, FILTER_SANITIZE_STRING);
             $id_salary_advance = $_POST['id_salary_advance'];
-            $errors = ['errors' => [['message' => '']]];
-            $old_ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)->getOne('salary_advance');
-            if ($old_ret['hod_approval']) {
-                $errors['errors'][0]['message'] = 'The HoD has already reviewed this application!';
-                echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
-            } else if ($old_ret['fmgr_approval']) {
-                $errors['errors'][0]['message'] = 'Finance manager has already reviewed this application!';
-                echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
-            } else if ($old_ret['gm_approval']) {
-                $errors['errors'][0]['message'] = 'General manager has already reviewed this application!';
-                echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
-            } else if ($old_ret['hr_approval']) {
-                $errors['errors'][0]['message'] = 'HR has already reviewed this application!';
-                echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
-            } else {
-                $data = [
-                    'amount_requested' => $_POST['amount_requested'],
-                    'percentage' => ($_POST['amount_requested'] / getUserSession()->basic_salary) * 100,
-                ];
-                $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)->update('salary_advance', $data);
-                if ($ret) {
-                    $ret = Database::getDbh()->where('id_salary_advance', $id_salary_advance)->get('salary_advance');
-                    $ret = transformArrayData($ret);
-                    echo json_encode($ret, JSON_THROW_ON_ERROR, 512);
-                } else {
-                    $errors['errors'][0]['message'] = 'Update failed!';
+            $salary_advance = $db->where('user_id', $current_user->user_id)
+                ->where('id_salary_advance', $id_salary_advance)
+                ->getOne('salary_advance');
+            if ($salary_advance) {
+                if ($salary_advance['hod_approval'] !== null) {
+                    $errors['errors'][0]['message'] = 'The HoD has already reviewed this application!';
                     echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
-                    return;
+                } else if ($salary_advance['fmgr_approval'] !== null) {
+                    $errors['errors'][0]['message'] = 'The Finance manager has already reviewed this application!';
+                    echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
+                } else if ($salary_advance['gm_approval'] !== null) {
+                    $errors['errors'][0]['message'] = 'The General manager has already reviewed this application!';
+                    echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
+                } else if ($salary_advance['hr_approval'] !== null) {
+                    $errors['errors'][0]['message'] = 'HR has already reviewed this application!';
+                    echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
+                } else {
+                    $percentage = ($_POST['amount_requested'] / $current_user->basic_salary) * 100;
+                    $min_percent = (MIN_PERCENTAGE / 100) * $current_user->basic_salary;
+                    $max_percent = (MAX_PERCENTAGE / 100) * $current_user->basic_salary;
+                    if ($percentage >= $min_percent || $percentage <= $max_percent) {
+                        $data = [
+                            'amount_requested' => $_POST['amount_requested'],
+                            'percentage' => $percentage
+                        ];
+                        $success = $db->where('id_salary_advance', $id_salary_advance)->update('salary_advance', $data);
+                        if ($success) {
+                            echo json_encode(getSalaryAdvance($current_user->user_id, $salary_advance['request_number']), JSON_THROW_ON_ERROR, 512);
+                        } else {
+                            $errors['errors'][0]['message'] = 'Update failed!';
+                            echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
+                            return;
+                        }
+                    }
                 }
             }
         } else {
@@ -145,6 +154,11 @@ class SalaryAdvanceAjax extends Controller
     public function hasActiveSalaryAdvance(): void
     {
         echo json_encode(hasActiveApplication(getUserSession()->user_id), JSON_THROW_ON_ERROR, 512);
+    }
+
+    public function salaryAdvanceApplicationReviewed($id_salary_advance): void
+    {
+        echo json_encode(salaryAdvanceReviewed($id_salary_advance), JSON_THROW_ON_ERROR, 512);
     }
 }
 

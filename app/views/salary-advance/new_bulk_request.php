@@ -62,17 +62,22 @@
 <?php require_once APP_ROOT . '\views\includes\scripts.php'; ?>
 
 <?php
-$universal = new stdClass();
-$universal->currency_symbol = CURRENCY_GHS;
-$universal->hr_comment_editable = $universal->isHr = getCurrentHR() === $current_user->user_id;
-$universal->fgmr_comment_editable = $universal->isFmgr = getCurrentFgmr() === $current_user->user_id;
-$universal->isSecretary = isAssignedAsSecretary($current_user->user_id);
-$universal->department = $current_user->department;
-$universal->department_id = $current_user->department_id;
-$universal->bulkRequestNumber = genDeptRef($current_user->department_id, 'salary_advance_bulk_requests', false);
+/** @var string $request_number */
 ?>
 <script>
-    let universal = JSON.parse(`<?php echo json_encode($universal, JSON_THROW_ON_ERROR, 512); ?>`);
+    let universal = {
+        basicSalary: "<?php echo $current_user->basic_salary; ?>",
+        currencySymbol: "<?php echo CURRENCY_GHS; ?>",
+        currentDepartment: "<?php echo $current_user->department ?>",
+        currentDepartmentID: "<?php echo $current_user->department_id; ?>",
+        hasActiveApplication: "<?php echo hasActiveApplication($current_user->user_id) ?>",
+        isFinanceOfficer: Boolean("<?php echo isFinanceOfficer($current_user->user_id); ?>"),
+        isHr: Boolean("<?php echo isCurrentHR($current_user->user_id) ?>"),
+        isFmgr: Boolean("<?php echo isCurrentFmgr($current_user->user_id) ?>"),
+        isGM: Boolean("<?php echo isCurrentGM($current_user->user_id) ?>"),
+        isManager: Boolean("<?php echo isCurrentManager($current_user->user_id) ?>"),
+        requestNumber: "<?php echo $request_number ?>"
+    };
     let $salaryAdvanceGrid;
     let salaryAdvanceDataSource;
     let bulkApplicants = [];
@@ -109,7 +114,7 @@ $universal->bulkRequestNumber = genDeptRef($current_user->department_id, 'salary
                     type: "post",
                     dataType: "json",
                     contentType: "application/json",
-                    data: {bulk_request_number: universal["bulkRequestNumber"]}
+                    data: {request_number: universal.requestNumber}
                 },
                 parameterMap: function (data, type) {
                     if (type === "create") {
@@ -121,14 +126,15 @@ $universal->bulkRequestNumber = genDeptRef($current_user->department_id, 'salary
                 }
             },
             error: function (e) {
-                toastError(e.errors? e.errors[0]['message'] : "The page failed to load some required assets." );
-                this.cancelChanges();
+                salaryAdvanceDataSource.cancelChanges();
+                salaryAdvanceDataSource.read();
+                toastError(e.errors ? e.errors[0]['message'] : "Some required assets on this page failed to load");
             },
             requestEnd: function (e) {
                 if (e.type === 'create' && e.response.length > 0) {
                     toastSuccess('Success', 5000);
                     setTimeout(function () {
-                        window.location.href = URL_ROOT + "/salary-advance/bulk-requests/" + universal["bulkRequestNumber"];
+                        window.location.href = URL_ROOT + "/salary-advance/bulk-requests/" + universal.requestNumber;
                     }, 3);
                 }
             },
@@ -155,8 +161,8 @@ $universal->bulkRequestNumber = genDeptRef($current_user->department_id, 'salary
                                 break;
                             }
                         }
-                        if (!found ) {
-                            bulkApplicants.splice(i,1);
+                        if (!found) {
+                            bulkApplicants.splice(i, 1);
                             i--;
                         }
                     }
@@ -179,9 +185,37 @@ $universal->bulkRequestNumber = genDeptRef($current_user->department_id, 'salary
                             validation: {min: "0", required: true}
                         },
                         amount_received: {editable: false, nullable: true, type: "number"},
-                        amount_requested: {editable: false, nullable: true, type: "number", validation: {min: 0, required: true}},
+                        amount_requested: {
+                            editable: false, nullable: true, type: "number", validation: {
+                                required: function (input) {
+                                    if (input.attr("name") === "amount_requested") {
+                                        input.attr("data-required-msg", "Enter an amount.");
+                                        return input.val() !== "";
+                                    }
+                                    return true;
+                                },
+                                min: function (input) {
+                                    if (input.attr("name") === "amount_requested") {
+                                        let grid = $salaryAdvanceGrid.getKendoGrid();
+                                        let model = grid.dataSource.getByUid(grid_uid);
+                                        input.attr("data-min-msg", "Amount must be more than 10% of salary.");
+                                        return (MIN_PERCENTAGE/ 100) * model.basic_salary <= kendo.parseFloat(input.val());
+                                    }
+                                    return true;
+                                },
+                                max: function (input) {
+                                    if (input.attr("name") === "amount_requested") {
+                                        let grid = $salaryAdvanceGrid.getKendoGrid();
+                                        let model = grid.dataSource.getByUid(grid_uid);
+                                        input.attr("data-max-msg", "Amount must not exceed 30% of salary.");
+                                        return (MAX_PERCENTAGE * model.basic_salary) >= kendo.parseFloat(input.val());
+                                    }
+                                    return true;
+                                }
+                            },
+                        },
                         basic_salary: {editable: false, type: "number"},
-                        bulk_request_number: {defaultValue: universal["bulkRequestNumber"], type: "string", editable: false},
+                        request_number: {defaultValue: universal.requestNumber, type: "string", editable: false},
                         date_raised: {editable: false, type: "date"},
                         date_received: {editable: false, nullable: true, type: "date"},
                         department: {editable: false, type: "string"},
@@ -206,19 +240,17 @@ $universal->bulkRequestNumber = genDeptRef($current_user->department_id, 'salary
                         hr_id: {type: "number", nullable: true},
                         is_bulk_request: {defaultValue: true, type: "boolean"},
                         name: {from: "employee.name"},
-                        percentage: {editable: true, type: "number", validation: {max: 30, min: 10, required: true}, defaultValue: 10},
+                        percentage: {
+                            editable: true,
+                            type: "number",
+                            validation: {max: 30, min: 10, required: true},
+                            defaultValue: 10
+                        },
                         raised_by_id: {type: "number", nullable: true},
                         raised_by_secretary: {type: "boolean", defaultValue: universal["isSecretary"]},
                         received_by: {editable: false, nullable: true, type: "string"},
                         user_id: {type: "number", nullable: true}
                     }
-                },
-                parse: function (data) {
-                    $.each(data, function (idx, elem) {
-                        elem.date_raised = moment(elem.date_raised).format("YYYY-MM-DD");
-                        elem.date_received = moment(elem.date_received).format("YYYY-MM-DD");
-                    });
-                    return data;
                 }
             }
         });
@@ -230,9 +262,6 @@ $universal->bulkRequestNumber = genDeptRef($current_user->department_id, 'salary
             noRecords: true,
             navigatable: true,
             toolbar: kendo.template($('#toolbarTemplate_New_Bulk_Request').html()),
-            filter: function (e) {
-                toggleDateFilterBtn(e);
-            },
             excel: {
                 fileName: "Salary Advance Export.xlsx",
                 filterable: true
@@ -261,11 +290,6 @@ $universal->bulkRequestNumber = genDeptRef($current_user->department_id, 'salary
                 }
             },
             editable: "incell",
-            cellClose: function (e) {
-                if (e.type === "save" && e.model["dirtyFields"]["name"]) {
-                    //bulkApplicants.push(e.model.name);
-                }
-            },
             save: function (e) {
                 if (e.values.name !== "") {
                     let dropDown = e.container.find("input").data("kendoDropDownList");
@@ -313,7 +337,12 @@ $universal->bulkRequestNumber = genDeptRef($current_user->department_id, 'salary
                     width: 250
                 },
                 {
-                    field: "bulk_request_number", title: "Request Number", width: 250, filterable: false, headerAttributes: {class: "title"}, hidden: true
+                    field: "request_number",
+                    title: "Request Number",
+                    width: 250,
+                    filterable: false,
+                    headerAttributes: {class: "title"},
+                    hidden: true
                 },
                 {
                     field: 'percentage',
@@ -328,23 +357,21 @@ $universal->bulkRequestNumber = genDeptRef($current_user->department_id, 'salary
                     groupHeaderTemplate: "Amount in Percentage: #= value? value + '%' : '' #",
                     aggregates: ["max", "min"],
                     format: "{0:#\\%}",
-                    filterable: false
+                    filterable: false,
+                    hidden: true
                 },
                 {
                     field: 'amount_requested',
-                    title: 'Amount in Figures',
+                    title: 'Amount Requested',
+                    editor: editNumberWithoutSpinners,
                     width: 250,
-                    template: function (dataItem) {
-                        return "<span>" + (dataItem.amount_requested ? kendo.format('{0:c}', dataItem.amount_requested) : '') + "</span>"
-                    },
                     headerAttributes: {
                         "class": "title"
                     },
-                    groupHeaderTemplate: "Amount in Figures: #=  value ? kendo.format('{0:c}', value) : ''#",
+                    groupHeaderTemplate: "Amount Requested: #=  value ? kendo.format('{0:c}', value) : ''#",
                     aggregates: ["max", "min", "count"],
                     format: "{0:c}",
-                    filterable: false,
-                    hidden: true
+                    filterable: false
                 },
                 {
                     field: 'department',
@@ -354,12 +381,11 @@ $universal->bulkRequestNumber = genDeptRef($current_user->department_id, 'salary
                     },
                     width: 260,
                     filterable: {
-                        //  ui: departmentFilter,
                         cell: {
                             showOperators: false
                         }
                     },
-                    hidden: universal["isSecretary"]
+                    hidden: universal.isSecretary
                 },
                 {
                     field: 'date_raised',
@@ -368,286 +394,10 @@ $universal->bulkRequestNumber = genDeptRef($current_user->department_id, 'salary
                         "class": "title"
                     },
                     width: 180,
-                    groupHeaderTemplate: "Date Raised: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') #",
-                    filterable:false,
-                    format: "{0:dddd dd MMM, yyyy}",
-                },
-                /*{
-                    field: 'hod_approval',
-                    title: 'HoD Approval',
-                    editor: approvalEditor,
-                    template: function (dataItem) {
-                        return "<span>" + (dataItem.hod_approval === null ? '<i class="fa fa-warning text-yellow"></i>  Pending' : dataItem.hod_approval ? '<i class="fa fa-check text-success"></i> Approved' : '<i class="fa fa-warning text-danger"></i> Rejected') + "</span>"
-                    },
-                    headerAttributes: {
-                        "class": "title"
-                    },
-                    width: 200,
-                    groupHeaderTemplate: "HoD Approved: #= value? 'Yes' : 'No' # | Total: #= count #",
-                    aggregates: ["count"],
-                    filterable: false
-                },
-                {
-                    field: 'hod_comment',
-                    title: 'HoD Comment',
-                    hidden: false,
-                    editor: textAreaEditor,
-                    headerAttributes: {
-                        "class": "title"
-                    },
-                    attributes: {
-                        class: 'comment'
-                    },
-                    template: function (dataItem) {
-                        let hod_comment = dataItem.hod_comment ? dataItem.hod_comment : '';
-                        return "<span>" + hod_comment + "</span>"
-                    },
-                    width: 200,
-                    filterable: false
-                },
-                {
-                    field: 'hod_approval_date',
-                    title: 'HoD Approval Date ',
-                    headerAttributes: {
-                        "class": "title"
-                    },
-                    width: 200,
-                    groupHeaderTemplate: "Date Raised: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') : '' #",
-                    hidden: false,
-                    format: "{0:dddd dd MMM, yyyy}",
-                    filterable: false
-
-                },
-                {
-                    field: 'hr_approval',
-                    title: 'HR Approval',
-                    editor: approvalEditor,
-                    template: function (dataItem) {
-                        return "<span>" + (dataItem.hr_approval === null ? '<i class="fa fa-warning text-yellow"></i>  Pending' : dataItem.hr_approval ? '<i class="fa fa-check text-success"></i> Approved' : '<i class="fa fa-warning text-danger"></i> Rejected') + "</span>"
-                    },
-                    headerAttributes: {
-                        "class": "title"
-                    },
-                    groupHeaderTemplate: "HR Approved: #= value? 'Yes' : 'No' # |  Total: #= count #",
-                    aggregates: ["count"],
-                    width: 200,
-                    filterable: false
-
-                },
-                {
-                    field: 'hr_comment',
-                    title: 'HR Comment',
-                    editor: textAreaEditor,
-                    hidden: false,
-                    headerAttributes: {
-                        "class": "title"
-                    },
-                    attributes: {
-                        class: 'comment'
-                    },
-                    template: function (dataItem) {
-                        let hr_comment = dataItem.hr_comment ? dataItem.hr_comment : '';
-                        return `<span>${hr_comment}</span>`
-                    },
-                    width: 200,
-                    filterable: false
-
-                },
-                {
-                    field: 'amount_payable',
-                    title: 'Amount Payable',
-                    template: function (dataItem) {
-                        if (dataItem.amount_payable == null) return "";
-                        return "<span>" + (kendo.format('{0:c}', dataItem.amount_payable)) + "</span>"
-                    },
-                    format: "{0:c}",
-                    headerAttributes: {
-                        "class": "title"
-                    },
-                    groupHeaderTemplate: "Amount Payable: #= value?  kendo.format('{0:c}', value) : 'Pending' #",
-                    aggregates: ["max", "min"],
-                    width: 200,
-                    filterable: false
-
-                },
-                {
-                    field: 'hr_approval_date',
-                    title: 'HR Approval Date ',
-                    headerAttributes: {
-                        "class": "title"
-                    },
-                    template: function (dataItem) {
-                        let date = dataItem.hr_approval_date ? kendo.toString(kendo.parseDate(dataItem.hr_approval_date), 'dddd dd MMM, yyyy') : '';
-                        return "<span>" + date + "</span>";
-                    },
-                    width: 200,
-                    groupHeaderTemplate: "HR Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') : '' #",
-                    hidden: false,
-                    filterable: false
-
-                },
-                {
-                    field: 'gm_approval',
-                    title: 'GM Approval',
-                    editor: approvalEditor,
-                    template: function (dataItem) {
-                        return "<span>" + (dataItem.gm_approval === null ? '<i class="fa fa-warning text-yellow"></i>  Pending' : dataItem.gm_approval ? '<i class="fa fa-check text-success"></i> Approved' : '<i class="fa fa-warning text-danger"></i> Rejected') + "</span>"
-                    },
-                    headerAttributes: {
-                        "class": "title"
-                    },
-                    width: 200,
-                    //groupHeaderTemplate: "GM Approval: #= value=== null 'Pending' : 'No' # | Total: #= count #",
-                    aggregates: ["count"],
-                    filterable: false
-                },
-                {
-                    field: 'gm_comment',
-                    title: 'GM Comment',
-                    editor: textAreaEditor,
-                    headerAttributes: {
-                        "class": "title"
-                    },
-                    attributes: {
-                        class: 'comment'
-                    },
-                    width: 200,
-                    filterable: false
-                },
-                {
-                    field: 'gm_approval_date',
-                    title: 'GM Approval Date ',
-                    headerAttributes: {
-                        "class": "title"
-                    },
-                    width: 200,
-                    groupHeaderTemplate: "GM's Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') : '' #",
+                    groupHeaderTemplate: "Date Raised: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') #",
                     filterable: false,
-                    format: "{0:dddd dd MMM, yyyy}"
-
+                    format: "{0:dddd dd MMM, yyyy}",
                 },
-                {
-                    field: 'fmgr_approval',
-                    title: 'Fin Mgr Approval',
-                    editor: approvalEditor,
-                    template: function (dataItem) {
-                        return "<span>" + (dataItem.fmgr_approval === null ? '<i class="fa fa-warning text-yellow"></i>  Pending' : dataItem.fmgr_approval ? '<i class="fa fa-check text-success"></i> Approved' : '<i class="fa fa-warning text-danger"></i> Rejected') + "</span>"
-                    },
-                    headerAttributes: {
-                        "class": "title"
-                    },
-                    width: 200,
-                    groupHeaderTemplate: "Finance Manager Approved: #= value? 'Yes' : 'No' # |  Total: #=count #",
-                    aggregates: ["count"],
-                    filterable: false
-
-                },
-                {
-                    field: 'fmgr_comment',
-                    title: 'Fin Mgr Comment',
-                    hidden: false,
-                    editor: textAreaEditor,
-                    headerAttributes: {
-                        "class": "title"
-                    },
-                    attributes: {
-                        class: 'comment'
-                    },
-                    width: 200,
-                    template: function (dataItem) {
-                        let fmgr_comment = dataItem.fmgr_comment ? dataItem.fmgr_comment : '';
-                        return "<span>" + fmgr_comment + "</span>"
-                    },
-                    filterable: false
-
-                },
-                {
-                    field: 'amount_approved',
-                    title: 'Amount Approved',
-                    template: function (dataItem) {
-                        if (dataItem.amount_approved == null) return "";
-                        return "<span>" + (kendo.format('{0:c}', dataItem.amount_approved)) + "</span>"
-                    },
-                    headerAttributes: {
-                        "class": "title"
-                    },
-                    groupHeaderTemplate: "Amount Approved: #= value?  kendo.format('{0:c}', value): 'Pending' #",
-                    aggregates: ["max", "min"],
-                    format: "{0:c}",
-                    width: 200,
-                    filterable: false
-
-                },
-                {
-                    field: 'fmgr_approval_date',
-                    title: 'Fin Mgr Approval Date ',
-                    headerAttributes: {
-                        "class": "title"
-                    },
-                    template: function (dataItem) {
-                        let date = dataItem.fmgr_approval_date ? kendo.toString(kendo.parseDate(dataItem.fmgr_approval_date), 'dddd dd MMM, yyyy') : '';
-                        return "<span>" + date + "</span>";
-                    },
-                    width: 200,
-                    groupHeaderTemplate: "Finance Mgr. Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') : '' #",
-                    hidden: false,
-                    filterable: false
-
-                },
-                {
-                    field: 'amount_received',
-                    title: 'Amount Received',
-                    template: function (dataItem) {
-                        if (dataItem.amount_received == null) return "";
-                        return "<span>" + kendo.format('{0:c}', dataItem.amount_received) + "</span>";
-
-                        // return dataItem.amount_received ? "<span title='Amount Received: " + kendo.format('{0:c}', dataItem.amount_received) + "'>" + kendo.format('{0:c}', dataItem.amount_received) + "</span>" : "<span title='0' " + universal.currency_symbol + ">0" + universal.currency_symbol + "</span>"
-                    },
-                    attributes: {
-                        class: 'amount_received'
-                    },
-                    headerAttributes: {
-                        "class": "title"
-                    },
-                    width: 200,
-                    groupHeaderTemplate: "Amount Received: #: kendo.format('{0:c}', value) #",
-                    filterable: false
-
-                },
-                {
-                    field: 'received_by',
-                    title: 'Received By',
-                    hidden: false,
-                    template: function (dataItem) {
-                        return dataItem.received_by ? "<span>" + dataItem.received_by + "</span>" : ""
-                    },
-                    headerAttributes: {
-                        "class": "title"
-                    },
-                    width: 200,
-                    groupHeaderTemplate: "Received By: #:  value #",
-                    filterable: false
-
-                },
-                {
-                    field: 'date_received',
-                    title: 'Date Received',
-                    hidden: false,
-                    template: function (dataItem) {
-                        let date = dataItem.date_received ? kendo.toString(kendo.parseDate(dataItem.date_received), 'dddd dd MMM, yyyy') : '';
-                        return "<span>" + date + "</span>";
-                    },
-                    headerAttributes: {
-                        "class": "title"
-                    },
-                    width: 150,
-                    groupHeaderTemplate: "Date Received: #= value? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : 'Pending' #",
-                    filterable: {
-                        cell: {
-                            template: dateRangeFilter
-                        }
-                    }
-                }*/
             ],
             detailTemplate: kendo.template($("#detailTemplate_Secretary").html()),
             dataSource: salaryAdvanceDataSource,
@@ -694,8 +444,8 @@ $universal->bulkRequestNumber = genDeptRef($current_user->department_id, 'salary
             },
             remove: function (e) {
                 // remove names from bulk applicants
-                for( let i = 0; i < bulkApplicants.length; i++){
-                    if ( bulkApplicants[i] === e.model.name) {
+                for (let i = 0; i < bulkApplicants.length; i++) {
+                    if (bulkApplicants[i] === e.model.name) {
                         bulkApplicants.splice(i, 1);
                         i--;
                     }
@@ -791,9 +541,6 @@ $universal->bulkRequestNumber = genDeptRef($current_user->department_id, 'salary
         });
 
         $salaryAdvanceGrid.data("kendoGrid").bind("dataBound", onDataBound);
-        $salaryAdvanceGrid.data("kendoGrid").bind("filter", function (e) {
-            toggleDateFilterBtn(e)
-        });
     });
 
 </script>

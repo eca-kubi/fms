@@ -687,3 +687,7 @@ function getSalaryAdvanceFromDepartments($department_id = '')
     }
     return $records;
 }
+
+function salaryAdvanceReviewed($id_salary_advance) {
+   return Database::getDbh()->where('user_id', getUserSession()->user_id)->where('id_salary_advance', $id_salary_advance)->where('hod_approval', true)->has('salary_advance');
+}

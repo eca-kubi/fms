@@ -80,6 +80,8 @@
     const DEBUG_MODE = false;
     const ERROR_UNSPECIFIED_ERROR = 'E_1000';
     const ERROR_APPLICATION_ALREADY_REVIEWED = 'E_1002';
+    let MIN_PERCENTAGE = <?php echo MIN_PERCENTAGE ?>;
+    let MAX_PERCENTAGE = <?php echo MAX_PERCENTAGE ?>;
     let kGridAddButton;
     let $salaryAdvanceGrid;
     let salaryAdvanceDataSource;
@@ -128,17 +130,22 @@
                 }
             },
             error: function (e) {
+                salaryAdvanceDataSource.cancelChanges();
+                salaryAdvanceDataSource.read();
+                if (e.status === "parsererror") {
+                    toastError("Some required assets on this page failed to load");
+                    return;
+                }
+                toastError(e.errors[0]['message']);
                 if (e.errors[0]['code'] === ERROR_AN_APPLICATION_ALREADY_EXISTS) {
                     disableGridAddButton();
                 }
-                salaryAdvanceDataSource.cancelChanges();
-                toastError(e.errors[0]['message']);
             },
             requestEnd: function (e) {
                 if (e.type === 'update' && e.response.length > 0 || e.type === 'create' && e.response.length > 0) {
                     toastSuccess('Success', 5000);
                 }
-                $.get(URL_ROOT + "/salary-advance-ajax/has-active-salary-advance").done(function (hasActiveSalaryAdvance) {
+                $.get(URL_ROOT + "/salary-advance-ajax/has-active-salary-advance", {}, null, "json").done(function (hasActiveSalaryAdvance) {
                     universal.hasActiveApplication = hasActiveSalaryAdvance
                 });
             },
@@ -362,10 +369,16 @@
                 {
                     attributes: {class: "action"},
                     command: [{
-                        name: "edit",
+                        name: "custom_edit",
                         text: "Edit",
                         iconClass: {edit: "k-icon k-i-edit"},
-                        className: "badge badge-success btn k-button text-black border"
+                        className: "badge badge-success btn k-button text-black border k-grid-custom-edit",
+                        click: function (e) {
+                            let grid = $salaryAdvanceGrid.getKendoGrid();
+                            salaryAdvanceDataSource.read().then(function () {
+                                grid.editRow(grid.currentRow());
+                            });
+                        }
                     },
                         {name: "print", template: $("#printButton").html()}],
                     headerAttributes: {class: "title"},
@@ -700,15 +713,13 @@
             detailCollapse: onDetailCollapse,
             beforeEdit: function (e) {
                 window.grid_uid = e.model.uid; // uid of current editing row
-                e.model.fields["amount_requested"].editable = e.model.hod_approval === null;
+                e.model.fields.amount_requested.editable = e.model.hod_approval === null;
             },
             edit: function (e) {
                 let validator = this.editable.validatable;
-                //let percentageLabelField = e.container.find('.k-edit-label:eq(1), .k-edit-field:eq(1) ');
                 let amountRequestedLabelField = e.container.find(".k-edit-label:eq(3), .k-edit-field:eq(3)");
                 let amountRequestedNumericTextBox = amountRequestedLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
-                //let amountRequestedPercentageNumericTextBox = percentageLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
-                // let radioButtonGroup = $('<div class="editor-field"><input type="radio" name="toggleAmountRequested" id="percentageRadio" class="k-radio" checked="checked" > <label class="k-radio-label" for="percentageRadio" >Percentage</label><input type="radio" name="toggleAmountRequested" id="figureRadio" class="k-radio"> <label class="k-radio-label" for="figureRadio">Figure</label></div>');
+
                 validator._errorTemplate = (function anonymous(data
                 ) {
                     let $kendoOutput, $kendoHtmlEncode = kendo.htmlEncode;
@@ -717,82 +728,17 @@
                     }
                     return $kendoOutput;
                 });
+
                 // Toggle visibility off for all editor fields and labels
                 e.container.find('.k-edit-label, .k-edit-field').addClass("pt-2").toggle(false);
+
                 amountRequestedLabelField.toggle(true);
+
                 e.container.on("keypress", ".k-input", function (e) {
                     if (e.which === 13)
                         $(this).blur().next("input").focus();
                 });
-                /*if (e.model.fields["percentage"].editable) {
-                    amountRequestedLabelField.toggle(true);
-                    percentageLabelField.toggle(true);
-                    amountRequestedLabelField.find('input').attr('min', '0');
-                    percentageLabelField.find('input').attr('min', 10).attr('max', 30).attr('data-min-msg', 'Amount Requested must be at least 10% of net salary!').attr('data-max-msg', 'Amount Requested must not exceed 30% of net salary!');
 
-                    percentageLabelField.find('label').html('Amount Requested <br><small class="text-danger text-bold">Enter as Percentage (10% - 30%)</small>');
-                    amountRequestedLabelField.find('label').html('Amount Requested <br> <small class="text-danger text-bold" > Enter as Figure</small>');
-
-                    radioButtonGroup.insertAfter(e.container.find('.k-edit-form-container').children('[data-container-for=amount_requested]'));
-                    radioButtonGroup.on('click', '#percentageRadio', function () {
-                        e.model.amount_requested_is_percentage = true;
-                        amountRequestedNumericTextBox.enable(false);
-                        amountRequestedPercentageNumericTextBox.enable();
-                        amountRequestedPercentageNumericTextBox.focus();
-                        amountRequestedPercentageNumericTextBox.element.attr("required", "required");
-                        amountRequestedPercentageNumericTextBox.wrapper.next('.k-invalid-msg').removeClass('d-none');
-                        amountRequestedNumericTextBox.element.removeAttr("required");
-                        amountRequestedNumericTextBox.wrapper.next('.k-invalid-msg').addClass('d-none');
-                    });
-
-                    radioButtonGroup.on('click', '#figureRadio', function () {
-                        e.model.amount_requested_is_percentage = false;
-                        amountRequestedPercentageNumericTextBox.enable(false);
-                        amountRequestedNumericTextBox.enable();
-                        amountRequestedNumericTextBox.focus();
-                        amountRequestedPercentageNumericTextBox.element.removeAttr("required");
-                        amountRequestedPercentageNumericTextBox.wrapper.next('.k-invalid-msg').addClass('d-none');
-                        amountRequestedNumericTextBox.element.attr("required", "required");
-                        amountRequestedNumericTextBox.wrapper.next('.k-invalid-msg').removeClass('d-none');
-                    });
-
-                    if (e.model.amount_requested_is_percentage) {
-                        amountRequestedPercentageNumericTextBox.focus();
-                        amountRequestedNumericTextBox.enable(false);
-                        radioButtonGroup.find('#percentageRadio').attr('checked', 'checked');
-                    } else {
-                        amountRequestedNumericTextBox.focus();
-                        amountRequestedPercentageNumericTextBox.enable(false);
-                        radioButtonGroup.find('#figureRadio').attr('checked', 'checked');
-                    }
-
-                    e.container.data('kendoWindow').bind('activate', function () {
-                        if (e.model.amount_requested_is_percentage) {
-                            amountRequestedPercentageNumericTextBox.focus();
-                        } else {
-                            amountRequestedNumericTextBox.focus();
-                        }
-                    });
-                    percentageLabelField.find('.k-input').attr('data-required-msg', 'A percentage is required!');
-                    amountRequestedLabelField.find('.k-input').attr('data-required-msg', 'An is required');
-                }*/
-
-                /*  if (!e.model.isNew()) {
-                      e.container.find('.k-edit-label:eq(3), .k-edit-field:eq(3)').toggle(e.model.hod_approval !== null); // hod approval
-                      e.container.find('.k-edit-label:eq(4), .k-edit-field:eq(4)').toggle(e.model.hod_approval !== null); // hod comment
-                      e.container.find('.k-edit-label:eq(6), .k-edit-field:eq(6)').toggle(true); // hr approval
-                      e.container.find('.k-edit-label:eq(7), .k-edit-field:eq(7)').toggle(e.model.hr_approval !== null); // hr comment
-                      e.container.find('.k-edit-label:eq(8), .k-edit-field:eq(8)').toggle(e.model.hr_approval !== null); // toggle visibility for amount payable
-                      e.container.find('.k-edit-label:eq(10), .k-edit-field:eq(10)').toggle(true); // toggle visibility for fmgr approval
-                      e.container.find('.k-edit-label:eq(11), .k-edit-field:eq(11)').toggle(e.model.fmgr_approval !== null); // toggle visibility for fmgr comment
-                      e.container.find('.k-edit-label:eq(12), .k-edit-field:eq(12)').toggle(e.model.fmgr_approval !== null); // toggle visibility for amount approved
-                      e.container.find('.k-edit-label:eq(14), .k-edit-field:eq(14)').toggle(Boolean(e.model.amount_received)); // toggle visibility for amount received
-                      e.container.find('.k-edit-label:eq(15), .k-edit-field:eq(15)').toggle(Boolean(e.model.received_by)); // toggle visibility for received by
-                      e.container.find('.k-edit-label:eq(16), .k-edit-field:eq(16)').toggle(Boolean(e.model.date_received)); // toggle visibility for date received // kendo grid has date set to today by default
-                  } else {
-                      amountRequestedLabelField.toggle(true);
-                      percentageLabelField.toggle(true);
-                  }*/
                 e.container.data('kendoWindow').bind('activate', function () {
                     if (e.model.fields["amount_requested"].editable) {
                         amountRequestedNumericTextBox.focus();
@@ -829,67 +775,9 @@
             }
         }).data("kendoTooltip");
 
-        // kGridAddButton
-        //     .removeClass("k-grid-add")
-        //     .addClass("k-state-disabled k-grid-add-disabled")
-        //     .removeAttr("href").click(function () {
-        //     toastError("You already have an active salary advance application for the month of " + moment()["format"]("MMMM") + "!");
-        // });
-        /*
-                $salaryAdvanceGrid.data('kendoGrid').thead.kendoTooltip({
-                    filter: "th.title",
-                    position: 'top',
-                    content: function (e) {
-                        let target = e.target; // element for which the tooltip is shown
-                        return $(target).text();
-                    }
-                });*/
-
-        $salaryAdvanceGrid.on("click", ".action-edit", function (e) {
-            let grid = $salaryAdvanceGrid.data("kendoGrid");
-            let target = $(e.currentTarget);
-            let currentRow;
-            if (target.hasClass('in-detail-row')) {
-                currentRow = target.closest('tr.k-detail-row').prev('tr.k-master-row');
-            } else {
-                currentRow = grid.currentRow();
-            }
-            grid.editRow(currentRow);
-            let actionTools = target.parent('.action-tools');
-            actionTools.html("<span class='col'><a href='#' class='text-success action-confirm-edit'><i class='fa fa-check'></i></a></span>" +
-                "<span class='col'><a href='#' class='text-black action-cancel-edit'><i class='k-icon k-i-cancel'></i></a></span>");
-        });
-
-        $salaryAdvanceGrid.on("click", ".action-cancel-edit", function () {
-            //let row = $(this).closest("tr");
-            let $this = $(this);
-            let actionTools = $this.closest('.action-tools');
-            actionTools.html("<span class='col' title='Edit'><a href='#' class='text-black action-edit'><i class='fa fa-pencil'></i></a></span>" +
-                "<span class='col' title='Delete'><a href='#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span>" +
-                "<span class='col' title='More Info'><a href='#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
-                "</span>");
-            $salaryAdvanceGrid.data("kendoGrid").cancelChanges();
-        });
-
-        $salaryAdvanceGrid.on("click", ".action-confirm-edit", function () {
-            //let row = $(this).closest("tr");
-            let $this = $(this);
-            let actionTools = $this.closest('.action-tools');
-            actionTools.html("<span class='col' title='Edit'><a href='#' class='text-black action-edit'><i class='fa fa-pencil'></i></a></span>" +
-                "<span class='col' title='Delete'><a href='#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span>" +
-                "<span class='col' title='More Info'><a href='#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
-                "</span>");
-            $salaryAdvanceGrid.data("kendoGrid").saveChanges();
-        });
-
         $salaryAdvanceGrid.on("click", ".action-delete", function () {
             let row = $(this).closest("tr");
             $salaryAdvanceGrid.data("kendoGrid").removeRow(row);
-        });
-
-        $salaryAdvanceGrid.on("click", ".action-more-info", function () {
-            let row = $(this).closest("tr");
-            row.find('.k-hierarchy-cell>a').click();
         });
 
         $salaryAdvanceGrid.on('click', '.k-grid-add-disabled', function () {

@@ -126,8 +126,9 @@
                 }
             },
             error: function (e) {
-                toastError(e.errors ? e.errors[0]['message'] : "The page failed to load some required assets.");
-                this.cancelChanges();
+                salaryAdvanceDataSource.cancelChanges();
+                salaryAdvanceDataSource.read();
+                toastError(e.errors ? e.errors[0]['message'] : "Some required assets on this page failed to load");
             },
             requestEnd: function (e) {
                 if ((e.type === 'update' || e.type === 'create') && e.response.length > 0) {
@@ -824,42 +825,12 @@
             }
         }).data("kendoTooltip");
 
-        $salaryAdvanceGrid.on("click", ".action-cancel-edit", function () {
-            //let row = $(this).closest("tr");
-            let $this = $(this);
-            let actionTools = $this.closest('.action-tools');
-            actionTools.html("<span class='col' title='Edit'><a href='#' class='text-black action-edit'><i class='fa fa-pencil'></i></a></span>" +
-                "<span class='col' title='Delete'><a href='#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span>" +
-                "<span class='col' title='More Info'><a href='#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
-                "</span>");
-            $salaryAdvanceGrid.data("kendoGrid").cancelChanges();
-        });
-
-        $salaryAdvanceGrid.on("click", ".action-confirm-edit", function () {
-            //let row = $(this).closest("tr");
-            let $this = $(this);
-            let actionTools = $this.closest('.action-tools');
-            actionTools.html("<span class='col' title='Edit'><a href='#' class='text-black action-edit'><i class='fa fa-pencil'></i></a></span>" +
-                "<span class='col' title='Delete'><a href='#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span>" +
-                "<span class='col' title='More Info'><a href='#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
-                "</span>");
-            $salaryAdvanceGrid.data("kendoGrid").saveChanges();
-        });
-
         $salaryAdvanceGrid.on("click", ".action-delete", function () {
             let row = $(this).closest("tr");
             $salaryAdvanceGrid.data("kendoGrid").removeRow(row);
         });
 
-        $salaryAdvanceGrid.on("click", ".action-more-info", function () {
-            let row = $(this).closest("tr");
-            row.find('.k-hierarchy-cell>a').click();
-        });
-
         $salaryAdvanceGrid.data("kendoGrid").bind("dataBound", onDataBound);
-        $salaryAdvanceGrid.data("kendoGrid").bind("filter", function (e) {
-            toggleDateFilterBtn(e)
-        });
     });
 
 </script>
