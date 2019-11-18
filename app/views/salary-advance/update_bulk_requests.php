@@ -66,11 +66,9 @@
 ?>
 <script>
     let universal = {
-        basicSalary: "<?php echo $current_user->basic_salary; ?>",
         currencySymbol: "<?php echo CURRENCY_GHS; ?>",
         currentDepartment: "<?php echo $current_user->department ?>",
         currentDepartmentID: "<?php echo $current_user->department_id; ?>",
-        hasActiveApplication: "<?php echo hasActiveApplication($current_user->user_id) ?>",
         isFinanceOfficer: Boolean("<?php echo isFinanceOfficer($current_user->user_id); ?>"),
         isHr: Boolean("<?php echo isCurrentHR($current_user->user_id) ?>"),
         isFmgr: Boolean("<?php echo isCurrentFmgr($current_user->user_id) ?>"),
@@ -632,7 +630,7 @@
                 let data = grid.dataSource.data();
                 let dataSource = grid.dataSource;
                 $.each(data, function (i, row) {
-                    $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["id_salary_advance"]);
+                    $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["request_number"]);
                 });
                 $(".print-it").printPage();
                 let headingRow = $salaryAdvanceGrid.find('thead tr[role=row]');
@@ -646,7 +644,8 @@
                 filterRow.find('input:eq(2)').attr('placeholder', 'Search...');
 
                 if (!currentRowSelected && universal['select_row_id']) {
-                    selectGridRow(universal["select_row_id"], grid, dataSource, 'id_salary_advance');
+                    let row = selectGridRow(universal["select_row_id"], grid, dataSource, 'id_salary_advance');
+                    grid.expandRow(row);
                 }
                 if (!firstLoadDone) {
                     firstLoadDone = true;

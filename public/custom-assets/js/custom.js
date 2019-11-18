@@ -117,6 +117,19 @@ function dropDownEditor(container, options) {
                     }
                 });
             },
+            change: function (e) {
+                let grid = $salaryAdvanceGrid.getKendoGrid();
+                let model = grid.dataSource.getByUid(grid_uid);
+                let current = grid.current();
+                if (e.sender.selectedIndex) {
+                    let data = e.sender.dataSource.at(e.sender.selectedIndex - 1);
+                    model.user_id = data.user_id;
+                    model.department = data.department;
+                    model.department_id = data.department_id;
+                }
+                grid.refresh();
+                grid.editCell($salaryAdvanceGrid.find("td:eq(3)"))
+            },
             filter: "contains",
             suggest: true,
             optionLabel: "Select an Employee",
@@ -412,11 +425,11 @@ function selectGridRow(searchedId, grid, dataSource, idField) {
     // grid._selectedIds = {};
 
     // Now go to the page holding the record and select the row
-    //let currentPageSize = dataSource.pageSize();
-    //let pageWithRow = pageWithRowSelected = parseInt((rowNum / currentPageSize)) + 1; // pages are one-based
+    let currentPageSize = dataSource.pageSize();
+    let pageWithRow = pageWithRowSelected = parseInt((rowNum / currentPageSize)) + 1; // pages are one-based
     if (!currentRowSelected) {
         currentRowSelected = true;
-        dataSource.page(pageWithRowSelected);
+        dataSource.page(pageWithRow);
     }
     const row = grid.element.find("tr[data-uid='" + modelToSelect.uid + "']");
     if (row.length > 0) {
@@ -424,8 +437,8 @@ function selectGridRow(searchedId, grid, dataSource, idField) {
 
         // Scroll to the item to ensure it is visible
         grid.content.scrollTop(grid.select().position().top);
-        grid.expandRow(row);
     }
+    return row;
 }
 
 function onDataBound() {
@@ -474,11 +487,11 @@ function onDetailCollapse(e) {
     expandedRows['expanded'] = JSON.stringify(items);
 }
 
-function editNumberWithoutSpinners(container, options) {
+function  editNumberWithoutSpinners(container, options) {
     $('<input name="' + options.field + '" data-text-field="' + options.field + '" ' +
         'data-value-field="' + options.field + '" ' +
         'data-bind="value:' + options.field + '" ' +
-        'data-format="' + options.format + '" />')
+        'data-format="' + options.format + '"/>')
         .appendTo(container)
         .kendoNumericTextBox({
             spinners: false,

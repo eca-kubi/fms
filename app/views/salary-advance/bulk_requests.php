@@ -66,11 +66,9 @@
 ?>
 <script>
     let universal = {
-        basicSalary: "<?php echo $current_user->basic_salary; ?>",
         currencySymbol: "<?php echo CURRENCY_GHS; ?>",
         currentDepartment: "<?php echo $current_user->department ?>",
         currentDepartmentID: <?php echo $current_user->department_id; ?>,
-        hasActiveApplication: "<?php echo hasActiveApplication($current_user->user_id) ?>",
         isFinanceOfficer: Boolean("<?php echo isFinanceOfficer($current_user->user_id); ?>"),
         isHr: Boolean("<?php echo isCurrentHR($current_user->user_id) ?>"),
         isFmgr: Boolean("<?php echo isCurrentFmgr($current_user->user_id) ?>"),
@@ -88,13 +86,13 @@
         $salaryAdvanceGrid = $('#salary_advance');
         salaryAdvanceDataSource = new kendo.data.DataSource({
             pageSize: 20,
-            filter: [
+          /*  filter: [
                 {
                     field: "date_raised", operator: "gte", value: new Date(firstDayOfMonth)
                 },
                 {
                     field: 'date_raised', operator: "lte", value: new Date(lastDayOfMonth)
-                }],
+                }],*/
             batch: false,
             transport: {
                 read: {
@@ -151,13 +149,6 @@
                         raised_by_id: {type: "number"},
                         raised_by: {type: "string"}
                     }
-                },
-                parse: function (data) {
-                    $.each(data, function (idx, elem) {
-                        elem.date_raised = moment(elem.date_raised).format("YYYY-MM-DD");
-                        elem.date_received = moment(elem.date_received).format("YYYY-MM-DD");
-                    });
-                    return data;
                 }
             }
         });
@@ -173,6 +164,7 @@
                 fileName: "Salary Advance Export - Bulk Requests.xlsx",
                 filterable: true
             },
+            dataSource: salaryAdvanceDataSource,
             excelExport: function (e) {
                 let sheet = e.workbook.sheets[0];
                 sheet.columns[0].autoWidth = false;

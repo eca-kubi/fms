@@ -622,72 +622,63 @@ function currentUrl($server)
 }
 
 /**
- * @param string $user_id
- * @param string $request_number
- * @param bool $deleted
- * @param bool $is_bulk_request
+ * Joins salary advance table with users, and departments and returns the records.
+ * @param array $key_value
  * @return array
  */
-function getSalaryAdvance($user_id = '', $request_number = '', $deleted = false, $is_bulk_request = false)
+function getSalaryAdvance($key_value)
 {
     $db = Database::getDbh();
     $records = [];
-    $user_id = $user_id ?: getUserSession()->user_id;
-    $current_user = new User($user_id);
+    foreach ($key_value as $key => $value) {
+        $db->where((string)$key, $value);
+    }
     try {
-        if ($request_number) {
-            $records = $db->join('users u', 'u.user_id=sa.user_id', 'LEFT')
-                ->join('departments d', 'd.department_id=u.department_id', 'LEFT')
-                ->where('u.user_id', $current_user->user_id)
-                ->where('is_bulk_request', $is_bulk_request)
-                ->where('request_number', $request_number)
-                ->where('deleted', $deleted)
-                ->orderBy('date_raised')
-                ->get('salary_advance sa', null, '*,  concat_ws(" ", u.first_name, u.last_name) as name, d.department, NULL as password, NULL as default_password');
-        } else {
-            $records = $db->join('users u', 'u.user_id=sa.user_id', 'LEFT')
-                ->join('departments d', 'd.department_id=u.department_id', 'LEFT')
-                ->where('u.user_id', $current_user->user_id)
-                ->where('is_bulk_request', $is_bulk_request)
-                ->where('deleted', $deleted)
-                ->orderBy('date_raised')
-                ->get('salary_advance sa', null, '*,  concat_ws(" ", u.first_name, u.last_name) as name, d.department, NULL as password, NULL as default_password');
-        }
+        $records = $db->join('users u', 'u.user_id=sa.user_id', 'LEFT')
+            ->join('departments d', 'd.department_id=u.department_id', 'LEFT')
+            ->orderBy('sa.date_raised', 'DESC')
+            ->get('salary_advance sa', null, '*,  concat_ws(" ", u.first_name, u.last_name) as name, d.department, NULL as password, NULL as default_password');
     } catch (Exception $e) {
     }
     return $records;
 }
 
 /**
- * @param string $department_id
+ * Joins salary advance table with users, departments, and bulk requests table and returns the records.
+ * @param array $key_value
  * @return array
  */
-function getSalaryAdvanceFromDepartments($department_id = '')
+function getBulkRequests($key_value)
 {
     $db = Database::getDbh();
-    $records = [];
+    $bulk_requests = [];
+    foreach ($key_value as $key => $value) {
+        $db->where((string)$key, $value);
+    }
     try {
-        if ($department_id) {
-            $records = $db->join('users u', 'u.user_id=sa.user_id', 'LEFT')
-                ->join('departments d', 'd.department_id=u.department_id', 'LEFT')
-                ->where('u.department_id', $department_id)
-                ->where('is_bulk_request', false)
-                ->where('deleted', false)
-                ->orderBy('date_raised')
-                ->get('salary_advance sa', null, '*,  concat_ws(" ", u.first_name, u.last_name) as name, d.department, NULL as password, NULL as default_password');
-        } else {
-            $records = $db->join('users u', 'u.user_id=sa.user_id', 'LEFT')
-                ->join('departments d', 'd.department_id=u.department_id', 'LEFT')
-                ->where('is_bulk_request', false)
-                ->where('deleted', false)
-                ->orderBy('date_raised')
-                ->get('salary_advance sa', null, '*,  concat_ws(" ", u.first_name, u.last_name) as name, d.department, NULL as password, NULL as default_password');
-        }
+        $bulk_requests = $db->join('users u', 'u.user_id=sa.raised_by_id', 'INNER')
+            ->join('departments d', 'd.department_id=sa.department_id')
+            ->get('salary_advance_bulk_requests sa', null,
+                'sa.id_salary_advance_bulk_requests, concat_ws(" ", u.first_name, u.last_name) as raised_by, sa.raised_by_id, sa.request_number, sa.department_id, d.department');
     } catch (Exception $e) {
     }
-    return $records;
+    return $bulk_requests;
 }
 
-function salaryAdvanceReviewed($id_salary_advance) {
-   return Database::getDbh()->where('user_id', getUserSession()->user_id)->where('id_salary_advance', $id_salary_advance)->where('hod_approval', true)->has('salary_advance');
+function salaryAdvanceReviewed($id_salary_advance)
+{
+    return Database::getDbh()->where('user_id', getUserSession()->user_id)->where('id_salary_advance', $id_salary_advance)->where('hod_approval', true)->has('salary_advance');
+}
+
+/**
+ * @param float $amount
+ * @param float $basic_salary
+ * @return bool
+ */
+function isValidAmount($amount, $basic_salary)
+{
+    $percentage = ($amount / $basic_salary) * 100;
+    $min_percent = (MIN_PERCENTAGE / 100) * $basic_salary;
+    $max_percent = (MAX_PERCENTAGE / 100) * $basic_salary;
+    return $percentage >= $min_percent || $percentage <= $max_percent;
 }

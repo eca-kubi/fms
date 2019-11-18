@@ -175,7 +175,7 @@
                                         let grid = $salaryAdvanceGrid.getKendoGrid();
                                         let model = grid.dataSource.getByUid(grid_uid);
                                         input.attr("data-min-msg", "Amount must be more than 10% of salary.");
-                                        return 0.1 * model.basic_salary <= kendo.parseFloat(input.val());
+                                        return (MIN_PERCENTAGE/100) * model.basic_salary <= kendo.parseFloat(input.val());
                                     }
                                     return true;
                                 },
@@ -184,7 +184,7 @@
                                         let grid = $salaryAdvanceGrid.getKendoGrid();
                                         let model = grid.dataSource.getByUid(grid_uid);
                                         input.attr("data-max-msg", "Amount must not exceed 30% of salary.");
-                                        return 0.30 * model.basic_salary >= kendo.parseFloat(input.val());
+                                        return (MAX_PERCENTAGE/100) * model.basic_salary >= kendo.parseFloat(input.val());
                                     }
                                     return true;
                                 }
@@ -426,7 +426,7 @@
                     field: 'amount_requested',
                     title: 'Amount Requested',
                     width: 180,
-                    editor: editNumberWithoutSpinners,
+                    //editor: editNumberWithoutSpinners,
                     headerAttributes: {
                         "class": "title"
                     },
@@ -690,7 +690,8 @@
                         disableGridAddButton();
                     }
                     if (!currentRowSelected && requestNumber) {
-                        selectGridRow(requestNumber, grid, dataSource, 'request_number');
+                        let row = selectGridRow(requestNumber, grid, dataSource, 'request_number');
+                        grid.expandRow(row);
                     }
                     if (!firstLoadDone) {
                         firstLoadDone = true;
@@ -780,6 +781,7 @@
             $salaryAdvanceGrid.data("kendoGrid").removeRow(row);
         });
 
+
         $salaryAdvanceGrid.on('click', '.k-grid-add-disabled', function () {
             toastError($(this).attr("data-title"));
         });
@@ -797,9 +799,6 @@
         };
 
         $salaryAdvanceGrid.data("kendoGrid").bind("dataBound", onDataBound);
-        /*$salaryAdvanceGrid.data("kendoGrid").bind("filter", function (e) {
-            toggleDateFilterBtn(e)
-        });*/
     });
 
     toggleAmountRequested = function () {

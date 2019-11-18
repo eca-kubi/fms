@@ -65,6 +65,9 @@
 /** @var string $request_number */
 ?>
 <script>
+    let MIN_PERCENTAGE = <?php echo MIN_PERCENTAGE ?>;
+    let MAX_PERCENTAGE = <?php echo MAX_PERCENTAGE ?>;
+    let grid = null;
     let universal = {
         basicSalary: "<?php echo $current_user->basic_salary; ?>",
         currencySymbol: "<?php echo CURRENCY_GHS; ?>",
@@ -76,7 +79,8 @@
         isFmgr: Boolean("<?php echo isCurrentFmgr($current_user->user_id) ?>"),
         isGM: Boolean("<?php echo isCurrentGM($current_user->user_id) ?>"),
         isManager: Boolean("<?php echo isCurrentManager($current_user->user_id) ?>"),
-        requestNumber: "<?php echo $request_number ?>"
+        requestNumber: "<?php echo $request_number ?>",
+        isSecretary: "<?php isSecretary($current_user->user_id); ?>"
     };
     let $salaryAdvanceGrid;
     let salaryAdvanceDataSource;
@@ -87,30 +91,27 @@
         kendo.culture().numberFormat.currency.symbol = 'GH₵';
         $salaryAdvanceGrid = $('#salary_advance');
         salaryAdvanceDataSource = new kendo.data.DataSource({
-            width: 'auto',
             pageSize: 20,
             batch: true,
             transport: {
                 read: {
-                    url: URL_ROOT + "/salary-advance-new-bulk-requests-ajax/",
-                    type: "post",
+                    url: URL_ROOT + "/salary-advance-bulk-requests-ajax/init/",
                     dataType: "json",
-                    contentType: "application/json"
                 },
                 update: {
-                    url: URL_ROOT + "/salary-advance-new-bulk-requests-ajax/update/",
-                    type: "post",
-                    dataType: "json",
+                    url: URL_ROOT + "/salary-advance-bulk-requests-ajax/update/",
+                    type: 'post',
+                    dataType: 'json',
                     contentType: "application/json"
                 },
                 destroy: {
-                    url: URL_ROOT + "/salary-advance-new-bulk-requests-ajax/destroy/",
+                    url: URL_ROOT + "/salary-advance-bulk-requests-ajax/destroy/",
                     type: "post",
                     dataType: "json",
                     contentType: "application/json"
                 },
                 create: {
-                    url: URL_ROOT + "/salary-advance-new-bulk-requests-ajax/create",
+                    url: URL_ROOT + "/salary-advance-bulk-requests-ajax/create",
                     type: "post",
                     dataType: "json",
                     contentType: "application/json",
@@ -186,7 +187,10 @@
                         },
                         amount_received: {editable: false, nullable: true, type: "number"},
                         amount_requested: {
-                            editable: false, nullable: true, type: "number", validation: {
+                            editable: true,
+                            nullable: true,
+                            type: "number",
+                            validation: {
                                 required: function (input) {
                                     if (input.attr("name") === "amount_requested") {
                                         input.attr("data-required-msg", "Enter an amount.");
@@ -199,7 +203,7 @@
                                         let grid = $salaryAdvanceGrid.getKendoGrid();
                                         let model = grid.dataSource.getByUid(grid_uid);
                                         input.attr("data-min-msg", "Amount must be more than 10% of salary.");
-                                        return (MIN_PERCENTAGE/ 100) * model.basic_salary <= kendo.parseFloat(input.val());
+                                        return (MIN_PERCENTAGE / 100) * model.basic_salary <= kendo.parseFloat(input.val());
                                     }
                                     return true;
                                 },
@@ -241,13 +245,11 @@
                         is_bulk_request: {defaultValue: true, type: "boolean"},
                         name: {from: "employee.name"},
                         percentage: {
-                            editable: true,
-                            type: "number",
-                            validation: {max: 30, min: 10, required: true},
-                            defaultValue: 10
+                            editable: false,
+                            type: "number"
                         },
                         raised_by_id: {type: "number", nullable: true},
-                        raised_by_secretary: {type: "boolean", defaultValue: universal["isSecretary"]},
+                        raised_by_secretary: {type: "boolean", defaultValue: universal.isSecretary},
                         received_by: {editable: false, nullable: true, type: "string"},
                         user_id: {type: "number", nullable: true}
                     }
@@ -255,7 +257,7 @@
             }
         });
 
-        $salaryAdvanceGrid.kendoGrid({
+        grid = $salaryAdvanceGrid.kendoGrid({
             autoFitColumn: true,
             selectable: true,
             mobile: true,
@@ -300,10 +302,26 @@
                 }
             },
             saveChanges: function (e) {
+                let models = grid.dataSource.data();
+                let preventDefault = false;
+                for (let i = 0; i < models.length; i++) {
+                    let model = models[i];
+                    if (model.name === null) {
+                        e.preventDefault();
+                        let row = selectGridRow();
+                        grid.editCell(selectGridRow(model.uid, grid, grid.dataSource, "uid").find("td:eq(1)"));
+                        return false;
+                    }
+                    if (model.amount_requested === null) {
+                        e.preventDefault();
+                        grid.editCell(selectGridRow(model.uid, grid, grid.dataSource, "uid").find("td:eq(2)"));
+                        return false;
+                    }
+                }
                 if (!confirm("Are you sure you want to submit these requests?")) {
                     e.preventDefault();
                 } else {
-                    $(".k-grid-cancel-changes, .k-grid-save-changes").addClass("d-none")
+                    $(".k-grid-cancel-changes, .k-grid-save-changes").addClass("d-none");
                 }
             },
             filterable: false,
@@ -337,33 +355,9 @@
                     width: 250
                 },
                 {
-                    field: "request_number",
-                    title: "Request Number",
-                    width: 250,
-                    filterable: false,
-                    headerAttributes: {class: "title"},
-                    hidden: true
-                },
-                {
-                    field: 'percentage',
-                    title: 'Amount in Percentage',
-                    template: function (dataItem) {
-                        return "<span>" + (dataItem.percentage ? kendo.toString(dataItem.percentage, '#\\%') : '') + "</span>"
-                    },
-                    headerAttributes: {
-                        "class": "title"
-                    },
-                    width: 250,
-                    groupHeaderTemplate: "Amount in Percentage: #= value? value + '%' : '' #",
-                    aggregates: ["max", "min"],
-                    format: "{0:#\\%}",
-                    filterable: false,
-                    hidden: true
-                },
-                {
                     field: 'amount_requested',
                     title: 'Amount Requested',
-                    editor: editNumberWithoutSpinners,
+                    //editor: editNumberWithoutSpinners,
                     width: 250,
                     headerAttributes: {
                         "class": "title"
@@ -437,11 +431,6 @@
             beforeEdit: function (e) {
                 window.grid_uid = e.model.uid; // uid of current editing row
             },
-            edit: function (e) {
-                if (this.columns[e.container.index() - 1].field === "percentage") {
-                    e.container.find("input[name='percentage']").attr("data-required-msg", "Percentage is required.");
-                }
-            },
             remove: function (e) {
                 // remove names from bulk applicants
                 for (let i = 0; i < bulkApplicants.length; i++) {
@@ -451,7 +440,7 @@
                     }
                 }
             }
-        });
+        }).getKendoGrid();
 
         $salaryAdvanceGrid.find('#department').kendoDropDownList({
             dataSource: new kendo.data.DataSource({

@@ -13,10 +13,6 @@ class SalaryAdvance extends Controller
             $payload['current_user'] = getUserSession();
             $payload['title'] = 'Salary Advance Applications';
             $payload['request_number'] = $request_number;
-            $payload['role'] = ROLE_USER;
-            if ($request_number && !$db->where('request_number', $request_number)->has('salary_advance')) {
-                redirect('errors/index/404');
-            }
             $this->view('salary-advance/index', $payload);
         }
     }
@@ -45,11 +41,12 @@ class SalaryAdvance extends Controller
         if (!isLoggedIn()) {
             redirect('users/login/salary-advance/new-bulk-request/');
         }
-        $current_user = $payload['current_user']  = getUserSession();
-        if (!isAssignedAsSecretary($current_user->user_id)) {
+        $current_user = getUserSession();
+        if (!isSecretary($current_user->user_id)) {
             redirect('salary-advance/bulk-requests');
         }
-        $payload['title'] = 'New Bulk Salary Advance Applications';
+        $payload['title'] = 'New Bulk Salary Advance Application';
+        $payload['request_number'] = genDeptRef($current_user->department_id, 'salary_advance', false);
         $this->view('salary-advance/new_bulk_request', $payload);
     }
 

@@ -90,13 +90,6 @@ window.addEventListener("load", function () {
 function dropDownEditor(container, options) {
     $('<input id="employeeDropDownList"  required name="' + options.field + '" data-bind="value:name" data-required-msg="Employee is required!"/>')
         .appendTo(container)
-        .on('change', function () {
-            console.log('');
-            //let option = options;
-            //let contain = container;
-            //options.model.department = options.model.employee.department;
-            // options.model.name = options.model.employee.name;
-        })
         .kendoDropDownList({
             dataTextField: "employee.name",
             dataValueField: "employee.user_id",
@@ -125,10 +118,12 @@ function dropDownEditor(container, options) {
             filter: "contains",
             suggest: true,
             select: function (e) {
-                //console.log('select')
+                let grid = $salaryAdvanceGrid.getKendoGrid();
+                let curCell  = $salaryAdvanceGrid.find(".k-edit-cell");
+                grid.editCell(curCell.next());
             },
             change: function (e) {
-                let grid = $salaryAdvanceGrid["data"]('kendoGrid');
+                let grid = $salaryAdvanceGrid.getKendoGrid();
                 let model = grid.dataSource.getByUid(grid_uid);
                 let selectedIndex = e.sender.selectedIndex;
                 if (selectedIndex) {
@@ -141,10 +136,8 @@ function dropDownEditor(container, options) {
                 //console.log('change');
             },
             close: function (e) {
-                //console.log('close')
             },
             optionLabel: "Select an Employee",
-            //index: 1
         });
 }
 

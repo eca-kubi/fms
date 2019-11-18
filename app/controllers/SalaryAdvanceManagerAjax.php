@@ -6,9 +6,9 @@ class SalaryAdvanceManagerAjax extends Controller
     {
         $current_user = getUserSession();
         if (!(isCurrentHR($current_user->user_id) || isCurrentFmgr($current_user->user_id) || isCurrentGM($current_user->user_id) || isFinanceOfficer($current_user->user_id))) {
-            echo json_encode(getSalaryAdvanceFromDepartments(getUserSession()->department_id), JSON_THROW_ON_ERROR, 512);
+            echo json_encode(getSalaryAdvance('', getUserSession()->department_id), JSON_THROW_ON_ERROR, 512);
         } else {
-            echo json_encode(getSalaryAdvanceFromDepartments(), JSON_THROW_ON_ERROR, 512);
+            echo json_encode(getSalaryAdvance(), JSON_THROW_ON_ERROR, 512);
         }
     }
 

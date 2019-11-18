@@ -4,7 +4,7 @@ class SalaryAdvanceAjax extends Controller
 {
     public function index(): void
     {
-        echo json_encode(getSalaryAdvance(), JSON_THROW_ON_ERROR, 512);
+        echo json_encode(getSalaryAdvance(['u.user_id' => getUserSession()->user_id]), JSON_THROW_ON_ERROR, 512);
     }
 
     public function Create(): void
@@ -48,7 +48,7 @@ class SalaryAdvanceAjax extends Controller
                 $data['body'] = $body;
                 $email = get_include_contents('email_templates/salary-advance/main', $data);
                 insertEmail($subject, $email, $current_user->email);
-                echo json_encode(getSalaryAdvance($current_user->user_id, $request_number), JSON_THROW_ON_ERROR, 512);
+                echo json_encode(getSalaryAdvance(['u.user_id' => $current_user->user_id, 'sa.request_number' => $request_number]), JSON_THROW_ON_ERROR, 512);
             } else {
                 $ret['errors'] = [['message' => 'Failed to add record.', 'code' => ERROR_UNSPECIFIED_ERROR]];
                 echo json_encode($ret, JSON_THROW_ON_ERROR, 512);
@@ -92,7 +92,7 @@ class SalaryAdvanceAjax extends Controller
                         ];
                         $success = $db->where('id_salary_advance', $id_salary_advance)->update('salary_advance', $data);
                         if ($success) {
-                            echo json_encode(getSalaryAdvance($current_user->user_id, $salary_advance['request_number']), JSON_THROW_ON_ERROR, 512);
+                            echo json_encode(getSalaryAdvance(['u.user_id' => $current_user->user_id, 'sa.request_number' => $salary_advance['request_number']]), JSON_THROW_ON_ERROR, 512);
                         } else {
                             $errors['errors'][0]['message'] = 'Update failed!';
                             echo json_encode($errors, JSON_THROW_ON_ERROR, 512);

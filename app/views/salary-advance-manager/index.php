@@ -703,7 +703,8 @@
                 filterRow.find('input:eq(2)').attr('placeholder', 'Search...');
 
                 if (!currentRowSelected && universal.requestNumber) {
-                    selectGridRow(universal.requestNumber, grid, dataSource, 'request_number');
+                    let row = selectGridRow(universal.requestNumber, grid, dataSource, 'request_number');
+                    grid.expandRow(row);
                 }
                 if (!firstLoadDone) {
                     firstLoadDone = true;
