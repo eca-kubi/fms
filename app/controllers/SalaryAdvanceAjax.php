@@ -160,5 +160,9 @@ class SalaryAdvanceAjax extends Controller
     {
         echo json_encode(salaryAdvanceReviewed($id_salary_advance), JSON_THROW_ON_ERROR, 512);
     }
+
+    public function ActiveApplicants() :void {
+        echo json_encode(getActiveApplicants(), JSON_THROW_ON_ERROR, 512);
+    }
 }
 

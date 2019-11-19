@@ -48,21 +48,23 @@ td.action {
     padding-bottom: 0.25rem !important;
 }
 
-.salary-advance-details label
-{
-    display:inline-block;
-    width:250px;
+.salary-advance-details label {
+    display: inline-block;
+    width: 250px;
     padding-right: 10px;
     text-align: right;
-    font-style:normal;
-    font-weight:bold;
+    font-style: normal;
+    font-weight: bold;
 }
+
 th.title {
     font-weight: bold !important;
 }
+
 .k-grid-header {
     padding-right: 0 !important;
 }
+
 .k-grid-content {
     margin: 0 auto;
     overflow: hidden;
@@ -431,6 +433,9 @@ select[multiple='multiple'] {
     background-color: #dc3545 !important;
 }
 
+.k-grid .k-edit-cell .k-tooltip {
+    white-space: nowrap;
+}
 html {
     -ms-overflow-style: none;
 }
@@ -444,12 +449,16 @@ html {
 }
 
 :-moz-ui-invalid {
-    box-shadow:none;
+    box-shadow: none;
 }
 
+td:nth-child(4) {
+    position: relative;
+    overflow: visible;
+}
 
-.navbar-nav  a{
-    font-size: .9375rem!important;
+.navbar-nav a {
+    font-size: .9375rem !important;
 }
 
 a.k-link.k-state-active {

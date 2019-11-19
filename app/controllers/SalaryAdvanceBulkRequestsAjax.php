@@ -42,6 +42,7 @@ class SalaryAdvanceBulkRequestsAjax extends Controller
         $request_number = genDeptRef($current_user->department_id, 'salary_advance', false);
         $models = $post['models'];
         $user_ids = [];
+        $bulk_requests = [];
         foreach ($models as $model) {
             $is_valid_user = $db->where('user_id', $model['user_id'])
                 ->where('department_id', $current_user->department_id)
@@ -52,10 +53,10 @@ class SalaryAdvanceBulkRequestsAjax extends Controller
                     $percentage = ($model['amount_requested'] / $valid_user['basic_salary']) * 100;
                     $insertID = $db->insert('salary_advance', ['user_id' => $valid_user['user_id'], 'percentage' => $percentage, 'raised_by_id' => $current_user->user_id,
                         'department_id' => $current_user->department_id, 'is_bulk_request' => true, 'raised_by_secretary' => true,
-                        'bulk_request_number' => $request_number, 'date_raised' => now(), 'amount_requested' => $model['amount_requested']]);
+                        'request_number' => $request_number, 'date_raised' => now(), 'amount_requested' => $model['amount_requested']]);
                     if ($insertID) {
                         $insertIDs[] = $insertID;
-                        $user_ids[] = $is_valid_user['user_id'];
+                        $user_ids[] = $valid_user['user_id'];
                     }
                 }
             }
@@ -63,25 +64,26 @@ class SalaryAdvanceBulkRequestsAjax extends Controller
         if (count($insertIDs) !== count($models)) {
             echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
         } else {
-            $db->insert('salary_advance_bulk_requests', [
-                'department_id' => $current_user->department_id,
-                'bulk_request_number' => $request_number,
-                'raised_by_id' => $current_user->user_id
-            ]);
-            $hod = new User(getCurrentManager($current_user->department_id));
-            // Send email to HoD
-            $subject = "Salary Advance Application ($request_number)";
-            $data = ['ref_number' => $request_number, 'link' => URL_ROOT . '/salary-advance/bulk-requests/' . $request_number, 'user_ids' => $user_ids];
-            $body = get_include_contents('email_templates/salary-advance/new_bulk_request_notify_hod', $data);
-            $data['body'] = $body;
-            $email = get_include_contents('email_templates/salary-advance/main', $data);
-            insertEmail($subject, $email, $hod->email);
             $bulk_requests = [];
-            foreach ($user_ids as $user_id) {
-                $bulk_requests[] = getSalaryAdvance(['u.user_id' => $user_id, 'sa.request_number' => $request_number])[0];
+            if ($db->insert('salary_advance_bulk_requests', [
+                'department_id' => $current_user->department_id,
+                'request_number' => $request_number,
+                'raised_by_id' => $current_user->user_id,
+                'date_raised' => now()
+            ])) {
+                $hod = new User(getCurrentManager($current_user->department_id));// Send email to HoD
+                $subject = "Salary Advance Application ($request_number)";
+                $data = ['ref_number' => $request_number, 'link' => URL_ROOT . '/salary-advance/bulk-requests/' . $request_number, 'user_ids' => $user_ids];
+                $body = get_include_contents('email_templates/salary-advance/new_bulk_request_notify_hod', $data);
+                $data['body'] = $body;
+                $email = get_include_contents('email_templates/salary-advance/main', $data);
+                insertEmail($subject, $email, $hod->email);
+                foreach ($user_ids as $user_id) {
+                    $bulk_requests[] = getSalaryAdvance(['u.user_id' => $user_id, 'sa.request_number' => $request_number])[0];
+                }
             }
-            echo json_encode($bulk_requests, JSON_THROW_ON_ERROR, 512);
         }
+        echo json_encode($bulk_requests, JSON_THROW_ON_ERROR, 512);
     }
 
     public function Update(): void

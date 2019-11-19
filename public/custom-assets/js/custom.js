@@ -82,21 +82,10 @@ function dropDownEditor(container, options) {
                 group: {field: 'department_short_name'}
             },
             dataBound: function (e) {
-                let kDropDownList = $("#employeeDropDownList").data("kendoDropDownList");
-                let grid = $salaryAdvanceGrid.data('kendoGrid');
-                let data = kDropDownList.dataSource.data();
                 let model = grid.dataSource.getByUid(grid_uid);
-
                 e.sender.select(function (dataItem) {
                     return dataItem.name === model.name;
                 });
-
-                for (let i = 0; i < data.length; i++) {
-                    if (saveActiveApplicants && data[i]["has_active_application"]) {
-                        activeApplicants.push(data[i].name);
-                    }
-                }
-                saveActiveApplicants = !saveActiveApplicants;
             },
             select: function (e) {
                 if (e.item.hasClass("k-state-disabled")) {
@@ -126,6 +115,7 @@ function dropDownEditor(container, options) {
                     model.user_id = data.user_id;
                     model.department = data.department;
                     model.department_id = data.department_id;
+                    model.basic_salary = data.basic_salary;
                 }
                 grid.refresh();
                 grid.editCell($salaryAdvanceGrid.find("td:eq(3)"))
@@ -511,4 +501,23 @@ function refreshGrid() {
         }));
     });
     grid.refresh();
+}
+
+function purgeBulkApplicants() {
+    // determine names not in the model and remove them from the list of bulk applicants
+    let data = grid.dataSource.data();
+    for (let i = 0; i < bulkApplicants.length; i++) {
+        let found = false;
+        for (let j = 0; j < data.length; j++) {
+            let model = data[j];
+            if (bulkApplicants[i] === model.name) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            bulkApplicants.splice(i, 1);
+            i--;
+        }
+    }
 }

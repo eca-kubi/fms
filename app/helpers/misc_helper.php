@@ -682,3 +682,18 @@ function isValidAmount($amount, $basic_salary)
     $max_percent = (MAX_PERCENTAGE / 100) * $basic_salary;
     return $percentage >= $min_percent || $percentage <= $max_percent;
 }
+
+ function getActiveApplicants() : array
+ {
+    $active_applicants = [];
+    try {
+        $active_applicants = Database::getDbh()->where('sa.deleted', false)
+            ->where('YEAR(sa.date_raised) = YEAR(CURRENT_DATE())')
+            ->where('MONTH(sa.date_raised) = MONTH(CURRENT_DATE())')
+            ->join('users u', 'u.user_id=sa.user_id', 'LEFT')
+            ->join('departments d', 'd.department_id=u.department_id', 'LEFT')
+            ->getValue('salary_advance sa','concat_ws(" ", first_name, last_name)', null);
+    } catch (Exception $e) {
+    }
+    return $active_applicants;
+}

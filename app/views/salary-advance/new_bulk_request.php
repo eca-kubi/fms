@@ -129,6 +129,7 @@
             error: function (e) {
                 salaryAdvanceDataSource.cancelChanges();
                 salaryAdvanceDataSource.read();
+                purgeBulkApplicants();
                 toastError(e.errors ? e.errors[0]['message'] : "Some required assets on this page failed to load");
             },
             requestEnd: function (e) {
@@ -151,22 +152,7 @@
                 }
 
                 if (e["action"] === "itemchange" && e.field === "name") {
-                    // determine names not in the model and remove them from the list of bulk applicants
-                    let data = dataSource.data();
-                    for (let i = 0; i < bulkApplicants.length; i++) {
-                        let found = false;
-                        for (let j = 0; j < data.length; j++) {
-                            let model = data[j];
-                            if (bulkApplicants[i] === model.name) {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) {
-                            bulkApplicants.splice(i, 1);
-                            i--;
-                        }
-                    }
+                    purgeBulkApplicants();
                 }
             },
             schema: {
@@ -212,7 +198,7 @@
                                         let grid = $salaryAdvanceGrid.getKendoGrid();
                                         let model = grid.dataSource.getByUid(grid_uid);
                                         input.attr("data-max-msg", "Amount must not exceed 30% of salary.");
-                                        return (MAX_PERCENTAGE * model.basic_salary) >= kendo.parseFloat(input.val());
+                                        return (MAX_PERCENTAGE/100) * model.basic_salary >= kendo.parseFloat(input.val());
                                     }
                                     return true;
                                 }
@@ -221,36 +207,11 @@
                         basic_salary: {editable: false, type: "number"},
                         request_number: {defaultValue: universal.requestNumber, type: "string", editable: false},
                         date_raised: {editable: false, type: "date"},
-                        date_received: {editable: false, nullable: true, type: "date"},
                         department: {editable: false, type: "string"},
                         department_id: {editable: false, type: "number", nullable: true},
-                        department_ref: {editable: false},
                         employee: {defaultValue: {}},
-                        fmgr_approval: {editable: false, nullable: true, type: "boolean"},
-                        fmgr_approval_date: {editable: false, nullable: true, type: "date"},
-                        fmgr_comment: {editable: false, type: "string"},
-                        fmgr_id: {type: "number", nullable: true},
-                        gm_approval: {editable: false, nullable: true, type: "boolean"},
-                        gm_approval_date: {editable: false, nullable: true, type: "date"},
-                        gm_comment: {editable: false, type: "string"},
-                        gm_id: {type: "number", nullable: true},
-                        hod_approval: {editable: false, nullable: true, type: "boolean"},
-                        hod_approval_date: {editable: false, nullable: true, type: "date"},
-                        hod_comment: {editable: false, type: "string"},
-                        hod_id: {type: "number", nullable: true},
-                        hr_approval: {editable: false, nullable: true, type: "boolean"},
-                        hr_approval_date: {editable: false, nullable: true, type: "date"},
-                        hr_comment: {editable: false, type: "string"},
-                        hr_id: {type: "number", nullable: true},
-                        is_bulk_request: {defaultValue: true, type: "boolean"},
                         name: {from: "employee.name"},
-                        percentage: {
-                            editable: false,
-                            type: "number"
-                        },
-                        raised_by_id: {type: "number", nullable: true},
                         raised_by_secretary: {type: "boolean", defaultValue: universal.isSecretary},
-                        received_by: {editable: false, nullable: true, type: "string"},
                         user_id: {type: "number", nullable: true}
                     }
                 }
@@ -273,15 +234,6 @@
                 sheet.columns[0].autoWidth = false;
                 for (let rowIndex = 1; rowIndex < sheet.rows.length; rowIndex++) {
                     let row = sheet.rows[rowIndex];
-                    let dataItem = {
-                        hod_approval: row.cells[5].value,
-                        fmgr_approval: row.cells[12].value,
-                        hr_approval: row.cells[8].value
-                    };
-                    row.cells[5].value = dataItem.hod_approval == null ? 'Pending' : (dataItem.hod_approval ? 'Approved' : 'Rejected');
-                    row.cells[8].value = dataItem.hr_approval == null ? 'Pending' : (dataItem.hr_approval ? 'Approved' : 'Rejected');
-                    row.cells[12].value = dataItem.fmgr_approval == null ? 'Pending' : (dataItem.fmgr_approval ? 'Approved' : 'Rejected');
-
                     // alternating row colors
                     if (rowIndex % 2 === 0) {
                         let row = sheet.rows[rowIndex];
@@ -293,7 +245,7 @@
             },
             editable: "incell",
             save: function (e) {
-                if (e.values.name !== "") {
+                if (e.values.name && e.values.name !== "") {
                     let dropDown = e.container.find("input").data("kendoDropDownList");
                     e.model.user_id = dropDown.dataSource.at(dropDown.selectedIndex - 1).user_id;
                     if (!bulkApplicants.includes(e.values.name)) {
@@ -306,15 +258,19 @@
                 let preventDefault = false;
                 for (let i = 0; i < models.length; i++) {
                     let model = models[i];
-                    if (model.name === null) {
+                    let row = selectGridRow(model.uid, grid, grid.dataSource, "uid");
+                    if (model.user_id === null) {
                         e.preventDefault();
-                        let row = selectGridRow();
-                        grid.editCell(selectGridRow(model.uid, grid, grid.dataSource, "uid").find("td:eq(1)"));
+                        let cell = row.find("td:eq(2)");
+                        grid.editCell(cell);
+                        cell.next().click();
                         return false;
                     }
                     if (model.amount_requested === null) {
                         e.preventDefault();
-                        grid.editCell(selectGridRow(model.uid, grid, grid.dataSource, "uid").find("td:eq(2)"));
+                        let cell = row.find("td:eq(3)");
+                        grid.editCell(cell);
+                        cell.next().click();
                         return false;
                     }
                 }
@@ -357,7 +313,6 @@
                 {
                     field: 'amount_requested',
                     title: 'Amount Requested',
-                    //editor: editNumberWithoutSpinners,
                     width: 250,
                     headerAttributes: {
                         "class": "title"
@@ -388,7 +343,7 @@
                         "class": "title"
                     },
                     width: 180,
-                    groupHeaderTemplate: "Date Raised: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') #",
+                   groupHeaderTemplate: "Date Raised: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') #",
                     filterable: false,
                     format: "{0:dddd dd MMM, yyyy}",
                 },
@@ -399,10 +354,6 @@
                 let grid = e.sender;
                 let data = grid.dataSource.data();
                 let dataSource = grid.dataSource;
-                $.each(data, function (i, row) {
-                    $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["id_salary_advance"]);
-                });
-                $(".print-it").printPage();
                 let headingRow = $salaryAdvanceGrid.find('thead tr[role=row]');
                 headingRow.find('th.k-hierarchy-cell').hide();
                 headingRow.find('th.k-hierarchy-cell').next('th').attr('colspan', 2);
@@ -411,18 +362,13 @@
                 filterRow.find('th.k-hierarchy-cell').next('th').attr('colspan', 2);
                 filterRow.find('input:first').attr('placeholder', 'Search...');
                 filterRow.find('input:eq(1)').attr('placeholder', 'Search...');
+                $.get(URL_ROOT + "/salary-advance-ajax/ActiveApplicants", {}, null, "json").done(function (data) {
+                    activeApplicants = data;
+                })
 
-                if (!currentRowSelected && universal['select_row_id']) {
-                    selectGridRow(universal["select_row_id"], grid, dataSource, 'id_salary_advance');
-                }
-                if (!firstLoadDone) {
-                    firstLoadDone = true;
-                    //filterDate(new Date(firstDayOfMonth), new Date(lastDayOfMonth), "date_raised");
-                }
             },
             detailInit: function (e) {
                 let colSize = e.sender.content.find('colgroup col').length;
-                $(".print-it").printPage();
                 e.detailRow.find('.k-hierarchy-cell').hide();
                 e.detailCell.attr('colspan', colSize);
             },
