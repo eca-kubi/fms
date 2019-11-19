@@ -72,7 +72,7 @@
         basicSalary: "<?php echo $current_user->basic_salary; ?>",
         currencySymbol: "<?php echo CURRENCY_GHS; ?>",
         currentDepartment: "<?php echo $current_user->department ?>",
-        currentDepartmentID: "<?php echo $current_user->department_id; ?>",
+        currentDepartmentID: <?php echo $current_user->department_id; ?>,
         hasActiveApplication: "<?php echo hasActiveApplication($current_user->user_id) ?>",
         isFinanceOfficer: Boolean("<?php echo isFinanceOfficer($current_user->user_id); ?>"),
         isHr: Boolean("<?php echo isCurrentHR($current_user->user_id) ?>"),

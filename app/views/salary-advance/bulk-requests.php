@@ -68,7 +68,7 @@
     let universal = {
         currencySymbol: "<?php echo CURRENCY_GHS; ?>",
         currentDepartment: "<?php echo $current_user->department ?>",
-        currentDepartmentID: "<?php echo $current_user->department_id; ?>",
+        currentDepartmentID: <?php echo $current_user->department_id; ?>,
         isFinanceOfficer: Boolean("<?php echo isFinanceOfficer($current_user->user_id); ?>"),
         isHr: Boolean("<?php echo isCurrentHR($current_user->user_id) ?>"),
         isFmgr: Boolean("<?php echo isCurrentFmgr($current_user->user_id) ?>"),
@@ -287,8 +287,9 @@
                             iconClass: {edit: "k-icon k-i-edit"},
                             className: "badge badge-success btn k-button text-black border k-grid-custom-edit",
                             click: function (e) {
+                                let id = $(grid.currentRow()).attr("data-id-salary-advance");
                                 grid.dataSource.read().then(function () {
-                                    grid.editRow(grid.currentRow());
+                                    grid.editRow(grid.table.find("tr[data-id-salary-advance=" + id + "]"));
                                 });
                             }
                         },
@@ -301,7 +302,7 @@
                 {
                     field: "name",
                     editor: dropDownEditor,
-                    filterable: {cell: {showOperators: false}},
+                    filterable: {cell: {showOperators: false, suggestionOperator: "contains", operator: "contains"}},
                     headerAttributes: {class: "title"},
                     title: "Employee",
                     width: 250
@@ -315,7 +316,7 @@
                     width: 260,
                     filterable: {
                         cell: {
-                            showOperators: false
+                            showOperators: false, suggestionOperator: "contains", operator: "contains"
                         }
                     },
                 },
@@ -323,7 +324,7 @@
                     field: "request_number",
                     title: "Request Number",
                     width: 250,
-                    filterable: {cell: {showOperators: false}},
+                    filterable: {cell: {showOperators: false, suggestionOperator: "contains", operator: "contains"}},
                     headerAttributes: {class: "title"}
                 },
                 {
@@ -507,7 +508,7 @@
                         "class": "title"
                     },
                     width: 200,
-                    //groupHeaderTemplate: "GM's Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : '' #",
+                    groupHeaderTemplate: "GM's Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : '' #",
                     filterable: false,
                     format: "{0:dddd dd MMM, yyyy}"
                 },
@@ -522,7 +523,7 @@
                         "class": "title"
                     },
                     width: 200,
-                    //groupHeaderTemplate: "Finance Manager Approval: #= value? 'Yes' : (value===null? 'Pending' : 'No') # |  Total: #=count #",
+                    groupHeaderTemplate: "Fin Mgr Approval: #= value? 'Yes' : (value===null? 'Pending' : 'No') # |  Total: #=count #",
                     aggregates: ["count"],
                     filterable: false
                 },
@@ -561,7 +562,7 @@
                         "class": "title"
                     },
                     width: 200,
-                    // groupHeaderTemplate: "Finance Mgr. Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : '' #",
+                    groupHeaderTemplate: "Fin Mgr Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : '' #",
                     hidden: false,
                     filterable: false,
                     format: "{0:dddd dd MMM, yyyy}"
@@ -636,10 +637,10 @@
                         .find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row.request_number);
                 });
                 $(".print-it").printPage();
-                let headingRow = $salaryAdvanceGrid.find('thead tr[role=row]');
+                let headingRow = grid.element.find('thead tr[role=row]');
                 headingRow.find('th.k-hierarchy-cell').hide();
                 headingRow.find('th.k-hierarchy-cell').next('th').attr('colspan', 2);
-                let filterRow = $salaryAdvanceGrid.find('thead tr.k-filter-row');
+                let filterRow = grid.element.find('thead tr.k-filter-row');
                 filterRow.find('th.k-hierarchy-cell').hide();
                 filterRow.find('th.k-hierarchy-cell').next('th').attr('colspan', 2);
                 filterRow.find('input:first').attr('placeholder', 'Search...');
@@ -651,13 +652,9 @@
                     if (universal.requestNumber) {
                         filterString(universal.requestNumber, "request_number");
                     }
-                    //filterDate(new Date(firstDayOfMonth), new Date(lastDayOfMonth), "date_raised");
                 }
             },
             detailInit: function (e) {
-                //let grid = $salaryAdvanceGrid.data("kendoGrid");
-                //let masterRow = e.detailRow.prev('tr.k-master-row');
-                //let dataItem = grid.dataItem(masterRow);
                 let colSize = e.sender.content.find('colgroup col').length;
                 e.detailRow.find('.k-hierarchy-cell').hide();
                 e.detailCell.attr('colspan', colSize);
@@ -667,10 +664,10 @@
             beforeEdit: function (e) {
                 window.grid_uid = e.model.uid; // uid of current editing row
                 e.model.fields.amount_requested.editable = e.model.hod_approval === null && universal.isSecretary;
-                e.model.fields.hod_comment.editable = e.model.fields.hod_approval.editable = e.model.hod_approval === null && e.model.department_id === universal.currentDepartmentID;
-                e.model.fields.amount_payable.editable = e.model.fields.hr_comment.editable = e.model.fields.hr_approval.editable = universal.isHr && e.model.hr_approval === null && (e.model.hod_approval !== null || e.model.department_id === universal.currentDepartmentID);
-                e.model.fields.gm_approval.editable = e.model.fields.gm_comment.editable = e.model.gm_approval === null && e.model.hr_approval !== null;
-                e.model.fields.amount_approved.editable = e.model.fields.fmgr_comment.editable = e.model.fields.fmgr_approval.editable = universal.isFmgr && e.model.fmgr_approval === null && e.model.gm_approval !== null;
+                e.model.fields.hod_comment.editable = e.model.fields.hod_approval.editable = e.model.hod_approval === null && (e.model.department_id === universal.currentDepartmentID);
+                e.model.fields.amount_payable.editable = e.model.fields.hr_comment.editable = e.model.fields.hr_approval.editable = (universal.isHr && e.model.hr_approval === null) && e.model.hod_approval !== null;
+                e.model.fields.gm_approval.editable = e.model.fields.gm_comment.editable = (universal.isGM && e.model.gm_approval === null) && e.model.hr_approval !== null;
+                e.model.fields.amount_approved.editable = e.model.fields.fmgr_comment.editable = e.model.fields.fmgr_approval.editable = (universal.isFmgr && e.model.fmgr_approval === null) && e.model.gm_approval !== null;
                 e.model.fields.received_by.editable = e.model.fields.amount_received.editable = e.model.fmgr_approval;
             },
             edit: function (e) {
@@ -709,21 +706,22 @@
 
                 amountPayableLabelField.toggle(Boolean(e.model.hr_approval));
                 amountApprovedLabelField.toggle(Boolean(e.model.fmgr_approval));
-                hodCommentLabelField.toggle(e.model.hod_approval !== null);
-                hrCommentLabelField.toggle(e.model.hr_approval !== null);
-                gmCommentLabelField.toggle(e.model.gm_approval !== null);
-                fmgrCommentLabelField.toggle(e.model.fmgr_approval !== null);
-                receivedByLabelField.toggle(e.model.received_by !== null);
-                amountReceivedLabelField.toggle(e.model.received_by !== null);
+                hodCommentLabelField.toggle(e.model.fields.hod_approval.editable || e.model.hod_comment !== null);
+                hrCommentLabelField.toggle(e.model.fields.hr_approval.editable || e.model.hr_comment !== null);
+                gmCommentLabelField.toggle(e.model.fields.gm_approval.editable || e.model.gm_comment !== null);
+                fmgrCommentLabelField.toggle(e.model.fields.fmgr_approval.editable || e.model.fmgr_comment !== null);
+                receivedByLabelField.toggle(e.model.fields.received_by.editable || e.model.received_by !== null);
+                amountReceivedLabelField.toggle(e.model.fields.amount_received.editable || e.model.received_by !== null);
                 dateReceivedLabelField.toggle(e.model.date_received !== null);
-                /* hodCommentLabelField.find('.k-textbox').attr('data-required-msg', 'HoD Comment is required!');
-                 hrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'HR Comment is required!');
-                 amountPayableLabelField.find('.k-input').attr('data-required-msg', 'Amount Payable is required!');
-                 gmCommentLabelField.find('.k-textbox').attr('data-required-msg', 'GM Comment is required!');
-                 fmgrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'Fin Mgr Comment is required!');
-                 amountApprovedLabelField.find('.k-input').attr('data-required-msg', 'Amount Approved is required!');
-                 amountReceivedLabelField.find('.k-input').attr('data-required-msg', 'Amount Received is required!');
-                 receivedByLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');*/
+
+                hodCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');
+                hrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');
+                amountPayableLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');
+                gmCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');
+                fmgrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');
+                amountApprovedLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');
+                amountReceivedLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');
+                receivedByLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');
                 let extRadioButtonGroup = e.container.find("[data-role=extradiobuttongroup]");
                 let updateButton = e.container.find('.k-grid-update');
                 extRadioButtonGroup.each(function () {
@@ -753,51 +751,13 @@
                     });
                     $(".print-it").printPage();
                 });
-
             }
         }).getKendoGrid();
-
-        $salaryAdvanceGrid.find('#department').kendoDropDownList({
-            dataSource: new kendo.data.DataSource({
-                transport: {
-                    read: {
-                        url: URL_ROOT + '/departments-ajax/',
-                        dataType: "json"
-                    }
-                }
-            }),
-            filter: "contains",
-            optionLabel: "All",
-            change: function () {
-                let value = this.value();
-                if (value) {
-                    $salaryAdvanceGrid.data("kendoGrid").dataSource.filter({
-                        field: "department",
-                        operator: "eq",
-                        value: this.value()
-                    });
-                } else {
-                    $salaryAdvanceGrid.data("kendoGrid").dataSource.filter({});
-                }
-            }
-        });
 
         $('.k-grid-cancel-changes').click(function (e) {
             $('.k-grid-cancel-changes, .k-grid-save-changes').addClass('d-none')
         });
 
-        $salaryAdvanceGrid.find('#names').keyup(function () {
-            $salaryAdvanceGrid.data("kendoGrid").dataSource.filter({
-                logic: "or",
-                filters: [
-                    {
-                        field: "name",
-                        operator: "contains",
-                        value: $(this).val()
-                    },
-                ]
-            });
-        });
 
         $salaryAdvanceTooltip = $salaryAdvanceGrid.kendoTooltip({
             filter: "td.comment", //this filter selects the second column's cells

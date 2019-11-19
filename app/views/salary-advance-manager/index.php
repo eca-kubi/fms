@@ -308,7 +308,7 @@
                     }
                 }
             },
-            editable: 'popup',
+            editable: "popup",
             save: function (e) {
                 let extRadioButtonGroup = e.container.find("[data-role=extradiobuttongroup]");
                 extRadioButtonGroup.each(function () {
@@ -358,9 +358,9 @@
                             iconClass: {edit: "k-icon k-i-edit"},
                             className: "badge badge-success btn k-button text-black border k-grid-custom-edit",
                             click: function (e) {
-                                let grid = $salaryAdvanceGrid.getKendoGrid();
-                                salaryAdvanceDataSource.read().then(function () {
-                                    grid.editRow(grid.currentRow());
+                                let id = $(grid.currentRow()).attr("data-id-salary-advance");
+                                grid.dataSource.read().then(function () {
+                                    grid.editRow(grid.table.find("tr[data-id-salary-advance=" + id + "]"));
                                 });
                             }
                         },
@@ -377,11 +377,11 @@
                     headerAttributes: {
                         "class": "title"
                     },
-                    filterable: {cell: {showOperators: false}},
+                    filterable: {cell: {showOperators: false, suggestionOperator: "contains", operator: "contains"}},
                 },
                 {
                     field: "name",
-                    filterable: {cell: {showOperators: false}},
+                    filterable: {cell: {showOperators: false, suggestionOperator: "contains", operator: "contains"}},
                     headerAttributes: {class: "title"},
                     title: "Employee",
                     width: 290
@@ -393,7 +393,7 @@
                         class: "title"
                     },
                     width: 260,
-                    filterable: {cell: {showOperators: false}}
+                    filterable: {cell: {showOperators: false, suggestionOperator: "contains", operator: "contains"}}
                 },
                 {
                     field: 'percentage',
@@ -691,23 +691,21 @@
                 let data = grid.dataSource.data();
                 let dataSource = grid.dataSource;
                 $.each(data, function (i, row) {
-                    $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["request_number"]);
+                    $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance'])
+                        .attr("data-request-number", row.request_number)
+                        .find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row.request_number);
                 });
                 $(".print-it").printPage();
-                let headingRow = $salaryAdvanceGrid.find('thead tr[role=row]');
+                let headingRow = grid.element.find('thead tr[role=row]');
                 headingRow.find('th.k-hierarchy-cell').hide();
                 headingRow.find('th.k-hierarchy-cell').next('th').attr('colspan', 2);
-                let filterRow = $salaryAdvanceGrid.find('thead tr.k-filter-row');
+                let filterRow = grid.element.find('thead tr.k-filter-row');
                 filterRow.find('th.k-hierarchy-cell').hide();
                 filterRow.find('th.k-hierarchy-cell').next('th').attr('colspan', 2);
                 filterRow.find('input:first').attr('placeholder', 'Search...');
                 filterRow.find('input:eq(1)').attr('placeholder', 'Search...');
                 filterRow.find('input:eq(2)').attr('placeholder', 'Search...');
 
-                if (!currentRowSelected && universal.requestNumber) {
-                    let row = selectGridRow(universal.requestNumber, grid, dataSource, 'request_number');
-                    grid.expandRow(row);
-                }
                 if (!firstLoadDone) {
                     firstLoadDone = true;
                     if (universal.requestNumber)
@@ -724,11 +722,10 @@
             beforeEdit: function (e) {
                 window.grid_uid = e.model.uid; // uid of current editing row
                 e.model.fields.amount_requested.editable = false;
-                e.model.fields.percentage.editable = false;
-                e.model.fields.hod_comment.editable = e.model.fields.hod_approval.editable = e.model.hod_approval === null && e.model.department_id === universal.currentDepartmentID;
-                e.model.fields.amount_payable.editable = e.model.fields.hr_comment.editable = e.model.fields.hr_approval.editable = universal.isHr && e.model.hr_approval === null && (e.model.hod_approval !== null || e.model.department_id === universal.currentDepartmentID);
-                e.model.fields.gm_approval.editable = e.model.fields.gm_comment.editable = e.model.gm_approval === null && e.model.hr_approval !== null;
-                e.model.fields.amount_approved.editable = e.model.fields.fmgr_comment.editable = e.model.fields.fmgr_approval.editable = universal.isFmgr && e.model.fmgr_approval === null && e.model.gm_approval !== null;
+                e.model.fields.hod_comment.editable = e.model.fields.hod_approval.editable = e.model.hod_approval === null && (e.model.department_id === universal.currentDepartmentID);
+                e.model.fields.amount_payable.editable = e.model.fields.hr_comment.editable = e.model.fields.hr_approval.editable = (universal.isHr && e.model.hr_approval === null) && e.model.hod_approval !== null;
+                e.model.fields.gm_approval.editable = e.model.fields.gm_comment.editable = (universal.isGM && e.model.gm_approval === null) && e.model.hr_approval !== null;
+                e.model.fields.amount_approved.editable = e.model.fields.fmgr_comment.editable = e.model.fields.fmgr_approval.editable = (universal.isFmgr && e.model.fmgr_approval === null) && e.model.gm_approval !== null;
                 e.model.fields.received_by.editable = e.model.fields.amount_received.editable = e.model.fmgr_approval;
             },
             edit: function (e) {

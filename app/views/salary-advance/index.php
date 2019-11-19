@@ -349,10 +349,10 @@
                         text: "Edit",
                         iconClass: {edit: "k-icon k-i-edit"},
                         className: "badge badge-success btn k-button text-black border k-grid-custom-edit",
-                        click: function () {
-                            let grid = $salaryAdvanceGrid.getKendoGrid();
-                            salaryAdvanceDataSource.read().then(function () {
-                                grid.editRow(grid.currentRow());
+                        click: function (e) {
+                            let id = $(grid.currentRow()).attr("data-id-salary-advance");
+                            grid.dataSource.read().then(function () {
+                                grid.editRow(grid.table.find("tr[data-id-salary-advance=" + id + "]"));
                             });
                         }
                     },
@@ -368,7 +368,7 @@
                     headerAttributes: {
                         "class": "title"
                     },
-                    filterable: {cell: {showOperators: false}},
+                    filterable: {cell: {showOperators: false, suggestionOperator: "contains", operator: "contains"}},
                 },
                 {
                     field: 'date_raised',
@@ -653,10 +653,10 @@
                     $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row.request_number);
                 });
                 $(".print-it").printPage();
-                let headingRow = grid.table.find('thead tr[role=row]');
+                let headingRow = grid.element.find('thead tr[role=row]');
                 headingRow.find('th.k-hierarchy-cell').hide();
                 headingRow.find('th.k-hierarchy-cell').next('th').attr('colspan', 2);
-                let filterRow = grid.table.find('thead tr.k-filter-row');
+                let filterRow = grid.element.find('thead tr.k-filter-row');
                 filterRow.find('th.k-hierarchy-cell').hide();
                 filterRow.find('th.k-hierarchy-cell').next('th').attr('colspan', 2);
                 filterRow.find('input:first').attr('placeholder', 'Search...');
