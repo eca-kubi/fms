@@ -286,7 +286,7 @@
                             text: "Edit",
                             iconClass: {edit: "k-icon k-i-edit"},
                             className: "badge badge-success btn k-button text-black border k-grid-custom-edit",
-                            click: function (e) {
+                            click: function () {
                                 let id = $(grid.currentRow()).attr("data-id-salary-advance");
                                 grid.dataSource.read().then(function () {
                                     grid.editRow(grid.table.find("tr[data-id-salary-advance=" + id + "]"));
@@ -456,7 +456,7 @@
                     headerAttributes: {
                         "class": "title"
                     },
-                    //groupHeaderTemplate: "Amount Payable: #= value?  kendo.format('{0:c}', value) : '' #",
+                    groupHeaderTemplate: "Amount Payable: #= value?  kendo.format('{0:c}', value) : '' #",
                     aggregates: ["max", "min"],
                     width: 200,
                     filterable: false
@@ -675,22 +675,17 @@
                 let nameLabelField = e.container.find(".k-edit-label:eq(0), .k-edit-field:eq(0)");
                 let departmentLabelField = e.container.find(".k-edit-label:eq(1), .k-edit-field:eq(1)");
                 let requestNumberLabelField = e.container.find(".k-edit-label:eq(2), .k-edit-field:eq(2)");
-                let percentageLabelField = e.container.find(".k-edit-label:eq(3), .k-edit-field:eq(3)");
                 let amountRequestedLabelField = e.container.find(".k-edit-label:eq(4), .k-edit-field:eq(4)");
                 let hodApprovalLabelField = e.container.find(".k-edit-label:eq(6), .k-edit-field:eq(6)");
                 let hodCommentLabelField = e.container.find(".k-edit-label:eq(7), .k-edit-field:eq(7)");
-                let hodApprovalDateLabelField = e.container.find(".k-edit-label:eq(8), .k-edit-field:eq(8)");
                 let hrApprovalLabelField = e.container.find(".k-edit-label:eq(9), .k-edit-field:eq(9)");
                 let hrCommentLabelField = e.container.find(".k-edit-label:eq(10), .k-edit-field:eq(10)");
                 let amountPayableLabelField = e.container.find(".k-edit-label:eq(11), .k-edit-field:eq(11)");
-                let hrApprovalDateLabelField = e.container.find(".k-edit-label:eq(12), .k-edit-field:eq(12)");
                 let gmApprovalLabelField = e.container.find(".k-edit-label:eq(13), .k-edit-field:eq(13)");
                 let gmCommentLabelField = e.container.find(".k-edit-label:eq(14), .k-edit-field:eq(14)");
-                let gmApprovalDateLabelField = e.container.find(".k-edit-label:eq(15), .k-edit-field:eq(15)");
                 let fmgrApprovalLabelField = e.container.find(".k-edit-label:eq(16), .k-edit-field:eq(16)");
                 let fmgrCommentLabelField = e.container.find(".k-edit-label:eq(17), .k-edit-field:eq(17)");
                 let amountApprovedLabelField = e.container.find(".k-edit-label:eq(18), .k-edit-field:eq(18)");
-                let fmgrApprovalDateLabelField = e.container.find(".k-edit-label:eq(19), .k-edit-field:eq(19)");
                 let amountReceivedLabelField = e.container.find('.k-edit-label:eq(20), .k-edit-field:eq(20)');
                 let receivedByLabelField = e.container.find('.k-edit-label:eq(21), .k-edit-field:eq(21)');
                 let dateReceivedLabelField = e.container.find('.k-edit-label:eq(22), .k-edit-field:eq(22)');
@@ -754,7 +749,7 @@
             }
         }).getKendoGrid();
 
-        $('.k-grid-cancel-changes').click(function (e) {
+        $('.k-grid-cancel-changes').click(function () {
             $('.k-grid-cancel-changes, .k-grid-save-changes').addClass('d-none')
         });
 

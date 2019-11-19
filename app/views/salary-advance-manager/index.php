@@ -357,7 +357,7 @@
                             text: "Edit",
                             iconClass: {edit: "k-icon k-i-edit"},
                             className: "badge badge-success btn k-button text-black border k-grid-custom-edit",
-                            click: function (e) {
+                            click: function () {
                                 let id = $(grid.currentRow()).attr("data-id-salary-advance");
                                 grid.dataSource.read().then(function () {
                                     grid.editRow(grid.table.find("tr[data-id-salary-advance=" + id + "]"));
@@ -689,7 +689,6 @@
             dataBound: function (e) {
                 let grid = e.sender;
                 let data = grid.dataSource.data();
-                let dataSource = grid.dataSource;
                 $.each(data, function (i, row) {
                     $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance'])
                         .attr("data-request-number", row.request_number)
@@ -731,7 +730,6 @@
             edit: function (e) {
                 let nameLabelField = e.container.find('.k-edit-label:eq(1), .k-edit-field:eq(1)');
                 let departmentLabelField = e.container.find('.k-edit-label:eq(2), .k-edit-field:eq(2)');
-                let percentageLabelField = e.container.find('.k-edit-label:eq(3), .k-edit-field:eq(3)');
                 let amountRequestedLabelField = e.container.find('.k-edit-label:eq(4), .k-edit-field:eq(4)');
                 let hodApprovalLabelField = e.container.find('.k-edit-label:eq(6), .k-edit-field:eq(6)');
                 let hodCommentLabelField = e.container.find('.k-edit-label:eq(7), .k-edit-field:eq(7)');
