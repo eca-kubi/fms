@@ -4,7 +4,7 @@ class SalaryAdvanceAjax extends Controller
 {
     public function index(): void
     {
-        echo json_encode(getSalaryAdvance(['u.user_id' => getUserSession()->user_id]), JSON_THROW_ON_ERROR, 512);
+        echo json_encode(getSalaryAdvance(['u.user_id' => getUserSession()->user_id, 'deleted' => false]), JSON_THROW_ON_ERROR, 512);
     }
 
     public function Create(): void

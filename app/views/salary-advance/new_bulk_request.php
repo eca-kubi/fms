@@ -80,7 +80,7 @@
         isGM: Boolean("<?php echo isCurrentGM($current_user->user_id) ?>"),
         isManager: Boolean("<?php echo isCurrentManager($current_user->user_id) ?>"),
         requestNumber: "<?php echo $request_number ?>",
-        isSecretary: "<?php isSecretary($current_user->user_id); ?>"
+        isSecretary: Boolean("<?php echo isSecretary($current_user->user_id); ?>")
     };
     let $salaryAdvanceGrid;
     let salaryAdvanceDataSource;
@@ -159,19 +159,6 @@
                 model: {
                     id: "id_salary_advance",
                     fields: {
-                        amount_approved: {
-                            editable: false,
-                            nullable: true,
-                            type: "number",
-                            validation: {min: "0", required: true}
-                        },
-                        amount_payable: {
-                            editable: false,
-                            nullable: true,
-                            type: "number",
-                            validation: {min: "0", required: true}
-                        },
-                        amount_received: {editable: false, nullable: true, type: "number"},
                         amount_requested: {
                             editable: true,
                             nullable: true,
@@ -229,20 +216,19 @@
             },
             saveChanges: function (e) {
                 let models = grid.dataSource.data();
-                let preventDefault = false;
                 for (let i = 0; i < models.length; i++) {
                     let model = models[i];
                     let row = selectGridRow(model.uid, grid, grid.dataSource, "uid");
                     if (model.user_id === null) {
                         e.preventDefault();
-                        let cell = row.find("td:eq(2)");
+                        let cell = row.find("td:eq(1)");
                         grid.editCell(cell);
                         cell.next().click();
                         return false;
                     }
                     if (model.amount_requested === null) {
                         e.preventDefault();
-                        let cell = row.find("td:eq(3)");
+                        let cell = row.find("td:eq(2)");
                         grid.editCell(cell);
                         cell.next().click();
                         return false;
@@ -308,7 +294,6 @@
                             showOperators: false
                         }
                     },
-                    hidden: universal.isSecretary
                 },
                 {
                     field: 'date_raised',
@@ -317,23 +302,14 @@
                         "class": "title"
                     },
                     width: 180,
-                   groupHeaderTemplate: "Date Raised: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') #",
+                    groupHeaderTemplate: "Date Raised: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') #",
                     filterable: false,
                     format: "{0:dddd dd MMM, yyyy}",
                 },
             ],
-            detailTemplate: kendo.template($("#detailTemplate_Secretary").html()),
             dataSource: salaryAdvanceDataSource,
             dataBound: function (e) {
-                let grid = e.sender;
-                let data = grid.dataSource.data();
-                let dataSource = grid.dataSource;
-                let headingRow = $salaryAdvanceGrid.find('thead tr[role=row]');
-                headingRow.find('th.k-hierarchy-cell').hide();
-                headingRow.find('th.k-hierarchy-cell').next('th').attr('colspan', 2);
-                let filterRow = $salaryAdvanceGrid.find('thead tr.k-filter-row');
-                filterRow.find('th.k-hierarchy-cell').hide();
-                filterRow.find('th.k-hierarchy-cell').next('th').attr('colspan', 2);
+                let filterRow = grid.table.find('thead tr.k-filter-row');
                 filterRow.find('input:first').attr('placeholder', 'Search...');
                 filterRow.find('input:eq(1)').attr('placeholder', 'Search...');
                 $.get(URL_ROOT + "/salary-advance-ajax/ActiveApplicants", {}, null, "json").done(function (data) {
@@ -341,13 +317,6 @@
                 })
 
             },
-            detailInit: function (e) {
-                let colSize = e.sender.content.find('colgroup col').length;
-                e.detailRow.find('.k-hierarchy-cell').hide();
-                e.detailCell.attr('colspan', colSize);
-            },
-            detailExpand: onDetailExpand,
-            detailCollapse: onDetailCollapse,
             beforeEdit: function (e) {
                 window.grid_uid = e.model.uid; // uid of current editing row
             },
@@ -362,50 +331,12 @@
             }
         }).getKendoGrid();
 
-        $salaryAdvanceGrid.find('#department').kendoDropDownList({
-            dataSource: new kendo.data.DataSource({
-                transport: {
-                    read: {
-                        url: URL_ROOT + '/departments-ajax/',
-                        dataType: "json"
-                    }
-                }
-            }),
-            filter: "contains",
-            optionLabel: "All",
-            change: function () {
-                let value = this.value();
-                if (value) {
-                    $salaryAdvanceGrid.data("kendoGrid").dataSource.filter({
-                        field: "department",
-                        operator: "eq",
-                        value: this.value()
-                    });
-                } else {
-                    $salaryAdvanceGrid.data("kendoGrid").dataSource.filter({});
-                }
-            }
-        });
-
         $('.k-grid-cancel-changes').click(function () {
             $('.k-grid-cancel-changes, .k-grid-save-changes').addClass('d-none');
             bulkApplicants.length = 0;
         });
 
-        $salaryAdvanceGrid.find('#names').keyup(function () {
-            $salaryAdvanceGrid.data("kendoGrid").dataSource.filter({
-                logic: "or",
-                filters: [
-                    {
-                        field: "name",
-                        operator: "contains",
-                        value: $(this).val()
-                    },
-                ]
-            });
-        });
-
-        $salaryAdvanceTooltip = $salaryAdvanceGrid.kendoTooltip({
+        $salaryAdvanceTooltip = grid.table.kendoTooltip({
             filter: "td.comment", //this filter selects the second column's cells
             position: "top",
             content: function (e) {
@@ -417,39 +348,12 @@
             }
         }).data("kendoTooltip");
 
-        $salaryAdvanceGrid.on("click", ".action-cancel-edit", function () {
-            //let row = $(this).closest("tr");
-            let $this = $(this);
-            let actionTools = $this.closest('.action-tools');
-            actionTools.html("<span class='col' title='Edit'><a href='#' class='text-black action-edit'><i class='fa fa-pencil'></i></a></span>" +
-                "<span class='col' title='Delete'><a href='#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span>" +
-                "<span class='col' title='More Info'><a href='#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
-                "</span>");
-            $salaryAdvanceGrid.data("kendoGrid").cancelChanges();
-        });
-
-        $salaryAdvanceGrid.on("click", ".action-confirm-edit", function () {
-            //let row = $(this).closest("tr");
-            let $this = $(this);
-            let actionTools = $this.closest('.action-tools');
-            actionTools.html("<span class='col' title='Edit'><a href='#' class='text-black action-edit'><i class='fa fa-pencil'></i></a></span>" +
-                "<span class='col' title='Delete'><a href='#' class='text-danger action-delete'><i class='fas fa-trash-alt'></i></a></span>" +
-                "<span class='col' title='More Info'><a href='#' class='text-primary action-more-info'><i class='fas fa-info-circle'></i></a></span>" +
-                "</span>");
-            $salaryAdvanceGrid.data("kendoGrid").saveChanges();
-        });
-
-        $salaryAdvanceGrid.on("click", ".action-delete", function () {
+        grid.table.on("click", ".action-delete", function () {
             let row = $(this).closest("tr");
             $salaryAdvanceGrid.data("kendoGrid").removeRow(row);
         });
 
-        $salaryAdvanceGrid.on("click", ".action-more-info", function () {
-            let row = $(this).closest("tr");
-            row.find('.k-hierarchy-cell>a').click();
-        });
-
-        $salaryAdvanceGrid.data("kendoGrid").bind("dataBound", onDataBound);
+        grid.bind("dataBound", onDataBound);
     });
 
 </script>

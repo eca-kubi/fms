@@ -75,7 +75,7 @@
         isGM: Boolean("<?php echo isCurrentGM($current_user->user_id) ?>"),
         isManager: Boolean("<?php echo isCurrentManager($current_user->user_id) ?>"),
         requestNumber: "<?php echo $request_number ?>",
-        isSecretary: "<?php isSecretary($current_user->user_id); ?>"
+        isSecretary: Boolean("<?php echo isSecretary($current_user->user_id); ?>")
     };
     let $salaryAdvanceGrid;
     let grid = null;
@@ -327,6 +327,20 @@
                     headerAttributes: {class: "title"}
                 },
                 {
+                    field: 'percentage',
+                    title: 'Amount in Percentage',
+                    template: function (dataItem) {
+                        return "<span>" + (dataItem.percentage ? kendo.toString(dataItem.percentage, '#\\%') : '') + "</span>"
+                    },
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    width: 180,
+                    format: "{0:#\\%}",
+                    filterable: false,
+                    hidden: true
+                },
+                {
                     field: 'amount_requested',
                     title: 'Amount Requested',
                     width: 180,
@@ -340,7 +354,6 @@
                     aggregates: ["max", "min", "count"],
                     format: "{0:c}",
                     filterable: false,
-                    hidden: universal.isSecretary
                 },
                 {
                     field: 'date_raised',
@@ -618,10 +631,9 @@
             dataBound: function (e) {
                 let grid = e.sender;
                 let data = grid.dataSource.data();
-                let dataSource = grid.dataSource;
                 $.each(data, function (i, row) {
-                    $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).attr("data-request_number", row.request_number)
-                        .find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["request_number"]);
+                    $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row["id_salary_advance"]).attr("data-request-number", row.request_number)
+                        .find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row.request_number);
                 });
                 $(".print-it").printPage();
                 let headingRow = $salaryAdvanceGrid.find('thead tr[role=row]');
@@ -654,15 +666,12 @@
             detailCollapse: onDetailCollapse,
             beforeEdit: function (e) {
                 window.grid_uid = e.model.uid; // uid of current editing row
-                e.model.fields["percentage"].editable = (universal["isSecretary"] && e.model.hod_approval === null) || (universal["isFmgr"] && e.model.fmgr_approval === null);
-                e.model.fields["hod_approval"].editable = universal["isCurrentManager"] && (e.model.hod_approval === null);
-                e.model.fields["hod_comment"].editable = universal["isCurrentManager"] && e.model.hod_approval === null;
-                e.model.fields["hr_approval"].editable = universal["isHR"] && (e.model.hr_approval === null) && e.model.hod_approval !== null;
-                e.model.fields["hr_comment"].editable = universal["isHr"] && e.model.hr_approval === null && e.model.hod_approval !== null;
-                e.model.fields["gm_approval"].editable = universal["isGM"] && (e.model.gm_approval === null) && e.model.hr_approval !== null;
-                e.model.fields["gm_comment"].editable = universal["isGM"] && (e.model.gm_approval === null) && e.model.hr_approval !== null;
-                e.model.fields["fmgr_approval"].editable = universal["isFmgr"] && (e.model.fmgr_approval === null) && e.model.gm_approval !== null;
-                e.model.fields["fmgr_comment"].editable = universal["isFmgr"] && (e.model.fmgr_approval === null) && e.model.gm_approval !== null;
+                e.model.fields.amount_requested.editable = e.model.hod_approval === null && universal.isSecretary;
+                e.model.fields.hod_comment.editable = e.model.fields.hod_approval.editable = e.model.hod_approval === null && e.model.department_id === universal.currentDepartmentID;
+                e.model.fields.amount_payable.editable = e.model.fields.hr_comment.editable = e.model.fields.hr_approval.editable = universal.isHr && e.model.hr_approval === null && (e.model.hod_approval !== null || e.model.department_id === universal.currentDepartmentID);
+                e.model.fields.gm_approval.editable = e.model.fields.gm_comment.editable = e.model.gm_approval === null && e.model.hr_approval !== null;
+                e.model.fields.amount_approved.editable = e.model.fields.fmgr_comment.editable = e.model.fields.fmgr_approval.editable = universal.isFmgr && e.model.fmgr_approval === null && e.model.gm_approval !== null;
+                e.model.fields.received_by.editable = e.model.fields.amount_received.editable = e.model.fmgr_approval;
             },
             edit: function (e) {
                 e.container.find(".k-edit-label, .k-edit-field").addClass("pt-2").toggle(false);
@@ -692,8 +701,7 @@
                 nameLabelField.toggle();
                 departmentLabelField.toggle();
                 requestNumberLabelField.toggle();
-                percentageLabelField.toggle();
-                amountRequestedLabelField.toggle(!universal["isSecretary"]);
+                amountRequestedLabelField.toggle();
                 hodApprovalLabelField.toggle();
                 hrApprovalLabelField.toggle();
                 gmApprovalLabelField.toggle();
@@ -701,33 +709,21 @@
 
                 amountPayableLabelField.toggle(Boolean(e.model.hr_approval));
                 amountApprovedLabelField.toggle(Boolean(e.model.fmgr_approval));
-                hodCommentLabelField.toggle(e.model.hod_approval !== null || universal["isCurrentManager"]);
-                hrCommentLabelField.toggle(e.model.hr_approval !== null || (e.model.hod_approval !== null && universal["isHr"]));
-                gmCommentLabelField.toggle(e.model.gm_approval !== null || (e.model.hr_approval !== null && universal["isGm"]));
-                fmgrCommentLabelField.toggle(e.model.fmgr_approval !== null || (e.model.gm_approval !== null && universal["isFmgr"]));
-                receivedByLabelField.toggle(e.model.received_by !== null || universal["isFinanceOfficer"]);
-                amountReceivedLabelField.toggle(e.model.received_by !== null || universal["isFinanceOfficer"]);
-                dateReceivedLabelField.toggle(e.model.date_received !== null || universal["isFinanceOfficer"]);
-                hodCommentLabelField.find('.k-textbox').attr('data-required-msg', 'HoD Comment is required!').attr('rows', '6');
-                hrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'HR Comment is required!').attr('rows', '6');
-                amountPayableLabelField.find('.k-input').attr('data-required-msg', 'Amount Payable is required!');
-                gmCommentLabelField.find('.k-textbox').attr('data-required-msg', 'GM Comment is required!').attr('rows', '6');
-                fmgrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'Fin Mgr Comment is required!').attr('rows', '6');
-                amountApprovedLabelField.find('.k-input').attr('data-required-msg', 'Amount Approved is required!');
-                amountReceivedLabelField.find('.k-input').attr('data-required-msg', 'Amount Received is required!');
-                receivedByLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');
-                let amountRequestedNumericTextBox = amountRequestedLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
-                let amountRequestedPercentageNumericTextBox = percentageLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
-
-                if (e.model.fields.percentage.editable) {
-                    e.model.amount_requested = (e.model.percentage / 100) * e.model.basic_salary;
-                    amountRequestedPercentageNumericTextBox.bind("change", function (e) {
-                        let grid = $salaryAdvanceGrid.getKendoGrid();
-                        let model = grid.dataSource.getByUid(window.grid_uid);
-                        model.amount_requested = (model.percentage / 100) * model.basic_salary;
-                    });
-                }
-
+                hodCommentLabelField.toggle(e.model.hod_approval !== null);
+                hrCommentLabelField.toggle(e.model.hr_approval !== null);
+                gmCommentLabelField.toggle(e.model.gm_approval !== null);
+                fmgrCommentLabelField.toggle(e.model.fmgr_approval !== null);
+                receivedByLabelField.toggle(e.model.received_by !== null);
+                amountReceivedLabelField.toggle(e.model.received_by !== null);
+                dateReceivedLabelField.toggle(e.model.date_received !== null);
+                /* hodCommentLabelField.find('.k-textbox').attr('data-required-msg', 'HoD Comment is required!');
+                 hrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'HR Comment is required!');
+                 amountPayableLabelField.find('.k-input').attr('data-required-msg', 'Amount Payable is required!');
+                 gmCommentLabelField.find('.k-textbox').attr('data-required-msg', 'GM Comment is required!');
+                 fmgrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'Fin Mgr Comment is required!');
+                 amountApprovedLabelField.find('.k-input').attr('data-required-msg', 'Amount Approved is required!');
+                 amountReceivedLabelField.find('.k-input').attr('data-required-msg', 'Amount Received is required!');
+                 receivedByLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');*/
                 let extRadioButtonGroup = e.container.find("[data-role=extradiobuttongroup]");
                 let updateButton = e.container.find('.k-grid-update');
                 extRadioButtonGroup.each(function () {
@@ -749,9 +745,11 @@
                 $(cancel).html('<span class="k-icon k-i-cancel"></span>Cancel');
 
                 e.container.data('kendoWindow').bind('deactivate', function () {
-                    let data = $salaryAdvanceGrid.getKendoGrid().dataSource.data();
+                    let data = grid.dataSource.data();
                     $.each(data, function (i, row) {
-                        $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["id_salary_advance"]);
+                        $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance'])
+                            .attr("data-request-number", row.request_number)
+                            .find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row.request_number);
                     });
                     $(".print-it").printPage();
                 });

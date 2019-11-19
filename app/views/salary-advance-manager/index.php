@@ -75,8 +75,9 @@
         isFmgr: Boolean("<?php echo isCurrentFmgr($current_user->user_id) ?>"),
         isGM: Boolean("<?php echo isCurrentGM($current_user->user_id) ?>"),
         isManager: Boolean("<?php echo isCurrentManager($current_user->user_id) ?>"),
-        isSecretary: "<?php isSecretary($current_user->user_id); ?>"
+        isSecretary: Boolean("<?php echo isSecretary($current_user->user_id); ?>")
     };
+    let grid = null;
     let $salaryAdvanceGrid;
     let salaryAdvanceDataSource;
     $(document).ready(function () {
@@ -271,7 +272,7 @@
             }
         });
 
-        $salaryAdvanceGrid.kendoGrid({
+        grid = $salaryAdvanceGrid.kendoGrid({
             autoFitColumn: true,
             selectable: true,
             mobile: true,
@@ -807,7 +808,7 @@
                 $(update).html('<span class="k-icon k-i-check"></span>OK');
                 $(cancel).html('<span class="k-icon k-i-cancel"></span>Cancel');
             }
-        });
+        }).getKendoGrid();
 
         $salaryAdvanceTooltip = $salaryAdvanceGrid.kendoTooltip({
             filter: "td.comment",

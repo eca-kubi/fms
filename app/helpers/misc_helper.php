@@ -648,7 +648,7 @@ function getSalaryAdvance($key_value)
  * @param array $key_value
  * @return array
  */
-function getBulkRequests($key_value)
+function getBulkRequestsParent($key_value)
 {
     $db = Database::getDbh();
     $bulk_requests = [];

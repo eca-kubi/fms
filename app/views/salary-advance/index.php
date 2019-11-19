@@ -83,6 +83,7 @@
     let MIN_PERCENTAGE = <?php echo MIN_PERCENTAGE ?>;
     let MAX_PERCENTAGE = <?php echo MAX_PERCENTAGE ?>;
     let kGridAddButton;
+    let grid = null;
     let $salaryAdvanceGrid;
     let salaryAdvanceDataSource;
     let $salaryAdvanceTooltip;
@@ -146,7 +147,8 @@
                     toastSuccess('Success', 5000);
                 }
                 $.get(URL_ROOT + "/salary-advance-ajax/has-active-salary-advance", {}, null, "json").done(function (hasActiveSalaryAdvance) {
-                    universal.hasActiveApplication = hasActiveSalaryAdvance
+                    universal.hasActiveApplication = hasActiveSalaryAdvance;
+                    if(hasActiveSalaryAdvance) disableGridAddButton();
                 });
             },
             schema: {
@@ -278,7 +280,7 @@
             }
         });
 
-        $salaryAdvanceGrid.kendoGrid({
+        grid = $salaryAdvanceGrid.kendoGrid({
             autoFitColumn: true,
             selectable: true,
             mobile: true,
@@ -347,7 +349,7 @@
                         text: "Edit",
                         iconClass: {edit: "k-icon k-i-edit"},
                         className: "badge badge-success btn k-button text-black border k-grid-custom-edit",
-                        click: function (e) {
+                        click: function () {
                             let grid = $salaryAdvanceGrid.getKendoGrid();
                             salaryAdvanceDataSource.read().then(function () {
                                 grid.editRow(grid.currentRow());
@@ -400,7 +402,6 @@
                     field: 'amount_requested',
                     title: 'Amount Requested',
                     width: 180,
-                    //editor: editNumberWithoutSpinners,
                     headerAttributes: {
                         "class": "title"
                     },
@@ -649,29 +650,24 @@
                 let dataSource = this.dataSource;
                 let data = grid.dataSource.data();
                 $.each(data, function (i, row) {
-                    $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["request_number"]);
+                    $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row.request_number);
                 });
                 $(".print-it").printPage();
-                let headingRow = $salaryAdvanceGrid.find('thead tr[role=row]');
+                let headingRow = grid.table.find('thead tr[role=row]');
                 headingRow.find('th.k-hierarchy-cell').hide();
                 headingRow.find('th.k-hierarchy-cell').next('th').attr('colspan', 2);
-                let filterRow = $salaryAdvanceGrid.find('thead tr.k-filter-row');
+                let filterRow = grid.table.find('thead tr.k-filter-row');
                 filterRow.find('th.k-hierarchy-cell').hide();
                 filterRow.find('th.k-hierarchy-cell').next('th').attr('colspan', 2);
                 filterRow.find('input:first').attr('placeholder', 'Search...');
-                with (universal) {
-                    if (hasActiveApplication) {
-                        disableGridAddButton();
-                    }
-                    if (!currentRowSelected && requestNumber) {
-                        let row = selectGridRow(requestNumber, grid, dataSource, 'request_number');
-                        grid.expandRow(row);
-                    }
-                    if (!firstLoadDone) {
-                        firstLoadDone = true;
-                        if (requestNumber)
-                            filterString(requestNumber, 'request_number');
-                    }
+
+                if (universal.hasActiveApplication) {
+                    disableGridAddButton();
+                }
+                if (!firstLoadDone) {
+                    firstLoadDone = true;
+                    if (universal.requestNumber)
+                        filterString(universal.requestNumber, 'request_number');
                 }
             },
             detailInit: function (e) {
@@ -694,15 +690,13 @@
                 let validator = this.editable.validatable;
                 let amountRequestedLabelField = e.container.find(".k-edit-label:eq(3), .k-edit-field:eq(3)");
                 let amountRequestedNumericTextBox = amountRequestedLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
-
+/*
                 validator._errorTemplate = (function anonymous(data
                 ) {
-                    let $kendoOutput, $kendoHtmlEncode = kendo.htmlEncode;
-                    with (data) {
-                        $kendoOutput = '<div class="k-widget k-tooltip k-tooltip-validation mt-2"><span class="k-icon k-i-warning"> </span><span class="mr-4">' + (message) + '</span><span class="k-callout k-callout-n"></span></div>';
-                    }
+                    let $kendoOutput;
+                    $kendoOutput = '<div class="k-widget k-tooltip k-tooltip-validation mt-2"><span class="k-icon k-i-warning"> </span><span class="mr-4">' + (data.message) + '</span><span class="k-callout k-callout-n"></span></div>';
                     return $kendoOutput;
-                });
+                });*/
 
                 // Toggle visibility off for all editor fields and labels
                 e.container.find('.k-edit-label, .k-edit-field').addClass("pt-2").toggle(false);
@@ -715,15 +709,17 @@
                 });
 
                 e.container.data('kendoWindow').bind('activate', function () {
-                    if (e.model.fields["amount_requested"].editable) {
+                    if (e.model.fields.amount_requested.editable) {
                         amountRequestedNumericTextBox.focus();
                     }
                 });
 
                 e.container.data('kendoWindow').bind('deactivate', function () {
-                    let data = $salaryAdvanceGrid.getKendoGrid().dataSource.data();
+                    let data = grid.dataSource.data();
                     $.each(data, function (i, row) {
-                        $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["request_number"]);
+                        $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance'])
+                            .attr("data-request-number", row.request_number)
+                            .find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row.request_number);
                     });
                     $(".print-it").printPage();
                 });
@@ -735,7 +731,7 @@
                 $(update).html('<span class="k-icon k-i-check"></span>OK');
                 $(cancel).html('<span class="k-icon k-i-cancel"></span>Cancel');
             }
-        });
+        }).getKendoGrid();
 
         kGridAddButton = $('.k-grid-add');
         $salaryAdvanceTooltip = $salaryAdvanceGrid.kendoTooltip({

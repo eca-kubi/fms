@@ -14,17 +14,9 @@ class SalaryAdvanceBulkRequestsAjax extends Controller
         $bulk_requests = [];
         try {
             if ($is_hod || $is_secretary) {
-                if ($request_number) {
-                    $bulk_requests = getSalaryAdvance(['u.department_id' => $current_user->department_id, 'sa.request_number' => $request_number, 'sa.is_bulk_request' => true]);
-                } else {
-                    $bulk_requests = getBulkRequests(['d.department_id' => $current_user->department_id]);
-                }
+                $bulk_requests = getSalaryAdvance(['u.department_id' => $current_user->department_id, 'sa.is_bulk_request' => true, 'deleted' => false]);
             } else if ($is_finance_officer || $is_hr || $is_gm || $is_fmgr) {
-                if ($request_number) {
-                    $bulk_requests = getSalaryAdvance(['sa.request_number' => $request_number, 'sa.is_bulk_request' => true]);
-                } else {
-                    $bulk_requests = getBulkRequests([]);
-                }
+                $bulk_requests = getSalaryAdvance(['sa.is_bulk_request' => true, 'deleted' => false]);
             }
         } catch (Exception $e) {
         }

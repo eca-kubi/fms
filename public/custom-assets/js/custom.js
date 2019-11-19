@@ -51,6 +51,9 @@ $(document).ready(function () {
         return null;
     };
 
+    kendo.ui.DropDownList.fn["disableItem"] = function () {
+
+    };
     kDefaultCalendar = $("<input id='kDefaultCalendar' class='k-default-calendar' type='date'>").kendoCalendar();
 });
 
@@ -86,6 +89,7 @@ function dropDownEditor(container, options) {
                 e.sender.select(function (dataItem) {
                     return dataItem.name === model.name;
                 });
+                this.options.disableItems(e.sender);
             },
             select: function (e) {
                 if (e.item.hasClass("k-state-disabled")) {
@@ -93,9 +97,27 @@ function dropDownEditor(container, options) {
                 }
             },
             open: function (e) {
-                let grid = $salaryAdvanceGrid.data('kendoGrid');
                 let model = grid.dataSource.getByUid(grid_uid);
-                e.sender.ul.find("li").each(function () {
+                this.options.disableItems(e.sender);
+            },
+            change: function (e) {
+                let model = grid.dataSource.getByUid(grid_uid);
+                if (e.sender.selectedIndex) {
+                    let data = e.sender.dataSource.at(e.sender.selectedIndex - 1);
+                    model.user_id = data.user_id;
+                    model.department = data.department;
+                    model.department_id = data.department_id;
+                    model.basic_salary = data.basic_salary;
+                }
+                grid.refresh();
+                grid.editCell(grid.table.find("td:eq(2)"))
+            },
+            filter: "contains",
+            suggest: true,
+            optionLabel: "Select an Employee",
+            disableItems: function (dropDown) {
+                let model = grid.dataSource.getByUid(grid_uid);
+                dropDown.ul.find("li").each(function () {
                     let li = $(this);
                     if (bulkApplicants.includes(li.text()) && model.name !== li.text() || activeApplicants.includes(li.text())) {
                         li.addClass("k-state-disabled cursor-disabled");
@@ -105,24 +127,7 @@ function dropDownEditor(container, options) {
                         li.removeAttr("title");
                     }
                 });
-            },
-            change: function (e) {
-                let grid = $salaryAdvanceGrid.getKendoGrid();
-                let model = grid.dataSource.getByUid(grid_uid);
-                let current = grid.current();
-                if (e.sender.selectedIndex) {
-                    let data = e.sender.dataSource.at(e.sender.selectedIndex - 1);
-                    model.user_id = data.user_id;
-                    model.department = data.department;
-                    model.department_id = data.department_id;
-                    model.basic_salary = data.basic_salary;
-                }
-                grid.refresh();
-                grid.editCell($salaryAdvanceGrid.find("td:eq(3)"))
-            },
-            filter: "contains",
-            suggest: true,
-            optionLabel: "Select an Employee",
+            }
         });
     container.append('<span class="k-invalid-msg" data-for="name"></span>')
 }
@@ -477,7 +482,7 @@ function onDetailCollapse(e) {
     expandedRows['expanded'] = JSON.stringify(items);
 }
 
-function  editNumberWithoutSpinners(container, options) {
+function editNumberWithoutSpinners(container, options) {
     $('<input name="' + options.field + '" data-text-field="' + options.field + '" ' +
         'data-value-field="' + options.field + '" ' +
         'data-bind="value:' + options.field + '" ' +
@@ -529,6 +534,8 @@ let Configurations = {
                 if (input.attr("name") === "amount_requested") {
                     input.attr("data-required-msg", "Enter an amount.");
                     return input.val() !== "";
+                } else {
+                    input.attr("data-required-msg", "This field is required!");
                 }
                 return true;
             },
@@ -546,7 +553,7 @@ let Configurations = {
                     let grid = $salaryAdvanceGrid.getKendoGrid();
                     let model = grid.dataSource.getByUid(grid_uid);
                     input.attr("data-max-msg", "Amount must not exceed 30% of salary.");
-                    return (MAX_PERCENTAGE/100) * model.basic_salary >= kendo.parseFloat(input.val());
+                    return (MAX_PERCENTAGE / 100) * model.basic_salary >= kendo.parseFloat(input.val());
                 }
                 return true;
             }
