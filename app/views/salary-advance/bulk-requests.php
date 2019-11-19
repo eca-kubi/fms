@@ -74,9 +74,11 @@
         isFmgr: Boolean("<?php echo isCurrentFmgr($current_user->user_id) ?>"),
         isGM: Boolean("<?php echo isCurrentGM($current_user->user_id) ?>"),
         isManager: Boolean("<?php echo isCurrentManager($current_user->user_id) ?>"),
-        requestNumber: "<?php echo $request_number ?>"
+        requestNumber: "<?php echo $request_number ?>",
+        isSecretary: "<?php isSecretary($current_user->user_id); ?>"
     };
     let $salaryAdvanceGrid;
+    let grid = null;
     let salaryAdvanceDataSource;
     const ERROR_AN_APPLICATION_ALREADY_EXISTS = 'E_1001';
     $(document).ready(function () {
@@ -86,16 +88,16 @@
         salaryAdvanceDataSource = new kendo.data.DataSource({
             pageSize: 20,
             batch: false,
-            filter: [
+            /*filter: [
                 {
                     field: "date_raised", operator: "gte", value: new Date(firstDayOfMonth)
                 },
                 {
                     field: 'date_raised', operator: "lte", value: new Date(lastDayOfMonth)
-                }],
+                }],*/
             transport: {
                 read: {
-                    url: URL_ROOT + "/salary-advance-bulk-requests-ajax/index/" + universal.requestNumber,
+                    url: URL_ROOT + "/salary-advance-bulk-requests-ajax/index/",
                     dataType: "json",
                     data: {request_number: universal.requestNumber}
                 },
@@ -154,7 +156,7 @@
                             editable: false,
                             nullable: true,
                             type: "number",
-                            validation: {min: 0, required: true}
+                            validation: Configurations.validations.amountRequested
                         },
                         basic_salary: {editable: false, type: "number"},
                         request_number: {nullable: true, type: "string", editable: false},
@@ -163,7 +165,6 @@
                         department: {editable: false, type: "string"},
                         department_id: {editable: false, type: "number"},
                         department_ref: {editable: false},
-                        //employee: {defaultValue: {}},
                         fmgr_approval: {editable: false, nullable: true, type: "boolean"},
                         fmgr_approval_date: {editable: false, nullable: true, type: "date"},
                         fmgr_comment: {editable: false, type: "string"},
@@ -181,7 +182,6 @@
                         hr_comment: {editable: false, type: "string"},
                         hr_id: {type: "number"},
                         is_bulk_request: {defaultValue: true, type: "boolean"},
-                        //name: {from: "employee.name", editable: false},
                         name: {editable: false},
                         percentage: {
                             editable: false,
@@ -200,7 +200,7 @@
             }
         });
 
-        $salaryAdvanceGrid.kendoGrid({
+        grid = $salaryAdvanceGrid.kendoGrid({
             autoFitColumn: true,
             selectable: true,
             mobile: true,
@@ -217,13 +217,13 @@
                 for (let rowIndex = 1; rowIndex < sheet.rows.length; rowIndex++) {
                     let row = sheet.rows[rowIndex];
                     let dataItem = {
-                        hod_approval: row.cells[5].value,
-                        fmgr_approval: row.cells[12].value,
-                        hr_approval: row.cells[8].value
+                        hod_approval: row.cells[6].value,
+                        hr_approval: row.cells[9].value,
+                        fmgr_approval: row.cells[13].value,
                     };
-                    row.cells[5].value = dataItem.hod_approval == null ? 'Pending' : (dataItem.hod_approval ? 'Approved' : 'Rejected');
-                    row.cells[8].value = dataItem.hr_approval == null ? 'Pending' : (dataItem.hr_approval ? 'Approved' : 'Rejected');
-                    row.cells[12].value = dataItem.fmgr_approval == null ? 'Pending' : (dataItem.fmgr_approval ? 'Approved' : 'Rejected');
+                    row.cells[6].value = dataItem.hod_approval == null ? 'Pending' : (dataItem.hod_approval ? 'Approved' : 'Rejected');
+                    row.cells[9].value = dataItem.hr_approval == null ? 'Pending' : (dataItem.hr_approval ? 'Approved' : 'Rejected');
+                    row.cells[13].value = dataItem.fmgr_approval == null ? 'Pending' : (dataItem.fmgr_approval ? 'Approved' : 'Rejected');
 
                     // alternating row colors
                     if (rowIndex % 2 === 0) {
@@ -280,21 +280,27 @@
             columns: [
                 {
                     attributes: {class: "action"},
-                    command: [{
-                        name: "edit", text: "Edit", iconClass: {edit: "k-icon k-i-edit"},
-                        className: "action-edit badge badge-success btn k-button text-black border",
-                        visible: function (dataItem) {
-                            return (dataItem.hod_approval === null && universal["isSecretary"]) || !universal["isSecretary"];
-                        }
-                    },
-                        {name: "print", template: $("#printButton").html()}],
+                    command: [
+                        {
+                            name: "custom_edit",
+                            text: "Edit",
+                            iconClass: {edit: "k-icon k-i-edit"},
+                            className: "badge badge-success btn k-button text-black border k-grid-custom-edit",
+                            click: function (e) {
+                                grid.dataSource.read().then(function () {
+                                    grid.editRow(grid.currentRow());
+                                });
+                            }
+                        },
+                        {name: "print", template: $("#printButton").html()}
+                    ],
                     headerAttributes: {class: "title"},
                     title: "Action",
                     width: 190
                 },
                 {
-                    editor: dropDownEditor,
                     field: "name",
+                    editor: dropDownEditor,
                     filterable: {cell: {showOperators: false}},
                     headerAttributes: {class: "title"},
                     title: "Employee",
@@ -312,33 +318,17 @@
                             showOperators: false
                         }
                     },
-                    hidden: universal["isSecretary"]
                 },
                 {
+                    field: "request_number",
                     title: "Request Number",
                     width: 250,
-                    field: "request_number",
                     filterable: {cell: {showOperators: false}},
                     headerAttributes: {class: "title"}
                 },
                 {
-                    field: 'percentage',
-                    title: 'Amount in Percentage',
-                    template: function (dataItem) {
-                        return "<span>" + (dataItem.percentage ? kendo.toString(dataItem.percentage, '#\\%') : '') + "</span>"
-                    },
-                    headerAttributes: {
-                        "class": "title"
-                    },
-                    width: 180,
-                    groupHeaderTemplate: "Amount in Percentage: #= value? value + '%' : '' #",
-                    aggregates: ["max", "min"],
-                    format: "{0:#\\%}",
-                    filterable: false
-                },
-                {
                     field: 'amount_requested',
-                    title: 'Amount in Figures',
+                    title: 'Amount Requested',
                     width: 180,
                     template: function (dataItem) {
                         return "<span>" + (dataItem.amount_requested ? kendo.format('{0:c}', dataItem.amount_requested) : '') + "</span>"
@@ -346,11 +336,11 @@
                     headerAttributes: {
                         "class": "title"
                     },
-                    groupHeaderTemplate: "Amount in Figures: #=  value ? kendo.format('{0:c}', value) : ''#",
+                    groupHeaderTemplate: "Amount Requested: #=  value ? kendo.format('{0:c}', value) : ''#",
                     aggregates: ["max", "min", "count"],
                     format: "{0:c}",
                     filterable: false,
-                    hidden: universal["isSecretary"]
+                    hidden: universal.isSecretary
                 },
                 {
                     field: 'date_raised',
@@ -359,7 +349,7 @@
                         "class": "title"
                     },
                     width: 450,
-                    groupHeaderTemplate: "Date Raised: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy h:mm:ss tt') #",
+                    groupHeaderTemplate: "Date Raised: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') #",
                     filterable: {
                         cell: {
                             template: dateRangeFilter
@@ -480,7 +470,7 @@
                         "class": "title"
                     },
                     width: 200,
-                    groupHeaderTemplate: "GM Approval: #= value=== null 'Pending' : ( value? 'Approved': 'Rejected' )# | Total: #= count #",
+                    groupHeaderTemplate: "GM Approval: #= value=== null? 'Pending' : ( value? 'Approved': 'Rejected' )# | Total: #= count #",
                     aggregates: ["count"],
                     filterable: false
                 },
@@ -504,7 +494,7 @@
                         "class": "title"
                     },
                     width: 200,
-                    groupHeaderTemplate: "GM's Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : '' #",
+                    //groupHeaderTemplate: "GM's Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : '' #",
                     filterable: false,
                     format: "{0:dddd dd MMM, yyyy}"
                 },
@@ -519,7 +509,7 @@
                         "class": "title"
                     },
                     width: 200,
-                    groupHeaderTemplate: "Finance Manager Approval: #= value? 'Yes' : (value===null? 'Pending' : 'No') # |  Total: #=count #",
+                    //groupHeaderTemplate: "Finance Manager Approval: #= value? 'Yes' : (value===null? 'Pending' : 'No') # |  Total: #=count #",
                     aggregates: ["count"],
                     filterable: false
                 },
@@ -544,7 +534,7 @@
                     headerAttributes: {
                         "class": "title"
                     },
-                    //groupHeaderTemplate: "Amount Approved: #= value?  kendo.format('{0:c}', value): '' #",
+                    groupHeaderTemplate: "Amount Approved: #= value?  kendo.format('{0:c}', value): '' #",
                     aggregates: ["max", "min"],
                     format: "{0:c}",
                     width: 200,
@@ -558,7 +548,7 @@
                         "class": "title"
                     },
                     width: 200,
-                    groupHeaderTemplate: "Finance Mgr. Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : '' #",
+                    // groupHeaderTemplate: "Finance Mgr. Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : '' #",
                     hidden: false,
                     filterable: false,
                     format: "{0:dddd dd MMM, yyyy}"
@@ -623,14 +613,15 @@
                     filterable: false
                 }
             ],
-            detailTemplate: kendo.template($("#detailTemplate_Secretary").html()),
             dataSource: salaryAdvanceDataSource,
+            detailTemplate: kendo.template($("#detailTemplate").html()),
             dataBound: function (e) {
                 let grid = e.sender;
                 let data = grid.dataSource.data();
                 let dataSource = grid.dataSource;
                 $.each(data, function (i, row) {
-                    $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["request_number"]);
+                    $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).attr("data-request_number", row.request_number)
+                        .find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["request_number"]);
                 });
                 $(".print-it").printPage();
                 let headingRow = $salaryAdvanceGrid.find('thead tr[role=row]');
@@ -643,12 +634,11 @@
                 filterRow.find('input:eq(1)').attr('placeholder', 'Search...');
                 filterRow.find('input:eq(2)').attr('placeholder', 'Search...');
 
-                if (!currentRowSelected && universal['select_row_id']) {
-                    let row = selectGridRow(universal["select_row_id"], grid, dataSource, 'id_salary_advance');
-                    grid.expandRow(row);
-                }
                 if (!firstLoadDone) {
                     firstLoadDone = true;
+                    if (universal.requestNumber) {
+                        filterString(universal.requestNumber, "request_number");
+                    }
                     //filterDate(new Date(firstDayOfMonth), new Date(lastDayOfMonth), "date_raised");
                 }
             },
@@ -657,7 +647,6 @@
                 //let masterRow = e.detailRow.prev('tr.k-master-row');
                 //let dataItem = grid.dataItem(masterRow);
                 let colSize = e.sender.content.find('colgroup col').length;
-                // $(".print-it").printPage();
                 e.detailRow.find('.k-hierarchy-cell').hide();
                 e.detailCell.attr('colspan', colSize);
             },
@@ -768,7 +757,7 @@
                 });
 
             }
-        });
+        }).getKendoGrid();
 
         $salaryAdvanceGrid.find('#department').kendoDropDownList({
             dataSource: new kendo.data.DataSource({

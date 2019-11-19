@@ -521,3 +521,35 @@ function purgeBulkApplicants() {
         }
     }
 }
+
+let Configurations = {
+    validations: {
+        amountRequested: {
+            required: function (input) {
+                if (input.attr("name") === "amount_requested") {
+                    input.attr("data-required-msg", "Enter an amount.");
+                    return input.val() !== "";
+                }
+                return true;
+            },
+            min: function (input) {
+                if (input.attr("name") === "amount_requested") {
+                    let grid = $salaryAdvanceGrid.getKendoGrid();
+                    let model = grid.dataSource.getByUid(grid_uid);
+                    input.attr("data-min-msg", "Amount must be more than 10% of salary.");
+                    return (MIN_PERCENTAGE / 100) * model.basic_salary <= kendo.parseFloat(input.val());
+                }
+                return true;
+            },
+            max: function (input) {
+                if (input.attr("name") === "amount_requested") {
+                    let grid = $salaryAdvanceGrid.getKendoGrid();
+                    let model = grid.dataSource.getByUid(grid_uid);
+                    input.attr("data-max-msg", "Amount must not exceed 30% of salary.");
+                    return (MAX_PERCENTAGE/100) * model.basic_salary >= kendo.parseFloat(input.val());
+                }
+                return true;
+            }
+        }
+    }
+};

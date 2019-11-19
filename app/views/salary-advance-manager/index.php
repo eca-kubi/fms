@@ -74,7 +74,8 @@
         isHr: Boolean("<?php echo isCurrentHR($current_user->user_id) ?>"),
         isFmgr: Boolean("<?php echo isCurrentFmgr($current_user->user_id) ?>"),
         isGM: Boolean("<?php echo isCurrentGM($current_user->user_id) ?>"),
-        isManager: Boolean("<?php echo isCurrentManager($current_user->user_id) ?>")
+        isManager: Boolean("<?php echo isCurrentManager($current_user->user_id) ?>"),
+        isSecretary: "<?php isSecretary($current_user->user_id); ?>"
     };
     let $salaryAdvanceGrid;
     let salaryAdvanceDataSource;
