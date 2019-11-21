@@ -3,37 +3,12 @@
 <?php require_once APP_ROOT . '\views\includes\sidebar.php'; ?>
 <!-- .content-wrapper -->
 <div class="content-wrapper animated fadeInRight" style="margin-top: <?php echo NAVBAR_MT; ?>">
-    <!-- .content-header-->
-    <section class="content-header d-none">
-        <!-- .container-fluid -->
-        <div class="container-fluid">
-            <!-- .row -->
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1>
-                        <?php echo APP_NAME; ?>
-                    </h1>
-                </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item active">
-                            <a href="#">Dashboard</a>
-                        </li>
-                    </ol>
-                </div>
-            </div>
-            <!-- /.row -->
-        </div>
-        <!-- /.container-fluid -->
-    </section>
-    <!-- /.content-header-->
     <!-- content -->
     <section class="content">
         <div class="box-group" id="box_group">
             <div class="box collapsed">
                 <div class="box-header">
                     <h5>
-                        <?php flash('flash_all'); ?>
                     </h5>
                     <h3 class="box-title text-bold d-none"></h3>
                     <div class="box-tools pull-right d-none">
@@ -65,7 +40,7 @@
 /** @var string $request_number */
 ?>
 <script>
-    var universal = {
+    let universal = {
             requestNumber: "<?php echo $request_number ?>",
             currencySymbol: "<?php echo CURRENCY_GHS; ?>",
             currentDepartment: "<?php echo $current_user->department; ?>",
@@ -77,28 +52,10 @@
             isManager: Boolean("<?php echo isCurrentManager($current_user->user_id) ?>"),
             isSecretary: Boolean("<?php echo isSecretary($current_user->user_id); ?>")
         },
-        grid = null,
-        $salaryAdvanceGrid = null,
-        salaryAdvanceDataSource,
         MIN_PERCENTAGE = <?php echo MIN_PERCENTAGE ?>,
-        MAX_PERCENTAGE = <?php echo MAX_PERCENTAGE ?>,
-        collapsed = {},
-        groups = [],
-        scrollLeft = 0,
-        scrollTop = 0;
-    let selectedRowId;
+        MAX_PERCENTAGE = <?php echo MAX_PERCENTAGE ?>;
     $(document).ready(function () {
-        URL_ROOT = $('#url_root').val();
-        kendo.culture().numberFormat.currency.symbol = 'GH₵';
-        $salaryAdvanceGrid = $('#salary_advance');
-        salaryAdvanceDataSource = new kendo.data.DataSource({
-            /* filter: [
-                 {
-                     field: "date_raised", operator: "gte", value: new Date(firstDayOfMonth)
-                 },
-                 {
-                     field: 'date_raised', operator: "lte", value: new Date(lastDayOfMonth)
-                 }],*/
+        dataSource = new kendo.data.DataSource({
             pageSize: 20,
             transport: {
                 read: {
@@ -287,44 +244,10 @@
                 }
             }
         });
-
-        grid = $salaryAdvanceGrid.kendoGrid({
-            autoFitColumn: true,
-            selectable: true,
-            mobile: true,
-            noRecords: true,
-            navigatable: true,
+        $salaryAdvanceGrid = $('#salary_advance');
+        grid = $salaryAdvanceGrid.kendoGrid($.extend({}, Configurations.grid.options, {dataSource: dataSource}, {
+            groupable: true,
             toolbar: [{name: "excel", template: $("#exportToExcel").html()}],
-            excel: {
-                fileName: "Salary Advance Export.xlsx",
-                filterable: true
-            },
-            excelExport: function (e) {
-                let sheet = e.workbook.sheets[0];
-                sheet.columns[0].autoWidth = false;
-                for (let rowIndex = 1; rowIndex < sheet.rows.length; rowIndex++) {
-                    let row = sheet.rows[rowIndex];
-                    let dataItem = {
-                        hod_approval: row.cells[5].value,
-                        hr_approval: row.cells[8].value,
-                        gm_approval: row.cells[12].value,
-                        fmgr_approval: row.cells[15].value
-                    };
-                    row.cells[5].value = dataItem.hod_approval == null ? 'Pending' : (dataItem.hod_approval ? 'Approved' : 'Rejected');
-                    row.cells[8].value = dataItem.hr_approval == null ? 'Pending' : (dataItem.hr_approval ? 'Approved' : 'Rejected');
-                    row.cells[12].value = dataItem.gm_approval == null ? 'Pending' : (dataItem.gm_approval ? 'Approved' : 'Rejected');
-                    row.cells[15].value = dataItem.fmgr_approval == null ? 'Pending' : (dataItem.fmgr_approval ? 'Approved' : 'Rejected');
-
-                    // alternating row colors
-                    if (rowIndex % 2 === 0) {
-                        let row = sheet.rows[rowIndex];
-                        for (let cellIndex = 0; cellIndex < row.cells.length; cellIndex++) {
-                            //row.cells[cellIndex].fontName = "Poppins";
-                        }
-                    }
-                }
-            },
-            editable: "popup",
             save: function (e) {
                 let extRadioButtonGroup = e.container.find("[data-role=extradiobuttongroup]");
                 extRadioButtonGroup.each(function () {
@@ -344,34 +267,6 @@
                     tooltip.destroy();
                 });
             },
-            filterable: {
-                extra: false,
-                mode: "row",
-                messages: {
-                    info: "",
-                    selectedItemsFormat: ""
-                }
-            },
-            columnMenu: false,
-            sortable: true,
-            groupable: true,
-            height: 520,
-            resizable: true,
-            //scrollable: true,
-            persistSelection: true,
-            pageable: {
-                alwaysVisible: false,
-                pageSizes: [20, 40, 60, 80, 100],
-                buttonCount: 5
-            },
-            columnResizeHandleWidth: 30,
-            columns: Configurations.grid.columns,
-            detailTemplate: kendo.template($("#detailTemplate").html()),
-            dataSource: salaryAdvanceDataSource,
-            dataBound: onDataBound,
-            detailInit: onDetailInit,
-            detailExpand: onDetailExpand,
-            detailCollapse: onDetailCollapse,
             beforeEdit: function (e) {
                 window.grid_uid = e.model.uid; // uid of current editing row
                 e.model.fields.amount_requested.editable = false;
@@ -427,8 +322,7 @@
                 amountReceivedLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');
                 receivedByLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');
             }
-        }).getKendoGrid();
-
+        })).getKendoGrid();
         documentReady()
     });
 </script>
