@@ -21,7 +21,6 @@ class SalaryAdvanceManagerAjax extends Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Sanitize POST array
             $_POST = json_decode(file_get_contents('php://input'), true, 512, JSON_THROW_ON_ERROR);
-            $_POST = filter_var_array($_POST, FILTER_SANITIZE_STRING);
             $errors = ['errors' => [['message' => '']]];
             $current_user = getUserSession();
             $id_salary_advance = $_POST['id_salary_advance'];
@@ -37,7 +36,7 @@ class SalaryAdvanceManagerAjax extends Controller
                     $update_success = $db->where('id_salary_advance', $id_salary_advance)->update('salary_advance', [
                         'hod_id' => $current_user->user_id,
                         'hod_approval' => $_POST['hod_approval'],
-                        'hod_comment' => $_POST['hod_comment'],
+                        'hod_comment' => filter_var($_POST['hod_comment'], FILTER_SANITIZE_STRING),
                         'hod_approval_date' => now()
                     ]);
                     if ($update_success) {
@@ -46,7 +45,7 @@ class SalaryAdvanceManagerAjax extends Controller
                         $data['body'] = get_include_contents('email_templates/salary-advance/approval', $data);
                         $email = get_include_contents('email_templates/salary-advance/main', $data);
                         insertEmail($subject, $email, $applicant->email);
-                        if ($hod->email !== $hr->email) {
+                        if ($hod->email !== $hr->email && $_POST['hod_approval']) {
                             $data['recipient_id'] = $hr->user_id;
                             $data['link'] =  URL_ROOT . '/salary-advance-manager/index/' . $request_number;
                             $data['body'] = get_include_contents('email_templates/salary-advance/approval', $data);
@@ -56,6 +55,7 @@ class SalaryAdvanceManagerAjax extends Controller
                     } else {
                         $errors['errors'][0]['message'] = 'The record failed to update';
                         echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
+                        return;
                     }
                 } elseif ($salary_advance['hod_approval'] && ($salary_advance['hr_approval'] === null) && $hr->user_id === $current_user->user_id) {
                     $update_success = $db->where('id_salary_advance', $id_salary_advance)->update('salary_advance', [
@@ -75,6 +75,7 @@ class SalaryAdvanceManagerAjax extends Controller
                     } else {
                         $errors['errors'][0]['message'] = 'The record failed to update';
                         echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
+                        return;
                     }
                 } elseif ($salary_advance['hr_approval'] && ($salary_advance['gm_approval'] === null)  && $gm->user_id === $current_user->user_id) {
                     $update_success = $db->where('id_salary_advance', $id_salary_advance)->update('salary_advance', [
@@ -93,6 +94,7 @@ class SalaryAdvanceManagerAjax extends Controller
                     } else {
                         $errors['errors'][0]['message'] = 'The record failed to update';
                         echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
+                        return;
                     }
                 } elseif ($salary_advance['gm_approval'] && ($salary_advance['fmgr_approval'] === null)  && $fmgr->user_id === $current_user->user_id) {
                     $update_success = $db->where('id_salary_advance', $id_salary_advance)->update('salary_advance', [
@@ -112,6 +114,7 @@ class SalaryAdvanceManagerAjax extends Controller
                     } else {
                         $errors['errors'][0]['message'] = 'The record failed to update';
                         echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
+                        return;
                     }
                 }
                 $updated_record = getSalaryAdvance(['id_salary_advance'=>$id_salary_advance, 'deleted' => false, 'is_bulk_request' => false]);

@@ -206,7 +206,6 @@
                             nullable: true,
                             type: 'boolean',
                             editable: false
-
                         },
                         amount_payable: {
                             type: 'number',
@@ -273,6 +272,9 @@
                         basic_salary: {
                             type: "number",
                             defaultValue: universal.basicSalary,
+                            editable: false
+                        },
+                        finance_officer_comment : {
                             editable: false
                         }
                     }
@@ -407,7 +409,8 @@
                         "class": "title"
                     },
                     format: "{0:c}",
-                    filterable: false
+                    filterable: false,
+                    editor: editNumberWithoutSpinners
                 },
                 {
                     field: 'hod_approval',
@@ -653,7 +656,7 @@
                 $.each(data, function (i, row) {
                     $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance'])
                         .attr('data-request-number', row.request_number)
-                        .find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row.request_number);
+                        .find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row.id_salary_advance);
                 });
                 $(".print-it").printPage();
                 let headingRow = grid.element.find('thead tr[role=row]');
@@ -674,12 +677,7 @@
                 }
             },
             detailInit: function (e) {
-                let grid = $salaryAdvanceGrid.data("kendoGrid");
-                let masterRow = e.detailRow.prev('tr.k-master-row');
-                let dataItem = grid.dataItem(masterRow);
                 let colSize = e.sender.content.find('colgroup col').length;
-                e.detailRow.find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + dataItem["request_number"]);
-                $(".print-it").printPage();
                 e.detailRow.find('.k-hierarchy-cell').hide();
                 e.detailCell.attr('colspan', colSize);
             },
@@ -693,14 +691,12 @@
                 let validator = this.editable.validatable;
                 let amountRequestedLabelField = e.container.find(".k-edit-label:eq(3), .k-edit-field:eq(3)");
                 let amountRequestedNumericTextBox = amountRequestedLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
-                /*
-                                validator._errorTemplate = (function anonymous(data
-                                ) {
-                                    let $kendoOutput;
-                                    $kendoOutput = '<div class="k-widget k-tooltip k-tooltip-validation mt-2"><span class="k-icon k-i-warning"> </span><span class="mr-4">' + (data.message) + '</span><span class="k-callout k-callout-n"></span></div>';
-                                    return $kendoOutput;
-                                });*/
-
+                grid.editable.validatable._errorTemplate = (function anonymous(data
+                ) {
+                    let $kendoOutput;
+                    $kendoOutput = '<div class="k-widget k-tooltip k-tooltip-validation row mt-2"><span class="k-icon k-i-info d-inline col"> </span><span class="col">' + (data.message) + '</span><span class="k-callout k-callout-n"></span></div>';
+                    return $kendoOutput;
+                });
                 // Toggle visibility off for all editor fields and labels
                 e.container.find('.k-edit-label, .k-edit-field').addClass("pt-2").toggle(false);
 
@@ -722,7 +718,7 @@
                     $.each(data, function (i, row) {
                         $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance'])
                             .attr("data-request-number", row.request_number)
-                            .find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row.request_number);
+                            .find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row.id_salary_advance);
                     });
                     $(".print-it").printPage();
                     setTimeout(function () {
@@ -761,18 +757,6 @@
         grid.table.on('click', '.k-grid-add-disabled', function () {
             toastError($(this).attr("data-title"));
         });
-
-        kendo.ui.Grid.fn["currentRow"] = function () {
-            //this will only work if grid is navigatable
-            let cell = this.current();
-            if (cell) {
-                return cell.closest('tr')[0];
-            }
-            //following will only work if grid is selectable, it will get the 1st row only for multiple selection
-            if (this.options.selectable !== false)
-                return this.select()[0];
-            return null;
-        };
 
         grid.bind("dataBound", onDataBound);
     });

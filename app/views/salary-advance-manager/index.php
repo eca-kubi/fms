@@ -65,7 +65,7 @@
 /** @var string $request_number */
 ?>
 <script>
-    let universal = {
+    var universal = {
             requestNumber: "<?php echo $request_number ?>",
             currencySymbol: "<?php echo CURRENCY_GHS; ?>",
             currentDepartment: "<?php echo $current_user->department; ?>",
@@ -86,6 +86,7 @@
         groups = [],
         scrollLeft = 0,
         scrollTop = 0;
+        let selectedRowId;
     $(document).ready(function () {
         URL_ROOT = $('#url_root').val();
         kendo.culture().numberFormat.currency.symbol = 'GH₵';
@@ -373,10 +374,13 @@
                             iconClass: {edit: "k-icon k-i-edit"},
                             className: "badge badge-success btn k-button text-black border k-grid-custom-edit",
                             click: function () {
-                                let id = $(grid.currentRow()).attr("data-id-salary-advance");
+                                let currentRow = grid.currentRow();
+                                let id_salary_advance;
+                                selectedRowId = id_salary_advance = currentRow.attr("data-id-salary-advance");
+                                grid.select(currentRow);
                                 grid.content.lockscroll(true);
                                 grid.dataSource.read().then(function () {
-                                    grid.editRow(grid.table.find("tr[data-id-salary-advance=" + id + "]"));
+                                    grid.editRow(grid.table.find("tr[data-id-salary-advance=" + id_salary_advance + "]"));
                                 });
                             }
                         },
@@ -704,14 +708,15 @@
             detailTemplate: kendo.template($("#detailTemplate").html()),
             dataSource: salaryAdvanceDataSource,
             dataBound: function (e) {
-                let grid = e.sender;
                 let data = grid.dataSource.data();
                 $.each(data, function (i, row) {
                     $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance'])
                         .attr("data-request-number", row.request_number)
-                        .find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row.request_number);
+                        .find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row.id_salary_advance);
                 });
                 $(".print-it").printPage();
+                if (selectedRowId)
+                grid.current(grid.element.find("tr[data-id-salary-advance=" + selectedRowId + "]").find("td[role=gridcell]:first"));
                 let headingRow = grid.element.find('thead tr[role=row]');
                 headingRow.find('th.k-hierarchy-cell').hide();
                 headingRow.find('th.k-hierarchy-cell').next('th').attr('colspan', 2);
@@ -828,12 +833,14 @@
                 e.container.data('kendoWindow').bind('deactivate', function () {
                     let data = grid.dataSource.data();
                     $.each(data, function (i, row) {
-                        $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["request_number"]);
+                        $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance'])
+                            .attr('data-request-number', row.request_number)
+                            .find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["id_salary_advance"]);
                     });
                     $(".print-it").printPage();
                     setTimeout(function () {
                         grid.content.lockscroll(false);
-                    },1)
+                    }, 1)
                 });
 
                 let title = $(e.container).parent().find(".k-window-title");

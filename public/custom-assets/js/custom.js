@@ -1,11 +1,8 @@
 /// <reference path='../../assets/ts/kendo.all.d.ts' />
 /// <reference path='../../assets/typescript/moment.d.ts' />
 let URL_ROOT = '';
-let lists = [];
 let employeeDataSource;
-let currentRowSelected = false;
 let firstLoadDone = false;
-let pageWithRowSelected = -1;
 let expandedRows = [];
 let firstDayOfMonth = moment().startOf('month').format('YYYY-MM-DD');
 let lastDayOfMonth = moment().endOf('month').format('YYYY-MM-DD');
@@ -24,10 +21,6 @@ $(document).ready(function () {
     });
     $('.print-it').printPage();
     $('.content-wrapper').css('margin-top', $('.navbar-fixed').height() + 'px');
-    $('.modal').on('shown.bs.modal', (e) => {
-        let $this = $(e.currentTarget);
-        $this.find('input[type=text]:first').focus();
-    });
     $(window).resize(function () {
         $('.content-wrapper').css('margin-top', $('.navbar-fixed').height() + 'px');
     });
@@ -35,23 +28,20 @@ $(document).ready(function () {
 // fix column width for tables in collapse
     $('.hide-child').removeClass('show').trigger('hidden.bs.collapse');
 
-    kendo.ui.Grid.fn["currentRow"] = function () {
-//this will only work if grid is navigatable
-        let cell = this.current();
-        if (cell) {
-            return cell.closest('tr')[0];
-        }
-//following will only work if grid is selectable, it will get the 1st row only for multiple selection
-        if (this.options.selectable !== false)
-            return this.select()[0];
-        return null;
-    };
-
-    kendo.ui.DropDownList.fn["disableItem"] = function () {
-
-    };
     kDefaultCalendar = $("<input id='kDefaultCalendar' class='k-default-calendar' type='date'>").kendoCalendar();
 });
+
+kendo.ui.Grid.fn["currentRow"] = function () {
+//this will only work if grid is navigatable
+    let cell = this.current();
+    if (cell) {
+        return cell.closest('tr');
+    }
+//following will only work if grid is selectable, it will get the 1st row only for multiple selection
+    if (this.options.selectable !== false)
+        return this.select();
+    return null;
+};
 
 window.addEventListener("load", function () {
     setTimeout(() => {
@@ -417,10 +407,8 @@ function selectGridRow(searchedId, grid, dataSource, idField) {
 // Now go to the page holding the record and select the row
     let currentPageSize = dataSource.pageSize();
     let pageWithRow = pageWithRowSelected = parseInt((rowNum / currentPageSize)) + 1; // pages are one-based
-    if (!currentRowSelected) {
-        currentRowSelected = true;
-        dataSource.page(pageWithRow);
-    }
+    dataSource.page(pageWithRow);
+
     const row = grid.element.find("tr[data-uid='" + modelToSelect.uid + "']");
     if (row.length > 0) {
         grid.select(row);
@@ -461,8 +449,8 @@ function onDetailExpand(e) {
     } else {
         items = [];
     }
-if ($.inArray(item.id_salary_advance, items) < 0)
-    items.push(item.id_salary_advance);
+    if ($.inArray(item.id_salary_advance, items) < 0)
+        items.push(item.id_salary_advance);
     expandedRows['expanded'] = JSON.stringify(items);
 }
 

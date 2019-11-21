@@ -3,4 +3,11 @@
   <component name="JavaScriptSettings">
     <option name="languageLevel" value="ES6" />
   </component>
+  <component name="ProjectPlainTextFileTypeManager">
+    <file url="file://$PROJECT_DIR$/app/controllers/SafetyFlash.php" />
+    <file url="file://$PROJECT_DIR$/app/controllers/SalaryAdvanceSecretary.php" />
+    <file url="file://$PROJECT_DIR$/app/controllers/SalaryAdvanceSecretaryAjax.php" />
+    <file url="file://$PROJECT_DIR$/app/controllers/VisitorAccessForm.php" />
+    <file url="file://$PROJECT_DIR$/app/views/view_change_process.php" />
+  </component>
 </project>

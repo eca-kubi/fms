@@ -218,7 +218,7 @@
                 let models = grid.dataSource.data();
                 for (let i = 0; i < models.length; i++) {
                     let model = models[i];
-                    let row = selectGridRow(model.uid, grid, grid.dataSource, "uid");
+                    let row = grid.table.find("tr[data-uid=" + model.uid + "]");
                     if (model.user_id === null) {
                         e.preventDefault();
                         let cell = row.find("td:eq(1)");

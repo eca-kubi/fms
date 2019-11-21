@@ -2,6 +2,17 @@
 <module type="WEB_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/app/templates/salary-advance-manager" />
+      <excludeFolder url="file://$MODULE_DIR$/app/views/choose_session" />
+      <excludeFolder url="file://$MODULE_DIR$/app/views/includes/safety-flash" />
+      <excludeFolder url="file://$MODULE_DIR$/app/views/modals" />
+      <excludeFolder url="file://$MODULE_DIR$/app/views/notices" />
+      <excludeFolder url="file://$MODULE_DIR$/app/views/safety-flash" />
+      <excludeFolder url="file://$MODULE_DIR$/app/views/salary-advance-finance-officer" />
+      <excludeFolder url="file://$MODULE_DIR$/app/views/salary-advance-secretary" />
+      <excludeFolder url="file://$MODULE_DIR$/app/views/users" />
+      <excludeFolder url="file://$MODULE_DIR$/app/views/visitor-access-form" />
+      <excludeFolder url="file://$MODULE_DIR$/public/assets/safety-flash" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/sirbrillig/phpcs-variable-analysis" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/squizlabs/php_codesniffer" />
     </content>
