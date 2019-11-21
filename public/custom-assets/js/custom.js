@@ -1,5 +1,3 @@
-/// <reference path='../../assets/ts/kendo.all.d.ts' />
-/// <reference path='../../assets/typescript/moment.d.ts' />
 let URL_ROOT = '';
 let firstLoadDone = false;
 let expandedRows = [];
