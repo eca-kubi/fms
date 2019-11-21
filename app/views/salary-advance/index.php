@@ -86,7 +86,7 @@
     let grid = null;
     let $salaryAdvanceGrid;
     let salaryAdvanceDataSource;
-    let $salaryAdvanceTooltip;
+    let gridTooltip;
     $(document).ready(function () {
         URL_ROOT = $('#url_root').val();
         kendo.culture().numberFormat.currency.symbol = 'GH₵';
@@ -148,7 +148,7 @@
                 }
                 $.get(URL_ROOT + "/salary-advance-ajax/has-active-salary-advance", {}, null, "json").done(function (hasActiveSalaryAdvance) {
                     universal.hasActiveApplication = hasActiveSalaryAdvance;
-                    if(hasActiveSalaryAdvance) disableGridAddButton();
+                    if (hasActiveSalaryAdvance) disableGridAddButton();
                 });
             },
             schema: {
@@ -164,7 +164,7 @@
                         },
                         amount_requested: {
                             type: 'number',
-                            validation: Configurations.validations.amountRequested,
+                            validation: Configurations.validations.minMaxAmount,
                             nullable: true,
                             editable: true
                         },
@@ -690,13 +690,13 @@
                 let validator = this.editable.validatable;
                 let amountRequestedLabelField = e.container.find(".k-edit-label:eq(3), .k-edit-field:eq(3)");
                 let amountRequestedNumericTextBox = amountRequestedLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
-/*
-                validator._errorTemplate = (function anonymous(data
-                ) {
-                    let $kendoOutput;
-                    $kendoOutput = '<div class="k-widget k-tooltip k-tooltip-validation mt-2"><span class="k-icon k-i-warning"> </span><span class="mr-4">' + (data.message) + '</span><span class="k-callout k-callout-n"></span></div>';
-                    return $kendoOutput;
-                });*/
+                /*
+                                validator._errorTemplate = (function anonymous(data
+                                ) {
+                                    let $kendoOutput;
+                                    $kendoOutput = '<div class="k-widget k-tooltip k-tooltip-validation mt-2"><span class="k-icon k-i-warning"> </span><span class="mr-4">' + (data.message) + '</span><span class="k-callout k-callout-n"></span></div>';
+                                    return $kendoOutput;
+                                });*/
 
                 // Toggle visibility off for all editor fields and labels
                 e.container.find('.k-edit-label, .k-edit-field').addClass("pt-2").toggle(false);
@@ -734,7 +734,7 @@
         }).getKendoGrid();
 
         kGridAddButton = $('.k-grid-add');
-        $salaryAdvanceTooltip = $salaryAdvanceGrid.kendoTooltip({
+        gridTooltip = grid.table.kendoTooltip({
             filter: "td.comment", //this filter selects the second column's cells
             position: "top",
             content: function (e) {
@@ -746,13 +746,13 @@
             }
         }).data("kendoTooltip");
 
-        $salaryAdvanceGrid.on("click", ".action-delete", function () {
+        grid.table.on("click", ".action-delete", function () {
             let row = $(this).closest("tr");
-            $salaryAdvanceGrid.data("kendoGrid").removeRow(row);
+            grid.removeRow(row);
         });
 
 
-        $salaryAdvanceGrid.on('click', '.k-grid-add-disabled', function () {
+        grid.table.on('click', '.k-grid-add-disabled', function () {
             toastError($(this).attr("data-title"));
         });
 
@@ -768,14 +768,8 @@
             return null;
         };
 
-        $salaryAdvanceGrid.data("kendoGrid").bind("dataBound", onDataBound);
+        grid.bind("dataBound", onDataBound);
     });
-
-    toggleAmountRequested = function () {
-        if (this.id === 'percentageRadio') {
-
-        }
-    };
 
     function disableGridAddButton() {
         let errorMessage = moment() > moment(30, "DD") ? "Applications cannot be accepted after 10 days into the month! <br> <span>Please try again next month.</span>" : "You have an active salary advance request for this month!";

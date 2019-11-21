@@ -1,8 +1,5 @@
 /// <reference path='../../assets/ts/kendo.all.d.ts' />
 /// <reference path='../../assets/typescript/moment.d.ts' />
-
-//let moment_format = 'DD/MM/YYYY';
-
 let URL_ROOT = '';
 let lists = [];
 let employeeDataSource;
@@ -13,7 +10,6 @@ let expandedRows = [];
 let firstDayOfMonth = moment().startOf('month').format('YYYY-MM-DD');
 let lastDayOfMonth = moment().endOf('month').format('YYYY-MM-DD');
 let kDefaultCalendar;
-let saveActiveApplicants = true;
 let activeApplicants = [];
 $(document).ready(function () {
     jQuery.fx.off = true;
@@ -36,16 +32,16 @@ $(document).ready(function () {
         $('.content-wrapper').css('margin-top', $('.navbar-fixed').height() + 'px');
     });
 
-    // fix column width for tables in collapse
+// fix column width for tables in collapse
     $('.hide-child').removeClass('show').trigger('hidden.bs.collapse');
 
     kendo.ui.Grid.fn["currentRow"] = function () {
-        //this will only work if grid is navigatable
+//this will only work if grid is navigatable
         let cell = this.current();
         if (cell) {
             return cell.closest('tr')[0];
         }
-        //following will only work if grid is selectable, it will get the 1st row only for multiple selection
+//following will only work if grid is selectable, it will get the 1st row only for multiple selection
         if (this.options.selectable !== false)
             return this.select()[0];
         return null;
@@ -97,7 +93,6 @@ function dropDownEditor(container, options) {
                 }
             },
             open: function (e) {
-                let model = grid.dataSource.getByUid(grid_uid);
                 this.options.disableItems(e.sender);
             },
             change: function (e) {
@@ -160,14 +155,14 @@ function approvalEditor(container, options) {
             groupName: options.field,
             orientation: "horizontal",
             change: function (e) {
-                let dataItem = grid.dataItem(row);
+                let dataItem = grid.dataItem(grid.element.find(`tr[data-uid=${window.grid_uid}]`));
                 let value = e.dataItem.id === true;
                 dataItem.set(options.field, value);
                 e.sender.element.data("kendoTooltip").hide();
             },
         }).data("kendoExtRadioButtonGroup");
     $(`#approvalRadioButtonGroup_${options.field}`).kendoTooltip({
-        content: "<span><i class='k-icon k-i-warning'></i> This field is required! </span>",
+        content: "<span><i class='k-icon k-i-info'></i> This field is required! </span>",
         showOn: "",
         animation: {
             open: {
@@ -199,9 +194,9 @@ function approvalEditor(container, options) {
 
 toastError = function f(message) {
     $.toast({
-        // heading: '<u>Information</u>',
+// heading: '<u>Information</u>',
         text: `<b class="text-bold row"><i class="fa fa-warning text-warning m-2"></i> <span class="text-danger">${message}</span></b>`,
-        //icon: 'warning',
+//icon: 'warning',
         loader: false,        // Change it to false to disable loader
         loaderBg: '#9EC600',  // To change the background
         position: 'top-center',
@@ -215,9 +210,9 @@ toastError = function f(message) {
 
 toastSuccess = function f(message, timeout = false) {
     $.toast({
-        // heading: '<u>Information</u>',
+// heading: '<u>Information</u>',
         text: `<b class="text-bold text-danger"><i class="fa fa-check text-success"></i> <span class="text-success">${message}</span></b>`,
-        //icon: 'warning',
+//icon: 'warning',
         loader: false,        // Change it to false to disable loader
         loaderBg: '#9EC600',  // To change the background
         position: 'top-center',
@@ -245,45 +240,45 @@ function departmentFilter(element) {
 }
 
 /*function kendoFastReDrawRow(grid, row, dItem) {
-    let dataItem = dItem ? dItem : grid.dataItem(row);
+let dataItem = dItem ? dItem : grid.dataItem(row);
 
-    let rowChildren = $(row).children('td[role="gridcell"]');
+let rowChildren = $(row).children('td[role="gridcell"]');
 
-    for (let i = 0; i < grid.columns.length; i++) {
+for (let i = 0; i < grid.columns.length; i++) {
 
-        let column = grid.columns[i];
-        let template = column.template;
-        let cell = rowChildren.eq(i);
+let column = grid.columns[i];
+let template = column.template;
+let cell = rowChildren.eq(i);
 
-        if (template !== undefined) {
-            let kendoTemplate = kendo.template(template);
+if (template !== undefined) {
+let kendoTemplate = kendo.template(template);
 
-            // Render using template
-            cell.html(kendoTemplate(dataItem));
-        } else {
-            let fieldValue = dataItem[column.field];
+// Render using template
+cell.html(kendoTemplate(dataItem));
+} else {
+let fieldValue = dataItem[column.field];
 
-            let format = column.format;
-            let values = column.values;
+let format = column.format;
+let values = column.values;
 
-            if (values !== undefined && values != null) {
-                // use the text value mappings (for enums)
-                for (let j = 0; j < values.length; j++) {
-                    let value = values[j];
-                    if (value.value === fieldValue) {
-                        cell.html(value.text);
-                        break;
-                    }
-                }
-            } else if (format !== undefined) {
-                // use the format
-                cell.html(kendo.format(format, fieldValue));
-            } else {
-                // Just dump the plain old value
-                cell.html(fieldValue);
-            }
-        }
-    }
+if (values !== undefined && values != null) {
+// use the text value mappings (for enums)
+for (let j = 0; j < values.length; j++) {
+let value = values[j];
+if (value.value === fieldValue) {
+cell.html(value.text);
+break;
+}
+}
+} else if (format !== undefined) {
+// use the format
+cell.html(kendo.format(format, fieldValue));
+} else {
+// Just dump the plain old value
+cell.html(fieldValue);
+}
+}
+}
 }*/
 
 function filterDate(startDate, endDate, field) {
@@ -309,12 +304,12 @@ function filterString(value, field) {
 }
 
 /*let triggerDateFilterEvent = function (filter, field) {
-    let grid = $salaryAdvanceGrid.data("kendoGrid");
-    let filterEvent = $.Event('filter');
-    filterEvent.field = field;
-    filterEvent.filter = filter;
-    filterEvent.sender = grid;
-    grid.trigger('filter', filterEvent);
+let grid = $salaryAdvanceGrid.data("kendoGrid");
+let filterEvent = $.Event('filter');
+filterEvent.field = field;
+filterEvent.filter = filter;
+filterEvent.sender = grid;
+grid.trigger('filter', filterEvent);
 };*/
 
 function dateRangeFilter(args) {
@@ -360,7 +355,7 @@ function dateRangeFilter(args) {
         $(this).addClass("d-none");
     });
 
-    let kStartDate = $(".start-date", filterCell).kendoDatePicker({
+    $(".start-date", filterCell).kendoDatePicker({
         change: function (e) {
             let startDate = e.sender.value(),
                 endDate = $("input.end-date", filterCell).data("kendoDatePicker").value();
@@ -377,7 +372,7 @@ function dateRangeFilter(args) {
         dateInput: true
     });
 
-    let kEndDate = $(".end-date", filterCell).kendoDatePicker({
+    $(".end-date", filterCell).kendoDatePicker({
         change: function (e) {
             let startDate = $("input.start-date", filterCell).data("kendoDatePicker").value(),
                 endDate = e.sender.value();
@@ -399,14 +394,14 @@ function selectGridRow(searchedId, grid, dataSource, idField) {
     let filters = dataSource.filter() || {};
     let sort = dataSource.sort() || {};
     let models = dataSource.data();
-    // We are using a Query object to get a sorted and filtered representation of the data, without paging applied, so we can search for the row on all pages
+// We are using a Query object to get a sorted and filtered representation of the data, without paging applied, so we can search for the row on all pages
     let query = new kendo.data.Query(models);
     let rowNum = 0;
     let modelToSelect = null;
 
     models = query.filter(filters).sort(sort).data;
     if (models.length <= 0) return;
-    // Now that we have an accurate representation of data, let's get the item position
+// Now that we have an accurate representation of data, let's get the item position
     for (let i = 0; i < models.length; ++i) {
         const model = models[i];
         if (model[idField] === searchedId) {
@@ -416,10 +411,10 @@ function selectGridRow(searchedId, grid, dataSource, idField) {
         }
     }
     if (!modelToSelect) return; // The row was not found in the current table model
-    // If you have persistSelection = true and want to clear all existing selections first, uncomment the next line
-    // grid._selectedIds = {};
+// If you have persistSelection = true and want to clear all existing selections first, uncomment the next line
+// grid._selectedIds = {};
 
-    // Now go to the page holding the record and select the row
+// Now go to the page holding the record and select the row
     let currentPageSize = dataSource.pageSize();
     let pageWithRow = pageWithRowSelected = parseInt((rowNum / currentPageSize)) + 1; // pages are one-based
     if (!currentRowSelected) {
@@ -430,8 +425,8 @@ function selectGridRow(searchedId, grid, dataSource, idField) {
     if (row.length > 0) {
         grid.select(row);
 
-        // Scroll to the item to ensure it is visible
-        grid.content.scrollTop(grid.select().position().top);
+// Scroll to the item to ensure it is visible
+        //grid.content.scrollTop(grid.select().position().top);
     }
     return row;
 }
@@ -443,12 +438,12 @@ function onDataBound() {
     if (items) {
         items = JSON.parse(items);
         items.forEach(function (x) {
-            const item = grid.dataSource.view().find(function (y) {
+            const item = grid.dataSource.data().find(function (y) {
                 return y.request_number === x;
             });
 
             if (item) {
-                const row = $('#' + grid.element.attr('id') + ' tr[data-uid="' + item.uid + '"]');
+                const row = $('#' + grid.element.attr('id') + ' tr[data-request-number="' + item.request_number + '"]');
                 grid.expandRow(row);
             }
         })
@@ -466,7 +461,7 @@ function onDetailExpand(e) {
     } else {
         items = [];
     }
-
+if ($.inArray(item.request_number, items) < 0)
     items.push(item.request_number);
     expandedRows['expanded'] = JSON.stringify(items);
 }
@@ -509,7 +504,7 @@ function refreshGrid() {
 }
 
 function purgeBulkApplicants() {
-    // determine names not in the model and remove them from the list of bulk applicants
+// determine names not in the model and remove them from the list of bulk applicants
     let data = grid.dataSource.data();
     for (let i = 0; i < bulkApplicants.length; i++) {
         let found = false;
@@ -529,18 +524,19 @@ function purgeBulkApplicants() {
 
 let Configurations = {
     validations: {
-        amountRequested: {
+        minMaxAmount: {
             required: function (input) {
-                if (input.attr("name") === "amount_requested") {
+                if ($.inArray(input.attr("name"), Configurations.validations.minMaxAmountInputs) > -1) {
                     input.attr("data-required-msg", "Enter an amount.");
                     return input.val() !== "";
-                } else {
+                } else if (input.is("[name]")) {
                     input.attr("data-required-msg", "This field is required!");
+                    return input.val() !== "";
                 }
                 return true;
             },
             min: function (input) {
-                if (input.attr("name") === "amount_requested") {
+                if ($.inArray(input.attr("name"), Configurations.validations.minMaxAmountInputs) > -1) {
                     let grid = $salaryAdvanceGrid.getKendoGrid();
                     let model = grid.dataSource.getByUid(grid_uid);
                     input.attr("data-min-msg", "Amount must be more than 10% of salary.");
@@ -549,7 +545,7 @@ let Configurations = {
                 return true;
             },
             max: function (input) {
-                if (input.attr("name") === "amount_requested") {
+                if ($.inArray(input.attr("name"), Configurations.validations.minMaxAmountInputs) > -1) {
                     let grid = $salaryAdvanceGrid.getKendoGrid();
                     let model = grid.dataSource.getByUid(grid_uid);
                     input.attr("data-max-msg", "Amount must not exceed 30% of salary.");
@@ -557,6 +553,23 @@ let Configurations = {
                 }
                 return true;
             }
-        }
+        },
+        minMaxAmountInputs: ["amount_requested", "amount_approved", "amount_payable"]
     }
 };
+
+function rowGroupKey(row, grid) {
+    let next = row.nextUntil("[data-uid]").next(),
+        item = grid.dataItem(next.length ? next : row.next()),
+        groupIdx = row.children(".k-group-cell").length,
+        groups = grid.dataSource.group(),
+        field = grid.dataSource.group()[groupIdx].field,
+        groupValue = item[field];
+    return "" + groupIdx + groupValue;
+}
+
+function findFromDataSource(field, value) {
+    return grid.dataSource.data().find(function (y) {
+        return y[field] === value;
+    });
+}

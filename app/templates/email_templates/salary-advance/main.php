@@ -21,7 +21,7 @@ echo <<<html
 <table align="center" cellpadding="10" cellspacing="0" width="600" style="border-collapse: collapse;">
     <tr bgcolor="#70bbd9" style="padding: 30px 30px 30px 30px;">
         <td style="color: #153643; font-family: Arial, sans-serif; font-size: 24px; font-weight: bold; border-bottom: #f8f8f8 2px solid;">
-            <b>New Salary Advance Application #$ref_number</b>
+            <b>Salary Advance Application #$ref_number</b>
         </td>
     </tr>
     <tr bgcolor="#70bbd9" style="padding: 30px 30px 30px 30px;">

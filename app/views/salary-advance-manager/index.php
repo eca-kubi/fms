@@ -66,20 +66,26 @@
 ?>
 <script>
     let universal = {
-        requestNumber: "<?php echo $request_number ?>",
-        currencySymbol: "<?php echo CURRENCY_GHS; ?>",
-        currentDepartment: "<?php echo $current_user->department; ?>",
-        currentDepartmentID: <?php echo $current_user->department_id; ?>,
-        isFinanceOfficer: Boolean("<?php echo isFinanceOfficer($current_user->user_id); ?>"),
-        isHr: Boolean("<?php echo isCurrentHR($current_user->user_id) ?>"),
-        isFmgr: Boolean("<?php echo isCurrentFmgr($current_user->user_id) ?>"),
-        isGM: Boolean("<?php echo isCurrentGM($current_user->user_id) ?>"),
-        isManager: Boolean("<?php echo isCurrentManager($current_user->user_id) ?>"),
-        isSecretary: Boolean("<?php echo isSecretary($current_user->user_id); ?>")
-    };
-    let grid = null;
-    let $salaryAdvanceGrid;
-    let salaryAdvanceDataSource;
+            requestNumber: "<?php echo $request_number ?>",
+            currencySymbol: "<?php echo CURRENCY_GHS; ?>",
+            currentDepartment: "<?php echo $current_user->department; ?>",
+            currentDepartmentID: <?php echo $current_user->department_id; ?>,
+            isFinanceOfficer: Boolean("<?php echo isFinanceOfficer($current_user->user_id); ?>"),
+            isHr: Boolean("<?php echo isCurrentHR($current_user->user_id) ?>"),
+            isFmgr: Boolean("<?php echo isCurrentFmgr($current_user->user_id) ?>"),
+            isGM: Boolean("<?php echo isCurrentGM($current_user->user_id) ?>"),
+            isManager: Boolean("<?php echo isCurrentManager($current_user->user_id) ?>"),
+            isSecretary: Boolean("<?php echo isSecretary($current_user->user_id); ?>")
+        },
+        grid = null,
+        $salaryAdvanceGrid = null,
+        salaryAdvanceDataSource,
+        MIN_PERCENTAGE = <?php echo MIN_PERCENTAGE ?>,
+        MAX_PERCENTAGE = <?php echo MAX_PERCENTAGE ?>,
+        collapsed = {},
+        groups = [],
+        scrollLeft = 0,
+        scrollTop = 0;
     $(document).ready(function () {
         URL_ROOT = $('#url_root').val();
         kendo.culture().numberFormat.currency.symbol = 'GH₵';
@@ -124,8 +130,8 @@
                 }
             },
             error: function (e) {
-                salaryAdvanceDataSource.cancelChanges();
-                salaryAdvanceDataSource.read();
+                grid.dataSource.cancelChanges();
+                grid.dataSource.read();
                 if (e.status === "parsererror") {
                     toastError("Some required assets on this page failed to load");
                     return;
@@ -135,6 +141,22 @@
             requestEnd: function (e) {
                 if (e.type === 'update' && e.response.length > 0 || e.type === 'create' && e.response.length > 0) {
                     toastSuccess('Success', 5000);
+                }
+                if (groups.length !== this.group().length) {
+                    let dataSourceGroups = this.group(),
+                        length = groups.length;
+                    if (length > dataSourceGroups.length) {
+                        if (dataSourceGroups.length === 0) {
+                            collapsed = {};
+                        } else {
+                            for (let key in collapsed) {
+                                if (key.indexOf(length - 1) === 0) {
+                                    collapsed[key] = false;
+                                }
+                            }
+                        }
+                    }
+                    groups = this.group().slice(0);
                 }
             },
             schema: {
@@ -202,19 +224,12 @@
                         amount_payable: {
                             type: 'number',
                             nullable: true,
-                            validation: {
-                                required: true,
-                                min: '0'
-                            },
+                            validation: Configurations.validations.minMaxAmount,
                             editable: false
                         },
                         amount_approved: {
                             nullable: true,
                             type: 'number',
-                            validation: {
-                                required: true,
-                                min: '0'
-                            },
                             editable: false
                         },
                         received_by: {
@@ -341,7 +356,7 @@
             groupable: true,
             height: 520,
             resizable: true,
-            scrollable: true,
+            //scrollable: true,
             persistSelection: true,
             pageable: {
                 alwaysVisible: false,
@@ -359,6 +374,7 @@
                             className: "badge badge-success btn k-button text-black border k-grid-custom-edit",
                             click: function () {
                                 let id = $(grid.currentRow()).attr("data-id-salary-advance");
+                                grid.content.lockscroll(true);
                                 grid.dataSource.read().then(function () {
                                     grid.editRow(grid.table.find("tr[data-id-salary-advance=" + id + "]"));
                                 });
@@ -411,7 +427,7 @@
                 },
                 {
                     field: 'amount_requested',
-                    title: 'Amount in Figures',
+                    title: 'Amount Requested',
                     width: 180,
                     headerAttributes: {
                         "class": "title"
@@ -515,7 +531,8 @@
                     aggregates: ["max", "min"],
                     width: 200,
                     filterable: false,
-                    nullable: true
+                    nullable: true,
+                    editor: editNumberWithoutSpinners
                 },
                 {
                     field: 'hr_approval_date',
@@ -710,6 +727,17 @@
                     if (universal.requestNumber)
                         filterString(universal.requestNumber, 'request_number');
                 }
+
+                let groups = grid.dataSource.group();
+                if (groups.length) {
+                    grid.tbody.children(".k-grouping-row").each(function () {
+                        let row = $(this),
+                            groupKey = rowGroupKey(row, grid);
+                        if (collapsed[groupKey]) {
+                            grid.collapseRow(row);
+                        }
+                    });
+                }
             },
             detailInit: function (e) {
                 let colSize = e.sender.content.find('colgroup col').length;
@@ -720,12 +748,13 @@
             detailCollapse: onDetailCollapse,
             beforeEdit: function (e) {
                 window.grid_uid = e.model.uid; // uid of current editing row
+                grid.content.lockscroll(true);
                 e.model.fields.amount_requested.editable = false;
                 e.model.fields.hod_comment.editable = e.model.fields.hod_approval.editable = e.model.hod_approval === null && (e.model.department_id === universal.currentDepartmentID);
-                e.model.fields.amount_payable.editable = e.model.fields.hr_comment.editable = e.model.fields.hr_approval.editable = (universal.isHr && e.model.hr_approval === null) && e.model.hod_approval !== null;
-                e.model.fields.gm_approval.editable = e.model.fields.gm_comment.editable = (universal.isGM && e.model.gm_approval === null) && e.model.hr_approval !== null;
-                e.model.fields.amount_approved.editable = e.model.fields.fmgr_comment.editable = e.model.fields.fmgr_approval.editable = (universal.isFmgr && e.model.fmgr_approval === null) && e.model.gm_approval !== null;
-                e.model.fields.received_by.editable = e.model.fields.amount_received.editable = e.model.fmgr_approval;
+                e.model.fields.amount_payable.editable = e.model.fields.hr_comment.editable = e.model.fields.hr_approval.editable = universal.isHr && (e.model.hr_approval === null) && e.model.hod_approval === true;
+                e.model.fields.gm_approval.editable = e.model.fields.gm_comment.editable = universal.isGM && (e.model.gm_approval === null) && e.model.hr_approval === true;
+                e.model.fields.amount_approved.editable = e.model.fields.fmgr_comment.editable = e.model.fields.fmgr_approval.editable = universal.isFmgr && (e.model.fmgr_approval === null) && e.model.gm_approval === true;
+                e.model.fields.received_by.editable = e.model.fields.amount_received.editable = e.model.fmgr_approval === true;
             },
             edit: function (e) {
                 let nameLabelField = e.container.find('.k-edit-label:eq(1), .k-edit-field:eq(1)');
@@ -747,6 +776,10 @@
 
                 e.container.find('.k-edit-label, .k-edit-field').addClass("pt-2").toggle(false);
 
+                e.container.on("keypress", ".k-input", function (e) {
+                    if (e.which === 13)
+                        $(this).blur().next("input").focus();
+                });
                 nameLabelField.toggle();
                 departmentLabelField.toggle();
                 amountRequestedLabelField.toggle();
@@ -754,8 +787,13 @@
                 hrApprovalLabelField.toggle();
                 gmApprovalLabelField.toggle();
                 fmgrApprovalLabelField.toggle();
-
-                amountPayableLabelField.toggle(Boolean(e.model.hr_approval));
+                grid.editable.validatable._errorTemplate = (function anonymous(data
+                ) {
+                    let $kendoOutput;
+                    $kendoOutput = '<div class="k-widget k-tooltip k-tooltip-validation row mt-2"><span class="k-icon k-i-info d-inline col"> </span><span class="col">' + (data.message) + '</span><span class="k-callout k-callout-n"></span></div>';
+                    return $kendoOutput;
+                });
+                amountPayableLabelField.toggle(e.model.fields.hr_approval.editable);
                 amountApprovedLabelField.toggle(Boolean(e.model.fmgr_approval));
                 hodCommentLabelField.toggle(e.model.fields.hod_approval.editable || e.model.hod_comment !== null);
                 hrCommentLabelField.toggle(e.model.fields.hr_approval.editable || e.model.hr_comment !== null);
@@ -794,6 +832,7 @@
                         $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["request_number"]);
                     });
                     $(".print-it").printPage();
+                    grid.content.lockscroll(false);
                 });
 
                 let title = $(e.container).parent().find(".k-window-title");
@@ -805,7 +844,14 @@
             }
         }).getKendoGrid();
 
-        $salaryAdvanceTooltip = $salaryAdvanceGrid.kendoTooltip({
+        // persist collapsed state of grouped records
+        grid.table.on("click", ".k-grouping-row .k-i-collapse, .k-grouping-row .k-i-expand", function () {
+            let row = $(this).closest("tr"),
+                groupKey = rowGroupKey(row, grid);
+
+            collapsed[groupKey] = !$(this).hasClass("k-i-collapse");
+        });
+        gridTooltip = grid.table.kendoTooltip({
             filter: "td.comment",
             position: "top",
             content: function (e) {
@@ -815,10 +861,8 @@
                 return text;
             }
         }).data("kendoTooltip");
-
-        $salaryAdvanceGrid.data("kendoGrid").bind("dataBound", onDataBound);
+        grid.bind("dataBound", onDataBound);
     });
-
 </script>
 </body>
 </html>

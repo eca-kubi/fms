@@ -39,6 +39,7 @@
     });
 </script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/jquery-toast.min.js"></script>
+<script src="<?php echo URL_ROOT; ?>/public/assets/js/jquery.lockscroll.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/bootstrap.min.js"></script>
 <script src="<?php echo URL_ROOT ?>/public/assets/js/shards.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/adminlte.min.js"></script>
@@ -49,6 +50,5 @@
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/jszip.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/kendo/kendo.all.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/kendo/kendo.web.plugins.radiobuttongroup.js"></script>
-<script src="<?php echo URL_ROOT; ?>/public/assets/nicescroll/jquery.nicescroll.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/jQuery-printPage/jquery.printPage.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/custom-assets/js/custom.js"></script>

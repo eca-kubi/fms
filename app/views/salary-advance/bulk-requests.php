@@ -156,7 +156,7 @@
                             editable: false,
                             nullable: true,
                             type: "number",
-                            validation: Configurations.validations.amountRequested
+                            validation: Configurations.validations.minMaxAmount
                         },
                         basic_salary: {editable: false, type: "number"},
                         request_number: {nullable: true, type: "string", editable: false},
