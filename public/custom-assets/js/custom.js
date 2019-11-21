@@ -439,11 +439,11 @@ function onDataBound() {
         items = JSON.parse(items);
         items.forEach(function (x) {
             const item = grid.dataSource.data().find(function (y) {
-                return y.request_number === x;
+                return y.id_salary_advance === x;
             });
 
             if (item) {
-                const row = $('#' + grid.element.attr('id') + ' tr[data-request-number="' + item.request_number + '"]');
+                const row = $('#' + grid.element.attr('id') + ' tr[data-id-salary-advance="' + item.id_salary_advance + '"]');
                 grid.expandRow(row);
             }
         })
@@ -461,8 +461,8 @@ function onDetailExpand(e) {
     } else {
         items = [];
     }
-if ($.inArray(item.request_number, items) < 0)
-    items.push(item.request_number);
+if ($.inArray(item.id_salary_advance, items) < 0)
+    items.push(item.id_salary_advance);
     expandedRows['expanded'] = JSON.stringify(items);
 }
 
@@ -471,7 +471,7 @@ function onDetailCollapse(e) {
     let items = JSON.parse(expandedRows['expanded']);
 
     items = items.filter(function (x) {
-        return x !== item.request_number;
+        return x !== item.id_salary_advance;
     });
 
     expandedRows['expanded'] = JSON.stringify(items);
@@ -487,20 +487,6 @@ function editNumberWithoutSpinners(container, options) {
             spinners: false,
             min: 0
         });
-}
-
-function refreshGrid() {
-    let grid = $salaryAdvanceGrid.data("kendoGrid");
-    let expanded = $.map(grid.tbody.children(":has(> .k-hierarchy-cell .k-i-collapse)"), function (row) {
-        return $(row).data("uid");
-    });
-
-    grid.one("dataBound", function () {
-        grid.expandRow(grid.tbody.children().filter(function (idx, row) {
-            return $.inArray($(row).data("uid"), expanded) >= 0;
-        }));
-    });
-    grid.refresh();
 }
 
 function purgeBulkApplicants() {

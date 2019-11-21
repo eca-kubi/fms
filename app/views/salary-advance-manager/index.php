@@ -748,7 +748,6 @@
             detailCollapse: onDetailCollapse,
             beforeEdit: function (e) {
                 window.grid_uid = e.model.uid; // uid of current editing row
-                grid.content.lockscroll(true);
                 e.model.fields.amount_requested.editable = false;
                 e.model.fields.hod_comment.editable = e.model.fields.hod_approval.editable = e.model.hod_approval === null && (e.model.department_id === universal.currentDepartmentID);
                 e.model.fields.amount_payable.editable = e.model.fields.hr_comment.editable = e.model.fields.hr_approval.editable = universal.isHr && (e.model.hr_approval === null) && e.model.hod_approval === true;
@@ -827,12 +826,14 @@
                 });
 
                 e.container.data('kendoWindow').bind('deactivate', function () {
-                    let data = $salaryAdvanceGrid.getKendoGrid().dataSource.data();
+                    let data = grid.dataSource.data();
                     $.each(data, function (i, row) {
                         $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["request_number"]);
                     });
                     $(".print-it").printPage();
-                    grid.content.lockscroll(false);
+                    setTimeout(function () {
+                        grid.content.lockscroll(false);
+                    },1)
                 });
 
                 let title = $(e.container).parent().find(".k-window-title");

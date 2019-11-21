@@ -351,6 +351,7 @@
                         className: "badge badge-success btn k-button text-black border k-grid-custom-edit",
                         click: function (e) {
                             let id = $(grid.currentRow()).attr("data-id-salary-advance");
+                            grid.content.lockscroll(true);
                             grid.dataSource.read().then(function () {
                                 grid.editRow(grid.table.find("tr[data-id-salary-advance=" + id + "]"));
                             });
@@ -650,7 +651,9 @@
                 let dataSource = this.dataSource;
                 let data = grid.dataSource.data();
                 $.each(data, function (i, row) {
-                    $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance']).find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row.request_number);
+                    $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance'])
+                        .attr('data-request-number', row.request_number)
+                        .find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row.request_number);
                 });
                 $(".print-it").printPage();
                 let headingRow = grid.element.find('thead tr[role=row]');
@@ -722,6 +725,9 @@
                             .find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row.request_number);
                     });
                     $(".print-it").printPage();
+                    setTimeout(function () {
+                        grid.content.lockscroll(false);
+                    }, 1);
                 });
 
                 let title = $(e.container).parent().find(".k-window-title");
