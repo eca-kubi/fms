@@ -160,24 +160,20 @@
             }
         });
         grid = $salaryAdvanceGrid.kendoGrid($.extend({}, Configurations.grid.options, {dataSource: dataSource},{
-            toolbar: kendo.template($('#toolbarTemplate_Bulk_Requests').html()),
-            excel: {
-                fileName: "Salary Advance Export.xlsx",
-                filterable: true
-            },
+            groupable: true,
             excelExport: function (e) {
                 let sheet = e.workbook.sheets[0];
                 sheet.columns[0].autoWidth = false;
                 for (let rowIndex = 1; rowIndex < sheet.rows.length; rowIndex++) {
                     let row = sheet.rows[rowIndex];
                     let dataItem = {
-                        hod_approval: row.cells[6].value,
-                        hr_approval: row.cells[9].value,
-                        fmgr_approval: row.cells[13].value,
+                        hod_approval: row.cells[5].value,
+                        hr_approval: row.cells[8].value,
+                        fmgr_approval: row.cells[12].value,
                     };
-                    row.cells[6].value = dataItem.hod_approval == null ? 'Pending' : (dataItem.hod_approval ? 'Approved' : 'Rejected');
-                    row.cells[9].value = dataItem.hr_approval == null ? 'Pending' : (dataItem.hr_approval ? 'Approved' : 'Rejected');
-                    row.cells[13].value = dataItem.fmgr_approval == null ? 'Pending' : (dataItem.fmgr_approval ? 'Approved' : 'Rejected');
+                    row.cells[5].value = dataItem.hod_approval == null ? 'Pending' : (dataItem.hod_approval ? 'Approved' : 'Rejected');
+                    row.cells[8].value = dataItem.hr_approval == null ? 'Pending' : (dataItem.hr_approval ? 'Approved' : 'Rejected');
+                    row.cells[12].value = dataItem.fmgr_approval == null ? 'Pending' : (dataItem.fmgr_approval ? 'Approved' : 'Rejected');
 
                     // alternating row colors
                     if (rowIndex % 2 === 0) {

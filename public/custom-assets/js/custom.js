@@ -411,6 +411,10 @@ function selectGridRow(searchedId, grid, dataSource, idField) {
     return row;
 }
 
+function onChange() {
+    grid.expandRow(grid.select())
+}
+
 function onDataBound() {
     let data = grid.dataSource.data();
     $.each(data, function (i, row) {
@@ -690,11 +694,13 @@ let Configurations = {
                 buttonCount: 5
             },
             detailTemplate: kendo.template($("#detailTemplate").html()),
+            toolbar: [{name: "excel", template: $("#exportToExcel").html()}],
             edit: onEdit,
             dataBound: onDataBound,
             detailInit: onDetailInit,
             detailExpand: onDetailExpand,
             detailCollapse: onDetailCollapse,
+            change: onChange,
             columns: [
                 {
                     command: [

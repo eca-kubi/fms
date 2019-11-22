@@ -60,22 +60,22 @@
             pageSize: 20,
             transport: {
                 read: {
-                    url: URL_ROOT + "/salary-advance-manager-ajax/",
+                    url: URL_ROOT + "/salary-advance-single-requests-ajax/",
                     type: "post",
                     dataType: "json"
                 },
                 update: {
-                    url: URL_ROOT + "/salary-advance-manager-ajax/update/",
+                    url: URL_ROOT + "/salary-advance-single-requests-ajax/update/",
                     type: 'post',
                     dataType: 'json'
                 },
                 destroy: {
-                    url: URL_ROOT + "/salary-advance-manager-ajax/destroy/",
+                    url: URL_ROOT + "/salary-advance-single-requests-ajax/destroy/",
                     type: 'post',
                     dataType: 'json'
                 },
                 create: {
-                    url: URL_ROOT + "/salary-advance-manager-ajax/create",
+                    url: URL_ROOT + "/salary-advance-single-requests-ajax/create",
                     type: 'post',
                     dataType: 'json'
                 },

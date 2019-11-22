@@ -277,7 +277,7 @@
                         <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownId"
                             style="position:absolute">
                             <li><a class="dropdown-item"
-                                   href="<?php echo site_url('salary-advance-manager') ?>">Single Requests</a>
+                                   href="<?php echo site_url('salary-advance/single-requests') ?>">Single Requests</a>
                             </li>
                             <li class="dropdown-divider"></li>
                             <li><a class="dropdown-item"

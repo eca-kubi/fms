@@ -12,13 +12,11 @@ class SalaryAdvanceBulkRequestsAjax extends Controller
         $is_fmgr = isCurrentFmgr($current_user->user_id);
         $is_hod = isCurrentManager($current_user->user_id);
         $bulk_requests = [];
-        try {
-            if ($is_hod || $is_secretary) {
-                $bulk_requests = getSalaryAdvance(['u.department_id' => $current_user->department_id, 'sa.is_bulk_request' => true, 'deleted' => false]);
-            } else if ($is_finance_officer || $is_hr || $is_gm || $is_fmgr) {
-                $bulk_requests = getSalaryAdvance(['sa.is_bulk_request' => true, 'deleted' => false]);
-            }
-        } catch (Exception $e) {
+        if ($is_hod || $is_secretary) {
+            $bulk_requests = getSalaryAdvance(['u.department_id' => $current_user->department_id, 'sa.is_bulk_request' => true, 'deleted' => false]);
+        }
+        if ($is_finance_officer || $is_hr || $is_gm || $is_fmgr) {
+            $bulk_requests = getSalaryAdvance(['sa.is_bulk_request' => true, 'deleted' => false]);
         }
         echo json_encode($bulk_requests, JSON_THROW_ON_ERROR, 512);
     }
@@ -65,7 +63,7 @@ class SalaryAdvanceBulkRequestsAjax extends Controller
             ])) {
                 $hod = new User(getCurrentManager($current_user->department_id));// Send email to HoD
                 $subject = "Salary Advance Application ($request_number)";
-                $data = ['ref_number' => $request_number, 'link' => URL_ROOT . '/salary-advance/bulk-requests/' . $request_number, 'user_ids' => $user_ids];
+                $data = ['ref_number' => $request_number, 'link' => URL_ROOT . '/salary-advance/bulk-request/' . $request_number, 'user_ids' => $user_ids];
                 $body = get_include_contents('email_templates/salary-advance/new_bulk_request_notify_hod', $data);
                 $data['body'] = $body;
                 $email = get_include_contents('email_templates/salary-advance/main', $data);
@@ -135,7 +133,8 @@ class SalaryAdvanceBulkRequestsAjax extends Controller
         $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
     }
 
-    public function init():void {
+    public function init(): void
+    {
         echo json_encode([], JSON_THROW_ON_ERROR, 512);
     }
 }

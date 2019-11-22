@@ -1,6 +1,6 @@
 <?php
 
-class SalaryAdvanceManagerAjax extends Controller
+class SalaryAdvanceSingleRequestsAjax extends Controller
 {
     public function index(): void
     {
