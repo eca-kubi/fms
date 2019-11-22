@@ -497,6 +497,16 @@ function onDetailInit(e) {
     e.detailCell.attr('colspan', colSize);
 }
 
+function onBeforeEdit(e) {
+    window.grid_uid = e.model.uid; // uid of current editing row
+    e.model.fields.amount_requested.editable = false;
+    e.model.fields.hod_comment.editable = e.model.fields.hod_approval.editable = e.model.hod_approval === null && (e.model.department_id === universal.currentDepartmentID);
+    e.model.fields.amount_payable.editable = e.model.fields.hr_comment.editable = e.model.fields.hr_approval.editable = universal.isHr && (e.model.hr_approval === null) && e.model.hod_approval === true;
+    e.model.fields.gm_approval.editable = e.model.fields.gm_comment.editable = universal.isGM && (e.model.gm_approval === null) && e.model.hr_approval === true;
+    e.model.fields.amount_approved.editable = e.model.fields.fmgr_comment.editable = e.model.fields.fmgr_approval.editable = universal.isFmgr && (e.model.fmgr_approval === null) && e.model.gm_approval === true;
+    e.model.fields.received_by.editable = e.model.fields.amount_received.editable = e.model.fmgr_approval === true;
+}
+
 function onEdit(e) {
     let title = $(e.container).parent().find(".k-window-title");
     let update = $(e.container).parent().find(".k-grid-update");
@@ -517,6 +527,51 @@ function onEdit(e) {
             }
         });
     });
+
+    let nameLabelField = e.container.find('.k-edit-label:eq(1), .k-edit-field:eq(1)');
+    let departmentLabelField = e.container.find('.k-edit-label:eq(2), .k-edit-field:eq(2)');
+    let amountRequestedLabelField = e.container.find('.k-edit-label:eq(4), .k-edit-field:eq(4)');
+    let hodApprovalLabelField = e.container.find('.k-edit-label:eq(5), .k-edit-field:eq(5)');
+    let hodCommentLabelField = e.container.find('.k-edit-label:eq(6), .k-edit-field:eq(6)');
+    let hrApprovalLabelField = e.container.find('.k-edit-label:eq(8), .k-edit-field:eq(8)');
+    let hrCommentLabelField = e.container.find('.k-edit-label:eq(9), .k-edit-field:eq(9)');
+    let amountPayableLabelField = e.container.find('.k-edit-label:eq(10), .k-edit-field:eq(10)');
+    let gmApprovalLabelField = e.container.find('.k-edit-label:eq(12), .k-edit-field:eq(12)');
+    let gmCommentLabelField = e.container.find('.k-edit-label:eq(13), .k-edit-field:eq(13)');
+    let fmgrApprovalLabelField = e.container.find('.k-edit-label:eq(15), .k-edit-field:eq(15)');
+    let fmgrCommentLabelField = e.container.find('.k-edit-label:eq(16), .k-edit-field:eq(16)');
+    let amountApprovedLabelField = e.container.find('.k-edit-label:eq(17), .k-edit-field:eq(17)');
+    let amountReceivedLabelField = e.container.find('.k-edit-label:eq(19), .k-edit-field:eq(19)');
+    let receivedByLabelField = e.container.find('.k-edit-label:eq(20), .k-edit-field:eq(20)');
+    let dateReceivedLabelField = e.container.find('.k-edit-label:eq(21), .k-edit-field:eq(21)');
+
+    e.container.find('.k-edit-label, .k-edit-field').addClass("pt-2").toggle(false);
+    nameLabelField.toggle();
+    departmentLabelField.toggle();
+    amountRequestedLabelField.toggle();
+    hodApprovalLabelField.toggle();
+    hrApprovalLabelField.toggle();
+    gmApprovalLabelField.toggle();
+    fmgrApprovalLabelField.toggle();
+    amountPayableLabelField.toggle(e.model.fields.hr_approval.editable);
+    amountApprovedLabelField.toggle(Boolean(e.model.fmgr_approval));
+    hodCommentLabelField.toggle(e.model.fields.hod_approval.editable || e.model.hod_comment !== null);
+    hrCommentLabelField.toggle(e.model.fields.hr_approval.editable || e.model.hr_comment !== null);
+    fmgrCommentLabelField.toggle(e.model.fmgr_comment !== null || e.model.fields.fmgr_approval.editable);
+    gmCommentLabelField.toggle(e.model.fields.gm_approval.editable || e.model.gm_comment !== null);
+    receivedByLabelField.toggle(e.model.fields.received_by.editable || e.model.received_by !== null);
+    amountReceivedLabelField.toggle(e.model.fields.amount_received.editable || e.model.received_by !== null);
+    dateReceivedLabelField.toggle(e.model.date_received !== null);
+
+    // Validations
+/*    hodCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');
+    hrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');
+    amountPayableLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');
+    gmCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');
+    fmgrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');
+    amountApprovedLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');
+    amountReceivedLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');
+    receivedByLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');*/
 
     e.container.getKendoWindow().bind('deactivate', function () {
         let data = grid.dataSource.data();

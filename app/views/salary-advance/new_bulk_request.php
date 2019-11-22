@@ -294,7 +294,7 @@
             $('.k-grid-cancel-changes, .k-grid-save-changes').addClass('d-none');
             bulkApplicants.length = 0;
         });
-        documentReady()
+        documentReady();
     });
 
 </script>
