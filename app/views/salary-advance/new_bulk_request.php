@@ -3,37 +3,12 @@
 <?php require_once APP_ROOT . '\views\includes\sidebar.php'; ?>
 <!-- .content-wrapper -->
 <div class="content-wrapper animated fadeInRight" style="margin-top: <?php echo NAVBAR_MT; ?>">
-    <!-- .content-header-->
-    <section class="content-header d-none">
-        <!-- .container-fluid -->
-        <div class="container-fluid">
-            <!-- .row -->
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1>
-                        <?php echo APP_NAME; ?>
-                    </h1>
-                </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item active">
-                            <a href="#">Dashboard</a>
-                        </li>
-                    </ol>
-                </div>
-            </div>
-            <!-- /.row -->
-        </div>
-        <!-- /.container-fluid -->
-    </section>
-    <!-- /.content-header-->
     <!-- content -->
     <section class="content">
         <div class="box-group" id="box_group">
             <div class="box collapsed">
                 <div class="box-header">
                     <h5>
-                        <?php flash('flash_all'); ?>
                     </h5>
                     <h3 class="box-title text-bold d-none"></h3>
                     <div class="box-tools pull-right d-none">
@@ -67,7 +42,6 @@
 <script>
     let MIN_PERCENTAGE = <?php echo MIN_PERCENTAGE ?>;
     let MAX_PERCENTAGE = <?php echo MAX_PERCENTAGE ?>;
-    let grid = null;
     let universal = {
         basicSalary: "<?php echo $current_user->basic_salary; ?>",
         currencySymbol: "<?php echo CURRENCY_GHS; ?>",
@@ -82,15 +56,10 @@
         requestNumber: "<?php echo $request_number ?>",
         isSecretary: Boolean("<?php echo isSecretary($current_user->user_id); ?>")
     };
-    let $salaryAdvanceGrid;
-    let salaryAdvanceDataSource;
     let bulkApplicants = [];
-    const ERROR_AN_APPLICATION_ALREADY_EXISTS = 'E_1001';
     $(document).ready(function () {
-        URL_ROOT = $('#url_root').val();
-        kendo.culture().numberFormat.currency.symbol = 'GH₵';
         $salaryAdvanceGrid = $('#salary_advance');
-        salaryAdvanceDataSource = new kendo.data.DataSource({
+        dataSource = new kendo.data.DataSource({
             pageSize: 20,
             batch: true,
             transport: {
@@ -180,16 +149,7 @@
         });
 
         grid = $salaryAdvanceGrid.kendoGrid({
-            autoFitColumn: true,
-            selectable: true,
-            mobile: true,
-            noRecords: true,
-            navigatable: true,
             toolbar: kendo.template($('#toolbarTemplate_New_Bulk_Request').html()),
-            excel: {
-                fileName: "Salary Advance Export.xlsx",
-                filterable: true
-            },
             excelExport: function (e) {
                 let sheet = e.workbook.sheets[0];
                 sheet.columns[0].autoWidth = false;
@@ -241,19 +201,6 @@
                 }
             },
             filterable: false,
-            columnMenu: false,
-            sortable: true,
-            groupable: false,
-            height: 520,
-            resizable: true,
-            scrollable: true,
-            persistSelection: true,
-            pageable: {
-                alwaysVisible: false,
-                pageSizes: [5, 10, 15, 20],
-                buttonCount: 5
-            },
-            columnResizeHandleWidth: 30,
             columns: [
                 {
                     attributes: {class: "action"},
@@ -307,15 +254,14 @@
                     format: "{0:dddd dd MMM, yyyy}",
                 },
             ],
-            dataSource: salaryAdvanceDataSource,
-            dataBound: function (e) {
+            dataSource: dataSource,
+            dataBound: function () {
                 let filterRow = grid.table.find('thead tr.k-filter-row');
                 filterRow.find('input:first').attr('placeholder', 'Search...');
                 filterRow.find('input:eq(1)').attr('placeholder', 'Search...');
                 $.get(URL_ROOT + "/salary-advance-ajax/ActiveApplicants", {}, null, "json").done(function (data) {
                     activeApplicants = data;
                 })
-
             },
             beforeEdit: function (e) {
                 window.grid_uid = e.model.uid; // uid of current editing row
@@ -335,18 +281,6 @@
             $('.k-grid-cancel-changes, .k-grid-save-changes').addClass('d-none');
             bulkApplicants.length = 0;
         });
-
-        $salaryAdvanceTooltip = grid.table.kendoTooltip({
-            filter: "td.comment", //this filter selects the second column's cells
-            position: "top",
-            content: function (e) {
-                // hide popup as default action
-                e.sender.popup.element.css("visibility", "hidden");
-                let text = $(e.target).text();
-                if (text) e.sender.popup.element.css("visibility", "visible");
-                return text;
-            }
-        }).data("kendoTooltip");
 
         grid.table.on("click", ".action-delete", function () {
             let row = $(this).closest("tr");

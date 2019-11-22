@@ -1042,6 +1042,7 @@ function documentReady() {
 
     grid.bind("edit", onEdit);
 }
+
 function disableGridAddButton() {
     let errorMessage = moment() > moment(30, "DD") ? "Applications cannot be accepted after 10 days into the month! <br> <span>Please try again next month.</span>" : "You have an active salary advance request for this month!";
     if (!DEBUG_MODE)
@@ -1052,12 +1053,14 @@ function disableGridAddButton() {
             .addClass("k-state-disabled k-grid-add-disabled")
             .removeAttr("href");
 }
+
 function enableGridAddButton() {
     kGridAddButton.removeAttr('disabled').removeAttr("title")
         .addClass('k-grid-add')
         .removeClass('k-state-disabled k-grid-add-disabled')
         .attr('href', '#');
 }
+
 function findFromDataSource(field, value) {
     return grid.dataSource.data().find(function (y) {
         return y[field] === value;
