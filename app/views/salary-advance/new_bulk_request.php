@@ -148,7 +148,7 @@
             }
         });
 
-        grid = $salaryAdvanceGrid.kendoGrid({
+        grid = $salaryAdvanceGrid.kendoGrid($.extend({}, Configurations.grid.options, {dataSource: dataSource}, {
             toolbar: kendo.template($('#toolbarTemplate_New_Bulk_Request').html()),
             excelExport: function (e) {
                 let sheet = e.workbook.sheets[0];
@@ -227,7 +227,8 @@
                     groupHeaderTemplate: "Amount Requested: #=  value ? kendo.format('{0:c}', value) : ''#",
                     aggregates: ["max", "min", "count"],
                     format: "{0:c}",
-                    filterable: false
+                    filterable: false,
+                    editor: editNumberWithoutSpinners
                 },
                 {
                     field: 'department',
@@ -274,20 +275,26 @@
                         i--;
                     }
                 }
-            }
-        }).getKendoGrid();
+            },
+            edit: function () {
+                grid.editable.validatable._errorTemplate = (function anonymous(data
+                ) {
+                    let $kendoOutput;
+                    $kendoOutput = '<div class="k-widget k-tooltip k-tooltip-validation row mt-2"><span class="k-icon k-i-info d-inline col"> </span><span class="col">' + (data.message) + '</span><span class="k-callout k-callout-n"></span></div>';
+                    return $kendoOutput;
+                });
+            },
+            detailTemplate: null,
+            detailInit: null,
+            detailExpand: null,
+            detailCollapse: null,
+        })).getKendoGrid();
 
         $('.k-grid-cancel-changes').click(function () {
             $('.k-grid-cancel-changes, .k-grid-save-changes').addClass('d-none');
             bulkApplicants.length = 0;
         });
-
-        grid.table.on("click", ".action-delete", function () {
-            let row = $(this).closest("tr");
-            $salaryAdvanceGrid.data("kendoGrid").removeRow(row);
-        });
-
-        grid.bind("dataBound", onDataBound);
+        documentReady()
     });
 
 </script>

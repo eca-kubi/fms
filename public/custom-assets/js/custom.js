@@ -634,6 +634,7 @@ let Configurations = {
                 buttonCount: 5
             },
             detailTemplate: kendo.template($("#detailTemplate").html()),
+            edit: onEdit,
             dataBound: onDataBound,
             detailInit: onDetailInit,
             detailExpand: onDetailExpand,
@@ -1039,8 +1040,6 @@ function documentReady() {
 
         collapsed[groupKey] = !$(this).hasClass("k-i-collapse");
     });
-
-    grid.bind("edit", onEdit);
 }
 
 function disableGridAddButton() {

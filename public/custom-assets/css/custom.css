@@ -436,6 +436,12 @@ select[multiple='multiple'] {
 .k-grid .k-edit-cell .k-tooltip {
     white-space: nowrap;
 }
+
+td[data-role=editable]{
+    position: relative;
+    overflow: visible;
+}
+
 html {
     -ms-overflow-style: none;
 }
