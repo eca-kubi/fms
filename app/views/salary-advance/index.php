@@ -90,15 +90,7 @@
                     }
                 }
             },
-            error: function (e) {
-                grid.dataSource.cancelChanges();
-                grid.dataSource.read();
-                if (e.status === "parsererror") {
-                    toastError("Some required assets on this page failed to load");
-                    return;
-                }
-                toastError(e.errors[0]['message']);
-            },
+            error: dataSourceError,
             requestEnd: function (e) {
                 if (e.type === 'update' && e.response.length > 0 || e.type === 'create' && e.response.length > 0) {
                     toastSuccess('Success', 5000);

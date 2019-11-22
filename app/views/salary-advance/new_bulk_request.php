@@ -98,8 +98,12 @@
             error: function (e) {
                 dataSource.cancelChanges();
                 dataSource.read();
+                if (e.status === "parsererror") {
+                    toastError("Some required assets failed to load");
+                    return;
+                }
                 purgeBulkApplicants();
-                toastError(e.errors ? e.errors[0]['message'] : "Some required assets on this page failed to load");
+                toastError(e.errors[0]['message']);
             },
             requestEnd: function (e) {
                 if (e.type === 'create' && e.response.length > 0) {

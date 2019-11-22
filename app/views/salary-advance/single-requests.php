@@ -88,36 +88,8 @@
                     }
                 }
             },
-            error: function (e) {
-                grid.dataSource.cancelChanges();
-                grid.dataSource.read();
-                if (e.status === "parsererror") {
-                    toastError("Some required assets on this page failed to load");
-                    return;
-                }
-                toastError(e.errors[0]['message']);
-            },
-            requestEnd: function (e) {
-                if (e.type === 'update' && e.response.length > 0 || e.type === 'create' && e.response.length > 0) {
-                    toastSuccess('Success', 5000);
-                }
-                if (groups.length !== this.group().length) {
-                    let dataSourceGroups = this.group(),
-                        length = groups.length;
-                    if (length > dataSourceGroups.length) {
-                        if (dataSourceGroups.length === 0) {
-                            collapsed = {};
-                        } else {
-                            for (let key in collapsed) {
-                                if (key.indexOf(length - 1) === 0) {
-                                    collapsed[key] = false;
-                                }
-                            }
-                        }
-                    }
-                    groups = this.group().slice(0);
-                }
-            },
+            error: dataSourceError,
+            requestEnd: onRequestEnd,
             schema: {
                 model: {
                     id: "id_salary_advance",

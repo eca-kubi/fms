@@ -30,8 +30,8 @@ class SalaryAdvanceSingleRequestsAjax extends Controller
                 $hod = new User(getCurrentManager($applicant->department_id));
                 $request_number = $salary_advance['request_number'];
                 $subject = "Salary Advance Application ($request_number)";
-                $data = ['ref_number' => $request_number, 'link' => URL_ROOT . '/salary-advance/index/' . $request_number, 'recipient_id' => $salary_advance['user_id']];
-                if ($applicant->department_id === $hod->department_id && $salary_advance['hod_approval'] === null) {
+                $data = ['ref_number' => $request_number, 'link' => URL_ROOT . '/salary-advance/single-requests/' . $request_number, 'recipient_id' => $salary_advance['user_id']];
+                if ($current_user->user_id === $hod->user_id && $salary_advance['hod_approval'] === null) {
                     // Current user is the hod
                     $update_success = $db->where('id_salary_advance', $id_salary_advance)->update('salary_advance', [
                         'hod_id' => $current_user->user_id,
@@ -45,10 +45,8 @@ class SalaryAdvanceSingleRequestsAjax extends Controller
                         $data['body'] = get_include_contents('email_templates/salary-advance/approval', $data);
                         $email = get_include_contents('email_templates/salary-advance/main', $data);
                         insertEmail($subject, $email, $applicant->email);
-                        if ($hod->email !== $hr->email && $_POST['hod_approval']) {
+                        if ($applicant->email !== $hr->email) {
                             $data['recipient_id'] = $hr->user_id;
-                            $data['link'] =  URL_ROOT . '/salary-advance-manager/index/' . $request_number;
-                            $data['body'] = get_include_contents('email_templates/salary-advance/approval', $data);
                             $email = get_include_contents('email_templates/salary-advance/main', $data);
                             insertEmail($subject, $email, $hr->email);
                         }
@@ -61,7 +59,7 @@ class SalaryAdvanceSingleRequestsAjax extends Controller
                     $update_success = $db->where('id_salary_advance', $id_salary_advance)->update('salary_advance', [
                         'hr_id' => $current_user->user_id,
                         'hr_approval' => $_POST['hr_approval'],
-                        'hr_comment' => $_POST['hr_comment'],
+                        'hr_comment' => filter_var($_POST['hr_comment'], FILTER_SANITIZE_STRING),
                         'hr_approval_date' => now(),
                         'amount_payable' => $_POST['amount_payable']
                     ]);
@@ -72,6 +70,11 @@ class SalaryAdvanceSingleRequestsAjax extends Controller
                         $data['body'] = $body;
                         $email = get_include_contents('email_templates/salary-advance/main', $data);
                         insertEmail($subject, $email, $applicant->email);
+                        if ($applicant->email !== $gm->email) {
+                            $data['recipient_id'] = $gm->user_id;
+                            $email = get_include_contents('email_templates/salary-advance/main', $data);
+                            insertEmail($subject, $email, $gm->email);
+                        }
                     } else {
                         $errors['errors'][0]['message'] = 'The record failed to update';
                         echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
@@ -81,16 +84,20 @@ class SalaryAdvanceSingleRequestsAjax extends Controller
                     $update_success = $db->where('id_salary_advance', $id_salary_advance)->update('salary_advance', [
                         'gm_id' => $current_user->user_id,
                         'gm_approval' => $_POST['gm_approval'],
-                        'gm_comment' => $_POST['gm_comment'],
+                        'gm_comment' => filter_var($_POST['gm_comment'], FILTER_SANITIZE_STRING),
                         'gm_approval_date' => now()
                     ]);
                     if ($update_success) {
                         $data['approval'] = $_POST['gm_approval'];
                         $data['comment'] = $_POST['gm_comment'];
-                        $body = get_include_contents('email_templates/salary-advance/approval', $data);
-                        $data['body'] = $body;
+                        $data['body']  = get_include_contents('email_templates/salary-advance/approval', $data);
                         $email = get_include_contents('email_templates/salary-advance/main', $data);
                         insertEmail($subject, $email, $applicant->email);
+                        if ($fmgr->user_id !== $applicant->user_id) {
+                            $data['recipient_id'] = $fmgr->user_id;
+                            $email = get_include_contents('email_templates/salary-advance/main', $data);
+                            insertEmail($subject, $email, $fmgr->email);
+                        }
                     } else {
                         $errors['errors'][0]['message'] = 'The record failed to update';
                         echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
@@ -100,15 +107,14 @@ class SalaryAdvanceSingleRequestsAjax extends Controller
                     $update_success = $db->where('id_salary_advance', $id_salary_advance)->update('salary_advance', [
                         'fmgr_id' => $current_user->user_id,
                         'fmgr_approval' => $_POST['fmgr_approval'],
-                        'fmgr_comment' => $_POST['fmgr_comment'],
+                        'fmgr_comment' => filter_var($_POST['fmgr_comment'], FILTER_SANITIZE_STRING),
                         'fmgr_approval_date' => now(),
                         'amount_approved' => $_POST['amount_approved']
                     ]);
                     if ($update_success) {
                         $data['approval'] = $_POST['fmgr_approval'];
                         $data['comment'] = $_POST['fmgr_comment'];
-                        $body = get_include_contents('email_templates/salary-advance/approval', $data);
-                        $data['body'] = $body;
+                        $data['body'] = get_include_contents('email_templates/salary-advance/approval', $data);
                         $email = get_include_contents('email_templates/salary-advance/main', $data);
                         insertEmail($subject, $email, $applicant->email);
                     } else {

@@ -53,10 +53,10 @@ class SalaryAdvance extends Controller
         $payload['title'] = 'Salary Advance Applications';
         $payload['request_number'] = $request_number;
         if (!isLoggedIn()) {
-            redirect('users/login/salary-advance/single-request/' . $request_number);
+            redirect('users/login/salary-advance/single-requests/' . $request_number);
         }
         if (!(isCurrentManager($current_user->user_id) || isCurrentFmgr($current_user->user_id) || isCurrentHR($current_user->user_id) || isCurrentGM($current_user->user_id) || isFinanceOfficer($current_user->user_id))) {
-            redirect('salary-advance');
+            redirect('salary-advance/index/'. $request_number);
         }
         if ($request_number && !$db->where('request_number', $request_number)->has('salary_advance')) {
             redirect('errors/index/404');

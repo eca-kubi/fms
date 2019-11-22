@@ -13,12 +13,14 @@ class SalaryAdvanceAjax extends Controller
             $db = Database::getDbh();
             $current_user = getUserSession();
             $_POST = json_decode(file_get_contents('php://input'), true, 512, JSON_THROW_ON_ERROR);
-            $_POST = filter_var_array($_POST, FILTER_SANITIZE_STRING);
             $ret = [];
             if (hasActiveApplication($current_user->user_id)) {
-                $ret['success'] = false;
                 $ret['has_active_application'] = true;
-                $ret['errors'] = [['message' => 'You already have an active application.', 'code' => ERROR_AN_APPLICATION_ALREADY_EXISTS]];
+                $ret['errors'] = [['message' => 'You already have an active application.']];
+                echo json_encode($ret, JSON_THROW_ON_ERROR, 512);
+                return;
+            }
+            if (!isValidAmount($_POST['amount_requested'], $current_user->basic_salary)) {
                 echo json_encode($ret, JSON_THROW_ON_ERROR, 512);
                 return;
             }

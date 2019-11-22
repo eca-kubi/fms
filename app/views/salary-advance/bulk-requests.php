@@ -86,16 +86,8 @@
                     return response.errors;
                 }
             },
-            error: function (e) {
-                dataSource.cancelChanges();
-                dataSource.read();
-                toastError(e.errors ? e.errors[0]['message'] : "Some required assets on this page failed to load");
-            },
-            requestEnd: function (e) {
-                if ((e.type === 'update' || e.type === 'create') && e.response.length > 0) {
-                    toastSuccess('Success', 5000);
-                }
-            },
+            error: dataSourceError,
+            requestEnd: onRequestEnd,
             schema: {
                 model: {
                     id: "id_salary_advance",

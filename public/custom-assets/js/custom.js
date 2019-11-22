@@ -294,6 +294,16 @@ filterEvent.sender = grid;
 grid.trigger('filter', filterEvent);
 };*/
 
+function dataSourceError(e) {
+    dataSource.cancelChanges();
+    dataSource.read();
+    if (e.status === "parsererror") {
+        toastError("Some required assets failed to load.");
+        return;
+    }
+    toastError(e.errors[0]['message']);
+}
+
 function dateRangeFilter(args) {
     let filterCell = args.element.parents(".k-filtercell");
     let field = filterCell.attr('data-field');
@@ -409,6 +419,28 @@ function selectGridRow(searchedId, grid, dataSource, idField) {
         //grid.content.scrollTop(grid.select().position().top);
     }
     return row;
+}
+
+function onRequestEnd(e) {
+    if ((e.type === 'update' || e.type === 'create') && e.response.length > 0) {
+        toastSuccess('Success', 5000);
+    }
+    if (groups.length !== this.group().length) {
+        let dataSourceGroups = this.group(),
+            length = groups.length;
+        if (length > dataSourceGroups.length) {
+            if (dataSourceGroups.length === 0) {
+                collapsed = {};
+            } else {
+                for (let key in collapsed) {
+                    if (key.indexOf(length - 1) === 0) {
+                        collapsed[key] = false;
+                    }
+                }
+            }
+        }
+        groups = this.group().slice(0);
+    }
 }
 
 function onChange() {
@@ -533,9 +565,10 @@ function onEdit(e) {
         });
     });
 
+    let requestNumberField = e.container.find(".k-edit-label:eq(0), .k-edit-field:eq(0)");
     let nameLabelField = e.container.find('.k-edit-label:eq(1), .k-edit-field:eq(1)');
     let departmentLabelField = e.container.find('.k-edit-label:eq(2), .k-edit-field:eq(2)');
-    let amountRequestedLabelField = e.container.find('.k-edit-label:eq(4), .k-edit-field:eq(4)');
+    let amountRequestedLabelField = e.container.find('.k-edit-label:eq(3), .k-edit-field:eq(3)');
     let hodApprovalLabelField = e.container.find('.k-edit-label:eq(5), .k-edit-field:eq(5)');
     let hodCommentLabelField = e.container.find('.k-edit-label:eq(6), .k-edit-field:eq(6)');
     let hrApprovalLabelField = e.container.find('.k-edit-label:eq(8), .k-edit-field:eq(8)');
@@ -551,6 +584,7 @@ function onEdit(e) {
     let dateReceivedLabelField = e.container.find('.k-edit-label:eq(21), .k-edit-field:eq(21)');
 
     e.container.find('.k-edit-label, .k-edit-field').addClass("pt-2").toggle(false);
+    requestNumberField.toggle();
     nameLabelField.toggle();
     departmentLabelField.toggle();
     amountRequestedLabelField.toggle();
