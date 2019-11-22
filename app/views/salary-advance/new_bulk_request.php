@@ -96,8 +96,8 @@
                 }
             },
             error: function (e) {
-                salaryAdvanceDataSource.cancelChanges();
-                salaryAdvanceDataSource.read();
+                dataSource.cancelChanges();
+                dataSource.read();
                 purgeBulkApplicants();
                 toastError(e.errors ? e.errors[0]['message'] : "Some required assets on this page failed to load");
             },
@@ -147,7 +147,6 @@
                 }
             }
         });
-
         grid = $salaryAdvanceGrid.kendoGrid($.extend({}, Configurations.grid.options, {dataSource: dataSource}, {
             toolbar: kendo.template($('#toolbarTemplate_New_Bulk_Request').html()),
             excelExport: function (e) {
@@ -289,14 +288,12 @@
             detailExpand: null,
             detailCollapse: null,
         })).getKendoGrid();
-
         $('.k-grid-cancel-changes').click(function () {
             $('.k-grid-cancel-changes, .k-grid-save-changes').addClass('d-none');
             bulkApplicants.length = 0;
         });
         documentReady();
     });
-
 </script>
 </body>
 </html>

@@ -54,8 +54,6 @@
         isSecretary: Boolean("<?php echo isSecretary($current_user->user_id); ?>")
     };
     $(document).ready(function () {
-        URL_ROOT = $('#url_root').val();
-        kendo.culture().numberFormat.currency.symbol = 'GH₵';
         $salaryAdvanceGrid = $('#salary_advance');
         dataSource = new kendo.data.DataSource({
             transport: {
@@ -161,7 +159,6 @@
                 }
             }
         });
-
         grid = $salaryAdvanceGrid.kendoGrid($.extend({}, Configurations.grid.options, {dataSource: dataSource},{
             toolbar: kendo.template($('#toolbarTemplate_Bulk_Requests').html()),
             excel: {

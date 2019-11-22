@@ -55,6 +55,7 @@
         MIN_PERCENTAGE = <?php echo MIN_PERCENTAGE ?>,
         MAX_PERCENTAGE = <?php echo MAX_PERCENTAGE ?>;
     $(document).ready(function () {
+        $salaryAdvanceGrid = $('#salary_advance');
         dataSource = new kendo.data.DataSource({
             pageSize: 20,
             transport: {
@@ -244,7 +245,6 @@
                 }
             }
         });
-        $salaryAdvanceGrid = $('#salary_advance');
         grid = $salaryAdvanceGrid.kendoGrid($.extend({}, Configurations.grid.options, {dataSource: dataSource}, {
             groupable: true,
             toolbar: [{name: "excel", template: $("#exportToExcel").html()}],

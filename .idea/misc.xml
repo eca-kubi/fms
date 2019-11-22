@@ -8,6 +8,11 @@
     <file url="file://$PROJECT_DIR$/app/controllers/SalaryAdvanceSecretary.php" />
     <file url="file://$PROJECT_DIR$/app/controllers/SalaryAdvanceSecretaryAjax.php" />
     <file url="file://$PROJECT_DIR$/app/controllers/VisitorAccessForm.php" />
+    <file url="file://$PROJECT_DIR$/app/views/salary-advance-manager/new.php" />
+    <file url="file://$PROJECT_DIR$/app/views/salary-advance-manager/single.php" />
+    <file url="file://$PROJECT_DIR$/app/views/salary-advance/bulk-requests-parent.php" />
+    <file url="file://$PROJECT_DIR$/app/views/salary-advance/new.php" />
+    <file url="file://$PROJECT_DIR$/app/views/salary-advance/single.php" />
     <file url="file://$PROJECT_DIR$/app/views/view_change_process.php" />
   </component>
 </project>

@@ -57,6 +57,7 @@
     let MAX_PERCENTAGE = <?php echo MAX_PERCENTAGE ?>;
     let kGridAddButton;
     $(document).ready(function () {
+        $salaryAdvanceGrid = $("#salary_advance");
         dataSource = new kendo.data.DataSource({
             pageSize: 20,
             transport: {
@@ -237,7 +238,6 @@
                 }
             }
         });
-        $salaryAdvanceGrid = $("#salary_advance");
         grid = $salaryAdvanceGrid.kendoGrid($.extend({}, Configurations.grid.options, {dataSource: dataSource}, {
             toolbar: [
                 {

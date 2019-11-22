@@ -10,6 +10,7 @@ let activeApplicants = [];
 let commentTooltip;
 let selectedRowId;
 let grid;
+let $salaryAdvanceGrid;
 let dataSource;
 kendo.culture().numberFormat.currency.symbol = 'GH₵';
 $(document).ready(function () {
