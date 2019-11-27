@@ -20,7 +20,7 @@ class Controller
     }
 
     // Load view
-    public function view(string $view, array $payload)
+    public function view(string $view, array $payload): void
     {
         // Check for view file
         extract($payload);

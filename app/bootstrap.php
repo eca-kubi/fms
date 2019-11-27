@@ -1,7 +1,7 @@
 <?php
 // Autoload Core Libraries
 
-spl_autoload_register(function($class_name){
+spl_autoload_register(static function($class_name){
     $dirs = array(
             'models/',
             'libraries/',

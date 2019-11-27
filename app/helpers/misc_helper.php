@@ -697,3 +697,15 @@ function getActiveApplicants(): array
     }
     return $active_applicants;
 }
+
+function nullableStringConverter($nullableString, $nullOutput, $trueOutput, $falseOutput)
+{
+    if ($nullableString === null) {
+        return $nullOutput;
+    }
+    if ($nullableString) {
+        return $trueOutput;
+    }
+
+    return $falseOutput;
+}
