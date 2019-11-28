@@ -30,7 +30,8 @@ class SalaryAdvanceSingleRequestsAjax extends Controller
                 $hod = new User(getCurrentManager($applicant->department_id));
                 $request_number = $salary_advance['request_number'];
                 $subject = "Salary Advance Application ($request_number)";
-                $data = ['ref_number' => $request_number, 'link' => URL_ROOT . '/salary-advance/single-requests/' . $request_number, 'recipient_id' => $salary_advance['user_id']];
+                $data = ['ref_number' => $request_number, 'link' => URL_ROOT . '/salary-advance/single-requests/' .
+                    $request_number, 'recipient_id' => $salary_advance['user_id'], 'applicant_id'=>$applicant->user_id];
                 if ($current_user->user_id === $hod->user_id && $salary_advance['hod_approval'] === null) {
                     // Current user is the hod
                     $update_success = $db->where('id_salary_advance', $id_salary_advance)->update('salary_advance', [
@@ -42,14 +43,7 @@ class SalaryAdvanceSingleRequestsAjax extends Controller
                     if ($update_success) {
                         $data['approval'] = $_POST['hod_approval'];
                         $data['comment'] = $_POST['hod_comment'];
-                        $data['body'] = get_include_contents('email_templates/salary-advance/approval', $data);
-                        $email = get_include_contents('email_templates/salary-advance/main', $data);
-                        insertEmail($subject, $email, $applicant->email);
-                        if ($applicant->email !== $hr->email) {
-                            $data['recipient_id'] = $hr->user_id;
-                            $email = get_include_contents('email_templates/salary-advance/main', $data);
-                            insertEmail($subject, $email, $hr->email);
-                        }
+                        requestApprovalNotification($applicant, $hr, $subject, $data);
                     } else {
                         $errors['errors'][0]['message'] = 'The record failed to update';
                         echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
@@ -66,15 +60,7 @@ class SalaryAdvanceSingleRequestsAjax extends Controller
                     if ($update_success) {
                         $data['approval'] = $_POST['hr_approval'];
                         $data['comment'] = $_POST['hr_comment'];
-                        $body = get_include_contents('email_templates/salary-advance/approval', $data);
-                        $data['body'] = $body;
-                        $email = get_include_contents('email_templates/salary-advance/main', $data);
-                        insertEmail($subject, $email, $applicant->email);
-                        if ($applicant->email !== $gm->email) {
-                            $data['recipient_id'] = $gm->user_id;
-                            $email = get_include_contents('email_templates/salary-advance/main', $data);
-                            insertEmail($subject, $email, $gm->email);
-                        }
+                        requestApprovalNotification($applicant, $gm, $subject, $data);
                     } else {
                         $errors['errors'][0]['message'] = 'The record failed to update';
                         echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
@@ -90,14 +76,7 @@ class SalaryAdvanceSingleRequestsAjax extends Controller
                     if ($update_success) {
                         $data['approval'] = $_POST['gm_approval'];
                         $data['comment'] = $_POST['gm_comment'];
-                        $data['body']  = get_include_contents('email_templates/salary-advance/approval', $data);
-                        $email = get_include_contents('email_templates/salary-advance/main', $data);
-                        insertEmail($subject, $email, $applicant->email);
-                        if ($fmgr->user_id !== $applicant->user_id) {
-                            $data['recipient_id'] = $fmgr->user_id;
-                            $email = get_include_contents('email_templates/salary-advance/main', $data);
-                            insertEmail($subject, $email, $fmgr->email);
-                        }
+                        requestApprovalNotification($applicant, $fmgr, $subject, $data);
                     } else {
                         $errors['errors'][0]['message'] = 'The record failed to update';
                         echo json_encode($errors, JSON_THROW_ON_ERROR, 512);

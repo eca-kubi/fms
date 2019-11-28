@@ -709,3 +709,15 @@ function nullableStringConverter($nullableString, $nullOutput, $trueOutput, $fal
 
     return $falseOutput;
 }
+
+function requestApprovalNotification ($applicant, $manager, $subject, $data) {
+    $data['body'] = get_include_contents('email_templates/salary-advance/approval', $data);
+    $email = get_include_contents('email_templates/salary-advance/main', $data);
+    insertEmail($subject, $email, $applicant->email);
+    if ($applicant->email !== $manager->email) {
+        $data['recipient_id'] = $manager->user_id;
+        $data['body'] = get_include_contents('email_templates/salary-advance/approval', $data);
+        $email = get_include_contents('email_templates/salary-advance/main', $data);
+        insertEmail($subject, $email, $manager->email);
+    }
+}

@@ -111,7 +111,8 @@
                         },
                         hod_comment: {
                             type: 'string',
-                            editable: false
+                            editable: false,
+                            validation: Configurations.validations.minMaxAmount
                         },
                         hr_comment: {
                             type: 'string',
@@ -145,7 +146,9 @@
                             type: "boolean"
                         },
                         gm_approval_date: {editable: false, nullable: true, type: "date"},
-                        gm_comment: {editable: false, type: "string"},
+                        gm_comment: {
+                            editable: false, type: "string", validation: Configurations.validations.minMaxAmount,
+                        },
                         gm_id: {type: "number", editable: false},
                         fmgr_approval: {
                             nullable: true,
@@ -161,6 +164,7 @@
                         amount_approved: {
                             nullable: true,
                             type: 'number',
+                            validation: Configurations.validations.minMaxAmount,
                             editable: false
                         },
                         received_by: {
@@ -212,7 +216,9 @@
                             type: "number", editable: false
                         },
                         finance_officer_id: {type: "number", nullable: true, editable: false},
-                        finance_officer_comment: {type: "string", editable: false}
+                        finance_officer_comment: {
+                            type: "string", editable: false, validation: Configurations.validations.minMaxAmount,
+                        }
                     }
                 }
             }

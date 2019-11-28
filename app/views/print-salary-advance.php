@@ -121,7 +121,7 @@
                     <div class="form-group col-12">
                         <label class="pt-1">Amount Payable: </label>
                         <input class="col-6 mb-3" readonly type="text"
-                               value="<?php echo $salary_advance->amount_payable; ?>">
+                               value="<?php echo CURRENCY_GHS . $salary_advance->amount_payable; ?>">
                     </div>
                     <div class="form-group col-8 pl-3 row">
                         <label class="pt-1">Approval by HR: </label>
@@ -164,14 +164,14 @@
                     <div class="form-group col-12">
                         <label class="pt-1">Amount Approved: </label>
                         <input class="col-6 mb-3" readonly type="text"
-                               value="<?php echo $salary_advance->amount_approved; ?>">
+                               value="<?php echo CURRENCY_GHS .$salary_advance->amount_approved; ?>">
                     </div>
                 </div>
                 <div class="row">
                     <p class="text-sm text-bold m-0">Receiver</p>
                     <div class="bg-dark w-100 mb-3" style="height: 20px"></div>
                     <div class="form-group col-8">
-                        <label class="pt-1">Amount Received By:</label>
+                        <label class="pt-1">Received By:</label>
                         <input class="col-6 mb-3" readonly type="text"
                                value="<?php echo nullableStringConverter($salary_advance->received_by, '', $salary_advance->received_by, ''); ?>">
                     </div>

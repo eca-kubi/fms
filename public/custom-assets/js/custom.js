@@ -141,8 +141,24 @@ function approvalEditor(container, options) {
             change: function (e) {
                 let dataItem = grid.dataItem(grid.element.find(`tr[data-uid=${window.grid_uid}]`));
                 let value = e.dataItem.id === true;
+                let editorContainer = e.sender.element.parents(".k-edit-form-container");
+
                 dataItem.set(options.field, value);
                 e.sender.element.data("kendoTooltip").hide();
+                if (value === false) {
+                    grid.editable.options.fields.forEach((v) => {
+                        let input = editorContainer.find("input[name=" + v.field + "]").getKendoNumericTextBox();
+                        if (Configurations.validations.minMaxAmountInputs.includes(v.field)) {
+                            input.enable(false);
+                            input.wrapper.find(".k-tooltip").hide()
+                        }
+                    });
+                } else {
+                    grid.editable.options.fields.forEach((v) => {
+                        if (Configurations.validations.minMaxAmountInputs.includes(v.field))
+                            editorContainer.find("input[name=" + v.field + "]").getKendoNumericTextBox().enable(true);
+                    });
+                }
             },
         }).data("kendoExtRadioButtonGroup");
     $(`#approvalRadioButtonGroup_${options.field}`).kendoTooltip({
@@ -541,7 +557,8 @@ function onBeforeEdit(e) {
     e.model.fields.amount_payable.editable = e.model.fields.hr_comment.editable = e.model.fields.hr_approval.editable = universal.isHr && (e.model.hr_approval === null) && e.model.hod_approval === true;
     e.model.fields.gm_approval.editable = e.model.fields.gm_comment.editable = universal.isGM && (e.model.gm_approval === null) && e.model.hr_approval === true;
     e.model.fields.amount_approved.editable = e.model.fields.fmgr_comment.editable = e.model.fields.fmgr_approval.editable = universal.isFmgr && (e.model.fmgr_approval === null) && e.model.gm_approval === true;
-    e.model.fields.received_by.editable = e.model.fields.amount_received.editable = e.model.fmgr_approval === true;
+    e.model.fields.received_by.editable = e.model.fields.amount_received.editable = (e.model.fmgr_approval === true && universal.isFinanceOfficer);
+    //if (e.model.fields.amount_payable.editable) e.model.amount_payable = e.model.amount_requested;
 }
 
 function onEdit(e) {
@@ -592,8 +609,8 @@ function onEdit(e) {
     hrApprovalLabelField.toggle();
     gmApprovalLabelField.toggle();
     fmgrApprovalLabelField.toggle();
-    amountPayableLabelField.toggle(e.model.fields.hr_approval.editable);
-    amountApprovedLabelField.toggle(Boolean(e.model.fmgr_approval));
+    amountPayableLabelField.toggle(e.model.fields.hr_approval.editable || e.model.hr_approval === true);
+    amountApprovedLabelField.toggle(e.model.fields.fmgr_approval.editable || e.model.fmgr_approval === true);
     hodCommentLabelField.toggle(e.model.fields.hod_approval.editable || e.model.hod_comment !== null);
     hrCommentLabelField.toggle(e.model.fields.hr_approval.editable || e.model.hr_comment !== null);
     fmgrCommentLabelField.toggle(e.model.fmgr_comment !== null || e.model.fields.fmgr_approval.editable);
@@ -603,14 +620,14 @@ function onEdit(e) {
     dateReceivedLabelField.toggle(e.model.date_received !== null);
 
     // Validations
-/*    hodCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');
-    hrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');
-    amountPayableLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');
-    gmCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');
-    fmgrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');
-    amountApprovedLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');
-    amountReceivedLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');
-    receivedByLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');*/
+    /*    hodCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');
+        hrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');
+        amountPayableLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');
+        gmCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');
+        fmgrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');
+        amountApprovedLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');
+        amountReceivedLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');
+        receivedByLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');*/
 
     e.container.getKendoWindow().bind('deactivate', function () {
         let data = grid.dataSource.data();
@@ -1069,6 +1086,7 @@ let Configurations = {
     validations: {
         minMaxAmount: {
             required: function (input) {
+                if (input.hasClass("no-validation")) return true;
                 if ($.inArray(input.attr("name"), Configurations.validations.minMaxAmountInputs) > -1) {
                     input.attr("data-required-msg", "Enter an amount.");
                     return input.val() !== "";
