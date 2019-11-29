@@ -230,7 +230,7 @@
                 }
             }
         });
-        grid = $salaryAdvanceGrid.kendoGrid($.extend({}, Configurations.grid.options, {dataSource: dataSource}, {
+        grid = $salaryAdvanceGrid.kendoGrid($.extend({}, Configurations.grid.options, {
             toolbar: [
                 {
                     name: "create",
@@ -256,8 +256,34 @@
                         amountRequestedNumericTextBox.focus();
                     }
                 });
+            },
+            excelExport: function (e) {
+                let sheet = e.workbook.sheets[0];
+                sheet.columns[0].autoWidth = false;
+                for (let rowIndex = 1; rowIndex < sheet.rows.length; rowIndex++) {
+                    let row = sheet.rows[rowIndex];
+                    if (row.type === "data") {
+                        let dataItem = {
+                            hod_approval: row.cells[5].value,
+                            hr_approval: row.cells[8].value,
+                            gm_approval: row.cells[12].value,
+                            fmgr_approval: row.cells[15].value
+                        };
+                        row.cells[5].value = dataItem.hod_approval == null ? 'Pending' : (dataItem.hod_approval ? 'Approved' : 'Rejected');
+                        row.cells[8].value = dataItem.hr_approval == null ? 'Pending' : (dataItem.hr_approval ? 'Approved' : 'Rejected');
+                        row.cells[12].value = dataItem.gm_approval == null ? 'Pending' : (dataItem.gm_approval ? 'Approved' : 'Rejected');
+                        row.cells[15].value = dataItem.fmgr_approval == null ? 'Pending' : (dataItem.fmgr_approval ? 'Approved' : 'Rejected');
+                        // alternating row colors
+                        if (rowIndex % 2 === 0) {
+                            let row = sheet.rows[rowIndex];
+                            for (let cellIndex = 0; cellIndex < row.cells.length; cellIndex++) {
+                                //row.cells[cellIndex].fontName = "Poppins";
+                            }
+                        }
+                    }
+                }
             }
-        })).getKendoGrid();
+        }, {dataSource: dataSource})).getKendoGrid();
         kGridAddButton = $('.k-grid-add');
         documentReady();
     });

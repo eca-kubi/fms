@@ -31,10 +31,13 @@
         .bg-dark {
             background-color: #343a40 !important;
         }
+        .bg-white {
+            background-color: white;
+        }
     </style>
 </head>
 <body>
-<section class="content pt-5 w3-text-black" id="main">
+<section class="content pt-5 w3-text-black bg-white" id="main">
     <div class="row container-fluid p-0 border-bottom m-0">
         <div class="col-10">
             <h5 class="font-raleway font-weight-bold mb-0 text-uppercase">Salary Advance <span
@@ -42,12 +45,12 @@
                     echo $salary_advance->request_number; ?>]</span></h5>
 
         </div>
-        <div class="col-2 text-right">
+        <div class="col-2 text-right mb-1">
             <img class="img-size-64" src="<?php echo site_url('public/assets/images/adamus.jpg') ?>" alt="">
         </div>
     </div>
     <!-- .content-wrapper -->
-    <div class="content-wrapper ml-0 bg-gray">
+    <div class="content-wrapper ml-0 bg-white">
         <!-- content -->
         <section class="content">
             <div class="p-2">
@@ -121,7 +124,7 @@
                     <div class="form-group col-12">
                         <label class="pt-1">Amount Payable: </label>
                         <input class="col-6 mb-3" readonly type="text"
-                               value="<?php echo CURRENCY_GHS . $salary_advance->amount_payable; ?>">
+                               value="<?php nullableStringConverter($salary_advance->amount_payable, '',CURRENCY_GHS . $salary_advance->amount_payable, ''); ?>">
                     </div>
                     <div class="form-group col-8 pl-3 row">
                         <label class="pt-1">Approval by HR: </label>
@@ -164,7 +167,7 @@
                     <div class="form-group col-12">
                         <label class="pt-1">Amount Approved: </label>
                         <input class="col-6 mb-3" readonly type="text"
-                               value="<?php echo CURRENCY_GHS .$salary_advance->amount_approved; ?>">
+                               value="<?php echo nullableStringConverter($salary_advance->amount_approved, '', CURRENCY_GHS .$salary_advance->amount_approved, '') ; ?>">
                     </div>
                 </div>
                 <div class="row">

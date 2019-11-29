@@ -53,6 +53,8 @@
         requestNumber: "<?php echo $request_number ?>",
         isSecretary: Boolean("<?php echo isSecretary($current_user->user_id); ?>")
     };
+    let MIN_PERCENTAGE = <?php echo MIN_PERCENTAGE ?>;
+    let MAX_PERCENTAGE = <?php echo MAX_PERCENTAGE ?>;
     $(document).ready(function () {
         $salaryAdvanceGrid = $('#salary_advance');
         dataSource = new kendo.data.DataSource({
@@ -128,7 +130,11 @@
                         gm_id: {type: "number"},
                         hod_approval: {editable: false, nullable: true, type: "boolean"},
                         hod_approval_date: {editable: false, nullable: true, type: "date"},
-                        hod_comment: {editable: false, type: "string", validation: Configurations.validations.minMaxAmount},
+                        hod_comment: {
+                            editable: false,
+                            type: "string",
+                            validation: Configurations.validations.minMaxAmount
+                        },
                         hod_id: {type: "number"},
                         hr_approval: {editable: false, nullable: true, type: "boolean"},
                         hr_approval_date: {editable: false, nullable: true, type: "date"},
@@ -151,33 +157,18 @@
                 }
             }
         });
-        grid = $salaryAdvanceGrid.kendoGrid($.extend({}, Configurations.grid.options, {dataSource: dataSource},{
+        grid = $salaryAdvanceGrid.kendoGrid($.extend({}, Configurations.grid.options, {dataSource: dataSource}, {
             groupable: true,
-            excelExport: function (e) {
-                let sheet = e.workbook.sheets[0];
-                sheet.columns[0].autoWidth = false;
-                for (let rowIndex = 1; rowIndex < sheet.rows.length; rowIndex++) {
-                    let row = sheet.rows[rowIndex];
-                    let dataItem = {
-                        hod_approval: row.cells[5].value,
-                        hr_approval: row.cells[8].value,
-                        fmgr_approval: row.cells[12].value,
-                    };
-                    row.cells[5].value = dataItem.hod_approval == null ? 'Pending' : (dataItem.hod_approval ? 'Approved' : 'Rejected');
-                    row.cells[8].value = dataItem.hr_approval == null ? 'Pending' : (dataItem.hr_approval ? 'Approved' : 'Rejected');
-                    row.cells[12].value = dataItem.fmgr_approval == null ? 'Pending' : (dataItem.fmgr_approval ? 'Approved' : 'Rejected');
-
-                    // alternating row colors
-                    if (rowIndex % 2 === 0) {
-                        let row = sheet.rows[rowIndex];
-                        for (let cellIndex = 0; cellIndex < row.cells.length; cellIndex++) {
-                            //row.cells[cellIndex].fontName = "Poppins";
-                        }
-                    }
-                }
-            },
             dataSource: dataSource,
-            beforeEdit: onBeforeEdit,
+            beforeEdit: function (e) {
+                window.grid_uid = e.model.uid; // uid of current editing row
+                e.model.fields.amount_requested.editable = (e.model.hod_approval === null) && universal.isSecretary;
+                e.model.fields.hod_comment.editable = e.model.fields.hod_approval.editable = e.model.hod_approval === null && (e.model.department_id === universal.currentDepartmentID) && universal.isManager;
+                e.model.fields.amount_payable.editable = e.model.fields.hr_comment.editable = e.model.fields.hr_approval.editable = universal.isHr && (e.model.hr_approval === null) && e.model.hod_approval === true;
+                e.model.fields.gm_approval.editable = e.model.fields.gm_comment.editable = universal.isGM && (e.model.gm_approval === null) && e.model.hr_approval === true;
+                e.model.fields.amount_approved.editable = e.model.fields.fmgr_comment.editable = e.model.fields.fmgr_approval.editable = universal.isFmgr && (e.model.fmgr_approval === null) && e.model.gm_approval === true;
+                e.model.fields.received_by.editable = e.model.fields.amount_received.editable = e.model.fields.finance_officer_comment.editable = ((e.model.fmgr_approval === true) && universal.isFinanceOfficer && e.model.date_received !== null);
+            },
             edit: onEdit,
         })).getKendoGrid();
         documentReady();

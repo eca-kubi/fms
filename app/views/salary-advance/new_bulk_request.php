@@ -159,10 +159,12 @@
                 for (let rowIndex = 1; rowIndex < sheet.rows.length; rowIndex++) {
                     let row = sheet.rows[rowIndex];
                     // alternating row colors
-                    if (rowIndex % 2 === 0) {
-                        let row = sheet.rows[rowIndex];
-                        for (let cellIndex = 0; cellIndex < row.cells.length; cellIndex++) {
-                            //row.cells[cellIndex].fontName = "Poppins";
+                    if (row.type=== "data") {
+                        if (rowIndex % 2 === 0) {
+                            let row = sheet.rows[rowIndex];
+                            for (let cellIndex = 0; cellIndex < row.cells.length; cellIndex++) {
+                                //row.cells[cellIndex].fontName = "Poppins";
+                            }
                         }
                     }
                 }

@@ -14,7 +14,7 @@ class SalaryAdvanceSingleRequestsAjax extends Controller
 
     public function Update(): void
     {
-        updateSingleRequest();
+        updateSalaryAdvance();
     }
 
     public function Destroy(): void

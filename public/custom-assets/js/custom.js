@@ -574,7 +574,7 @@ function onDetailInit(e) {
 function onBeforeEdit(e) {
     window.grid_uid = e.model.uid; // uid of current editing row
     e.model.fields.amount_requested.editable = false;
-    e.model.fields.hod_comment.editable = e.model.fields.hod_approval.editable = e.model.hod_approval === null && (e.model.department_id === universal.currentDepartmentID);
+    e.model.fields.hod_comment.editable = e.model.fields.hod_approval.editable = e.model.hod_approval === null && (e.model.department_id === universal.currentDepartmentID) && universal.isManager;
     e.model.fields.amount_payable.editable = e.model.fields.hr_comment.editable = e.model.fields.hr_approval.editable = universal.isHr && (e.model.hr_approval === null) && e.model.hod_approval === true;
     e.model.fields.gm_approval.editable = e.model.fields.gm_comment.editable = universal.isGM && (e.model.gm_approval === null) && e.model.hr_approval === true;
     e.model.fields.amount_approved.editable = e.model.fields.fmgr_comment.editable = e.model.fields.fmgr_approval.editable = universal.isFmgr && (e.model.fmgr_approval === null) && e.model.gm_approval === true;
@@ -725,21 +725,23 @@ let Configurations = {
                 sheet.columns[0].autoWidth = false;
                 for (let rowIndex = 1; rowIndex < sheet.rows.length; rowIndex++) {
                     let row = sheet.rows[rowIndex];
-                    let dataItem = {
-                        hod_approval: row.cells[3].value,
-                        hr_approval: row.cells[6].value,
-                        gm_approval: row.cells[10].value,
-                        fmgr_approval: row.cells[13].value
-                    };
-                    row.cells[3].value = dataItem.hod_approval == null ? 'Pending' : (dataItem.hod_approval ? 'Approved' : 'Rejected');
-                    row.cells[6].value = dataItem.hr_approval == null ? 'Pending' : (dataItem.hr_approval ? 'Approved' : 'Rejected');
-                    row.cells[10].value = dataItem.gm_approval == null ? 'Pending' : (dataItem.gm_approval ? 'Approved' : 'Rejected');
-                    row.cells[13].value = dataItem.fmgr_approval == null ? 'Pending' : (dataItem.fmgr_approval ? 'Approved' : 'Rejected');
-                    // alternating row colors
-                    if (rowIndex % 2 === 0) {
-                        let row = sheet.rows[rowIndex];
-                        for (let cellIndex = 0; cellIndex < row.cells.length; cellIndex++) {
-                            //row.cells[cellIndex].fontName = "Poppins";
+                    if (row.type === "data") {
+                        let dataItem = {
+                            hod_approval: row.cells[6].value,
+                            hr_approval: row.cells[9].value,
+                            gm_approval: row.cells[13].value,
+                            fmgr_approval: row.cells[16].value
+                        };
+                        row.cells[6].value = dataItem.hod_approval == null ? 'Pending' : (dataItem.hod_approval ? 'Approved' : 'Rejected');
+                        row.cells[9].value = dataItem.hr_approval == null ? 'Pending' : (dataItem.hr_approval ? 'Approved' : 'Rejected');
+                        row.cells[13].value = dataItem.gm_approval == null ? 'Pending' : (dataItem.gm_approval ? 'Approved' : 'Rejected');
+                        row.cells[16].value = dataItem.fmgr_approval == null ? 'Pending' : (dataItem.fmgr_approval ? 'Approved' : 'Rejected');
+                        // alternating row colors
+                        if (rowIndex % 2 === 0) {
+                            let row = sheet.rows[rowIndex];
+                            for (let cellIndex = 0; cellIndex < row.cells.length; cellIndex++) {
+                                //row.cells[cellIndex].fontName = "Poppins";
+                            }
                         }
                     }
                 }

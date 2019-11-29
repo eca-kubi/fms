@@ -28,11 +28,9 @@ class SalaryAdvanceBulkRequestsAjax extends Controller
         $insertIDs = [];
         $errors = ['errors' => [['message' => 'Request submission failed.']]];
         $_POST = json_decode(file_get_contents('php://input'), true, 512, JSON_THROW_ON_ERROR);
-        $post = filter_var_array($_POST, FILTER_SANITIZE_STRING);
         $request_number = genDeptRef($current_user->department_id, 'salary_advance', false);
-        $models = $post['models'];
+        $models = $_POST['models'];
         $user_ids = [];
-        $bulk_requests = [];
         foreach ($models as $model) {
             $is_valid_user = $db->where('user_id', $model['user_id'])
                 ->where('department_id', $current_user->department_id)
@@ -72,13 +70,13 @@ class SalaryAdvanceBulkRequestsAjax extends Controller
                     $bulk_requests[] = getSalaryAdvance(['u.user_id' => $user_id, 'sa.request_number' => $request_number])[0];
                 }
             }
+            echo json_encode($bulk_requests, JSON_THROW_ON_ERROR, 512);
         }
-        echo json_encode($bulk_requests, JSON_THROW_ON_ERROR, 512);
     }
 
     public function Update(): void
     {
-        updateSingleRequest(false);
+        updateSalaryAdvance(false);
     }
 
     public function Destroy(): void

@@ -728,10 +728,11 @@ function requestApprovalNotification($applicant, $manager, $subject, $data)
     }
 }
 
-function updateSingleRequest($send_email = true)
+function updateSalaryAdvance($send_email = true)
 {
     $db = Database::getDbh();
     $current_user = getUserSession();
+    $is_secretary = isSecretary($current_user->user_id);
     $hr = new User(getCurrentHR());
     $fmgr = new User(getCurrentFgmr());
     $gm = new User(getCurrentGM());
@@ -748,7 +749,16 @@ function updateSingleRequest($send_email = true)
             $subject = "Salary Advance Application ($request_number)";
             $data = ['ref_number' => $request_number, 'link' => URL_ROOT . '/salary-advance/single-requests/' .
                 $request_number, 'recipient_id' => $salary_advance['user_id'], 'applicant_id' => $applicant->user_id];
-            if ($current_user->user_id === $hod->user_id && $salary_advance['hod_approval'] === null) {
+            if ($is_secretary) {
+                $update_success = $db->where('id_salary_advance', $id_salary_advance)->update('salary_advance', [
+                    'amount_requested' => $_POST['amount_requested']
+                ]);
+                if (!$update_success) {
+                    $errors['errors'][0]['message'] = 'The record failed to update';
+                    echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
+                    return;
+                }
+            } elseif ($current_user->user_id === $hod->user_id && $salary_advance['hod_approval'] === null) {
                 // Current user is the hod
                 $update_success = $db->where('id_salary_advance', $id_salary_advance)->update('salary_advance', [
                     'hod_id' => $current_user->user_id,
@@ -839,7 +849,7 @@ function updateSingleRequest($send_email = true)
                     return;
                 }
             }
-            $updated_record = getSalaryAdvance(['id_salary_advance' => $id_salary_advance, 'deleted' => false, 'is_bulk_request' => false]);
+            $updated_record = getSalaryAdvance(['id_salary_advance' => $id_salary_advance, 'deleted' => false]);
             echo json_encode($updated_record, JSON_THROW_ON_ERROR, 512);
         }
     }
