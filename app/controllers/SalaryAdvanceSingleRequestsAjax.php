@@ -18,6 +18,7 @@ class SalaryAdvanceSingleRequestsAjax extends Controller
         $hr = new User(getCurrentHR());
         $fmgr = new User(getCurrentFgmr());
         $gm = new User(getCurrentGM());
+        $finance_officer = new User(getFinanceOfficer());
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Sanitize POST array
             $_POST = json_decode(file_get_contents('php://input'), true, 512, JSON_THROW_ON_ERROR);
@@ -97,6 +98,19 @@ class SalaryAdvanceSingleRequestsAjax extends Controller
                         $email = get_include_contents('email_templates/salary-advance/main', $data);
                         insertEmail($subject, $email, $applicant->email);
                     } else {
+                        $errors['errors'][0]['message'] = 'The record failed to update';
+                        echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
+                        return;
+                    }
+                }elseif($salary_advance['fmgr_approval'] && $finance_officer->user_id === $current_user->user_id){
+                    $update_success = $db->where('id_salary_advance', $id_salary_advance)->update('salary_advance', [
+                        'finance_officer_id' => $current_user->user_id,
+                        'finance_officer_comment' => filter_var($_POST['finance_officer_comment'], FILTER_SANITIZE_STRING),
+                        'date_received' => now(),
+                        'amount_received' => $_POST['amount_received'],
+                        'received_by' => filter_var($_POST['received_by'], FILTER_SANITIZE_STRING)
+                    ]);
+                    if (!$update_success) {
                         $errors['errors'][0]['message'] = 'The record failed to update';
                         echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
                         return;

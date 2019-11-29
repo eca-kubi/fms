@@ -109,7 +109,28 @@ function dropDownEditor(container, options) {
                 });
             }
         });
-    container.append('<span class="k-invalid-msg" data-for="name"></span>')
+    container.append('<span class="k-invalid-msg" data-for="' + options.field  + '"></span>')
+}
+
+function employeesEditor(container, options) {
+    $('<input id="employees"  required name="' + options.field + '" data-bind="value:' + options.field + '" data-bind="text:' +options.field +'" data-required-msg="Please select an employee!"/>')
+        .appendTo(container)
+        .kendoAutoComplete({
+            dataTextField: "name",
+            dataSource: {
+                transport: {
+                    read: {
+                        url: URL_ROOT + '/employees-ajax/employees',
+                        dataType: "json"
+                    }
+                },
+                group: {field: 'department_short_name'}
+            },
+            filter: "contains",
+            suggest: true,
+            ignoreCase: true,
+        });
+    container.append('<span class="k-invalid-msg" data-for="' + options.field  +'"></span>')
 }
 
 function textAreaEditor(container, options) {
@@ -557,8 +578,7 @@ function onBeforeEdit(e) {
     e.model.fields.amount_payable.editable = e.model.fields.hr_comment.editable = e.model.fields.hr_approval.editable = universal.isHr && (e.model.hr_approval === null) && e.model.hod_approval === true;
     e.model.fields.gm_approval.editable = e.model.fields.gm_comment.editable = universal.isGM && (e.model.gm_approval === null) && e.model.hr_approval === true;
     e.model.fields.amount_approved.editable = e.model.fields.fmgr_comment.editable = e.model.fields.fmgr_approval.editable = universal.isFmgr && (e.model.fmgr_approval === null) && e.model.gm_approval === true;
-    e.model.fields.received_by.editable = e.model.fields.amount_received.editable = (e.model.fmgr_approval === true && universal.isFinanceOfficer);
-    //if (e.model.fields.amount_payable.editable) e.model.amount_payable = e.model.amount_requested;
+    e.model.fields.received_by.editable = e.model.fields.amount_received.editable = e.model.fields.finance_officer_comment.editable = ((e.model.fmgr_approval === true) && universal.isFinanceOfficer && e.model.date_received !== null);
 }
 
 function onEdit(e) {
@@ -599,6 +619,7 @@ function onEdit(e) {
     let amountReceivedLabelField = e.container.find('.k-edit-label:eq(19), .k-edit-field:eq(19)');
     let receivedByLabelField = e.container.find('.k-edit-label:eq(20), .k-edit-field:eq(20)');
     let dateReceivedLabelField = e.container.find('.k-edit-label:eq(21), .k-edit-field:eq(21)');
+    let financeOfficerCommentLabelField = e.container.find('.k-edit-label:eq(22), .k-edit-field:eq(22)');
 
     e.container.find('.k-edit-label, .k-edit-field').addClass("pt-2").toggle(false);
     requestNumberField.toggle();
@@ -618,7 +639,7 @@ function onEdit(e) {
     receivedByLabelField.toggle(e.model.fields.received_by.editable || e.model.received_by !== null);
     amountReceivedLabelField.toggle(e.model.fields.amount_received.editable || e.model.received_by !== null);
     dateReceivedLabelField.toggle(e.model.date_received !== null);
-
+    financeOfficerCommentLabelField.toggle(e.model.finance_officer_comment !== null);
     // Validations
     /*    hodCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');
         hrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');
@@ -1033,7 +1054,8 @@ let Configurations = {
                     },
                     width: 200,
                     filterable: false,
-                    format: "{0:c}"
+                    format: "{0:c}",
+                    editor: editNumberWithoutSpinners
                 },
                 {
                     field: 'received_by',
@@ -1045,7 +1067,8 @@ let Configurations = {
                     width: 200,
                     groupHeaderTemplate: "Received By: #:  value #",
                     filterable: false,
-                    nullable: true
+                    nullable: true,
+                    editor: employeesEditor
                 },
                 {
                     field: 'date_received',

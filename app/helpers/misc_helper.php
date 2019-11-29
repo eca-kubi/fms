@@ -237,6 +237,10 @@ function getCurrentGM()
 {
     return Database::getDbh()->where('prop', 'current_gm')->getValue('settings', 'value');
 }
+function getFinanceOfficer()
+{
+    return Database::getDbh()->where('prop', 'finance_officer')->getValue('settings', 'value');
+}
 
 function its_logged_in_user($user_id)
 {

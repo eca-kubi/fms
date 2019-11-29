@@ -203,7 +203,10 @@
                         },
                         raised_by_id: {type: "number", editable: false},
                         amount_received: {
-                            type: "number", editable: false, nullable: true
+                            type: "number",
+                            editable: false,
+                            nullable: true,
+                            validation: Configurations.validations.minMaxAmount
                         },
                         percentage: {
                             type: "number",
@@ -217,7 +220,7 @@
                         },
                         finance_officer_id: {type: "number", nullable: true, editable: false},
                         finance_officer_comment: {
-                            type: "string", editable: false, validation: Configurations.validations.minMaxAmount,
+                            type: "string", editable: false, validation: Configurations.validations.minMaxAmount
                         }
                     }
                 }

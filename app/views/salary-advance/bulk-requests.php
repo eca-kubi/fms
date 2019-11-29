@@ -128,7 +128,7 @@
                         gm_id: {type: "number"},
                         hod_approval: {editable: false, nullable: true, type: "boolean"},
                         hod_approval_date: {editable: false, nullable: true, type: "date"},
-                        hod_comment: {editable: false, type: "string"},
+                        hod_comment: {editable: false, type: "string", validation: Configurations.validations.minMaxAmount},
                         hod_id: {type: "number"},
                         hr_approval: {editable: false, nullable: true, type: "boolean"},
                         hr_approval_date: {editable: false, nullable: true, type: "date"},
