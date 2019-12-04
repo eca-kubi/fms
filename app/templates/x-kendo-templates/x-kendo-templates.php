@@ -161,3 +161,15 @@ $is_secretary = isAssignedAsSecretary($current_user->user_id);
 </script>
 
 <script id="tooltipTemplate" type="text/x-kendo-template"><span class="k-widget k-tooltip k-tooltip-validation"><span class="k-icon k-warning"></span>#=message#</span></script>
+
+<script id="groupByColumnsTemplate" type="text/x-kendo-template">
+    <label for="groupByColumnsSelect">Group By Columns</label>
+    <select id="groupByColumnsSelect" multiple="multiple" data-placeholder="Select columns...">
+        <option>HoD Approval</option>
+        <option>HR Approval</option>
+        <option>GM Approval</option>
+        <option>FMgr Approval</option>
+        <option>Request Number</option>
+        <option>Date Raised</option>
+    </select>
+</script>

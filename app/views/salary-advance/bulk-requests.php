@@ -158,7 +158,9 @@
             }
         });
         grid = $salaryAdvanceGrid.kendoGrid($.extend({}, Configurations.grid.options, {dataSource: dataSource}, {
-            groupable: true,
+            groupable: {
+                enabled: true
+            },
             dataSource: dataSource,
             beforeEdit: function (e) {
                 window.grid_uid = e.model.uid; // uid of current editing row
@@ -172,6 +174,7 @@
             edit: onEdit,
         })).getKendoGrid();
         documentReady();
+        //grid.bind("dataBound", appendToHeader);
     });
 </script>
 </body>

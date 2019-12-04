@@ -11,6 +11,7 @@ let commentTooltip;
 let selectedRowId;
 let grid;
 let $salaryAdvanceGrid;
+let groupByColumnsSelect;
 let dataSource;
 kendo.culture().numberFormat.currency.symbol = 'GH₵';
 $(document).ready(function () {
@@ -1203,4 +1204,12 @@ function findFromDataSource(field, value) {
     return grid.dataSource.data().find(function (y) {
         return y[field] === value;
     });
+}
+
+function appendToHeader() {
+    $(".k-grouping-header").empty();
+    $(".k-grouping-header>span").append($("#groupByColumnsTemplate").html());
+    groupByColumnsSelect =  $("#groupByColumnsSelect").kendoMultiSelect({
+    }).data("kendoMultiSelect");
+   // grid.unbind("dataBound", appendToHeader);
 }

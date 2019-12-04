@@ -416,14 +416,9 @@ li.selected .dropdown-item.selected {
     padding-right: 3rem;
 }
 
-select[multiple='multiple'] {
+/*select[multiple='multiple'] {
     display: none;
-}
-
-.pignose-calendar-unit-toggle-active > a {
-    background-color: #777777 !important;
-    border-radius: 50% !important;
-}
+}*/
 
 .dtr-title::after {
     content: ':'
