@@ -12,7 +12,19 @@
       <excludeFolder url="file://$MODULE_DIR$/app/views/salary-advance-secretary" />
       <excludeFolder url="file://$MODULE_DIR$/app/views/users" />
       <excludeFolder url="file://$MODULE_DIR$/app/views/visitor-access-form" />
+      <excludeFolder url="file://$MODULE_DIR$/public/assets/adminlte" />
+      <excludeFolder url="file://$MODULE_DIR$/public/assets/adminlte-3" />
+      <excludeFolder url="file://$MODULE_DIR$/public/assets/algo" />
+      <excludeFolder url="file://$MODULE_DIR$/public/assets/css/font-awesome-free" />
+      <excludeFolder url="file://$MODULE_DIR$/public/assets/css/kendo.old" />
+      <excludeFolder url="file://$MODULE_DIR$/public/assets/js/ajaxlivesearch" />
+      <excludeFolder url="file://$MODULE_DIR$/public/assets/js/kendo.old" />
+      <excludeFolder url="file://$MODULE_DIR$/public/assets/js/library" />
+      <excludeFolder url="file://$MODULE_DIR$/public/assets/nicescroll" />
       <excludeFolder url="file://$MODULE_DIR$/public/assets/safety-flash" />
+      <excludeFolder url="file://$MODULE_DIR$/public/assets/select2" />
+      <excludeFolder url="file://$MODULE_DIR$/public/assets/shards" />
+      <excludeFolder url="file://$MODULE_DIR$/public/assets/ts" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/sirbrillig/phpcs-variable-analysis" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/squizlabs/php_codesniffer" />
     </content>

@@ -14,7 +14,6 @@
 -->
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/animate.min.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/w3.css"/>
-    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/bootstrap-select.css"/>
     <link rel="stylesheet" media="all" href="<?php echo URL_ROOT; ?>/public/assets/css/adminlte.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/adminlte-miscellaneous.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/box-widget.css"/>
@@ -28,7 +27,6 @@
     <link rel="stylesheet" media="all"
           href="<?php echo URL_ROOT; ?>/public/assets/css/font-awesome-pro/css/v4-shims.min.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT ?>/public/assets/css/shards.min.css">
-
     <link rel="stylesheet"
           href="<?php echo URL_ROOT; ?>/public/custom-assets/css/custom.css?<?php echo microtime(); ?>"/>
     <link rel="stylesheet" media="print"
