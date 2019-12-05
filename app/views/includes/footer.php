@@ -10,3 +10,14 @@
     </div>
 </footer>
 <input type="hidden" id="url_root" value="<?php echo URL_ROOT; ?>">
+
+<div id="uploadSalariesWindow" style="display: none">
+    <div class="k-content">
+        <h4>Upload Salaries</h4>
+        <input name="files" id="excelUpload" type="file" />
+        <div class="demo-hint">You can only upload <strong>Excel</strong> files.</div>
+    </div>
+    <!--<form action="<?php /*echo URL_ROOT . '/salary-advance/upload-salaries' */?>">
+        <div class="form-group"><label for="excelUpload"><input type="file" id="excelUpload"></label></div>
+    </form>-->
+</div>

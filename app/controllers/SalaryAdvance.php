@@ -71,4 +71,9 @@ class SalaryAdvance extends Controller
         $payload['salary_advance'] = $db->where('id_salary_advance', $id_salary_advance)->objectBuilder()->getOne('salary_advance');
         $this->view('print-salary-advance', $payload);
     }
+
+    public function uploadSalaries(): void
+    {
+
+    }
 }

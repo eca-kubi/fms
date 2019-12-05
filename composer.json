@@ -11,7 +11,8 @@
     "ext-zip": "*",
     "tecnickcom/tcpdf": "^6.2",
     "squizlabs/php_codesniffer": "3.5.1",
-    "sirbrillig/phpcs-variable-analysis": "v2.7.0"
+    "sirbrillig/phpcs-variable-analysis": "v2.7.0",
+    "nuovo/spreadsheet-reader": "0.5.11"
   },
   "repositories": [
     {

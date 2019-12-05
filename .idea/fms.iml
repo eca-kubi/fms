@@ -24,7 +24,7 @@
       <excludeFolder url="file://$MODULE_DIR$/public/assets/safety-flash" />
       <excludeFolder url="file://$MODULE_DIR$/public/assets/select2" />
       <excludeFolder url="file://$MODULE_DIR$/public/assets/shards" />
-      <excludeFolder url="file://$MODULE_DIR$/public/assets/ts" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/nuovo/spreadsheet-reader" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/sirbrillig/phpcs-variable-analysis" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/squizlabs/php_codesniffer" />
     </content>

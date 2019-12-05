@@ -89,8 +89,10 @@
                     if ($user->profile_pic === DEFAULT_PROFILE_PIC) {
                         $name = $user->first_name . ' ' . $user->last_name;
                         $src = PROFILE_PIC_DIR . $user->profile_pic . '?' . microtime(); ?>
-                        <img alt="<?php echo $initials ?>" class="user-image img-size-32 img-fluid img-circle d-inline-block" avatar="<?php echo $name; ?>">
-                  <?php  } else { ?>
+                        <img alt="<?php echo $initials ?>"
+                             class="user-image img-size-32 img-fluid img-circle d-inline-block"
+                             avatar="<?php echo $name; ?>">
+                    <?php } else { ?>
                         <img src="<?php echo PROFILE_PIC_DIR . $user->profile_pic . '?' . microtime(); ?>"
                              class="user-image img-size-32 img-fluid img-circle d-inline-block"
                              alt="<?php echo $initials; ?>" /><?php } ?>
@@ -108,8 +110,10 @@
                             if ($user->profile_pic === DEFAULT_PROFILE_PIC) {
                                 $initials = $user->first_name[0] . $user->last_name[0];
                                 $name = $user->first_name . ' ' . $user->last_name; ?>
-                                 <img alt="<?php echo $initials ?>" class="user-image img-size-32 img-fluid img-circle d-inline-block" avatar="<?php echo $name; ?>">
-                          <?php  } else { ?>
+                                <img alt="<?php echo $initials ?>"
+                                     class="user-image img-size-32 img-fluid img-circle d-inline-block"
+                                     avatar="<?php echo $name; ?>">
+                            <?php } else { ?>
                                 <img src="<?php echo PROFILE_PIC_DIR . $user->profile_pic . '?' . microtime(); ?>"
                                      class="user-image img-size-32 img-fluid img-circle d-inline-block"
                                      alt="<?php echo $initials; ?>" /><?php } ?>
@@ -152,117 +156,15 @@
                 <li class="nav-item ml-0 ml-sm-4 text-left pr-1 border-right border-warning fa">
                     <a href="<?php echo site_url('start-page'); ?>"
                        class="ajax-link nav-link btn border-0 text-bold flat text-left font-raleway text-warning">
-                        <i class="fal fa-home ml-4"></i> DASHBOARD
+                        <i class="fal fa-home ml-4"></i> START PAGE
                     </a>
                 </li>
-                <li class="nav-item dropdown fa  mx-2 d-none">
-                    <a class="nav-link dropdown-item dropdown-toggle btn border-0 text-bold flat text-warning"
-                       data-toggle="dropdown">
-                        <i class="fas fa-edit"></i>
-                        Forms
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownId"
-                        style="position:absolute">
-                        <li class="dropdown-submenu"><a class="dropdown-item dropdown-toggle" href="#">Finance</a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="<?php echo site_url('salary-advance') ?>">Salary
-                                        Advance</a></li>
-                                <!--<li class="dropdown-submenu"><a class="dropdown-item dropdown-toggle" href="#">Subsubmenu</a>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="#">Subsubmenu action</a></li>
-                                        <li><a class="dropdown-item" href="#">Another subsubmenu action</a></li>
-                                    </ul>
-                                </li>
-                                <li class="dropdown-submenu"><a class="dropdown-item dropdown-toggle" href="#">Second subsubmenu</a>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="#">Subsubmenu action</a></li>
-                                        <li><a class="dropdown-item" href="#">Another subsubmenu action</a></li>
-                                    </ul>
-                                </li>-->
-                            </ul>
-                        </li>
-                        <li class="dropdown-divider"></li>
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                IT
-                            </a>
-                        </li>
-                        <li class="dropdown-divider"></li>
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                HR
-                            </a>
-                        </li>
-                        <li class="dropdown-divider"></li>
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                Admin
-                            </a>
-                        </li>
-                        <li class="dropdown-divider"></li>
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                Mining
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item dropdown fa  mx-2 d-none">
-                    <a class="nav-link dropdown-item text-warning dropdown-toggle btn border-0 text-bold flat"
-                       data-toggle="dropdown">
-                        <i class="fa fa-history"></i>
-                        History
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownId"
-                        style="position:absolute">
-                        <li class="dropdown-submenu"><a class="dropdown-item dropdown-toggle" href="#">Finance</a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="<?php echo site_url('salary-advance') ?>">Salary
-                                        Advance</a></li>
-                                <!--<li class="dropdown-submenu"><a class="dropdown-item dropdown-toggle" href="#">Subsubmenu</a>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="#">Subsubmenu action</a></li>
-                                        <li><a class="dropdown-item" href="#">Another subsubmenu action</a></li>
-                                    </ul>
-                                </li>
-                                <li class="dropdown-submenu"><a class="dropdown-item dropdown-toggle" href="#">Second subsubmenu</a>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="#">Subsubmenu action</a></li>
-                                        <li><a class="dropdown-item" href="#">Another subsubmenu action</a></li>
-                                    </ul>
-                                </li>-->
-                            </ul>
-                        </li>
-                        <li class="dropdown-divider"></li>
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                IT
-                            </a>
-                        </li>
-                        <li class="dropdown-divider"></li>
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                HR
-                            </a>
-                        </li>
-                        <li class="dropdown-divider"></li>
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                Admin
-                            </a>
-                        </li>
-                        <li class="dropdown-divider"></li>
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                Mining
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <?php $is_secretary = isAssignedAsSecretary($current_user->user_id);  $is_current_manager = isCurrentManager($current_user->user_id);
-                $is_finance_officer = isFinanceOfficer($current_user->user_id)?>
+                <?php $is_secretary = isAssignedAsSecretary($current_user->user_id);
+                $is_current_manager = isCurrentManager($current_user->user_id);
+                $is_finance_officer = isFinanceOfficer($current_user->user_id) ?>
                 <li class="nav-item  mx-2">
-                    <a class="nav-link text-warning  btn border-0 text-bold flat" href="<?php echo site_url('salary-advance') ?>">
+                    <a class="nav-link text-warning  btn border-0 text-bold flat"
+                       href="<?php echo site_url('salary-advance') ?>">
                         <i class="fal fa-user"></i>
                         MY REQUESTS
                     </a>
@@ -280,10 +182,16 @@
                                    href="<?php echo site_url('salary-advance/single-requests') ?>">Single Requests</a>
                             </li>
                             <li class="dropdown-divider"></li>
-                            <li><a class="dropdown-item"
+                            <li>
+                                <a class="dropdown-item"
                                    href="<?php echo site_url('salary-advance/bulk-requests') ?>">Bulk Requests</a>
                             </li>
                         </ul>
+                    </li>
+                    <li class="nav-item  mx-2">
+                        <a class="nav-link text-warning  btn border-0 text-bold flat" id="uploadSalariesButton"
+                           href="javascript:"><i class="fal fa-file-upload"></i>
+                            Upload Salaries</a>
                     </li>
                 <?php endif ?>
                 <?php if ($is_secretary): ?>

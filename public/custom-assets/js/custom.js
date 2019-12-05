@@ -13,7 +13,8 @@ let grid;
 let $salaryAdvanceGrid;
 let groupByColumnsSelect;
 let dataSource;
-kendo.culture().numberFormat.currency.symbol = 'GH₵';
+let uploadSalariesWindow;
+//kendo.culture().numberFormat.currency.symbol = 'GH₵';
 $(document).ready(function () {
     jQuery.fx.off = true;
     URL_ROOT = $('#url_root').val();
@@ -110,11 +111,11 @@ function dropDownEditor(container, options) {
                 });
             }
         });
-    container.append('<span class="k-invalid-msg" data-for="' + options.field  + '"></span>')
+    container.append('<span class="k-invalid-msg" data-for="' + options.field + '"></span>')
 }
 
 function employeesEditor(container, options) {
-    $('<input id="employees"  required name="' + options.field + '" data-bind="value:' + options.field + '" data-bind="text:' +options.field +'" data-required-msg="Please select an employee!"/>')
+    $('<input id="employees"  required name="' + options.field + '" data-bind="value:' + options.field + '" data-bind="text:' + options.field + '" data-required-msg="Please select an employee!"/>')
         .appendTo(container)
         .kendoAutoComplete({
             dataTextField: "name",
@@ -131,7 +132,7 @@ function employeesEditor(container, options) {
             suggest: true,
             ignoreCase: true,
         });
-    container.append('<span class="k-invalid-msg" data-for="' + options.field  +'"></span>')
+    container.append('<span class="k-invalid-msg" data-for="' + options.field + '"></span>')
 }
 
 function textAreaEditor(container, options) {
@@ -1180,6 +1181,36 @@ function documentReady() {
 
         collapsed[groupKey] = !$(this).hasClass("k-i-collapse");
     });
+
+    $("#uploadSalariesButton").click(function () {
+        $("#excelUpload").kendoUpload({
+            async: {
+                saveUrl: "save",
+                removeUrl: "remove",
+                autoUpload: true
+            },
+            validation: {
+                allowedExtensions: [".xlsx", ".xls", ".csv"]
+            },
+            success: function () {
+
+            },
+            showFileList: true,
+            //dropZone: ".dropZoneElement"
+        });
+        uploadSalariesWindow = $("#uploadSalariesWindow");
+        uploadSalariesWindow.kendoWindow({
+            width: "600px",
+            title: "",
+            visible: false,
+            actions: [
+                "Pin",
+                "Minimize",
+                "Maximize",
+                "Close"
+            ],
+        }).data("kendoWindow").center().open();
+    });
 }
 
 function disableGridAddButton() {
@@ -1209,7 +1240,6 @@ function findFromDataSource(field, value) {
 function appendToHeader() {
     $(".k-grouping-header").empty();
     $(".k-grouping-header>span").append($("#groupByColumnsTemplate").html());
-    groupByColumnsSelect =  $("#groupByColumnsSelect").kendoMultiSelect({
-    }).data("kendoMultiSelect");
-   // grid.unbind("dataBound", appendToHeader);
+    groupByColumnsSelect = $("#groupByColumnsSelect").kendoMultiSelect({}).data("kendoMultiSelect");
+    // grid.unbind("dataBound", appendToHeader);
 }
