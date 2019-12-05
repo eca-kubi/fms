@@ -688,7 +688,7 @@ function isValidAmount($amount, $basic_salary)
     return $percentage >= $min_percent || $percentage <= $max_percent;
 }
 
-function getActiveApplicants(): array
+function getActiveApplicants()
 {
     $active_applicants = [];
     try {
@@ -700,7 +700,7 @@ function getActiveApplicants(): array
             ->getValue('salary_advance sa', 'concat_ws(" ", first_name, last_name)', null);
     } catch (Exception $e) {
     }
-    return $active_applicants;
+    return $active_applicants?: [];
 }
 
 function nullableStringConverter($nullableString, $nullOutput, $trueOutput, $falseOutput)

@@ -128,7 +128,7 @@ $is_secretary = isAssignedAsSecretary($current_user->user_id);
 </script>
 
 <script  type="text/x-kendo-template" id="destroyButton">
-    <span class='col'><a class='btn btn-destroy k-grid-delete w3-hover-red k-button badge badge-danger border text-bold text-white'><i class='k-icon k-i-trash'></i> DELETE</a></span>
+    <span class='col m-1'><a class='btn btn-destroy k-grid-delete w3-hover-red k-button badge badge-danger border text-bold text-white'><i class='k-icon k-i-trash'></i> DELETE</a></span>
 </script>
 
 <script  type="text/x-kendo-template" id="printButton">

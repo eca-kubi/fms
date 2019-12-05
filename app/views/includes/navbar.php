@@ -120,7 +120,7 @@
                             <p class="text-bold mb-1">
                                 <?php echo ucwords($user->first_name . ' ' . $user->last_name, ' -'); ?>
                             </p>
-                            <p class="text-bold mb-1">
+                            <p class="text-bold mb-1 text-sm">
                                 <?php echo ucwords($user->job_title, '- '); ?>
                             </p>
                             <p class="text-nowrap text-muted d-none">

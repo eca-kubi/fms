@@ -14,208 +14,207 @@ $user = getUserSession();
     <script src="<?php echo URL_ROOT; ?>/public/assets/js/jquery.min.js"></script>
     <link rel="icon" href="<?php echo URL_ROOT; ?>/public/favicon.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/AdminLTE.min.css"/>
-    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/bootstrap.css"/>
+    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/fonts.css"/>
-    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/animate.css"/>
-    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/font-awesome.css"/>
+    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/font-awesome-pro/css/all.min.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/custom-assets/css/custom.css"/>
-</head>
-<body class="bg-nzema-mine">
-<style>
-    * {
-        -webkit-box-sizing: border-box;
-        box-sizing: border-box;
-    }
+    <style>
+        * {
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+        }
 
-    body {
-        padding: 0;
-        margin: 0;
-    }
+        body {
+            padding: 0;
+            margin: 0;
+        }
 
-    #notfound {
-        position: relative;
-        height: 100vh;
-    }
+        #notfound {
+            position: relative;
+            height: 100vh;
+        }
 
-    #notfound .notfound-bg {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        /* background-image: url('
-    <?php echo APP_ROOT; ?> /../public/assets/images/bg.jpg'); */
-        background-size: cover;
-    }
+        #notfound .notfound-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            /* background-image: url('
+<?php echo APP_ROOT; ?> /../public/assets/images/bg.jpg'); */
+            background-size: cover;
+        }
 
-    #notfound .notfound-bg:after {
-        content: '';
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.25);
-    }
+        #notfound .notfound-bg:after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.25);
+        }
 
-    #notfound .notfound {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        -webkit-transform: translate(-50%, -50%);
-        -ms-transform: translate(-50%, -50%);
-        transform: translate(-50%, -50%);
-    }
+        #notfound .notfound {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+        }
 
-    #notfound .notfound:after {
-        content: '';
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        -webkit-transform: translate(-50%, -50%);
-        -ms-transform: translate(-50%, -50%);
-        transform: translate(-50%, -50%);
-        width: 100%;
-        height: 600px;
-        background-color: rgba(255, 255, 255, 0.7);
-        -webkit-box-shadow: 0 0 0 30px rgba(255, 255, 255, 0.7) inset;
-        box-shadow: 0 0 0 30px rgba(255, 255, 255, 0.7) inset;
-        z-index: -1;
-    }
+        #notfound .notfound:after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 600px;
+            background-color: rgba(255, 255, 255, 0.7);
+            -webkit-box-shadow: 0 0 0 30px rgba(255, 255, 255, 0.7) inset;
+            box-shadow: 0 0 0 30px rgba(255, 255, 255, 0.7) inset;
+            z-index: -1;
+        }
 
-    .notfound {
-        max-width: 600px;
-        width: 100%;
-        text-align: center;
-        padding: 30px;
-        line-height: 1.4;
-    }
+        .notfound {
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            padding: 30px;
+            line-height: 1.4;
+        }
 
-    .notfound .notfound-404 {
-        position: relative;
-        height: 200px;
-    }
-
-    .notfound .notfound-404 h1 {
-        font-family: 'Passion One', cursive;
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        -webkit-transform: translate(-50%, -50%);
-        -ms-transform: translate(-50%, -50%);
-        transform: translate(-50%, -50%);
-        font-size: 220px;
-        margin: 0;
-        color: #222225;
-        text-transform: uppercase;
-    }
-
-    .notfound h2 {
-        font-family: 'Muli', sans-serif;
-        font-size: 26px;
-        font-weight: 400;
-        text-transform: uppercase;
-        color: #222225;
-        margin-top: 26px;
-        margin-bottom: 20px;
-    }
-
-    /*
-    .notfound-search {
-      position: relative;
-      padding-right: 120px;
-      max-width: 420px;
-      width: 100%;
-      margin: 30px auto 20px;
-    }
-    */
-
-    input {
-        font-family: 'Muli', sans-serif;
-        width: 100%;
-        height: 40px;
-        padding: 3px 15px;
-        color: #fff;
-        font-weight: 400;
-        font-size: 18px;
-        background: #222225;
-        border: none;
-    }
-
-    .notfound-search button {
-        font-family: 'Muli', sans-serif;
-        position: absolute;
-        right: 0;
-        top: 0;
-        width: 120px;
-        height: 40px;
-        text-align: center;
-        border: none;
-        background: #ff00b4;
-        cursor: pointer;
-        padding: 0;
-        color: #fff;
-        font-weight: 400;
-        font-size: 16px;
-        text-transform: uppercase;
-    }
-
-    .notfound a {
-        font-family: 'Muli', sans-serif;
-        display: inline-block;
-        font-weight: 400;
-        text-decoration: none;
-        background-color: transparent;
-        /* color: #222225;*/
-        text-transform: uppercase;
-        font-size: 14px;
-    }
-
-    /*.notfound-social {
-      margin-bottom: 15px;
-    }*/
-    .notfound-social > a {
-        display: inline-block;
-        height: 40px;
-        line-height: 40px;
-        width: 40px;
-        font-size: 14px;
-        color: #fff;
-        background-color: #222225;
-        margin: 3px;
-        -webkit-transition: 0.2s all;
-        transition: 0.2s all;
-    }
-
-    .notfound-social > a:hover {
-        color: #fff;
-        background-color: #ff00b4;
-    }
-
-    /*.nav-link.active {
-        border-color: #343a40 !important;
-    }*/
-
-    /*.border-danger-4 {
-      border: 4px solid red;
-    }*/
-
-    #forgot_password:hover {
-        color: #0056b3 !important;
-    }
-
-    @media only screen and (max-width: 480px) {
         .notfound .notfound-404 {
-            height: 146px;
+            position: relative;
+            height: 200px;
         }
 
         .notfound .notfound-404 h1 {
-            font-size: 146px;
+            font-family: 'Passion One', cursive;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            font-size: 220px;
+            margin: 0;
+            color: #222225;
+            text-transform: uppercase;
         }
 
         .notfound h2 {
-            font-size: 22px;
+            font-family: 'Muli', sans-serif;
+            font-size: 26px;
+            font-weight: 400;
+            text-transform: uppercase;
+            color: #222225;
+            margin-top: 26px;
+            margin-bottom: 20px;
         }
-    }
+
+        /*
+        .notfound-search {
+          position: relative;
+          padding-right: 120px;
+          max-width: 420px;
+          width: 100%;
+          margin: 30px auto 20px;
+        }
+        */
+
+        input {
+            font-family: 'Muli', sans-serif;
+            width: 100%;
+            height: 40px;
+            padding: 3px 15px;
+            color: #fff;
+            font-weight: 400;
+            font-size: 18px;
+            background: #222225;
+            border: none;
+        }
+
+        .notfound-search button {
+            font-family: 'Muli', sans-serif;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 120px;
+            height: 40px;
+            text-align: center;
+            border: none;
+            background: #ff00b4;
+            cursor: pointer;
+            padding: 0;
+            color: #fff;
+            font-weight: 400;
+            font-size: 16px;
+            text-transform: uppercase;
+        }
+
+        .notfound a {
+            font-family: 'Muli', sans-serif;
+            display: inline-block;
+            font-weight: 400;
+            text-decoration: none;
+            background-color: transparent;
+            /* color: #222225;*/
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+
+        /*.notfound-social {
+          margin-bottom: 15px;
+        }*/
+        .notfound-social > a {
+            display: inline-block;
+            height: 40px;
+            line-height: 40px;
+            width: 40px;
+            font-size: 14px;
+            color: #fff;
+            background-color: #222225;
+            margin: 3px;
+            -webkit-transition: 0.2s all;
+            transition: 0.2s all;
+        }
+
+        .notfound-social > a:hover {
+            color: #fff;
+            background-color: #ff00b4;
+        }
+
+        /*.nav-link.active {
+            border-color: #343a40 !important;
+        }*/
+
+        /*.border-danger-4 {
+          border: 4px solid red;
+        }*/
+
+        #forgot_password:hover {
+            color: #0056b3 !important;
+        }
+
+        @media only screen and (max-width: 480px) {
+            .notfound .notfound-404 {
+                height: 146px;
+            }
+
+            .notfound .notfound-404 h1 {
+                font-size: 146px;
+            }
+
+            .notfound h2 {
+                font-size: 22px;
+            }
+        }
 
 
-</style>
+    </style>
+</head>
+<body class="bg-nzema-mine">
 <div id="notfound">
     <div class="notfound-bg"></div>
     <div class="notfound">
@@ -283,7 +282,7 @@ $user = getUserSession();
 
         <div class="text-capitalize mt-5 pb-md-2">
             <a class="mr-5" href="<?php echo HOST; ?>">
-                <i class="fa fa-windows"></i> Adamus Apps
+                <i class="fa fa-window"></i> Adamus Apps
             </a>
             <a class="" href="<?php echo INTRANET; ?>" target="_blank">
                 <i class="fa fa-cloud"></i> Intranet
@@ -333,7 +332,7 @@ $user = getUserSession();
         </div>
     </div>
 </div>
-<script src="<?php echo URL_ROOT; ?>/public/assets/js/bootstrap.bundle.js"></script>
+<script src="<?php echo URL_ROOT; ?>/public/assets/js/bootstrap.bundle.min.js"></script>
 <script>
     $('#staff_id').focus();
 </script>

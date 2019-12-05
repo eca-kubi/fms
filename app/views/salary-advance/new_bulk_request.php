@@ -37,7 +37,7 @@
 <?php require_once APP_ROOT . '\views\includes\scripts.php'; ?>
 
 <?php
-/** @var string $request_number */
+/** @var string $bulk_request_number */
 ?>
 <script>
     let MIN_PERCENTAGE = <?php echo MIN_PERCENTAGE ?>;
@@ -53,7 +53,7 @@
         isFmgr: Boolean("<?php echo isCurrentFmgr($current_user->user_id) ?>"),
         isGM: Boolean("<?php echo isCurrentGM($current_user->user_id) ?>"),
         isManager: Boolean("<?php echo isCurrentManager($current_user->user_id) ?>"),
-        requestNumber: "<?php echo $request_number ?>",
+        bulkRequestNumber: "<?php echo $bulk_request_number ?>",
         isSecretary: Boolean("<?php echo isSecretary($current_user->user_id); ?>")
     };
     let bulkApplicants = [];
@@ -84,7 +84,7 @@
                     type: "post",
                     dataType: "json",
                     contentType: "application/json",
-                    data: {request_number: universal.requestNumber}
+                    data: {request_number: universal.bulkRequestNumber}
                 },
                 parameterMap: function (data, type) {
                     if (type === "create") {
@@ -109,7 +109,7 @@
                 if (e.type === 'create' && e.response.length > 0) {
                     toastSuccess('Success', 5000);
                     setTimeout(function () {
-                        window.location.href = URL_ROOT + "/salary-advance/bulk-requests/" + universal.requestNumber;
+                        window.location.href = URL_ROOT + "/salary-advance/bulk-requests/" + universal.bulkRequestNumber;
                     }, 3);
                 }
             },
@@ -139,12 +139,11 @@
                             validation: Configurations.validations.minMaxAmount
                         },
                         basic_salary: {editable: false, type: "number"},
-                        request_number: {defaultValue: universal.requestNumber, type: "string", editable: false},
+                        bulk_request_number: {defaultValue: universal.bulkRequestNumber, type: "string", editable: false},
                         date_raised: {editable: false, type: "date"},
                         department: {editable: false, type: "string"},
                         department_id: {editable: false, type: "number", nullable: true},
-                        employee: {defaultValue: {}},
-                        name: {from: "employee.name"},
+                        name: {editable: false, type: "string"},
                         raised_by_secretary: {type: "boolean", defaultValue: universal.isSecretary},
                         user_id: {type: "number", nullable: true}
                     }

@@ -17,10 +17,10 @@ class SalaryAdvance extends Controller
         }
     }
 
-    public function bulkRequests(string $request_number = null): void
+    public function bulkRequests(string $bulk_request_number = null): void
     {
         if (!isLoggedIn()) {
-            redirect('users/login/salary-advance/bulk-requests/' . $request_number);
+            redirect('users/login/salary-advance/bulk-requests/' . $bulk_request_number);
         }
         $current_user = $payload['current_user'] = getUserSession();
 
@@ -28,7 +28,7 @@ class SalaryAdvance extends Controller
             redirect('salary-advance/index');
         }
         $payload['title'] = 'Bulk Salary Advance Applications';
-        $payload['request_number'] = $request_number;
+        $payload['request_number'] = $bulk_request_number;
         $this->view('salary-advance/bulk-requests', $payload);
     }
 
@@ -42,7 +42,8 @@ class SalaryAdvance extends Controller
             redirect('salary-advance/bulk-requests');
         }
         $payload['title'] = 'New Bulk Salary Advance Application';
-        $payload['request_number'] = genDeptRef($current_user->department_id, 'salary_advance', false);
+        $request_number_parts = explode('-', genDeptRef($current_user->department_id, 'salary_advance', false));
+        $payload['bulk_request_number'] = implode('-', [$request_number_parts[0], $request_number_parts[1], $request_number_parts[2]]);
         $this->view('salary-advance/new_bulk_request', $payload);
     }
 

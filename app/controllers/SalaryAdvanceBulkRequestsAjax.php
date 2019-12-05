@@ -28,7 +28,7 @@ class SalaryAdvanceBulkRequestsAjax extends Controller
         $insertIDs = [];
         $errors = ['errors' => [['message' => 'Request submission failed.']]];
         $_POST = json_decode(file_get_contents('php://input'), true, 512, JSON_THROW_ON_ERROR);
-        $request_number = genDeptRef($current_user->department_id, 'salary_advance', false);
+        $bulk_request_number = '';
         $models = $_POST['models'];
         $user_ids = [];
         foreach ($models as $model) {
@@ -39,9 +39,12 @@ class SalaryAdvanceBulkRequestsAjax extends Controller
                 $valid_user = $db->where('user_id', $model['user_id'])->getOne('users');
                 if (!hasActiveApplication($valid_user['user_id']) && isValidAmount($model['amount_requested'], $valid_user['basic_salary'])) {
                     $percentage = ($model['amount_requested'] / $valid_user['basic_salary']) * 100;
+                    $request_number = genDeptRef($current_user->department_id, 'salary_advance', false);
+                    $request_number_parts = explode('-', $request_number);
+                    $bulk_request_number = implode('-', [$request_number_parts[0], $request_number_parts[1], $request_number_parts[2]]);
                     $insertID = $db->insert('salary_advance', ['user_id' => $valid_user['user_id'], 'percentage' => $percentage, 'raised_by_id' => $current_user->user_id,
                         'department_id' => $current_user->department_id, 'is_bulk_request' => true, 'raised_by_secretary' => true,
-                        'request_number' => $request_number, 'date_raised' => now(), 'amount_requested' => $model['amount_requested']]);
+                        'request_number' => $request_number, 'date_raised' => now(), 'amount_requested' => $model['amount_requested'], 'bulk_request_number'=> $bulk_request_number]);
                     if ($insertID) {
                         $insertIDs[] = $insertID;
                         $user_ids[] = $valid_user['user_id'];
@@ -55,19 +58,19 @@ class SalaryAdvanceBulkRequestsAjax extends Controller
             $bulk_requests = [];
             if ($db->insert('salary_advance_bulk_requests', [
                 'department_id' => $current_user->department_id,
-                'request_number' => $request_number,
+                'bulk_request_number' => $bulk_request_number,
                 'raised_by_id' => $current_user->user_id,
                 'date_raised' => now()
             ])) {
                 $hod = new User(getCurrentManager($current_user->department_id));// Send email to HoD
-                $subject = "Salary Advance Application ($request_number)";
-                $data = ['ref_number' => $request_number, 'link' => URL_ROOT . '/salary-advance/bulk-request/' . $request_number, 'user_ids' => $user_ids];
+                $subject = "Salary Advance Application ($bulk_request_number)";
+                $data = ['ref_number' => $bulk_request_number, 'link' => URL_ROOT . '/salary-advance/bulk-request/' . $bulk_request_number, 'user_ids' => $user_ids];
                 $body = get_include_contents('email_templates/salary-advance/new_bulk_request_notify_hod', $data);
                 $data['body'] = $body;
                 $email = get_include_contents('email_templates/salary-advance/main', $data);
                 insertEmail($subject, $email, $hod->email);
                 foreach ($user_ids as $user_id) {
-                    $bulk_requests[] = getSalaryAdvance(['u.user_id' => $user_id, 'sa.request_number' => $request_number])[0];
+                    $bulk_requests[] = getSalaryAdvance(['u.user_id' => $user_id, 'sa.bulk_request_number' => $bulk_request_number])[0];
                 }
             }
             echo json_encode($bulk_requests, JSON_THROW_ON_ERROR, 512);
