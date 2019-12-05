@@ -643,7 +643,7 @@ function onEdit(e) {
     dateReceivedLabelField.toggle(e.model.date_received !== null);
     financeOfficerCommentLabelField.toggle(e.model.finance_officer_comment !== null);
     // Validations
-    /*    hodCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');
+    /*    hodCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');u
         hrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');
         amountPayableLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');
         gmCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');
@@ -661,7 +661,7 @@ function onEdit(e) {
         });
         $(".print-it").printPage();
         setTimeout(function () {
-            grid.content.lockscroll(false);
+            grid.content.toggleScroll();
         }, 1)
     });
 
@@ -783,14 +783,14 @@ let Configurations = {
                         {
                             name: "custom_edit",
                             text: "Edit",
-                            iconClass: {edit: "k-icon k-i-edit"},
-                            className: "badge badge-success btn k-button text-black border k-grid-custom-edit",
+                            iconClass: "k-icon k-i-edit",
+                            className: "badge badge-success btn k-button text-black border k-grid-custom-edit m-2",
                             click: function () {
                                 let currentRow = grid.currentRow();
                                 let id_salary_advance;
                                 selectedRowId = id_salary_advance = currentRow.attr("data-id-salary-advance");
                                 grid.select(currentRow);
-                                grid.content.lockscroll(true);
+                                grid.content.toggleScroll(true);
                                 grid.dataSource.read().then(function () {
                                     grid.editRow(grid.table.find("tr[data-id-salary-advance=" + id_salary_advance + "]"));
                                 });
@@ -1242,3 +1242,22 @@ function appendToHeader() {
     groupByColumnsSelect = $("#groupByColumnsSelect").kendoMultiSelect({}).data("kendoMultiSelect");
     // grid.unbind("dataBound", appendToHeader);
 }
+
+$.fn.extend({
+    toggleScroll: function (toggleState) {
+        let noScroll = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        };
+        if (toggleState) {
+            this.on('scroll touchmove mousewheel', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            })
+        } else {
+            this.off('scroll touchmove mousewheel');
+        }
+    }
+});

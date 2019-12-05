@@ -143,7 +143,7 @@
                         date_raised: {editable: false, type: "date"},
                         department: {editable: false, type: "string"},
                         department_id: {editable: false, type: "number", nullable: true},
-                        name: {editable: false, type: "string"},
+                        name: {type: "string"},
                         raised_by_secretary: {type: "boolean", defaultValue: universal.isSecretary},
                         user_id: {type: "number", nullable: true}
                     }
