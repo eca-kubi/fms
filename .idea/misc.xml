@@ -57,7 +57,7 @@
     <file url="file://$PROJECT_DIR$/public/assets/js/bootstrap-dropdownhover.min.js" />
     <file url="file://$PROJECT_DIR$/public/assets/js/bootstrap-multiselect.js" />
     <file url="file://$PROJECT_DIR$/public/assets/js/bootstrap-select.js" />
-    <file url="file://$PROJECT_DIR$/public/assets/js/bootstrap.bundle.js" />
+    <file url="file://$PROJECT_DIR$/public/assets/js/bootstrap.js" />
     <file url="file://$PROJECT_DIR$/public/assets/js/bundle.js" />
     <file url="file://$PROJECT_DIR$/public/assets/js/custom.ajax-enabled.js" />
     <file url="file://$PROJECT_DIR$/public/assets/js/datatables.min.js" />
@@ -73,6 +73,7 @@
     <file url="file://$PROJECT_DIR$/public/assets/js/html2canvas.min.js" />
     <file url="file://$PROJECT_DIR$/public/assets/js/HTMLtoPDF_Simple.js" />
     <file url="file://$PROJECT_DIR$/public/assets/js/initial.js" />
+    <file url="file://$PROJECT_DIR$/public/assets/js/jQuery-printPage/jquery-1.4.4.min.js" />
     <file url="file://$PROJECT_DIR$/public/assets/js/jquery.collapser.min.js" />
     <file url="file://$PROJECT_DIR$/public/assets/js/jquery.daterange.js" />
     <file url="file://$PROJECT_DIR$/public/assets/js/jquery.dropdown.js" />
@@ -81,7 +82,7 @@
     <file url="file://$PROJECT_DIR$/public/assets/js/jquery.iframe-transport.js" />
     <file url="file://$PROJECT_DIR$/public/assets/js/jquery.inputpicker.js" />
     <file url="file://$PROJECT_DIR$/public/assets/js/jquery.inputpicker.messed.js" />
-    <file url="file://$PROJECT_DIR$/public/assets/js/jquery.lockscroll.min.js" />
+    <file url="file://$PROJECT_DIR$/public/assets/js/jquery.min.old.js" />
     <file url="file://$PROJECT_DIR$/public/assets/js/jquery.shortify.js" />
     <file url="file://$PROJECT_DIR$/public/assets/js/jquery.ui.widget.js" />
     <file url="file://$PROJECT_DIR$/public/assets/js/jquery.xdomain.min.js" />

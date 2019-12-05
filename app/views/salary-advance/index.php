@@ -231,6 +231,329 @@
             }
         });
         grid = $salaryAdvanceGrid.kendoGrid($.extend({}, Configurations.grid.options, {
+            columns: [
+                {
+                    command: [
+                        {
+                            name: "custom_edit",
+                            text: "Edit",
+                            iconClass: {edit: "k-icon k-i-edit"},
+                            className: "badge badge-success btn k-button text-black border k-grid-custom-edit",
+                            click: function () {
+                                let currentRow = grid.currentRow();
+                                let id_salary_advance;
+                                selectedRowId = id_salary_advance = currentRow.attr("data-id-salary-advance");
+                                grid.select(currentRow);
+                                grid.content.lockscroll(true);
+                                grid.dataSource.read().then(function () {
+                                    grid.editRow(grid.table.find("tr[data-id-salary-advance=" + id_salary_advance + "]"));
+                                });
+                            }
+                        },
+                        {name: "print", template: $("#printButton").html()}
+                    ],
+                    headerAttributes: {class: "title"},
+                    title: "Action",
+                    width: 190
+                },
+                {
+                    field: "request_number",
+                    title: "Request Number",
+                    width: 230,
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    filterable: {cell: {showOperators: false, suggestionOperator: "contains", operator: "contains"}},
+                },
+                {
+                    field: 'department',
+                    title: 'Department',
+                    headerAttributes: {
+                        class: "title"
+                    },
+                    width: 260,
+                    filterable: {cell: {showOperators: false, suggestionOperator: "contains", operator: "contains"}}
+                },
+                {
+                    field: 'amount_requested',
+                    title: 'Amount Requested',
+                    width: 180,
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    format: "{0:c}",
+                    filterable: false,
+                    editor: editNumberWithoutSpinners
+                },
+                {
+                    field: 'date_raised',
+                    title: 'Date Raised',
+                    headerAttributes: {
+                        class: "title"
+                    },
+                    width: 450,
+                    groupHeaderTemplate: "Date Raised: #= kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') #",
+                    filterable: {cell: {template: dateRangeFilter}},
+                    format: "{0:dddd dd MMM, yyyy}",
+                    nullable: true
+                },
+                {
+                    field: 'hod_approval',
+                    title: 'HoD Approval',
+                    editor: approvalEditor,
+                    template: function (dataItem) {
+                        return "<span>" + (dataItem.hod_approval === null ? '<i class="fa fa-warning text-yellow"></i>  Pending' : dataItem.hod_approval ? '<i class="fa fa-check text-success"></i> Approved' : '<i class="fa fa-warning text-danger"></i> Rejected') + "</span>"
+                    },
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    width: 200,
+                    groupHeaderTemplate: "HoD Approval: #= value===null? 'Pending' : (value? 'Approved' : 'Rejected') # | Total: #= count #",
+                    aggregates: ["count"],
+                    filterable: false
+                },
+                {
+                    field: 'hod_comment',
+                    title: 'HoD Comment',
+                    hidden: false,
+                    nullable: true,
+                    editor: textAreaEditor,
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    attributes: {
+                        class: 'comment'
+                    },
+                    width: 200,
+                    filterable: false
+                },
+                {
+                    field: 'hod_approval_date',
+                    title: 'HoD Approval Date ',
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    width: 200,
+                    groupHeaderTemplate: "Date Raised: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : '' #",
+                    hidden: false,
+                    format: "{0:dddd dd MMM, yyyy}",
+                    filterable: false,
+                    nullable: true
+                },
+                {
+                    field: 'hr_approval',
+                    title: 'HR Approval',
+                    editor: approvalEditor,
+                    template: function (dataItem) {
+                        return "<span>" + (dataItem.hr_approval === null ? '<i class="fa fa-warning text-yellow"></i>  Pending' : dataItem.hr_approval ? '<i class="fa fa-check text-success"></i> Approved' : '<i class="fa fa-warning text-danger"></i> Rejected') + "</span>"
+                    },
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    groupHeaderTemplate: "HR Approval: #= value===null? 'Pending' : (value? 'Approved' : 'Rejected') # |  Total: #= count #",
+                    aggregates: ["count"],
+                    width: 200,
+                    filterable: false
+                },
+                {
+                    field: 'hr_comment',
+                    title: 'HR Comment',
+                    editor: textAreaEditor,
+                    hidden: false,
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    attributes: {
+                        class: 'comment'
+                    },
+                    width: 200,
+                    filterable: false,
+                    nullable: true
+                },
+                {
+                    field: 'amount_payable',
+                    title: 'Amount Payable',
+                    format: "{0:c}",
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    groupHeaderTemplate: "Amount Payable: #= value?  kendo.format('{0:c}', value) : 'Pending' #",
+                    aggregates: ["max", "min"],
+                    width: 200,
+                    filterable: false,
+                    nullable: true,
+                    editor: editNumberWithoutSpinners
+                },
+                {
+                    field: 'hr_approval_date',
+                    title: 'HR Approval Date ',
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    width: 200,
+                    groupHeaderTemplate: "HR Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : '' #",
+                    hidden: false,
+                    filterable: false,
+                    format: "{0:dddd dd MMM, yyyy}",
+                    nullable: true
+                },
+                {
+                    field: 'gm_approval',
+                    title: 'GM Approval',
+                    editor: approvalEditor,
+                    template: function (dataItem) {
+                        return "<span>" + (dataItem.gm_approval === null ? '<i class="fa fa-warning text-yellow"></i>  Pending' : dataItem.gm_approval ? '<i class="fa fa-check text-success"></i> Approved' : '<i class="fa fa-warning text-danger"></i> Rejected') + "</span>"
+                    },
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    width: 200,
+                    groupHeaderTemplate: "GM Approval: #= value=== null? 'Pending' : ( value? 'Approved': 'Rejected' )# | Total: #= count #",
+                    aggregates: ["count"],
+                    filterable: false
+                },
+                {
+                    field: 'gm_comment',
+                    title: 'GM Comment',
+                    editor: textAreaEditor,
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    attributes: {
+                        class: 'comment'
+                    },
+                    width: 200,
+                    filterable: false,
+                    nullable: true
+                },
+                {
+                    field: 'gm_approval_date',
+                    title: 'GM Approval Date ',
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    width: 200,
+                    groupHeaderTemplate: "GM's Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : '' #",
+                    filterable: false,
+                    format: "{0:dddd dd MMM, yyyy}",
+                    nullable: true
+                },
+                {
+                    field: 'fmgr_approval',
+                    title: 'Fin Mgr Approval',
+                    editor: approvalEditor,
+                    template: function (dataItem) {
+                        return "<span>" + (dataItem.fmgr_approval === null ? '<i class="fa fa-warning text-yellow"></i>  Pending' : dataItem.fmgr_approval ? '<i class="fa fa-check text-success"></i> Approved' : '<i class="fa fa-warning text-danger"></i> Rejected') + "</span>"
+                    },
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    width: 200,
+                    groupHeaderTemplate: "Fin Mgr Approval: #= value? 'Approved' : (value===null? 'Pending' : 'Rejected') # |  Total: #=count #",
+                    aggregates: ["count"],
+                    filterable: false
+                },
+                {
+                    field: 'fmgr_comment',
+                    title: 'Fin Mgr Comment',
+                    hidden: false,
+                    editor: textAreaEditor,
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    attributes: {
+                        class: 'comment'
+                    },
+                    width: 200,
+                    nullable: true,
+                    filterable: false
+                },
+                {
+                    field: 'amount_approved',
+                    title: 'Amount Approved',
+                    nullable: true,
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    format: "{0:c}",
+                    width: 200,
+                    filterable: false,
+                    editor: editNumberWithoutSpinners
+                },
+                {
+                    field: 'fmgr_approval_date',
+                    title: 'Fin Mgr Approval Date ',
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    width: 200,
+                    groupHeaderTemplate: "Fin Mgr Approval Date: #= value ? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : '' #",
+                    hidden: false,
+                    filterable: false,
+                    format: "{0:dddd dd MMM, yyyy}",
+                    nullable: true
+                },
+                {
+                    field: 'amount_received',
+                    title: 'Amount Received',
+                    nullable: true,
+                    attributes: {
+                        class: 'amount_received'
+                    },
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    width: 200,
+                    filterable: false,
+                    format: "{0:c}",
+                    editor: editNumberWithoutSpinners
+                },
+                {
+                    field: 'received_by',
+                    title: 'Received By',
+                    hidden: false,
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    width: 200,
+                    groupHeaderTemplate: "Received By: #:  value #",
+                    filterable: false,
+                    nullable: true,
+                    editor: employeesEditor
+                },
+                {
+                    field: 'date_received',
+                    title: 'Date Received',
+                    hidden: false,
+                    nullable: true,
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    width: 450,
+                    groupHeaderTemplate: "Date Received: #= value? kendo.toString(kendo.parseDate(value), 'dddd dd MMM, yyyy') : '' #",
+                    filterable: {
+                        cell: {
+                            template: dateRangeFilter
+                        }
+                    },
+                    format: "{0:dddd dd MMM, yyyy}"
+                },
+                {
+                    field: 'finance_officer_comment',
+                    title: 'Fin Officer Comment',
+                    hidden: false,
+                    editor: textAreaEditor,
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    attributes: {
+                        class: 'comment'
+                    },
+                    width: 200,
+                    nullable: true,
+                    filterable: false
+                }
+            ],
             toolbar: [
                 {
                     name: "create",
@@ -244,7 +567,8 @@
                 e.model.fields.amount_requested.editable = e.model.hod_approval === null;
             },
             edit: function (e) {
-                let amountRequestedLabelField = e.container.find(".k-edit-label:eq(3), .k-edit-field:eq(3)");
+                grid.content.lockscroll(true);
+                let amountRequestedLabelField = e.container.find(".k-edit-label:eq(2), .k-edit-field:eq(2)");
                 let amountRequestedNumericTextBox = amountRequestedLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
 
                 // Toggle visibility off for all editor fields and labels
@@ -255,6 +579,31 @@
                     if (e.model.fields.amount_requested.editable) {
                         amountRequestedNumericTextBox.focus();
                     }
+                });
+
+                e.container.getKendoWindow().bind('close', function () {
+                    let data = grid.dataSource.data();
+                    $.each(data, function (i, row) {
+                        $('tr[data-uid="' + row.uid + '"] ').attr('data-id-salary-advance', row['id_salary_advance'])
+                            .attr('data-request-number', row.request_number)
+                            .find(".print-it").attr("href", URL_ROOT + "/salary-advance/print/" + row["id_salary_advance"]);
+                    });
+                    $(".print-it").printPage();
+                    setTimeout(function () {
+                        grid.content.lockscroll(false);
+                    }, 1)
+                });
+
+                e.container.on("keypress", ".k-input", function (e) {
+                    if (e.which === 13)
+                        $(this).blur().next("input").focus();
+                });
+
+                grid.editable.validatable._errorTemplate = (function anonymous(data
+                ) {
+                    let $kendoOutput;
+                    $kendoOutput = '<div class="k-widget k-tooltip k-tooltip-validation row mt-2"><span class="k-icon k-i-info d-inline col"> </span><span class="col">' + (data.message) + '</span><span class="k-callout k-callout-n"></span></div>';
+                    return $kendoOutput;
                 });
             },
             excelExport: function (e) {

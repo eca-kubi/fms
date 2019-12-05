@@ -1148,7 +1148,6 @@ function rowGroupKey(row, grid) {
     let next = row.nextUntil("[data-uid]").next(),
         item = grid.dataItem(next.length ? next : row.next()),
         groupIdx = row.children(".k-group-cell").length,
-        groups = grid.dataSource.group(),
         field = grid.dataSource.group()[groupIdx].field,
         groupValue = item[field];
     return "" + groupIdx + groupValue;
