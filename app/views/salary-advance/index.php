@@ -266,15 +266,6 @@
                     filterable: {cell: {showOperators: false, suggestionOperator: "contains", operator: "contains"}},
                 },
                 {
-                    field: 'department',
-                    title: 'Department',
-                    headerAttributes: {
-                        class: "title"
-                    },
-                    width: 260,
-                    filterable: {cell: {showOperators: false, suggestionOperator: "contains", operator: "contains"}}
-                },
-                {
                     field: 'amount_requested',
                     title: 'Amount Requested',
                     width: 180,
@@ -568,7 +559,7 @@
             },
             edit: function (e) {
                 grid.content.lockscroll(true);
-                let amountRequestedLabelField = e.container.find(".k-edit-label:eq(2), .k-edit-field:eq(2)");
+                let amountRequestedLabelField = e.container.find(".k-edit-label:eq(1), .k-edit-field:eq(1)");
                 let amountRequestedNumericTextBox = amountRequestedLabelField.find('input[data-role="numerictextbox"]').data('kendoNumericTextBox');
 
                 // Toggle visibility off for all editor fields and labels
@@ -613,15 +604,15 @@
                     let row = sheet.rows[rowIndex];
                     if (row.type === "data") {
                         let dataItem = {
-                            hod_approval: row.cells[5].value,
-                            hr_approval: row.cells[8].value,
-                            gm_approval: row.cells[12].value,
-                            fmgr_approval: row.cells[15].value
+                            hod_approval: row.cells[3].value,
+                            hr_approval: row.cells[6].value,
+                            gm_approval: row.cells[10].value,
+                            fmgr_approval: row.cells[13].value
                         };
-                        row.cells[5].value = dataItem.hod_approval == null ? 'Pending' : (dataItem.hod_approval ? 'Approved' : 'Rejected');
-                        row.cells[8].value = dataItem.hr_approval == null ? 'Pending' : (dataItem.hr_approval ? 'Approved' : 'Rejected');
-                        row.cells[12].value = dataItem.gm_approval == null ? 'Pending' : (dataItem.gm_approval ? 'Approved' : 'Rejected');
-                        row.cells[15].value = dataItem.fmgr_approval == null ? 'Pending' : (dataItem.fmgr_approval ? 'Approved' : 'Rejected');
+                        row.cells[3].value = dataItem.hod_approval == null ? 'Pending' : (dataItem.hod_approval ? 'Approved' : 'Rejected');
+                        row.cells[6].value = dataItem.hr_approval == null ? 'Pending' : (dataItem.hr_approval ? 'Approved' : 'Rejected');
+                        row.cells[10].value = dataItem.gm_approval == null ? 'Pending' : (dataItem.gm_approval ? 'Approved' : 'Rejected');
+                        row.cells[13].value = dataItem.fmgr_approval == null ? 'Pending' : (dataItem.fmgr_approval ? 'Approved' : 'Rejected');
                         // alternating row colors
                         if (rowIndex % 2 === 0) {
                             let row = sheet.rows[rowIndex];
