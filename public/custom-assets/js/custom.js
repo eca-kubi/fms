@@ -1181,6 +1181,11 @@ function documentReady() {
                 //removeUrl: "remove",
                 autoUpload: false
             },
+            success(e) {
+                if (e.operation === "upload" && e.response.success) {
+                    $.ajax(URL_ROOT + "/salary-advance/update-salaries").then(r => null);
+                }
+            },
             validation: {
                 allowedExtensions: [".xlsx", ".xls", ".csv"]
             },

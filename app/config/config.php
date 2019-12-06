@@ -37,6 +37,7 @@ const EXCEL_FILE_TYPES = '.csv, application/vnd.openxmlformats-officedocument.sp
 const HTML_NEW_LINE = '<br/>';
 const EMAIL_SUBJECT = 'Salary Advance';
 const PATH_SALARIES = APP_ROOT . '/uploads/';
+const FILE_NAME_SALARIES = 'Salaries';
 const SALT = 'archangel';
 const REMINDER_LIMIT = 3;
 const REMINDER_INTERVAL = '1H'; // 1 hour

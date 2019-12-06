@@ -13,8 +13,12 @@ return array(
     'React\\Stream\\' => array($vendorDir . '/react/stream/src'),
     'React\\EventLoop\\' => array($vendorDir . '/react/event-loop/src'),
     'React\\ChildProcess\\' => array($vendorDir . '/react/child-process/src'),
+    'Psr\\SimpleCache\\' => array($vendorDir . '/psr/simple-cache/src'),
+    'PhpOffice\\PhpSpreadsheet\\' => array($vendorDir . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet'),
     'PHPMailer\\PHPMailer\\' => array($vendorDir . '/phpmailer/phpmailer/src'),
     'Moment\\' => array($vendorDir . '/fightbulc/moment/src'),
+    'Matrix\\' => array($vendorDir . '/markbaker/matrix/classes/src'),
     'GO\\' => array($vendorDir . '/peppeocchi/php-cron-scheduler/src/GO'),
     'Cron\\' => array($vendorDir . '/mtdowling/cron-expression/src/Cron'),
+    'Complex\\' => array($vendorDir . '/markbaker/complex/classes/src'),
 );

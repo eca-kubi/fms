@@ -85,7 +85,7 @@ class SalaryAdvance extends Controller
             $allowedfileExtensions = array('xls', 'xlsx', 'csv');
             if (in_array($fileExtension, $allowedfileExtensions, true)) {
                 $uploadFileDir = PATH_SALARIES;
-                $dest_path = $uploadFileDir . $fileName;
+                $dest_path = $uploadFileDir . FILE_NAME_SALARIES . '.xlsx';
                 if (!move_uploaded_file($fileTmpPath, $dest_path)) {
                     echo json_encode(['success'=>false, 'error' => 'File upload failed!'], JSON_THROW_ON_ERROR, 512);
                 } else{
@@ -94,6 +94,27 @@ class SalaryAdvance extends Controller
             } else {
                 echo json_encode(['success'=>false, 'error' => 'Unsupported file type!'], JSON_THROW_ON_ERROR, 512);
             }
+        }
+    }
+
+  public  function updateSalaries (): void
+  {
+        $inputFileName = PATH_SALARIES . FILE_NAME_SALARIES . '.xlsx';
+        $db  = Database::getDbh();
+        try {
+            $inputFileType = \PhpOffice\PhpSpreadsheet\IOFactory::identify($inputFileName);
+            $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader($inputFileType);
+            $reader->setReadDataOnly(true);
+            $spreadsheet = $reader->load($inputFileName);
+            $worksheet = $spreadsheet->getActiveSheet();
+            $highestRow = $worksheet->getHighestRow();
+
+            for ($row = 2; $row <= $highestRow; ++$row) {
+                $staff_number = $worksheet->getCellByColumnAndRow(2, $row)->getValue();
+                $basic_salary = $worksheet->getCellByColumnAndRow(3, $row)->getValue();
+                $db->where('staff_number', $staff_number)->update('users', ['basic_salary'=> $basic_salary]);
+            }
+        } catch (\PhpOffice\PhpSpreadsheet\Exception $e) {
         }
     }
 }

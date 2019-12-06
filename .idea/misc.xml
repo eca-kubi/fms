@@ -23,7 +23,6 @@
     <file url="file://$PROJECT_DIR$/public/assets/css/bootstrap-fs-modal.css" />
     <file url="file://$PROJECT_DIR$/public/assets/css/bootstrap-multiselect.css" />
     <file url="file://$PROJECT_DIR$/public/assets/css/bootstrap-select.css" />
-    <file url="file://$PROJECT_DIR$/public/assets/css/bootstrap.css" />
     <file url="file://$PROJECT_DIR$/public/assets/css/datatables.min.css" />
     <file url="file://$PROJECT_DIR$/public/assets/css/daterangepicker.css" />
     <file url="file://$PROJECT_DIR$/public/assets/css/dropdown.css" />
@@ -103,5 +102,6 @@
     <file url="file://$PROJECT_DIR$/public/assets/js/validator.js" />
     <file url="file://$PROJECT_DIR$/public/assets/js/vfs_fonts.js" />
     <file url="file://$PROJECT_DIR$/public/assets/js/xdomain.min.js" />
+    <file url="file://$PROJECT_DIR$/public/assets/ts/kendo.all.d.ts" />
   </component>
 </project>
