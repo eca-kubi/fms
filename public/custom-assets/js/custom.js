@@ -11,16 +11,15 @@ let commentTooltip;
 let selectedRowId;
 let grid;
 let $salaryAdvanceGrid;
-let groupByColumnsSelect;
 let dataSource;
 let uploadSalariesWindow;
 //kendo.culture().numberFormat.currency.symbol = 'GH₵';
-$(document).ready(function () {
+$(function () {
     jQuery.fx.off = true;
     URL_ROOT = $('#url_root').val();
     $('.print-it').printPage();
     $('.content-wrapper').css('margin-top', $('.navbar-fixed').height() + 'px');
-    $(window).resize(function () {
+    $(window).on("resize", function () {
         $('.content-wrapper').css('margin-top', $('.navbar-fixed').height() + 'px');
     });
 // fix column width for tables in collapse
@@ -139,11 +138,11 @@ function textAreaEditor(container, options) {
     $('<textarea class="k-textbox" name="' + options.field + '" style="width:100%;height:100%;"  rows="3" required/>').appendTo(container);
 }
 
-function customBoolEditor(container, options) {
+/*function customBoolEditor(container, options) {
     let guid = kendo.guid();
     $(`<input class="k-checkbox" id="${guid}" type="checkbox" name="${options.field}" data-bind="checked:${options.field}" data-type="boolean">`).appendTo(container);
     $(`<label class="k-checkbox-label" for="${guid}">&#8203;</label>`).appendTo(container);
-}
+}*/
 
 function approvalEditor(container, options) {
     let model = grid.dataSource.getByUid(grid_uid);
@@ -246,7 +245,7 @@ toastSuccess = function f(message, timeout = false) {
         }
     });
 };
-
+/*
 function departmentFilter(element) {
     element.kendoDropDownList({
         dataSource: new kendo.data.DataSource({
@@ -260,7 +259,7 @@ function departmentFilter(element) {
         filter: "contains",
         optionLabel: "Select Department"
     });
-}
+}*/
 
 /*function kendoFastReDrawRow(grid, row, dItem) {
 let dataItem = dItem ? dItem : grid.dataItem(row);
@@ -421,7 +420,7 @@ function dateRangeFilter(args) {
     });
 }
 
-function selectGridRow(searchedId, grid, dataSource, idField) {
+/*function selectGridRow(searchedId, grid, dataSource, idField) {
     let filters = dataSource.filter() || {};
     let sort = dataSource.sort() || {};
     let models = dataSource.data();
@@ -458,7 +457,7 @@ function selectGridRow(searchedId, grid, dataSource, idField) {
         //grid.content.scrollTop(grid.select().position().top);
     }
     return row;
-}
+}*/
 
 function onRequestEnd(e) {
     if ((e.type === 'update' || e.type === 'create') && e.response.length > 0) {
@@ -658,7 +657,7 @@ function onEdit(e) {
 
     e.container.on("keypress", ".k-input", function (e) {
         if (e.which === 13)
-            $(this).blur().next("input").focus();
+            $(this).trigger("blur").next("input").trigger("focus");
     });
 
     grid.editable.validatable._errorTemplate = (function anonymous(data
@@ -1174,7 +1173,7 @@ function documentReady() {
         collapsed[groupKey] = !$(this).hasClass("k-i-collapse");
     });
 
-    $("#uploadSalariesButton").click(function () {
+    $("#uploadSalariesButton").on("click",function () {
         $("#excelUpload").kendoUpload({
             async: {
                 saveUrl: URL_ROOT + "/salary-advance/upload-salaries",
@@ -1216,27 +1215,27 @@ function disableGridAddButton() {
             .removeAttr("href");
 }
 
-function enableGridAddButton() {
+/*function enableGridAddButton() {
     kGridAddButton.removeAttr('disabled').removeAttr("title")
         .addClass('k-grid-add')
         .removeClass('k-state-disabled k-grid-add-disabled')
         .attr('href', '#');
-}
+}*/
 
-function findFromDataSource(field, value) {
+/*function findFromDataSource(field, value) {
     return grid.dataSource.data().find(function (y) {
         return y[field] === value;
     });
-}
+}*/
 
-function appendToHeader() {
+/*function appendToHeader() {
     $(".k-grouping-header").empty();
     $(".k-grouping-header>span").append($("#groupByColumnsTemplate").html());
     groupByColumnsSelect = $("#groupByColumnsSelect").kendoMultiSelect({}).data("kendoMultiSelect");
     // grid.unbind("dataBound", appendToHeader);
-}
+}*/
 
-$.fn.extend({
+/*$.fn.extend({
     toggleScroll: function (toggleState) {
         let noScroll = function (e) {
             e.preventDefault();
@@ -1253,4 +1252,4 @@ $.fn.extend({
             this.off('scroll touchmove mousewheel');
         }
     }
-});
+});*/
