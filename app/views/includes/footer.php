@@ -14,7 +14,17 @@
 <div id="uploadSalariesWindow" style="display: none">
     <div class="k-content">
         <h4>Upload Salaries</h4>
-        <input name="uploadedFile" id="excelUpload" type="file" />
+        <input name="uploadedFile" id="excelUpload" type="file"/>
         <div class="demo-hint">You can only upload <strong>Excel</strong> files.</div>
     </div>
+</div>
+<div id="exchangeRateWindow" style="display: none">
+    <form action="<?php URL_ROOT ?>\salary-advance\exchange-rate" id="exchangeRateForm" method="get">
+        <div class="k-content">
+            <h4>Enter Exchange Rate</h4>
+            <label for="exchangeRateInput" class="mr-2">1 USD = </label><input name="exchange_rate" id="exchangeRateInput" type="text" data-required-msg="Exchange Rate is required!" required/>
+            <span class="k-invalid-msg" data-for="exchangeRateInput"></span>
+            <input type="submit" class="success btn btn-success" value="Submit" id="exchangeRateSubmitButton">
+        </div>
+    </form>
 </div>

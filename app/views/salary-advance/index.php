@@ -41,7 +41,7 @@
 <script>
     let universal = {
         basicSalary: "<?php echo $current_user->basic_salary; ?>",
-        currencySymbol: "<?php echo CURRENCY_GHS; ?>",
+        ghanaCediSymbol: "<?php echo CURRENCY_GHS; ?>",
         currentDepartment: "<?php echo $current_user->department ?>",
         currentDepartmentID: <?php echo $current_user->department_id; ?>,
         hasActiveApplication: Boolean("<?php echo hasActiveApplication($current_user->user_id) ?>"),
@@ -238,7 +238,7 @@
                             name: "custom_edit",
                             text: "Edit",
                             iconClass: "k-icon k-i-edit",
-                            className: "badge badge-success btn k-button text-black border k-grid-custom-edit",
+                            className: "badge badge-success btn k-button text-black border k-grid-custom-edit m-2",
                             click: function () {
                                 let currentRow = grid.currentRow();
                                 let id_salary_advance;

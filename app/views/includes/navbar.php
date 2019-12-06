@@ -193,6 +193,11 @@
                            href="javascript:"><i class="fal fa-file-upload"></i>
                             Upload Salaries</a>
                     </li>
+                    <li class="nav-item  mx-2">
+                        <a class="nav-link text-warning  btn border-0 text-bold flat" id="exchangeRateButton"
+                           href="javascript:"><i class="fal fa-exchange"></i>
+                            Exchange Rate</a>
+                    </li>
                 <?php endif ?>
                 <?php if ($is_secretary): ?>
                     <li class="nav-item dropdown  mx-2">

@@ -87,20 +87,20 @@ class SalaryAdvance extends Controller
                 $uploadFileDir = PATH_SALARIES;
                 $dest_path = $uploadFileDir . FILE_NAME_SALARIES . '.xlsx';
                 if (!move_uploaded_file($fileTmpPath, $dest_path)) {
-                    echo json_encode(['success'=>false, 'error' => 'File upload failed!'], JSON_THROW_ON_ERROR, 512);
-                } else{
+                    echo json_encode(['success' => false, 'error' => 'File upload failed!'], JSON_THROW_ON_ERROR, 512);
+                } else {
                     echo json_encode(['success' => true], JSON_THROW_ON_ERROR, 512);
                 }
             } else {
-                echo json_encode(['success'=>false, 'error' => 'Unsupported file type!'], JSON_THROW_ON_ERROR, 512);
+                echo json_encode(['success' => false, 'error' => 'Unsupported file type!'], JSON_THROW_ON_ERROR, 512);
             }
         }
     }
 
-  public  function updateSalaries (): void
-  {
+    public function updateSalaries(): void
+    {
         $inputFileName = PATH_SALARIES . FILE_NAME_SALARIES . '.xlsx';
-        $db  = Database::getDbh();
+        $db = Database::getDbh();
         try {
             $inputFileType = \PhpOffice\PhpSpreadsheet\IOFactory::identify($inputFileName);
             $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader($inputFileType);
@@ -112,9 +112,23 @@ class SalaryAdvance extends Controller
             for ($row = 2; $row <= $highestRow; ++$row) {
                 $staff_number = $worksheet->getCellByColumnAndRow(2, $row)->getValue();
                 $basic_salary = $worksheet->getCellByColumnAndRow(3, $row)->getValue();
-                $db->where('staff_number', $staff_number)->update('users', ['basic_salary'=> $basic_salary]);
+                $db->where('staff_number', $staff_number)->update('users', ['basic_salary' => $basic_salary]);
             }
         } catch (\PhpOffice\PhpSpreadsheet\Exception $e) {
         }
+    }
+
+    public function exchangeRate(): void
+    {
+        $db = Database::getDbh();
+        $exchange_rate = filter_var($_POST['exchange_rate'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+        if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
+            $success = $db->where('prop', 'exchange_rate')->update('settings', ['value' => $exchange_rate]);
+            if ($success) {
+                echo json_encode(['success' => true], JSON_THROW_ON_ERROR, 512);
+                return;
+            }
+        }
+        echo json_encode(['success' => false], JSON_THROW_ON_ERROR, 512);
     }
 }

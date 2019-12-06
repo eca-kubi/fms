@@ -12,8 +12,20 @@ let selectedRowId;
 let grid;
 let $salaryAdvanceGrid;
 let dataSource;
-let uploadSalariesWindow;
-//kendo.culture().numberFormat.currency.symbol = 'GH₵';
+const GHS_SYMBOL = "₵";
+let customGH = $.extend(true, {}, kendo.culture(), {
+    name: "custom-GH",
+    numberFormat: {
+        currency: {
+            symbol: GHS_SYMBOL,
+            name: "GH Cedi",
+            abbr: "GHS"
+        }
+    }
+});
+
+//add a reference to the custom culture script
+kendo.cultures["custom-GH"] = customGH;
 $(function () {
     jQuery.fx.off = true;
     URL_ROOT = $('#url_root').val();
@@ -1173,38 +1185,94 @@ function documentReady() {
         collapsed[groupKey] = !$(this).hasClass("k-i-collapse");
     });
 
-    $("#uploadSalariesButton").on("click",function () {
-        $("#excelUpload").kendoUpload({
-            multiple: false,
-            async: {
-                saveUrl: URL_ROOT + "/salary-advance/upload-salaries",
-                //removeUrl: "remove",
-                autoUpload: false
-            },
-            success(e) {
-                if (e.operation === "upload" && e.response.success) {
-                    $.ajax(URL_ROOT + "/salary-advance/update-salaries").then(r => null);
-                }
-            },
-            validation: {
-                allowedExtensions: [".xlsx", ".xls", ".csv"]
-            },
-            showFileList: true
-        });
-        uploadSalariesWindow = $("#uploadSalariesWindow");
-        uploadSalariesWindow.kendoWindow({
-            width: "600px",
-            title: "",
-            visible: false,
-            actions: [
-                "Minimize",
-                "Maximize",
-                "Close"
-            ],
-            close: function () {
-                uploadSalariesWindow.find("input#excelUpload").getKendoUpload().clearAllFiles();
+    let excelUpload = $("#excelUpload").kendoUpload({
+        multiple: false,
+        async: {
+            saveUrl: URL_ROOT + "/salary-advance/upload-salaries",
+            //removeUrl: "remove",
+            autoUpload: false
+        },
+        success(e) {
+            if (e.operation === "upload" && e.response.success) {
+                $.ajax(URL_ROOT + "/salary-advance/update-salaries").then(r => null);
             }
-        }).data("kendoWindow").center().open();
+        },
+        validation: {
+            allowedExtensions: [".xlsx", ".xls", ".csv"]
+        },
+        showFileList: true
+    }).data("kendoUpload");
+
+    let uploadSalariesWindow = $("#uploadSalariesWindow").kendoWindow({
+        width: "600px",
+        title: "",
+        visible: false,
+        actions: [
+            "Minimize",
+            "Maximize",
+            "Close"
+        ],
+        minimize(e) {
+            let title = this.wrapper.find(".k-window-title");
+            title.html("<span class='fa fa-file-upload'></span> <span class='ml-1'>Upload Salaries</span>")
+                .next()
+                .one("click", "a[aria-label=window-restore]", function () {
+                    title.html("");
+                });
+        },
+        close: function () {
+            this.wrapper.find("input#excelUpload").getKendoUpload().clearAllFiles();
+        }
+    }).data("kendoWindow");
+
+    $("#uploadSalariesButton").on("click", function () {
+        uploadSalariesWindow.center().open();
+    });
+
+    let exchangeRateInput = $("#exchangeRateInput").kendoNumericTextBox({
+        min: 0.1,
+        spinners: false,
+        placeholder: " GHS",
+        decimals: 3,
+        culture: "custom-GH",
+        format: "c3"
+    }).data("kendoNumericTextBox");
+
+    let exchangeRateWindow = $("#exchangeRateWindow").kendoWindow({
+        width: "600px",
+        title: "",
+        visible: false,
+        actions: [
+            "Minimize",
+            "Maximize",
+            "Close"
+        ],
+        minimize(e) {
+            let title = this.wrapper.find(".k-window-title");
+            title.html("<span class='fa fa-exchange'></span> <span class='ml-1'>Exchange Rate</span>")
+                .next()
+                .one("click", "a[aria-label=window-restore]", function () {
+                    title.html("");
+                });
+        },
+    }).data("kendoWindow");
+
+    $("#exchangeRateForm").on("submit", function (e) {
+        e.preventDefault();
+        let form = $(this);
+        let validator = form.data("kendoValidator");
+        if (validator.validate()) {
+            $.post(URL_ROOT + "/salary-advance/exchange-rate", form.serialize(), function (data) {
+                if (data.success) {
+                    toastSuccess("Exchange rate updated successfully!", 5000);
+                }
+            }, "json").then(r => null);
+        }
+    })
+        .kendoValidator();
+
+    $("#exchangeRateButton").on("click", function () {
+        exchangeRateWindow.center().open();
     });
 }
 
