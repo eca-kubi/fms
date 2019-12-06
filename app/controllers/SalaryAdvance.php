@@ -87,8 +87,12 @@ class SalaryAdvance extends Controller
                 $uploadFileDir = PATH_SALARIES;
                 $dest_path = $uploadFileDir . $fileName;
                 if (!move_uploaded_file($fileTmpPath, $dest_path)) {
-                    echo json_encode(['error' => 'File upload failed!'], JSON_THROW_ON_ERROR, 512);
+                    echo json_encode(['success'=>false, 'error' => 'File upload failed!'], JSON_THROW_ON_ERROR, 512);
+                } else{
+                    echo json_encode(['success' => true], JSON_THROW_ON_ERROR, 512);
                 }
+            } else {
+                echo json_encode(['success'=>false, 'error' => 'Unsupported file type!'], JSON_THROW_ON_ERROR, 512);
             }
         }
     }

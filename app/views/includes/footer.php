@@ -17,7 +17,4 @@
         <input name="uploadedFile" id="excelUpload" type="file" />
         <div class="demo-hint">You can only upload <strong>Excel</strong> files.</div>
     </div>
-    <!--<form action="<?php /*echo URL_ROOT . '/salary-advance/upload-salaries' */?>">
-        <div class="form-group"><label for="excelUpload"><input type="file" id="excelUpload"></label></div>
-    </form>-->
 </div>

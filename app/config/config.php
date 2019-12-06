@@ -36,7 +36,7 @@ const DOC_FILE_TYPES = '.csv, application/vnd.openxmlformats-officedocument.spre
 const EXCEL_FILE_TYPES = '.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel';
 const HTML_NEW_LINE = '<br/>';
 const EMAIL_SUBJECT = 'Salary Advance';
-const PATH_SALARIES = APP_ROOT . '\..\public\assets\uploads\salaries\\';
+const PATH_SALARIES = APP_ROOT . '/uploads/';
 const SALT = 'archangel';
 const REMINDER_LIMIT = 3;
 const REMINDER_INTERVAL = '1H'; // 1 hour
@@ -51,4 +51,4 @@ const ROLE_SECRETARY = 'Secretary';
 const ROLE_USER = 'User';
 const MIN_PERCENTAGE = 10;
 const MAX_PERCENTAGE = 30;
-include_once(APP_ROOT . '\..\helpers\error_codes.php');
+include_once(APP_ROOT. '\helpers\error_codes.php');

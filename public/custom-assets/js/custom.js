@@ -1175,6 +1175,7 @@ function documentReady() {
 
     $("#uploadSalariesButton").on("click",function () {
         $("#excelUpload").kendoUpload({
+            multiple: false,
             async: {
                 saveUrl: URL_ROOT + "/salary-advance/upload-salaries",
                 //removeUrl: "remove",
@@ -1183,11 +1184,7 @@ function documentReady() {
             validation: {
                 allowedExtensions: [".xlsx", ".xls", ".csv"]
             },
-            success: function () {
-
-            },
-            showFileList: true,
-            //dropZone: ".dropZoneElement"
+            showFileList: true
         });
         uploadSalariesWindow = $("#uploadSalariesWindow");
         uploadSalariesWindow.kendoWindow({
@@ -1195,11 +1192,13 @@ function documentReady() {
             title: "",
             visible: false,
             actions: [
-                "Pin",
                 "Minimize",
                 "Maximize",
                 "Close"
             ],
+            close: function () {
+                uploadSalariesWindow.find("input#excelUpload").getKendoUpload().clearAllFiles();
+            }
         }).data("kendoWindow").center().open();
     });
 }
