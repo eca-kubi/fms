@@ -237,7 +237,7 @@
                         {
                             name: "custom_edit",
                             text: "Edit",
-                            iconClass: {edit: "k-icon k-i-edit"},
+                            iconClass: "k-icon k-i-edit",
                             className: "badge badge-success btn k-button text-black border k-grid-custom-edit",
                             click: function () {
                                 let currentRow = grid.currentRow();

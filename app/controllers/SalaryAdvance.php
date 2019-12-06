@@ -57,7 +57,7 @@ class SalaryAdvance extends Controller
             redirect('users/login/salary-advance/single-requests/' . $request_number);
         }
         if (!(isCurrentManager($current_user->user_id) || isCurrentFmgr($current_user->user_id) || isCurrentHR($current_user->user_id) || isCurrentGM($current_user->user_id) || isFinanceOfficer($current_user->user_id))) {
-            redirect('salary-advance/index/'. $request_number);
+            redirect('salary-advance/index/' . $request_number);
         }
         if ($request_number && !$db->where('request_number', $request_number)->has('salary_advance')) {
             redirect('errors/index/404');
@@ -75,6 +75,21 @@ class SalaryAdvance extends Controller
 
     public function uploadSalaries(): void
     {
-
+        if (($_SERVER['REQUEST_METHOD'] === 'POST') && isset($_FILES['uploadedFile']) && $_FILES['uploadedFile']['error'] === UPLOAD_ERR_OK) {
+            $fileTmpPath = $_FILES['uploadedFile']['tmp_name'];
+            $fileName = filter_var($_FILES['uploadedFile']['name'], FILTER_SANITIZE_STRING);
+            $fileSize = $_FILES['uploadedFile']['size'];
+            $fileType = $_FILES['uploadedFile']['type'];
+            $fileNameParts = explode('.', $fileName);
+            $fileExtension = strtolower(end($fileNameParts));
+            $allowedfileExtensions = array('xls', 'xlsx', 'csv');
+            if (in_array($fileExtension, $allowedfileExtensions, true)) {
+                $uploadFileDir = PATH_SALARIES;
+                $dest_path = $uploadFileDir . $fileName;
+                if (!move_uploaded_file($fileTmpPath, $dest_path)) {
+                    echo json_encode(['error' => 'File upload failed!'], JSON_THROW_ON_ERROR, 512);
+                }
+            }
+        }
     }
 }

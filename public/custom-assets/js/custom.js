@@ -642,15 +642,6 @@ function onEdit(e) {
     amountReceivedLabelField.toggle(e.model.fields.amount_received.editable || e.model.received_by !== null);
     dateReceivedLabelField.toggle(e.model.date_received !== null);
     financeOfficerCommentLabelField.toggle(e.model.finance_officer_comment !== null);
-    // Validations
-    /*    hodCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');u
-        hrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');
-        amountPayableLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');
-        gmCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');
-        fmgrCommentLabelField.find('.k-textbox').attr('data-required-msg', 'This field is required!');
-        amountApprovedLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');
-        amountReceivedLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');
-        receivedByLabelField.find('.k-input').attr('data-required-msg', 'This field is required!');*/
 
     e.container.getKendoWindow().bind('deactivate', function () {
         let data = grid.dataSource.data();
@@ -661,8 +652,8 @@ function onEdit(e) {
         });
         $(".print-it").printPage();
         setTimeout(function () {
-            grid.content.toggleScroll();
-        }, 1)
+            grid.content.lockscroll(false)
+        }, 10)
     });
 
     e.container.on("keypress", ".k-input", function (e) {
@@ -729,15 +720,15 @@ let Configurations = {
                     let row = sheet.rows[rowIndex];
                     if (row.type === "data") {
                         let dataItem = {
-                            hod_approval: row.cells[6].value,
-                            hr_approval: row.cells[9].value,
-                            gm_approval: row.cells[13].value,
-                            fmgr_approval: row.cells[16].value
+                            hod_approval: row.cells[5].value,
+                            hr_approval: row.cells[8].value,
+                            gm_approval: row.cells[12].value,
+                            fmgr_approval: row.cells[15].value
                         };
-                        row.cells[6].value = dataItem.hod_approval == null ? 'Pending' : (dataItem.hod_approval ? 'Approved' : 'Rejected');
-                        row.cells[9].value = dataItem.hr_approval == null ? 'Pending' : (dataItem.hr_approval ? 'Approved' : 'Rejected');
-                        row.cells[13].value = dataItem.gm_approval == null ? 'Pending' : (dataItem.gm_approval ? 'Approved' : 'Rejected');
-                        row.cells[16].value = dataItem.fmgr_approval == null ? 'Pending' : (dataItem.fmgr_approval ? 'Approved' : 'Rejected');
+                        row.cells[5].value = dataItem.hod_approval == null ? 'Pending' : (dataItem.hod_approval ? 'Approved' : 'Rejected');
+                        row.cells[8].value = dataItem.hr_approval == null ? 'Pending' : (dataItem.hr_approval ? 'Approved' : 'Rejected');
+                        row.cells[12].value = dataItem.gm_approval == null ? 'Pending' : (dataItem.gm_approval ? 'Approved' : 'Rejected');
+                        row.cells[15].value = dataItem.fmgr_approval == null ? 'Pending' : (dataItem.fmgr_approval ? 'Approved' : 'Rejected');
                         // alternating row colors
                         if (rowIndex % 2 === 0) {
                             let row = sheet.rows[rowIndex];
@@ -789,8 +780,10 @@ let Configurations = {
                                 let currentRow = grid.currentRow();
                                 let id_salary_advance;
                                 selectedRowId = id_salary_advance = currentRow.attr("data-id-salary-advance");
+                                scrollTop = grid.content.scrollTop();
+                                scrollLeft = grid.content.scrollLeft();
                                 grid.select(currentRow);
-                                grid.content.toggleScroll(true);
+                                grid.content.lockscroll(true);
                                 grid.dataSource.read().then(function () {
                                     grid.editRow(grid.table.find("tr[data-id-salary-advance=" + id_salary_advance + "]"));
                                 });
@@ -1184,9 +1177,9 @@ function documentReady() {
     $("#uploadSalariesButton").click(function () {
         $("#excelUpload").kendoUpload({
             async: {
-                saveUrl: "save",
-                removeUrl: "remove",
-                autoUpload: true
+                saveUrl: URL_ROOT + "/salary-advance/upload-salaries",
+                //removeUrl: "remove",
+                autoUpload: false
             },
             validation: {
                 allowedExtensions: [".xlsx", ".xls", ".csv"]
