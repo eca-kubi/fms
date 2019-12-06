@@ -58,6 +58,7 @@
     $(document).ready(function () {
         $salaryAdvanceGrid = $('#salary_advance');
         dataSource = new kendo.data.DataSource({
+            group: { field: "bulk_request_number" },
             transport: {
                 read: {
                     url: URL_ROOT + "/salary-advance-bulk-requests-ajax/index/",
@@ -114,6 +115,7 @@
                             validation: Configurations.validations.minMaxAmount
                         },
                         basic_salary: {editable: false, type: "number"},
+                        bulk_request_number: {editable: false},
                         request_number: {nullable: true, type: "string", editable: false},
                         date_raised: {editable: false, type: "date"},
                         date_received: {editable: false, nullable: true, type: "date"},
@@ -162,15 +164,7 @@
                 enabled: true
             },
             dataSource: dataSource,
-            beforeEdit: function (e) {
-                window.grid_uid = e.model.uid; // uid of current editing row
-                e.model.fields.amount_requested.editable = (e.model.hod_approval === null) && universal.isSecretary;
-                e.model.fields.hod_comment.editable = e.model.fields.hod_approval.editable = e.model.hod_approval === null && (e.model.department_id === universal.currentDepartmentID) && universal.isManager;
-                e.model.fields.amount_payable.editable = e.model.fields.hr_comment.editable = e.model.fields.hr_approval.editable = universal.isHr && (e.model.hr_approval === null) && e.model.hod_approval === true;
-                e.model.fields.gm_approval.editable = e.model.fields.gm_comment.editable = universal.isGM && (e.model.gm_approval === null) && e.model.hr_approval === true;
-                e.model.fields.amount_approved.editable = e.model.fields.fmgr_comment.editable = e.model.fields.fmgr_approval.editable = universal.isFmgr && (e.model.fmgr_approval === null) && e.model.gm_approval === true;
-                e.model.fields.received_by.editable = e.model.fields.amount_received.editable = e.model.fields.finance_officer_comment.editable = ((e.model.fmgr_approval === true) && universal.isFinanceOfficer && e.model.date_received !== null);
-            },
+            beforeEdit: onBeforeEdit,
             edit: onEdit,
         })).getKendoGrid();
         documentReady();

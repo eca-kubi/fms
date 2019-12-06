@@ -586,11 +586,12 @@ function onDetailInit(e) {
 
 function onBeforeEdit(e) {
     window.grid_uid = e.model.uid; // uid of current editing row
-    e.model.fields.amount_requested.editable = false;
+    e.model.fields.amount_requested.editable = (e.model.hod_approval === null) && universal.isSecretary;
     e.model.fields.hod_comment.editable = e.model.fields.hod_approval.editable = e.model.hod_approval === null && (e.model.department_id === universal.currentDepartmentID) && universal.isManager;
     e.model.fields.amount_payable.editable = e.model.fields.hr_comment.editable = e.model.fields.hr_approval.editable = universal.isHr && (e.model.hr_approval === null) && e.model.hod_approval === true;
     e.model.fields.gm_approval.editable = e.model.fields.gm_comment.editable = universal.isGM && (e.model.gm_approval === null) && e.model.hr_approval === true;
-    e.model.fields.amount_approved.editable = e.model.fields.fmgr_comment.editable = e.model.fields.fmgr_approval.editable = universal.isFmgr && (e.model.fmgr_approval === null) && e.model.gm_approval === true;
+    e.model.fields.fmgr_comment.editable = e.model.fields.fmgr_approval.editable = universal.isFmgr && (e.model.fmgr_approval === null) && e.model.gm_approval === true;
+    e.model.fields.amount_approved.editable = (universal.isFmgr && (e.model.fmgr_approval === null) && e.model.gm_approval === true) || (e.model.fmgr_approval === true && universal.isFinanceOfficer);
     e.model.fields.received_by.editable = e.model.fields.amount_received.editable = e.model.fields.finance_officer_comment.editable = ((e.model.fmgr_approval === true) && universal.isFinanceOfficer && e.model.date_received !== null);
 }
 
@@ -615,24 +616,25 @@ function onEdit(e) {
         });
     });
 
-    let requestNumberField = e.container.find(".k-edit-label:eq(0), .k-edit-field:eq(0)");
-    let nameLabelField = e.container.find('.k-edit-label:eq(1), .k-edit-field:eq(1)');
-    let departmentLabelField = e.container.find('.k-edit-label:eq(2), .k-edit-field:eq(2)');
-    let amountRequestedLabelField = e.container.find('.k-edit-label:eq(3), .k-edit-field:eq(3)');
-    let hodApprovalLabelField = e.container.find('.k-edit-label:eq(5), .k-edit-field:eq(5)');
-    let hodCommentLabelField = e.container.find('.k-edit-label:eq(6), .k-edit-field:eq(6)');
-    let hrApprovalLabelField = e.container.find('.k-edit-label:eq(8), .k-edit-field:eq(8)');
-    let hrCommentLabelField = e.container.find('.k-edit-label:eq(9), .k-edit-field:eq(9)');
-    let amountPayableLabelField = e.container.find('.k-edit-label:eq(10), .k-edit-field:eq(10)');
-    let gmApprovalLabelField = e.container.find('.k-edit-label:eq(12), .k-edit-field:eq(12)');
-    let gmCommentLabelField = e.container.find('.k-edit-label:eq(13), .k-edit-field:eq(13)');
-    let fmgrApprovalLabelField = e.container.find('.k-edit-label:eq(15), .k-edit-field:eq(15)');
-    let fmgrCommentLabelField = e.container.find('.k-edit-label:eq(16), .k-edit-field:eq(16)');
-    let amountApprovedLabelField = e.container.find('.k-edit-label:eq(17), .k-edit-field:eq(17)');
-    let amountReceivedLabelField = e.container.find('.k-edit-label:eq(19), .k-edit-field:eq(19)');
-    let receivedByLabelField = e.container.find('.k-edit-label:eq(20), .k-edit-field:eq(20)');
-    let dateReceivedLabelField = e.container.find('.k-edit-label:eq(21), .k-edit-field:eq(21)');
-    let financeOfficerCommentLabelField = e.container.find('.k-edit-label:eq(22), .k-edit-field:eq(22)');
+    let bulkLabelField = e.container.find('.k-edit-label:eq(0), .k-edit-field:eq(0)');
+    let requestNumberField = e.container.find(".k-edit-label:eq(1), .k-edit-field:eq(1)");
+    let nameLabelField = e.container.find('.k-edit-label:eq(2), .k-edit-field:eq(2)');
+    let departmentLabelField = e.container.find('.k-edit-label:eq(4), .k-edit-field:eq(4)');
+    let amountRequestedLabelField = e.container.find('.k-edit-label:eq(5), .k-edit-field:eq(5)');
+    let hodApprovalLabelField = e.container.find('.k-edit-label:eq(6), .k-edit-field:eq(6)');
+    let hodCommentLabelField = e.container.find('.k-edit-label:eq(7), .k-edit-field:eq(7)');
+    let hrApprovalLabelField = e.container.find('.k-edit-label:eq(9), .k-edit-field:eq(9)');
+    let hrCommentLabelField = e.container.find('.k-edit-label:eq(10), .k-edit-field:eq(10)');
+    let amountPayableLabelField = e.container.find('.k-edit-label:eq(11), .k-edit-field:eq(11)');
+    let gmApprovalLabelField = e.container.find('.k-edit-label:eq(13), .k-edit-field:eq(13)');
+    let gmCommentLabelField = e.container.find('.k-edit-label:eq(14), .k-edit-field:eq(14)');
+    let fmgrApprovalLabelField = e.container.find('.k-edit-label:eq(16), .k-edit-field:eq(16)');
+    let fmgrCommentLabelField = e.container.find('.k-edit-label:eq(17), .k-edit-field:eq(17)');
+    let amountApprovedLabelField = e.container.find('.k-edit-label:eq(18), .k-edit-field:eq(18)');
+    let amountReceivedLabelField = e.container.find('.k-edit-label:eq(20), .k-edit-field:eq(20)');
+    let receivedByLabelField = e.container.find('.k-edit-label:eq(21), .k-edit-field:eq(21)');
+    let dateReceivedLabelField = e.container.find('.k-edit-label:eq(22), .k-edit-field:eq(22)');
+    let financeOfficerCommentLabelField = e.container.find('.k-edit-label:eq(23), .k-edit-field:eq(23)');
 
     e.container.find('.k-edit-label, .k-edit-field').addClass("pt-2").toggle(false);
     requestNumberField.toggle();
@@ -805,6 +807,15 @@ let Configurations = {
                     headerAttributes: {class: "title"},
                     title: "Action",
                     width: 190
+                },
+                {
+                    field: "bulk_request_number",
+                    title: "Bulk Number",
+                    width: 230,
+                    headerAttributes: {
+                        "class": "title"
+                    },
+                    filterable: {cell: {showOperators: false, suggestionOperator: "contains", operator: "contains"}},
                 },
                 {
                     field: "request_number",

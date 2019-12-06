@@ -94,6 +94,7 @@
                 model: {
                     id: "id_salary_advance",
                     fields: {
+                        bulk_request_number: {editable: false},
                         request_number: {
                             editable: false
                         },
@@ -226,6 +227,7 @@
                 }
             }
         });
+        Configurations.grid.options.columns[1].hidden = true;
         grid = $salaryAdvanceGrid.kendoGrid($.extend({}, Configurations.grid.options, {dataSource: dataSource}, {
             groupable: true,
             save: function (e) {
