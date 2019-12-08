@@ -728,7 +728,7 @@ function requestApprovalNotification($applicant, $manager, $subject, $data)
     }
 }
 
-function updateSalaryAdvance($send_email = true)
+function updateSalaryAdvance($is_bulk = false)
 {
     $db = Database::getDbh();
     $current_user = getUserSession();
@@ -747,8 +747,8 @@ function updateSalaryAdvance($send_email = true)
             $hod = new User(getCurrentManager($applicant->department_id));
             $request_number = $salary_advance['request_number'];
             $subject = "Salary Advance Application ($request_number)";
-            $data = ['ref_number' => $request_number, 'link' => URL_ROOT . '/salary-advance/single-requests/' .
-                $request_number, 'recipient_id' => $salary_advance['user_id'], 'applicant_id' => $applicant->user_id];
+            $link = $is_bulk?  URL_ROOT . '/salary-advance/bulk-requests/' . $request_number :  URL_ROOT . '/salary-advance/single-requests/' . $request_number;
+            $data = ['ref_number' => $request_number, 'link' => $link, 'recipient_id' => $salary_advance['user_id'], 'applicant_id' => $applicant->user_id];
             if ($is_secretary) {
                 $update_success = $db->where('id_salary_advance', $id_salary_advance)->update('salary_advance', [
                     'amount_requested' => $_POST['amount_requested']
@@ -769,9 +769,7 @@ function updateSalaryAdvance($send_email = true)
                 if ($update_success) {
                     $data['approval'] = $_POST['hod_approval'];
                     $data['comment'] = $_POST['hod_comment'];
-                    if ($send_email) {
-                        requestApprovalNotification($applicant, $hr, $subject, $data);
-                    }
+                    requestApprovalNotification($applicant, $hr, $subject, $data);
                 } else {
                     $errors['errors'][0]['message'] = 'The record failed to update';
                     echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
@@ -788,9 +786,7 @@ function updateSalaryAdvance($send_email = true)
                 if ($update_success) {
                     $data['approval'] = $_POST['hr_approval'];
                     $data['comment'] = $_POST['hr_comment'];
-                    if ($send_email) {
-                        requestApprovalNotification($applicant, $gm, $subject, $data);
-                    }
+                    requestApprovalNotification($applicant, $gm, $subject, $data);
                 } else {
                     $errors['errors'][0]['message'] = 'The record failed to update';
                     echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
@@ -806,9 +802,7 @@ function updateSalaryAdvance($send_email = true)
                 if ($update_success) {
                     $data['approval'] = $_POST['gm_approval'];
                     $data['comment'] = $_POST['gm_comment'];
-                    if ($send_email) {
-                        requestApprovalNotification($applicant, $fmgr, $subject, $data);
-                    }
+                    requestApprovalNotification($applicant, $fmgr, $subject, $data);
                 } else {
                     $errors['errors'][0]['message'] = 'The record failed to update';
                     echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
@@ -825,11 +819,9 @@ function updateSalaryAdvance($send_email = true)
                 if ($update_success) {
                     $data['approval'] = $_POST['fmgr_approval'];
                     $data['comment'] = $_POST['fmgr_comment'];
-                    if ($send_email) {
-                        $data['body'] = get_include_contents('email_templates/salary-advance/approval', $data);
-                        $email = get_include_contents('email_templates/salary-advance/main', $data);
-                        insertEmail($subject, $email, $applicant->email);
-                    }
+                    $data['body'] = get_include_contents('email_templates/salary-advance/approval', $data);
+                    $email = get_include_contents('email_templates/salary-advance/main', $data);
+                    insertEmail($subject, $email, $applicant->email);
                 } else {
                     $errors['errors'][0]['message'] = 'The record failed to update';
                     echo json_encode($errors, JSON_THROW_ON_ERROR, 512);

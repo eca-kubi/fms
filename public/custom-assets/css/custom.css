@@ -48,13 +48,26 @@ td.action {
     padding-bottom: 0.25rem !important;
 }
 
-.salary-advance-details label {
+.k-detail-cell label {
     display: inline-block;
     width: 250px;
     padding-right: 10px;
     text-align: right;
     font-style: normal;
     font-weight: bold;
+}
+
+.k-detail-cell span.comment {
+    display: inline-block;
+    vertical-align: top !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 15%!important;
+}
+
+.k-tooltip-content {
+    text-align: justify !important;
 }
 
 th.title {

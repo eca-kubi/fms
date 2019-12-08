@@ -1,4 +1,4 @@
-// 
+// @flow
 let URL_ROOT = '';
 let firstLoadDone = false;
 let collapsed = {},
@@ -1345,7 +1345,7 @@ function disableGridAddButton() {
     }
 });*/
 
-function createKendoTooltip(target, filter, position = "top") {
+function createKendoTooltip(target: jQuery, filter: string, position = "top") : kendo.ui.Tooltip {
     return target.kendoTooltip({
         filter: filter,
         position: position,

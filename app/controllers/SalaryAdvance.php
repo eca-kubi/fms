@@ -25,7 +25,7 @@ class SalaryAdvance extends Controller
         $current_user = $payload['current_user'] = getUserSession();
 
         if (!(isCurrentManager($current_user->user_id) || isAssignedAsSecretary($current_user->user_id) || isFinanceOfficer($current_user->user_id))) {
-            redirect('salary-advance/index');
+            redirect('salary-advance/index/'.$bulk_request_number);
         }
         $payload['title'] = 'Bulk Salary Advance Applications';
         $payload['request_number'] = $bulk_request_number;

@@ -44,7 +44,7 @@ class SalaryAdvanceBulkRequestsAjax extends Controller
                     $bulk_request_number = implode('-', [$request_number_parts[0], $request_number_parts[1], $request_number_parts[2]]);
                     $insertID = $db->insert('salary_advance', ['user_id' => $valid_user['user_id'], 'percentage' => $percentage, 'raised_by_id' => $current_user->user_id,
                         'department_id' => $current_user->department_id, 'is_bulk_request' => true, 'raised_by_secretary' => true,
-                        'request_number' => $request_number, 'date_raised' => now(), 'amount_requested' => $model['amount_requested'], 'bulk_request_number'=> $bulk_request_number]);
+                        'request_number' => $request_number, 'date_raised' => now(), 'amount_requested' => $model['amount_requested'], 'bulk_request_number' => $bulk_request_number]);
                     if ($insertID) {
                         $insertIDs[] = $insertID;
                         $user_ids[] = $valid_user['user_id'];
@@ -79,12 +79,11 @@ class SalaryAdvanceBulkRequestsAjax extends Controller
 
     public function Update(): void
     {
-        updateSalaryAdvance(false);
+        updateSalaryAdvance(true);
     }
 
     public function Destroy(): void
     {
-        $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
     }
 
     public function init(): void

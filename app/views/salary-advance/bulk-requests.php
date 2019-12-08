@@ -55,7 +55,7 @@
     };
     let MIN_PERCENTAGE = <?php echo MIN_PERCENTAGE ?>;
     let MAX_PERCENTAGE = <?php echo MAX_PERCENTAGE ?>;
-    $(document).ready(function () {
+    $(function () {
         $salaryAdvanceGrid = $('#salary_advance');
         dataSource = new kendo.data.DataSource({
             group: { field: "bulk_request_number" },
@@ -166,6 +166,14 @@
             dataSource: dataSource,
             beforeEdit: onBeforeEdit,
             edit: onEdit,
+            cancel(e) {
+                let extRadioButtonGroup = e.container.find("[data-role=extradiobuttongroup]");
+                extRadioButtonGroup.each(function () {
+                    let element = $(this);
+                    let tooltip = element.data('kendoTooltip');
+                    tooltip.destroy();
+                });
+            }
         })).getKendoGrid();
         documentReady();
         //grid.bind("dataBound", appendToHeader);
