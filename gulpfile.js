@@ -1,7 +1,19 @@
 const gulp = require('gulp'), flowRemoveTypes = require('gulp-flow-remove-types'), rename = require('gulp-rename'),
     browserSync = require('browser-sync').create(),
-    reload = browserSync.reload, settings = require('./settings')
+    reload = browserSync.reload, settings = require('./settings'), launcher = require('launch-browser')
 ;
+
+gulp.task('launcher', async function () {
+    launcher(settings.urlToPreview, {browser: ['chrome']}, function (e, browser) {
+
+        if (e) return console.log(e);
+
+        browser.on('stop', function (code) {
+            console.log('Browser closed with exit code:', code);
+        });
+
+    })
+});
 
 gulp.task('flow_remove_types', async function () {
     gulp.src('public/custom-assets/js/custom-src.js')
@@ -22,4 +34,4 @@ gulp.task('watch', async function () {
     //gulp.watch('public/custom-assets/css/**/*.css').on('change', reload);
 });
 
-gulp.task('default', gulp.series('watch'));
+gulp.task('default', gulp.series('watch', 'launcher'));

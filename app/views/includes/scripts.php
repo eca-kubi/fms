@@ -52,4 +52,7 @@
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/kendo/kendo.web.plugins.radiobuttongroup.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/jQuery-printPage/jquery.printPage.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/jquery.dim-background.min.js"></script>
+<script src="<?php echo URL_ROOT; ?>/public/assets/js/tour.js"></script>
+<script src="<?php echo URL_ROOT; ?>/public/assets/js/enjoyhint.js"></script>
+<script src="<?php echo URL_ROOT; ?>/public/assets/js/node-bundle.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/custom-assets/js/custom.js"></script>
