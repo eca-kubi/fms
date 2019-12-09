@@ -1,17 +1,17 @@
 // @flow
-let URL_ROOT = '';
+let URL_ROOT = "";
 let firstLoadDone = false;
 let collapsed = {},
     groups = [],
     scrollLeft = 0,
     scrollTop = 0;
 let expandedRows = [];
-let kDefaultCalendar;
 let activeApplicants = [];
+let kDefaultCalendar;
 let commentTooltip;
-let selectedRowId;
+let selectedRowId : string;
 let grid;
-let $salaryAdvanceGrid;
+let $salaryAdvanceGrid: jQuery;
 let dataSource;
 const GHS_SYMBOL = "₵";
 let customGH = $.extend(true, {}, kendo.culture(), {
