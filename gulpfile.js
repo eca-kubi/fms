@@ -1,6 +1,6 @@
 const gulp = require('gulp'), flowRemoveTypes = require('gulp-flow-remove-types'), rename = require('gulp-rename'),
     browserSync = require('browser-sync').create(),
-    reload = browserSync.reload, settings = require('./settings'), launcher = require('launch-browser')
+    reload = browserSync.reload, settings = require('./settings'), launcher = require('launch-browser'), http = require('http'), httpProxy = require('http-proxy')
 ;
 
 gulp.task('launcher', async function () {
@@ -13,6 +13,10 @@ gulp.task('launcher', async function () {
         });
 
     })
+});
+
+gulp.task('create-proxy', async function () {
+    httpProxy.createProxyServer({target:'http://localhost:80'}).listen(8000);
 });
 
 gulp.task('flow_remove_types', async function () {
