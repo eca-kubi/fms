@@ -1,5 +1,5 @@
 exports.themeLocation = './';
-exports.urlToPreview = 'http://sms2.arlgh.com/cms';
+exports.urlToPreview = 'http://sms2.arlgh.com/fms';
 
 // If you're using Local by Flywheel you will
 // want your settings to be similar to the examples below:

@@ -240,11 +240,11 @@ toastError = function f(message, timeout = 3000) {
         beforeShow: function (element) {
             element.addClass("bg-white card")
         },
-        afterShown (element) {
+        afterShown(element) {
             $(".dimbackground-curtain").remove();
-            element.dimBackground({darkness : 0.6});
+            element.dimBackground({darkness: 0.6});
         },
-        afterHidden (element) {
+        afterHidden(element) {
             element.undim();
         }
     });
@@ -263,11 +263,11 @@ toastSuccess = function f(message, timeout = 3000) {
         beforeShow: function (element) {
             element.addClass("bg-white card")
         },
-        afterShown (element) {
+        afterShown(element) {
             $(".dimbackground-curtain").remove();
-            element.dimBackground({darkness : 0.6});
+            element.dimBackground({darkness: 0.6});
         },
-        afterHidden (element) {
+        afterHidden(element) {
             element.undim();
         }
     });
@@ -1187,6 +1187,7 @@ function rowGroupKey(row, grid) {
 }
 
 function documentReady() {
+    console.log("dom rea");
     commentTooltip = createKendoTooltip(grid.table, "td.comment");
 
     grid.table.on("click", ".action-delete", function () {

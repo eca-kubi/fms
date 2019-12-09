@@ -6,14 +6,6 @@ $is_secretary = isAssignedAsSecretary($current_user->user_id);
 <script type="text/x-kendo-template" id="detailTemplate">
     <div class="salary-advance-details">
         <ul style="list-style: none">
-            <li class="d-none"><label>Action:</label>
-                <span class='text-center action-tools'>
-                        <span><a href='javascript:' class='action-edit badge badge-success btn k-button text-black in-detail-row border'><i class='k-icon k-i-edit'></i>Review</a></span>
-                        <span class='d-none'><a href='javascript:' class='text-danger action-delete in-detail-row'><i class='fas fa-trash-alt'></i></a></span>
-                        <span class='d-none'><a href='javascript:' class='action-more-info in-detail-row'><i class='fas fa-info-circle'></i></a></span>
-                        <span title=''><a href='\\#' class='text-black action-print print-it in-detail-row badge badge-primary btn k-button border' target='_blank'><i class='k-icon k-i-printer'></i>Print</a></span>
-                </span>
-            </li>
             <li class="d-none"><label>Date Raised:</label><span>#= kendo.toString(kendo.parseDate(date_raised), 'dddd dd MMM, yyyy') #</span></li>
             <li class="#= amount_requested == null? 'd-none' : '' #"><label>Amount Requested:</label> <span>#= kendo.format('{0:c}', amount_requested) #</span></li>
             <li class="d-none"><label>Amount in Percentage:</label> <span>#= percentage +'% of Salary' #</span></li>
