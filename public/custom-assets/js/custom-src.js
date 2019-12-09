@@ -1187,7 +1187,7 @@ function rowGroupKey(row, grid) {
 }
 
 function documentReady() {
-    console.log("dom rea");
+    console.log("dom re");
     commentTooltip = createKendoTooltip(grid.table, "td.comment");
 
     grid.table.on("click", ".action-delete", function () {

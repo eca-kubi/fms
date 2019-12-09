@@ -19,6 +19,7 @@ gulp.task('watch', async function () {
         ghostMode: false
     });
     gulp.watch('public/custom-assets/js/custom-src.js', gulp.series('flow_remove_types')).on('change', reload);
+    //gulp.watch('public/custom-assets/css/**/*.css').on('change', reload);
 });
 
 gulp.task('default', gulp.series('watch'));
