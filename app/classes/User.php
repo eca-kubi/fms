@@ -1,9 +1,5 @@
 <?php
 
-/**
- * @version 1.0
- * @author UNCLE CHARLES
- */
 class User
 {
     public $first_name;
@@ -17,6 +13,8 @@ class User
     public $department;
     public $department_id;
     public $basic_salary;
+    public $password;
+    public $default_password;
 
     public function __construct($user_id = '')
     {

@@ -5,7 +5,6 @@ class SalaryAdvance extends Controller
     public function index($request_number = null): void
     {
         currentUrl($_SERVER);
-        $db = Database::getDbh();
         if (!isLoggedIn()) {
             redirect('users/login/salary-advance/index/' . $request_number);
         } else {

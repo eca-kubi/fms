@@ -2,17 +2,10 @@
 class Users extends Controller
 {
     private $payload;
-    private $db;
-    public function login($redirect_url = '')
+    public function login($redirect_url = ''): void
     {
         $payload['title'] = 'FMS Login';
         $payload['redirect_url'] = $redirect_url;
-        /*if (isLoggedIn()) {
-            //goBack();
-            if (isAdmin(getUserSession()->user_id)) {
-                redirect('users/choose-session');
-            }
-        }*/
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $payload['post'] = validatePost('login_form');
             $post = $payload['post'];
@@ -24,19 +17,12 @@ class Users extends Controller
                 $loggedInUser = User::login($post->staff_id, $post->password);
                 if ($loggedInUser)
                 {
-                    // check if uses default password
-                    /*if ($loggedInUser['default_password']) {
-                        flash('flash_dashboard', "<a class='text-warning' href='#change_password_modal' data-toggle='modal'><i class='fa fa-warning'></i> Set a new Password </a> <= ", 'alert text-danger text-sm text-center', '&nbsp;');
-                    }*/
                     $u = new User($loggedInUser->user_id);
                     createUserSession($u);
                     if (!empty($redirect_url)) {
                         redirect($redirect_url);
                     }
                     redirect('start-page');
-                    /*if (isAdmin($loggedInUser->user_id)) {
-                        redirect('users/choose-session');
-                    }*/
                 }
             }
         } else {
@@ -51,12 +37,6 @@ class Users extends Controller
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             $email = $_POST['email'] ?? null;
             if ($email) {
-                /*if (v::email()->validate($email)) {
-
-                } else {
-                    flash('flash', 'The email is incorrect.', 'text-danger alert');
-                    redirect('users/login');
-                }*/
                 $ret = $db->where('email', $email)->getOne('users');
                 if ($ret) {
                     $ret = $db->where('email', $email)->getOne('users');
@@ -73,7 +53,7 @@ class Users extends Controller
                         $link;
                     if (insertEmail($subject, $body, $email, $recipient)) {
                         flash('flash', 'We have sent a link to your email for you to reset your password.', 'text-success alert text-sm');
-                    };
+                    }
                     $db->onDuplicate(['secret_token' => $pass, 'email_hashed' => $md5_email])
                         ->insert('password_reset', [
                             'email' => $email,
@@ -146,7 +126,6 @@ class Users extends Controller
         }
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!empty($_POST['email'])) {
-                $user_id = $db->where('email', $_POST['email'])->getValue('users', 'user_id');
                 $email = $_POST['email'];
                 $md5_email = md5($_POST['email'] . $salt);
                 if ($db->where('email', $_POST['email'])->where('email_hashed', $md5_email)->get('password_reset')) {
@@ -158,11 +137,6 @@ class Users extends Controller
                             $db->where('email', $email)
                                 ->delete('password_reset');
                             flash('flash', 'Password changed successfully. Please login with your new password!', 'alert text-success text-sm');
-                           /* setActionLog([
-                                'action' => ACTION_PASSWORD_RESET,
-                                'performed_by' => $user_id,
-                                'remarks' => 'Password reset by ' . concatNameWithUserId($user_id)
-                            ]);*/
                             redirect('users/login');
                         }
                     } else {
