@@ -1,5 +1,5 @@
 <?php
-function redirect(?string $page)
+function redirect(string $page = '')
 {
     header('location: ' . HOST . '/' . $page);
     exit;
