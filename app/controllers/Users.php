@@ -1,8 +1,8 @@
 <?php
 class Users extends Controller
 {
-    private $payload;
-    public function login($redirect_url = ''): void
+    private array $payload;
+    public function login(?string $redirect_url): void
     {
         $payload['title'] = 'FMS Login';
         $payload['redirect_url'] = $redirect_url;

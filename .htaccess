@@ -6,5 +6,5 @@
 </IfModule>
 php_flag display_errors On
 php_value date.timezone 'Africa/Accra'
-php_flag xdebug.remote_autostart On
-php_value xdebug.remote_mode  jit
+php_value xdebug.remote_mode  req
+php_flag xdebug.remote_enable On
