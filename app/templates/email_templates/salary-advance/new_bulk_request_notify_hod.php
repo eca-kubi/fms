@@ -11,6 +11,6 @@ foreach ($user_ids as $user_id) {
     $name_list .= '<li style=" background: #cce5ff; margin: 5px;">' . getFullName($user_id) . '</li>';
 }
 
-$body .= '<ul>' . $name_list . '</ul>' . '<br>' . 'Kindly click the link below to review the bulk request.<br>' . "<a href='<?php echo $link; ?>'>$link</a>" ;
+$body .= '<ul>' . $name_list . '</ul>' . '<br>' . 'Kindly click the link below to review the bulk request.<br><b>Link: </b>' . "<a href='<?php echo $link; ?>'>$link</a>" ;
 
 echo $body;

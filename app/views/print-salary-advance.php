@@ -88,7 +88,7 @@
                     <div class="col-12">
                         <div class="">
                             <p class="text-bold font-italic">Please pay fixed amount
-                                of <?php echo CURRENCY_GHS . number_format($salary_advance->amount_approved, 2); ?> of
+                                of <?php echo CURRENCY_USD . number_format($salary_advance->amount_approved, 2); ?> of
                                 my basic salary as
                                 advance against the month of <u><?php try {
                                         echo (new Moment($salary_advance->date_raised))->addMonths(1)->format('MMMM', new MomentJs());
@@ -124,7 +124,7 @@
                     <div class="form-group col-12">
                         <label class="pt-1">Amount Payable: </label>
                         <input class="col-6 mb-3" readonly type="text"
-                               value="<?php nullableStringConverter($salary_advance->amount_payable, '',CURRENCY_GHS . $salary_advance->amount_payable, ''); ?>">
+                               value="<?php echo nullableStringConverter($salary_advance->amount_payable, '',CURRENCY_USD . $salary_advance->amount_payable, ''); ?>">
                     </div>
                     <div class="form-group col-8 pl-3 row">
                         <label class="pt-1">Approval by HR: </label>
@@ -167,7 +167,7 @@
                     <div class="form-group col-12">
                         <label class="pt-1">Amount Approved: </label>
                         <input class="col-6 mb-3" readonly type="text"
-                               value="<?php echo nullableStringConverter($salary_advance->amount_approved, '', CURRENCY_GHS .$salary_advance->amount_approved, '') ; ?>">
+                               value="<?php echo nullableStringConverter($salary_advance->amount_approved, '', CURRENCY_USD .$salary_advance->amount_approved, '') ; ?>">
                     </div>
                 </div>
                 <div class="row">

@@ -99,15 +99,15 @@
                             editable: false,
                             nullable: true,
                             type: "number",
-                            validation: {min: "0", required: true}
+                            validation: Configurations.validations.minMaxAmount
                         },
                         amount_payable: {
                             editable: false,
                             nullable: true,
                             type: "number",
-                            validation: {min: "0", required: true}
+                            validation: Configurations.validations.minMaxAmount
                         },
-                        amount_received: {editable: false, nullable: true, type: "number"},
+                        amount_received: {editable: false, nullable: true, type: "number", validation: Configurations.validations.minMaxAmount},
                         amount_requested: {
                             editable: false,
                             nullable: true,

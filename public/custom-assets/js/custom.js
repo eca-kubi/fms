@@ -250,7 +250,7 @@ toastError = function f(message, timeout = 3000) {
     });
 };
 
-toastSuccess = function f(message, timeout = 3000) {
+toastSuccess = function f(message, timeout = 1000) {
     $.toast({
 // heading: '<u>Information</u>',
         text: `<b class="text-bold text-danger"><i class="fa fa-check text-success p-1"></i> <span class="text-success">${message}</span></b>`,
@@ -488,7 +488,7 @@ function dateRangeFilter(args) {
 
 function onRequestEnd(e) {
     if ((e.type === 'update' || e.type === 'create') && e.response.length > 0) {
-        toastSuccess('Success', 5000);
+        toastSuccess('Success', 1000);
     }
     if (groups.length !== this.group().length) {
         let dataSourceGroups = this.group(),
@@ -608,8 +608,8 @@ function onBeforeEdit(e) {
     e.model.fields.amount_payable.editable = e.model.fields.hr_comment.editable = e.model.fields.hr_approval.editable = universal.isHr && (e.model.hr_approval === null) && e.model.hod_approval === true;
     e.model.fields.gm_approval.editable = e.model.fields.gm_comment.editable = universal.isGM && (e.model.gm_approval === null) && e.model.hr_approval === true;
     e.model.fields.fmgr_comment.editable = e.model.fields.fmgr_approval.editable = universal.isFmgr && (e.model.fmgr_approval === null) && e.model.gm_approval === true;
-    e.model.fields.amount_approved.editable = (universal.isFmgr && (e.model.fmgr_approval === null) && e.model.gm_approval === true) || (e.model.fmgr_approval === true && universal.isFinanceOfficer);
-    e.model.fields.received_by.editable = e.model.fields.amount_received.editable = e.model.fields.finance_officer_comment.editable = ((e.model.fmgr_approval === true) && universal.isFinanceOfficer && e.model.date_received !== null);
+    e.model.fields.amount_approved.editable = (universal.isFmgr && (e.model.fmgr_approval === null) && e.model.gm_approval === true) || ((e.model.fmgr_approval === true) && universal.isFinanceOfficer && (e.model.finance_officer_comment === null));
+    e.model.fields.received_by.editable = e.model.fields.amount_received.editable = e.model.fields.finance_officer_comment.editable = ((e.model.fmgr_approval === true) && universal.isFinanceOfficer && (e.model.finance_officer_comment === null));
 }
 
 function onEdit(e) {
@@ -663,6 +663,7 @@ function onEdit(e) {
     hrApprovalLabelField.toggle();
     gmApprovalLabelField.toggle();
     fmgrApprovalLabelField.toggle();
+
     amountPayableLabelField.toggle(e.model.fields.hr_approval.editable || e.model.hr_approval === true);
     amountApprovedLabelField.toggle(e.model.fields.fmgr_approval.editable || e.model.fmgr_approval === true);
     hodCommentLabelField.toggle(e.model.fields.hod_approval.editable || e.model.hod_comment !== null);
@@ -670,9 +671,9 @@ function onEdit(e) {
     fmgrCommentLabelField.toggle(e.model.fmgr_comment !== null || e.model.fields.fmgr_approval.editable);
     gmCommentLabelField.toggle(e.model.fields.gm_approval.editable || e.model.gm_comment !== null);
     receivedByLabelField.toggle(e.model.fields.received_by.editable || e.model.received_by !== null);
-    amountReceivedLabelField.toggle(e.model.fields.amount_received.editable || e.model.received_by !== null);
+    amountReceivedLabelField.toggle(e.model.fields.amount_received.editable || e.model.amount_received !== null);
     dateReceivedLabelField.toggle(e.model.date_received !== null);
-    financeOfficerCommentLabelField.toggle(e.model.finance_officer_comment !== null);
+    financeOfficerCommentLabelField.toggle(e.model.fields.finance_officer_comment.editable || e.model.finance_officer_comment !== null);
 
     e.container.getKendoWindow().bind('deactivate', function () {
         let data = grid.dataSource.data();
@@ -1173,7 +1174,7 @@ let Configurations = {
                 return true;
             }
         },
-        minMaxAmountInputs: ["amount_requested", "amount_approved", "amount_payable"]
+        minMaxAmountInputs: ["amount_requested", "amount_approved", "amount_payable", "amount_received"]
     }
 };
 
@@ -1283,7 +1284,7 @@ function documentReady() {
         if (validator.validate()) {
             $.post(URL_ROOT + "/salary-advance/exchange-rate", form.serialize(), function (data) {
                 if (data.success) {
-                    toastSuccess("Exchange rate updated successfully!", 5000);
+                    toastSuccess("Exchange rate updated successfully!", 1000);
                 }
             }, "json").then(r => null);
         }
@@ -1296,14 +1297,17 @@ function documentReady() {
 }
 
 function disableGridAddButton() {
-    let errorMessage = moment() > moment(30, "DD") ? "Applications cannot be accepted after 10 days into the month! <br> <span>Please try again next month.</span>" : "You have an active salary advance request for this month!";
+    let errorMessage = moment() > moment(30, "DD") ? "Applications cannot be submitted after 10 days into the month! <br> <span>Please try again next month.</span>" : "You have an active salary advance request for this month!";
     if (!DEBUG_MODE)
         kGridAddButton.attr('disabled', 'disabled')
             .attr("data-title", errorMessage)
-            .attr('title', moment() > moment(30, "DD") ? "Applications cannot be accepted after 10 days into the month! Please try again next month." : "You have an active salary advance request for this month!")
+            .attr('title',  errorMessage)
             .removeClass("k-grid-add")
-            .addClass("k-state-disabled k-grid-add-disabled")
-            .removeAttr("href");
+            .addClass("k-grid-add-disabled")
+            .removeAttr("href")
+            .on("click", function () {
+                toastError($(this).attr("title"));
+            })
 }
 
 /*function enableGridAddButton() {

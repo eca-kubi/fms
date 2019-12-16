@@ -44,6 +44,7 @@ const REMINDER_INTERVAL = '1H'; // 1 hour
 const ROLE_MANAGER = 'Manager';
 const ROLE_SUPERINTENDENT = 'Superintendent';
 const CURRENCY_GHS = 'GH₵';
+const CURRENCY_USD = '$';
 const ADMIN = [
     'Superintendent',
     'Manager'

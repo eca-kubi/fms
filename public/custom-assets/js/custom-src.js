@@ -250,7 +250,7 @@ toastError = function f(message, timeout = 3000) {
     });
 };
 
-toastSuccess = function f(message, timeout = 3000) {
+toastSuccess = function f(message, timeout = 500) {
     $.toast({
 // heading: '<u>Information</u>',
         text: `<b class="text-bold text-danger"><i class="fa fa-check text-success p-1"></i> <span class="text-success">${message}</span></b>`,
