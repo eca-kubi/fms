@@ -1,15 +1,10 @@
 <?php
 class Pages extends Controller
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     public function index()
     {
         if (!isLoggedIn()) {
-            redirect('users/login');
+            redirect('users/login/');
         }
         redirect('pages/start-page');
     }
@@ -25,6 +20,9 @@ class Pages extends Controller
     public  function startPage() {
         $payload = [];
         $payload['title'] = 'Dashboard';
+        if (!isLoggedIn()) {
+            redirect('users/login/pages/start-page');
+        }
         $this->view('pages/start-page', $payload);
     }
 
