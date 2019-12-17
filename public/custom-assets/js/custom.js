@@ -1301,21 +1301,23 @@ function disableGridAddButton() {
     if (!DEBUG_MODE)
         kGridAddButton.attr('disabled', 'disabled')
             .attr("data-title", errorMessage)
-            .attr('title',  errorMessage)
+            .attr('title', errorMessage)
             .removeClass("k-grid-add")
             .addClass("k-grid-add-disabled")
             .removeAttr("href")
             .on("click", function () {
-                toastError($(this).attr("title"));
+                if (universal.hasActiveApplication) {
+                    toastError($(this).attr("title"));
+                }
             })
 }
 
-/*function enableGridAddButton() {
+function enableGridAddButton() {
     kGridAddButton.removeAttr('disabled').removeAttr("title")
         .addClass('k-grid-add')
-        .removeClass('k-state-disabled k-grid-add-disabled')
+        .removeClass('k-grid-add-disabled')
         .attr('href', '#');
-}*/
+}
 
 /*function findFromDataSource(field, value) {
     return grid.dataSource.data().find(function (y) {

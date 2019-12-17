@@ -93,11 +93,15 @@
             error: dataSourceError,
             requestEnd: function (e) {
                 if (e.type === 'update' && e.response.length > 0 || e.type === 'create' && e.response.length > 0) {
-                    toastSuccess('Success', 5000);
+                    toastSuccess('Success');
                 }
                 $.get(URL_ROOT + "/salary-advance-ajax/has-active-salary-advance", {}, null, "json").done(function (hasActiveSalaryAdvance) {
                     universal.hasActiveApplication = hasActiveSalaryAdvance;
-                    if (hasActiveSalaryAdvance) disableGridAddButton();
+                    if (hasActiveSalaryAdvance) {
+                        disableGridAddButton()
+                    }  else {
+                        enableGridAddButton();
+                    }
                 });
             },
             schema: {
