@@ -35,14 +35,14 @@ class Core
                     $this->currentControllerFile = 'Errors';
                     require_once '../app/controllers/' . $this->currentControllerFile . '.php';
                     $this->currentController = new $this->currentControllerFile;
-                    call_user_func([$this->currentController, $this->currentMethod], 404);
+                    call_user_func([$this->currentController, 'index'], 404);
                     return;
                 }
             } else {
                 $this->currentControllerFile = 'Errors';
                 require_once '../app/controllers/' . $this->currentControllerFile . '.php';
                 $this->currentController = new $this->currentControllerFile;
-                call_user_func([$this->currentController, $this->currentMethod], 404);
+                call_user_func([$this->currentController, 'index'], 404);
                 return;
             }
         }
