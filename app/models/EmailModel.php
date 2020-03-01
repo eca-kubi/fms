@@ -2,7 +2,7 @@
 
 class EmailModel extends Model
 {
-    public static $table = 'emails';
+    public static string $table = 'emails';
 
     public function __construct()
     {
