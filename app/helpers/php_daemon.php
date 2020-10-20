@@ -27,8 +27,8 @@ use PHPMailer\PHPMailer\PHPMailer;
 
 // DB Params
 define('DB_HOST', 'localhost');
-define('DB_USER', 'appiahmakuta');
-define('DB_PASS', 'gmail300');
+define('DB_USER', 'sms_db_admin');
+define('DB_PASS', 'Gmail@3000');
 define('DB_NAME', 'sms');
 define('EMAIL_TABLE', 'emails');
 try {
@@ -42,17 +42,19 @@ try {
     $mail->Password = '@1234NzGh'; // SMTP password
     $mail->SMTPSecure = 'tls'; // Enable TLS encryption, `ssl` also accepted
     $mail->Port = 587; // TCP port to connect to
-    $mail->setFrom('webservices@adamusgh.com', 'CMS@Adamusgh');
+    $mail->setFrom('webservices@adamusgh.com', 'Adamus Web Services');
     while (true) {
         $emails = fetch_email();
         foreach ($emails as $email) {
             $mail->addAddress($email->recipient_address, $email->recipient_name);     // Add a recipient
             $mail->isHTML(true); // Set email format to HTML
-            $mail->Subject = 'Re: ' . $email->subject;
+            $mail->Subject = $email->subject;
             //$mail->MessageID = '<' . $mail->Subject . '@cms>';
             //$mail->addCustomHeader('In-Reply-To', '<' . $email->subject . '@cms>');
             //$mail->addCustomHeader('References', '<' . $email->subject . '@cms>');
             $mail->Body = $email->body;
+            if ($email->attachment) $mail->addAttachment($email->attachment);
+
             if ($mail->send()) {
                 update_status($email->email_id);
             }

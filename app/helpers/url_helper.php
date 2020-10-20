@@ -1,6 +1,12 @@
 <?php
-function redirect(string $page = '')
+function redirect(string $page = ''): void
 {
-    header('location: ' . URL_ROOT . '/' . $page);
+    $getParams = fetchGetParams();
+    if (strpos($page, '?') === false && $getParams) {
+        header('location: ' . URL_ROOT . '/' . $page . '?' . fetchGetParams());
+    }
+    else {
+        header('location: ' . URL_ROOT . '/' . $page);
+    }
     exit;
 }

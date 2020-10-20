@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpIncludeInspection */
 
 /*
  * Base Controller
@@ -32,6 +32,20 @@ class Controller
             // View does not exist
             //die('View is missing.');
             redirect('errors/index/404');
+        }
+    }
+
+    public function view_2(string $view, string $controller, array $payload = [])
+    {
+        // Check for view file
+        $viewFilePath = '../app/views/' . $controller . '/' .$view;
+        extract($payload, EXTR_OVERWRITE);
+        if (file_exists("$viewFilePath.php" )) {
+            require_once "$viewFilePath.php";
+        } else if (file_exists("$viewFilePath.html")) {
+            require_once "$viewFilePath.html";
+        } else {
+            redirect('errors/index/1000');
         }
     }
 }

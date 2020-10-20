@@ -10,7 +10,7 @@ function validatePost($form)
         $post->error_count = 0;
         switch ($form) {
             case 'registration_form':
-                // Process form
+                // Process form\
                 $post->first_name = trim($_POST['first_name']);
                 $post->last_name = trim($_POST['last_name']);
                 $post->email = trim($_POST['email']);
@@ -124,7 +124,7 @@ function validatePost($form)
 
                 // Verify staff id
                 if (!User::has('staff_id', $post->staff_id)) {
-                    $post->staff_id_err = 'No staff found with this id';
+                    $post->staff_id_err = 'Invalid Username/Password';
                     return $post;
                 }
 
@@ -342,7 +342,7 @@ function initData()
         'vac_phone_no' => '',
         'relationship' => '',
         'resume_date' => '',
-        'current_date' => (new \DateTime())->format(DATE_FORMATS['front_end']),
+        'current_date' => (new DateTime())->format(DATE_FORMATS['front_end']),
     ]));
 
 }

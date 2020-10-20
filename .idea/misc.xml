@@ -7,7 +7,6 @@
     <file url="file://$PROJECT_DIR$/app/controllers/SafetyFlash.php" />
     <file url="file://$PROJECT_DIR$/app/controllers/SalaryAdvanceSecretary.php" />
     <file url="file://$PROJECT_DIR$/app/controllers/SalaryAdvanceSecretaryAjax.php" />
-    <file url="file://$PROJECT_DIR$/app/controllers/VisitorAccessForm.php" />
     <file url="file://$PROJECT_DIR$/app/views/salary-advance-manager/index.php" />
     <file url="file://$PROJECT_DIR$/app/views/salary-advance-manager/new.php" />
     <file url="file://$PROJECT_DIR$/app/views/salary-advance-manager/single.php" />

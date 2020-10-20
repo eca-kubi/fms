@@ -26,7 +26,4 @@ class Pages extends Controller
         $this->view('pages/start-page', $payload);
     }
 
-	public function test(){
-		echo phpinfo();
-	}
 }

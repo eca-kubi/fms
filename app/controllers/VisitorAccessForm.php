@@ -27,8 +27,4 @@ class VisitorAccessForm extends Controller
         $payload['title'] = 'Start Page';
         $this->view('pages/start-page', $payload);
     }
-
-	public function test(){
-		echo phpinfo();
-	}
 }
