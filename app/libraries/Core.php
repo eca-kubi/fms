@@ -1,9 +1,11 @@
 <?php
+
 /*
  * App Core Class
  * Creates URL & loads core controller
  * URL FORMAT - /controller/method/params
  */
+
 class Core
 {
     protected string $currentControllerFile = 'Pages';
@@ -27,7 +29,7 @@ class Core
                 if (method_exists($this->currentController, $this->currentMethod)) {
                     $this->params = $url ? array_values($url) : [];
                     if ($this->currentMethod === 'login') {
-                        $this->params = [implode('/', $this->params)];
+                        $this->params = [implode('/', $this->params). '?' . fetchGetParams()];
                     }
                     call_user_func_array([$this->currentController, $this->currentMethod], $this->params);
                     return;
