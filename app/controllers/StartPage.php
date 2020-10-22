@@ -6,11 +6,11 @@ class StartPage extends Controller
         parent::__construct();
     }
 
-    public function index($department="")
+    public function index()
     {
         $payload = [];
-        $payload['title'] = 'Dashboard';
-        $this->view('pages/start-page', $payload);
+        $payload['title'] = 'Forms';
+        $this->view('start-page/index', $payload);
     }
 
 
@@ -23,56 +23,65 @@ class StartPage extends Controller
 
     public function finance() {
         $payload = [];
-        $payload['title'] = 'Finance';
-        $this->view('pages/start-page-finance', $payload);
+        $payload['title'] = 'Forms/Finance';
+        $payload['sub_page'] = 'Finance';
+        $this->view('start-page/finance', $payload);
     }
 
     public function hr() {
         $payload = [];
-        $payload['title'] = 'HR';
-        $this->view('pages/start-page-hr', $payload);
+        $payload['title'] = 'Forms/HR';
+        $payload['sub_page'] = 'HR';
+        $this->view('start-page/hr', $payload);
     }
 
     public function admin() {
         $payload = [];
-        $payload['title'] = 'Admin';
-        $this->view('pages/start-page-admin', $payload);
+        $payload['title'] = 'Forms/Admin';
+        $payload['sub_page'] = 'Admin';
+        $this->view('start-page/admin', $payload);
     }
 
     public function it() {
         $payload = [];
-        $payload['title'] = 'IT';
-        $this->view('pages/start-page-it', $payload);
+        $payload['title'] = 'Forms/IT';
+        $payload['sub_page'] = 'IT';
+        $this->view('start-page/it', $payload);
     }
 
     public function engineering() {
         $payload = [];
-        $payload['title'] = 'Engineering';
-        $this->view('pages/start-page-engineering', $payload);
+        $payload['title'] = 'Forms/Engineering';
+        $payload['sub_page'] = 'Engineering';
+        $this->view('start-page/engineering', $payload);
     }
 
     public function mining() {
         $payload = [];
-        $payload['title'] = 'Mining';
-        $this->view('pages/start-page-mining', $payload);
+        $payload['title'] = 'Forms/Mining';
+        $payload['sub_page'] = 'Mining';
+        $this->view('start-page/mining', $payload);
     }
 
     public function security() {
         $payload = [];
-        $payload['title'] = 'Security';
-        $this->view('pages/start-page-security', $payload);
+        $payload['title'] = 'Forms/Security';
+        $payload['sub_page'] = 'Security';
+        $this->view('start-page/security', $payload);
     }
 
     public function processing() {
         $payload = [];
-        $payload['title'] = 'Processing';
-        $this->view('pages/start-page-processing', $payload);
+        $payload['title'] = 'Forms/Processing';
+        $payload['sub_page'] = 'Processing';
+        $this->view('start-page/processing', $payload);
     }
 
     public function hse() {
         $payload = [];
-        $payload['title'] = 'HSE';
-        $this->view('pages/start-page-hse', $payload);
+        $payload['title'] = 'Forms/HSE';
+        $payload['sub_page'] = 'HSE';
+        $this->view('start-page/hse', $payload);
     }
 
     public function test(){

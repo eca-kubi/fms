@@ -1,5 +1,5 @@
 <?php
-class VisitorAccessForm extends Controller
+class VisitorAccess extends Controller
 {
     public function __construct()
     {

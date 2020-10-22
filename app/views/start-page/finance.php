@@ -1,4 +1,5 @@
-<?php /** @var array $payload */ ?>
+<?php /** @noinspection PhpIncludeInspection */
+/** @var array $payload */ ?>
 <!DOCTYPE html>
 <html lang="en">
 <?php require_once APP_ROOT . '/views/includes/start-page-header.php' ?>
@@ -12,7 +13,6 @@
                 <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5 m-0">Salary Advance<span></span></h2>
                 <p class="mbr-fonts-style text1 mbr-text desc">
                     <span>Apply for Salary Advance</span>
-                    <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                 </p>
             </div>
         </div>

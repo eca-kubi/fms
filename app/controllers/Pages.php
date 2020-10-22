@@ -6,7 +6,7 @@ class Pages extends Controller
         if (!isLoggedIn()) {
             redirect('users/login/');
         }
-        redirect('pages/start-page');
+        redirect('start-page');
     }
 
 
@@ -14,7 +14,7 @@ class Pages extends Controller
     {
         $payload = [];
         $payload['title'] = 'About us';
-        $this->view('pages/about', $payload);
+        $this->view('about', $payload);
     }
 
     public  function startPage() {

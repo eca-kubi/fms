@@ -1,53 +1,56 @@
-<?php /** @var array $payload */ ?>
+<?php /** @noinspection PhpIncludeInspection */
+/** @var array $payload */ ?>
 <!DOCTYPE html>
 <html lang="en">
 <?php require_once APP_ROOT . '\views\includes\start-page-header.php'; ?>
 <body>
-<div class="row mbr-justify-content-center">
+<div class="row mbr-justify-content-center blockable">
     <div class="col-lg-4 mbr-col-md-10" data-url="<?php echo site_url('start-page/finance') ?>">
-        <span class="text-success text-sm tag-coming-soon"><i class="fa fa-check"></i></span>
+        <span class="text-success text-sm tag-coming-soon invisible"><i class="fa fa-check"></i></span>
         <div class="wrap">
             <div class="ico-wrap">
                 <span class="mbr-iconfont fa fa-money"></span>
             </div>
             <div class="text-wrap">
-                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Finance <span></span></h2>
+                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5"><i
+                            class="fa fa-folder w3-text-amber"></i> Finance</h2>
                 <p class="mbr-fonts-style mbr-text display-6">
-                    <span>Salary Advance...</span>
-                    <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
+                    <a class="d-block w3-text-black" href="<?php echo URL_ROOT . '/salary-advance' ?>">
+                        <i class="fa fa-check animated text-black"></i> Salary Advance </a>
                 </p>
             </div>
         </div>
     </div>
     <div class="col-lg-4 mbr-col-md-10 coming-soon" data-url="<?php echo site_url('start-page/security'); ?>">
-        <span class="text-success text-sm tag-coming-soon"><i class="fa fa-check"></i></span>
+        <span class="text-success text-sm tag-coming-soon invisible"><i class="fa fa-check"></i></span>
         <div class="wrap">
             <div class="ico-wrap">
                 <span class="mbr-iconfont fontastic-001-engineer-2"></span>
             </div>
             <div class="text-wrap">
-                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Security</h2>
+                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5"><i
+                            class="fa fa-folder w3-text-amber"></i> Security</h2>
                 <p class="mbr-fonts-style mbr-text display-6">
-                    <span>Visitor Access Form...</span>
-                    <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
+                    <a href='<?php echo site_url("visitor-access") ?>' class="d-block w3-text-black"><i
+                                class="fa fa fa-check animated text-black"></i> Visitor Access</a>
                 </p>
             </div>
         </div>
     </div>
     <div class="col-lg-4 mbr-col-md-10" data-url="<?php echo site_url('start-page/hse'); ?>">
-        <span class="text-success text-sm tag-coming-soon"><i class="fa fa-check"></i></span>
+        <span class="badge badge-pill badge-outline-secondary text-sm tag-coming-soon invisible">Coming soon</span>
         <div class="wrap">
             <div class="ico-wrap">
-                <span class="mbr-iconfont ">
-                                        <?php require_once APP_ROOT . '\views\includes\svg-icons\vest.svg'; ?>
-
-                </span>
+                <span class="mbr-iconfont "><?php require_once APP_ROOT . '\views\includes\svg-icons\vest.svg'; ?></span>
             </div>
             <div class="text-wrap">
-                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">HSE <span></span></h2>
-                <p class="mbr-fonts-style mbr-text display-6">
-                    <span>Near Miss Draw...</span>
-                    <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
+                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5"><i
+                            class="fa fa-folder w3-text-amber"></i> HSE <span></span></h2>
+                <p class="mbr-fonts-style mbr-text display-6 mb-0">
+                    <a href="https://adamusgh.com/apps/near-miss" target="_blank" class="d-block w3-text-black"><i
+                                class="fa fa-check text-black"></i> Near Miss</a>
+                    <a href="https://adamusgh.com/apps/incident-alert" target="_blank" class="d-block w3-text-black"><i
+                                class="fa fa-check text-black"></i> Incident Alert</a>
                 </p>
             </div>
         </div>
@@ -60,12 +63,12 @@
                 <span class="mbr-iconfont fa-wpforms fa"></span>
             </div>
             <div class="text-wrap">
-                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Admin
+                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5"><i
+                            class="fa fa-folder w3-text-amber"></i> Admin
                     <span></span>
                 </h2>
                 <p class="mbr-fonts-style mbr-text display-6">
                     <span class="">All Admin-related forms.</span>
-                    <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                 </p>
             </div>
         </div>
@@ -74,13 +77,13 @@
         <span class="badge badge-pill badge-outline-secondary text-sm tag-coming-soon">Coming soon</span>
         <div class="wrap">
             <div class="ico-wrap">
-                <span class="mbr-iconfont fa-windows fa"></span>
+                <span class="mbr-iconfont fa-computer-classic fa"></span>
             </div>
             <div class="text-wrap">
-                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">IT <span></span></h2>
+                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5"><i
+                            class="fa fa-folder w3-text-amber"></i> IT <span></span></h2>
                 <p class="mbr-fonts-style mbr-text display-6">
                     <span class="">All IT-related forms.</span>
-                    <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                 </p>
             </div>
         </div>
@@ -92,11 +95,11 @@
                 <span class="mbr-iconfont fa-users fa"></span>
             </div>
             <div class="text-wrap">
-                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">HR
+                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5"><i
+                            class="fa fa-folder w3-text-amber"></i> HR
                 </h2>
                 <p class="mbr-fonts-style mbr-text display-6">
                     <span class="">All HR-related forms.</span>
-                    <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                 </p>
             </div>
         </div>
@@ -108,10 +111,10 @@
                 <span class="mbr-iconfont fontastic-mine-truck"></span>
             </div>
             <div class="text-wrap">
-                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Mining <span></span></h2>
+                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5"><i
+                            class="fa fa-folder w3-text-amber"></i> Mining <span></span></h2>
                 <p class="mbr-fonts-style mbr-text display-6">
                     <span class="">All Mining-related forms.</span>
-                    <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                 </p>
             </div>
         </div>
@@ -123,10 +126,10 @@
                 <span class="mbr-iconfont fontastic-engineering"></span>
             </div>
             <div class="text-wrap">
-                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Engineering <span></span></h2>
+                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5"><i
+                            class="fa fa-folder w3-text-amber"></i> Engineering <span></span></h2>
                 <p class="mbr-fonts-style mbr-text display-6">
                     <span class="">All Engineering-related forms.</span>
-                    <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                 </p>
             </div>
         </div>
@@ -138,10 +141,10 @@
                 <span class="mbr-iconfont fontastic-robot"></span>
             </div>
             <div class="text-wrap">
-                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Processing <span></span></h2>
+                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5"><i
+                            class="fa fa-folder w3-text-amber"></i> Processing <span></span></h2>
                 <p class="mbr-fonts-style mbr-text display-6">
                     <span class="">All Processing-related forms.</span>
-                    <span class="d-none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</span>
                 </p>
             </div>
         </div>
@@ -149,10 +152,6 @@
 </div>
 </div>
 </section>
-<input type="hidden" id="url_root" value="<?php  echo URL_ROOT; ?>">
 <?php require_once APP_ROOT . '/views/includes/start-page-footer.php' ?>
-<script>
-    $('.logout-back').html("Logout <i class='fa fa-sign-out' ></i>").attr('href', $('#url_root').val() +"/users/logout");
-</script>
 </body>
 </html>

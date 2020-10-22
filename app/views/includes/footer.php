@@ -1,7 +1,7 @@
 <footer class="font-raleway w3-tiny d-none main-footer" style="z-index: 1100">
     <div class="col-8 float-left text-left">
         <strong>
-            &copy; 2019 -
+            &copy; <?php echo year(now()) ?> -
             <a href="<?php echo site_url('about'); ?>">Developed By Adamus IT</a>.
         </strong>
     </div>

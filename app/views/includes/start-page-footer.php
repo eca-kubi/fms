@@ -1,83 +1,52 @@
-<?php
-?>
+<?php ?>
+<input type="hidden" id="url_root" value="<?php echo URL_ROOT; ?>">
+
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/jquery.min.js"></script>
-<script src="<?php echo URL_ROOT; ?>/public/assets/js/tether.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/jquery-toast.min.js"></script>
-<script src="<?php echo URL_ROOT; ?>/public/assets/js/jquery.shortify.js"></script>
-<script src="<?php echo URL_ROOT; ?>/public/assets/js/jquery.collapser.min.js"></script>
-
-
+<script src="<?php echo URL_ROOT; ?>/public/assets/kinetic/kinetic.js"></script>
+<script src="<?php echo URL_ROOT; ?>/public/assets/jquery-scrollto/jquery.scrollTo.min.js"></script>
+<script src="<?php echo URL_ROOT; ?>/public/assets/enjoyhint-master/enjoyhint.js"></script>
+<script src="<?php echo URL_ROOT; ?>/public/assets/js/blockui.js"></script>
 <script>
+    $.blockUI({
+        message: '<i class="fa fa-spinner w3-spin" style="font-size:32px"></i>',
+        css: {
+            padding: 0,
+            margin: 0,
+            width: '0%',
+            top: '40%',
+            left: '50%',
+            textAlign: 'center',
+            color: '#000',
+            border: '0',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            cursor: 'default'
+        },
+        overlayCSS: {
+            backgroundColor: '#000',
+            opacity: 0.0,
+            cursor: 'default'
+        },
+        onUnblock: function () {
+            $('.tag-coming-soon').addClass('badge-light flash slow animated')
+            $('.fa-check').removeClass('d-none').addClass('rotateInUpLeft text-success text-bold').parent().addClass('text-success');
+        }
+    });
+    let enjoyhint_instance = new EnjoyHint({});
     $(function () {
         $("[data-url]").on('click', function () {
             window.location.href = $(this).data('url');
         });
-
-        /*$(".more").shortify({
-            char_limit: 25,
-            position:  "tooltip-bottom",
-            ellipsis: '...'
+        /*$('.section-1')[0].addEventListener('animationend', () => {
+            let enjoyhint_script_steps = [
+                {
+                    ' .go-back' : 'Click on Forms to go back.',
+                    'skipButton' : {text: 'OK'}
+                }
+            ];
+            enjoyhint_instance.set(enjoyhint_script_steps);
+            enjoyhint_instance.run();
         });*/
-
-        $('.more').collapser({
-            target: 'next',
-            mode: 'chars',
-            speed: 'slow',
-            truncate: 10,
-            ellipsis: '...',
-            effect: 'fade',
-            controlBtn: '',
-            showText: 'Show more',
-            hideText: 'Hide text',
-            showClass: 'show-class',
-            hideClass: 'hide-class',
-            atStart: 'hide',
-            lockHide: false,
-            dynamic: false,
-            changeText: false,
-            beforeShow: null,
-            afterShow: null,
-            beforeHide: null,
-            afterHide: null
-        }).click(function (e) {
-            e.stopPropagation();
-        });
-/*        new Tether({
-            element: '.tag-coming-soon',
-            target: '.tag-target',
-            attachment: 'top left',
-            targetAttachment: 'top right',
-            constraints: [{
-                to: 'window',
-                attachment: 'together'
-            }]
-        });*/
-
-        /*$("[data-toggle=list]").on('click', function () {
-            let list = $(this).data('list');
-            $.toast({
-                heading: 'Click on a link below:',
-                icon: 'info',
-                loader: false,        // Change it to false to disable loader
-                loaderBg: '#9EC600',  // To change the background
-                position: 'top-center',
-                stack: 1,
-                hideAfter: false,
-                text: list
-            })
-        });*/
-        /*$('.coming-soon').on('click', function () {
-            $.toast({
-                heading: 'Information',
-                text: 'Coming soon!',
-                icon: 'info',
-                loader: false,        // Change it to false to disable loader
-                loaderBg: '#9EC600',  // To change the background
-                position: 'top-center',
-                stack: 1,
-                hideAfter: false
-            })
-        });*/
-
+        setTimeout(() => $.unblockUI(), 1000);
     });
 </script>

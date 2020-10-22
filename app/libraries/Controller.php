@@ -29,9 +29,8 @@ class Controller
         } else if (file_exists('../app/views/' . $view . '.html')) {
             require_once "../app/views/$view.html";
         } else {
-            // View does not exist
-            //die('View is missing.');
-            redirect('errors/index/404');
+            // View does not exist: redirect to custom error page with error code 1000
+            redirect('errors/index/1000');
         }
     }
 

@@ -5,9 +5,8 @@
     <title><?php /** @var array $payload */
         echo $payload['title']; ?></title>
     <link href="<?php echo URL_ROOT; ?>/public/assets/fontastic/styles.css" rel="stylesheet">
-    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/tether.min.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/w3.css"/>
-    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/animate.css"/>
+    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/animate.min.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/adminlte.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/adminlte-miscellaneous.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/box-widget.css"/>
@@ -16,11 +15,12 @@
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/tooltips.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/jquery-toast.min.css"/>
     <link rel="stylesheet" media="all" href="<?php echo URL_ROOT; ?>/public/assets/css/font-awesome-free/css/all.css"/>
-    <link rel="stylesheet" media="all" href="<?php echo URL_ROOT; ?>/public/assets/css/font-awesome-pro/css/all.css"/>
-    <link rel="stylesheet" media="all" href="<?php echo URL_ROOT; ?>/public/assets/css/font-awesome-free/css/v4-shims.min.css"/>
+    <link rel="stylesheet" media="all"
+          href="<?php echo URL_ROOT; ?>/public/assets/css/font-awesome-pro/css/all.min.css"/>
+    <link rel="stylesheet" media="all"
+          href="<?php echo URL_ROOT; ?>/public/assets/css/font-awesome-free/css/v4-shims.min.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT ?>/public/assets/css/shards.min.css">
-
-
+    <link rel="stylesheet" href="<?php echo URL_ROOT ?>/public/assets/enjoyhint-master/enjoyhint.css">
     <link rel="stylesheet"
           href="<?php echo URL_ROOT; ?>/public/custom-assets/css/custom.css?<?php echo microtime(); ?>"/>
     <style>
@@ -122,12 +122,20 @@
     </style>
 </head>
 <body>
-<section class="animated fadeInRight m-2 border"
+<section class="animated fadeInRight m-2 border section-1"
          style="    background-image: url(<?php echo URL_ROOT; ?>/public/assets/images/bgs/background.png)">
     <div class="container">
-        <div class="row mb-2" style="border-bottom: 4px solid #eedaa8!important">
-            <span class="h3"><?php echo $payload['title'] ?></span>
+        <div class="row">
+            <span class="m-l"><a href="javascript:window.history.back();"
+                                 class="btn btn-pill btn-primary <?php echo isset($sub_page) ? '' : 'd-none'; ?> "><i
+                            class="fa fa-caret-left"></i> Go Back</a></span>
             <span class="m-1 ml-auto">
-                    <a href="<?php echo site_url("start-page") ?>" class="btn btn-pill btn-primary logout-back"><i class="fa fa-arrow-left"></i>&nbsp;Back</a>
-                </span>
+                    <a href="<?php echo site_url('users/logout') ?>" class="btn btn-pill btn-primary logout"><i
+                                class="fa fa-sign-out"></i>&nbsp;Logout</a>
+            </span>
+        </div>
+        <div class="row mb-2" style="border-bottom: 4px solid #eedaa8!important">
+            <span class="h3">
+              <i class="fal fa-folder-open"></i> <?php echo isset($sub_page) ? "<a href='" . site_url('start-page') . "' class='w3-text-black'>Forms</a>" . " / <span class='w3-text-gray'>$sub_page</span> " : 'Forms' ?>
+            </span>
         </div>
