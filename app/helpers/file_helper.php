@@ -127,7 +127,7 @@ function uploadCSV($table)
 
 function uploadFile($file, $cms_form_id, $path = PATH_ADDITIONAL_INFO)
 {
-    $cms = new CMSFormModel($cms_form_id);
+    $cms = new CMSFormDbModel($cms_form_id);
 
     $result = array();
     $result['success'] = false;

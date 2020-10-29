@@ -237,7 +237,7 @@ function getDepartmentHod($department_id)
  */
 function insertEmail($subject, $body, $recipient_address, $recipient_name = '', $attachment = "")
 {
-    $email_model = new EmailModel();
+    $email_model = new EmailDbModel();
     return $email_model->add([
         'subject' => $subject,
         'body' => $body,
@@ -416,11 +416,9 @@ function modal($modal)
 {
     // todo: extract payload
     //extract($payload);
-    if (file_exists(APP_ROOT . '/views/modals/' . $modal . '.php')) {
-        require_once APP_ROOT . '/views/modals/' . $modal . '.php';
-    } else {
-        // Modal does not exist
-        die('Modal is missing.');
+    $path = APP_ROOT . '/views/modals/' . $modal . '.php';
+    if (file_exists($path)) {
+        require_once $path;
     }
 }
 
@@ -1122,4 +1120,88 @@ function getMinDmrDate()
 
 function toJSDate($time) {
     return (DateTime::createFromFormat('Y-m-d', $time))->format('d-m-Y');
+}
+
+function prepPostData($section, $cms_form_id = '')
+{
+    $_POST = filterPost();
+    $validated_post = validatePost($_POST);
+    $current_user = getUserSession();
+    $v_dbmodel = new VisitorDbModel([]);
+    $va_dbmodel = new VisitorAccessFormDbModel([]);
+
+    if ($section === SECTION_A_VISITOR_DETAILS) {
+        $vdbmodel->change_description = $_POST['change_description'];
+        $vdbmodel->advantages = $_POST['advantages'];
+        $vdbmodel->alternatives = $_POST['alternatives'];
+        $vdbmodel->area_affected = $_POST['area_affected'];
+        if (!empty($_POST['other_type'])) {
+            $_POST['change_type'][] = $_POST['other_type'];
+            $key = array_search('Other', $_POST['change_type']);
+            if (false !== $key) {
+                unset($_POST['change_type'][$key]);
+            }
+            $vdbmodel->other_type = $_POST['other_type'];
+        }
+        $vdbmodel->change_type = concatWith(', ', ' & ', $_POST['change_type']);
+        $vdbmodel->originator_id = $current_user->user_id;
+        $vdbmodel->certify_details = $_POST['certify_details'];
+        $vdbmodel->state = STATUS_ACTIVE;
+        $vdbmodel->hod_ref_num = getDeptRef($current_user->department_id);
+        $vdbmodel->department_id = $current_user->department_id;
+        $vdbmodel->title = $_POST['title'];
+        // upload additional info
+        $vdbmodel->hod_id = $_POST['hod_id'];
+    } elseif ($section === SECTION_HOD_ASSESSMENT) {
+        $vdbmodel = new CMSFormModel(['cms_form_id' => $cms_form_id]);
+        $vdbmodel->hod_approval = $_POST['hod_approval'];
+        $vdbmodel->hod_reasons = $_POST['hod_reasons'];
+        if ($vdbmodel->hod_approval == STATUS_REJECTED) {
+            $vdbmodel->state = STATUS_REJECTED;
+        }
+        try {
+            $vdbmodel->hod_approval_date = (new DateTime())->format(DFB_DT);
+        } catch (Exception $e) {
+        }
+    } elseif ($section === SECTION_RISK_ASSESSMENT) {
+        $vdbmodel = new CMSFormModel(['cms_form_id' => $cms_form_id]);
+        $temp = Database::getDbh()->getValue('departments', 'department_id', null);
+        $all_depts = [];
+        foreach ($temp as $dept) {
+            if (Database::getDbh()->where('department_id', $dept)->has('cms_impact_question')) {
+                $all_depts[] = $dept;
+            }
+        }
+        $vdbmodel->affected_dept = implode(',', $all_depts);
+    }
+    return $vdbmodel;
+}
+
+function trimPostData(){
+    return array_filter($_POST, fn($item) => trim($item));
+}
+
+function getDeptRef($department_id)
+{
+    $department = new Department($department_id);
+    $va_form = new VisitorAccessFormDbModel(['date_raised' => now()]);
+    $short_name = $department->short_name;
+    $today = date('Ymd');
+    $count = count($va_form->getMultiple()->toArray()) + 1 . "";
+    return sprintf("%s-%s-VAF%s", $short_name,$today, str_pad($count, '3', '0', STR_PAD_LEFT)); // eg. ITD-20201021-VAF001;
+}
+
+function getGms()
+{
+    $result = [];
+    $managers = Database::getDbh()
+        ->where('staff_category', 'Management')
+        ->objectBuilder()
+        ->get('users');
+    foreach ($managers as $manager) {
+        if (in_array($manager->job_title, GMs)) {
+            $result[] = $manager;
+        }
+    }
+    return $result;
 }

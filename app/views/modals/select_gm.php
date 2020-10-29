@@ -21,7 +21,6 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="form-group form-row">
-
                             <?php
                             $gms = getGms();
                             $current_gm = getCurrentGM();

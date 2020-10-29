@@ -1,5 +1,7 @@
 <?php
+
 use Respect\Validation\Validator as v;
+
 function validatePost($form)
 {
     // Init data
@@ -129,7 +131,7 @@ function validatePost($form)
                 }
 
                 $loggedInUser = User::login($post->staff_id, $post->password);
-                if(!$loggedInUser) {
+                if (!$loggedInUser) {
                     $post->password_err = 'Password Incorrect!';
                     return $post;
                 }
@@ -279,17 +281,17 @@ function validatePost($form)
                     $post->error_count++;
                 }
                 return $post;
-                case 'book_leave':
-                    // validate leave form
-                    $post->start_date = formatDate($_POST["start_date"], DATE_FORMATS['front_end'], DATE_FORMATS['back_end']) ;
-                    $post->end_date = formatDate($_POST["end_date"], DATE_FORMATS['front_end'], DATE_FORMATS['back_end']);
-                    $post->type = $_POST["type"];
-                    $post->vac_address = $_POST["vac_address"];
-                    $post->vac_phone_no = $_POST["vac_phone_no"];
-                    $post->resume_date = formatDate($_POST["resume_date"], DATE_FORMATS['front_end'], DATE_FORMATS['back_end']);
-                    $post->relationship = isset($_POST["relationship"])? $_POST["relationship"] : '';
-                    $post->leave_reason = $_POST["leave_reason"];
-                    break;
+            case 'book_leave':
+                // validate leave form
+                $post->start_date = formatDate($_POST["start_date"], DATE_FORMATS['front_end'], DATE_FORMATS['back_end']);
+                $post->end_date = formatDate($_POST["end_date"], DATE_FORMATS['front_end'], DATE_FORMATS['back_end']);
+                $post->type = $_POST["type"];
+                $post->vac_address = $_POST["vac_address"];
+                $post->vac_phone_no = $_POST["vac_phone_no"];
+                $post->resume_date = formatDate($_POST["resume_date"], DATE_FORMATS['front_end'], DATE_FORMATS['back_end']);
+                $post->relationship = isset($_POST["relationship"]) ? $_POST["relationship"] : '';
+                $post->leave_reason = $_POST["leave_reason"];
+                break;
             default:
         }
     }
@@ -351,4 +353,37 @@ function validateDate($date, $format = 'Y-m-d H:i:s')
 {
     $d = DateTime::createFromFormat($format, $date);
     return $d && $d->format($format) == $date;
+}
+
+function validateVisitorAccessForm(array $post_data, string $section) : ValidationErrorCollection
+{
+    $errors = [];
+    switch ($section) {
+        case SECTION_A_VISITOR_DETAILS:
+            // Arrival Date
+            $date_validator = v::date(DateFormat::FRONTEND_FORMAT);
+            if (!$date_validator->validate($post_data['arrival_date'])) {
+                $errors[] = new ValidationError('arrival_date', 'The value provided is not a valid date in the format ' . toJSDate(now()));
+            }
+            if (!$date_validator->validate($post_data['departure_date'])) {
+                $errors[] = new ValidationError('departure_date', 'The value provided is not a valid date in the format ' . toJSDate(now()));
+            }
+
+            // Departure Date
+            // Name
+            // Id Num
+            // Company
+            // Visitor Type
+            // Reason For Visit
+            // Visitor Category
+        return new ValidationErrorCollection(...$errors);
+        case SECTION_B_ACCESS_LEVEL:
+        case SECTION_C_SITE_SPONSORS_APPROVAL:
+        case SECTION_D_SITE_ACCESS_APPROVAL:
+        case SECTION_E_VISITORS_DECLARATION:
+        case SECTION_F_HOST_APPROVAL:
+            break;
+        default;
+    }
+    return $ve;
 }

@@ -13,7 +13,8 @@ define('DB_USER', 'sms_db_admin');
 define('DB_PASS', 'Gmail@3000');
 define('DB_NAME', 'sms');
 define('DB_PARAMS', ['db' => DB_NAME, 'host' => DB_HOST, 'username' => DB_USER, 'password' => DB_PASS, 'charset' => 'utf8mb4']);
-define('APP_ROOT', dirname(__FILE__, 2));
+/*define('APP_ROOT', dirname(__FILE__, 2));*/
+define('APP_ROOT', dirname(dirname(__FILE__)));
 define('SITE_NAME', 'Nzema Monthly Report');
 define('APP_NAME', 'NMR');
 define('APP_VERSION', '3.0.0');
@@ -44,7 +45,7 @@ const MEDIA_FILE_TYPES = 'image/*,  video/*, audio/*';
 const PHOTO_FILE_TYPES = 'image/*';
 const VIDEO_FILE_TYPES = 'video/*';
 const AUDIO_FILE_TYPES = 'audio/*';
-const DOC_MIME_TYPES = ['.csv', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel', 'application/msword', 'application/pdf', 'text/plain', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+const DOC_FILE_TYPES = ['.csv', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel', 'application/msword', 'application/pdf', 'text/plain', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
 const HTML_NEW_LINE = '<br/>';
 const SALT = 'archangel';
 const ROLE_MANAGER = 'Manager';
@@ -65,3 +66,13 @@ const TABLE_NMR_SAVED_SPREADSHEETS = 'nmr_saved_spreadsheets';
 const ICON_PATH = URL_ROOT . '/public/assets/images/icons/icons.svg';
 const PAGE_TITLE_DRAFT_REPORT = 'Draft Report';
 const CKFILEFINDER_CONNECTOR_PATH = "/public/assets/js/ckfinder/core/connector/php/connector.php";
+
+/*-----------SECTIONS------------------*/
+const SECTION_A_VISITOR_DETAILS = 'SECTION_A_VISITOR_DETAILS';
+const SECTION_B_ACCESS_LEVEL = 'SECTION_B_ACCESS_LEVEL';
+const SECTION_C_SITE_SPONSORS_APPROVAL = 'SECTION_C_SITE_SPONSORS_APPROVAL';
+const SECTION_D_SITE_ACCESS_APPROVAL = 'SECTION_D_SITE_ACCESS_APPROVAL';
+const SECTION_E_VISITORS_DECLARATION = 'SECTION_D_VISITORS_DECLARATION';
+const SECTION_F_HOST_APPROVAL = 'SECTION_F_HOST_APPROVAL';
+
+const GMs = ['General Manager', 'Mining Manager', 'Process Manager'];

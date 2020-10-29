@@ -45,14 +45,18 @@
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/adminlte.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/adminlte-2.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/moment.js"></script>
-<script src="<?php echo URL_ROOT; ?>/public/assets/js/jquery.scrollTo.js"></script>
+<script src="<?php echo URL_ROOT; ?>/public/assets/jquery-scrollto/jquery.scrollTo.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/letter-avatar.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/jszip.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/kendo/kendo.all.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/kendo/kendo.web.plugins.radiobuttongroup.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/jQuery-printPage/jquery.printPage.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/jquery.dim-background.min.js"></script>
-<script src="<?php echo URL_ROOT; ?>/public/assets/js/tour.js"></script>
-<script src="<?php echo URL_ROOT; ?>/public/assets/js/enjoyhint.js"></script>
-<script src="<?php echo URL_ROOT; ?>/public/assets/js/node-bundle.js"></script>
+<!--<script src="<?php /*echo URL_ROOT; */?>/public/assets/js/tour.js"></script>
+-->
+<script src="<?php echo URL_ROOT; ?>/public/assets/enjoyhint-master/enjoyhint.min.js"></script>
+<script src="<?php echo URL_ROOT; ?>/public/assets/bootstrap-validator/validator.min.js"></script>
+<!--<script src="<?php /*echo URL_ROOT; */?>/public/assets/js/node-bundle.js"></script>
+-->
+
 <script src="<?php echo URL_ROOT; ?>/public/custom-assets/js/custom.js"></script>

@@ -1,6 +1,6 @@
 <?php
 
-class EmailModel extends Model
+class EmailDbModel extends DbModel
 {
     public static string $table = 'emails';
 

@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/w3.css"/>
     <link rel="stylesheet" media="all" href="<?php echo URL_ROOT; ?>/public/assets/css/bootstrap.min.css"/>
     <link rel="stylesheet" media="all" href="<?php echo URL_ROOT; ?>/public/assets/css/adminlte.css"/>
+    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/bootstrap-select/bootstrap-select.min.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/adminlte-miscellaneous.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/box-widget.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/jquery-toast.min.css"/>

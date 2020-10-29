@@ -38,6 +38,21 @@ $(function () {
 // fix column width for tables in collapse
     $('.hide-child').removeClass('show').trigger('hidden.bs.collapse');
     kDefaultCalendar = $("<input id='kDefaultCalendar' class='k-default-calendar' type='date'>").kendoCalendar();
+
+    $('.modal').on('shown.bs.modal', (e) => {
+        let $this = $(e.currentTarget);
+        $this.find('input[type=text]:first').trigger('focus');
+    });
+
+    $('form[data-toggle=validator] input[type=text]:not([readonly]):first').trigger('focus');
+
+    $("[id='*_form']").validator().on('submit', () => {
+        if (e.isDefaultPrevented()) {
+            // handle the invalid form...
+        } else {
+            // everything looks good!
+        }
+    });
 });
 
 kendo.ui.Grid.fn["currentRow"] = function () {

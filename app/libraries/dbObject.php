@@ -10,18 +10,18 @@
  * @link      http://github.com/joshcam/PHP-MySQLi-Database-Class
  * @version   2.9-master
  *
- * @method int count ()
- * @method dbObject ArrayBuilder()
- * @method dbObject JsonBuilder()
- * @method dbObject ObjectBuilder()
- * @method mixed byId(string $id, mixed $fields)
- * @method mixed get(mixed $limit, mixed $fields)
- * @method mixed getOne(mixed $fields)
- * @method mixed paginate(int $page, array $fields)
+ * @func int count ()
+ * @func dbObject ArrayBuilder()
+ * @func dbObject JsonBuilder()
+ * @func dbObject ObjectBuilder()
+ * @func mixed byId(string $id, mixed $fields)
+ * @func mixed get(mixed $limit, mixed $fields)
+ * @func mixed getOne(mixed $fields)
+ * @func mixed paginate(int $page, array $fields)
  * @method dbObject query($query, $numRows = null)
  * @method dbObject rawQuery($query, $bindParams = null)
- * @method dbObject join(string $objectName, string $key, string $joinType, string $primaryKey)
- * @method dbObject with(string $objectName)
+ * @func dbObject join(string $objectName, string $key, string $joinType, string $primaryKey)
+ * @func dbObject with(string $objectName)
  * @method dbObject groupBy(string $groupByField)
  * @method dbObject orderBy($orderByField, $orderbyDirection = "DESC", $customFieldsOrRegExp = null)
  * @method dbObject where($whereProp, $whereValue = 'DBNULL', $operator = '=', $cond = 'AND')
@@ -111,7 +111,7 @@ class dbObject {
      *
      * @var stating
      */
-    protected $dbTable;
+    protected string $dbTable;
 
 	/**
 	 * @var array name of the fields that will be skipped during validation, preparing & saving
