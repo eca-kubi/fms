@@ -12,7 +12,7 @@ class VisitorAccessFormDbModel extends DbModel
     public ?string $date_raised;
     public ?int $department_id;
 
-    public function __construct(?array $properties, ?array $where_col_val)
+    public function __construct(?array $properties = null, ?array $where_col_val = null)
     {
         parent::__construct($properties, $where_col_val);
     }

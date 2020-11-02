@@ -1,0 +1,46 @@
+[02-Nov-2020 06:38:53 Africa/Accra] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function VisitorAccessFormDbModel::__construct(), 1 passed in C:\xampp\htdocs\fms\app\helpers\misc_helper.php on line 1187 and exactly 2 expected in C:\xampp\htdocs\fms\app\models\VisitorAccessFormDbModel.php:15
+Stack trace:
+#0 C:\xampp\htdocs\fms\app\helpers\misc_helper.php(1187): VisitorAccessFormDbModel->__construct(Array)
+#1 C:\xampp\htdocs\fms\app\controllers\VisitorAccess.php(33): getDeptRef(9)
+#2 C:\xampp\htdocs\fms\app\libraries\Core.php(49): VisitorAccess->SectionAVisitorDetails()
+#3 C:\xampp\htdocs\fms\public\index.php(4): Core->__construct()
+#4 {main}
+  thrown in C:\xampp\htdocs\fms\app\models\VisitorAccessFormDbModel.php on line 15
+[02-Nov-2020 06:38:56 Africa/Accra] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function VisitorAccessFormDbModel::__construct(), 1 passed in C:\xampp\htdocs\fms\app\helpers\misc_helper.php on line 1187 and exactly 2 expected in C:\xampp\htdocs\fms\app\models\VisitorAccessFormDbModel.php:15
+Stack trace:
+#0 C:\xampp\htdocs\fms\app\helpers\misc_helper.php(1187): VisitorAccessFormDbModel->__construct(Array)
+#1 C:\xampp\htdocs\fms\app\controllers\VisitorAccess.php(33): getDeptRef(9)
+#2 C:\xampp\htdocs\fms\app\libraries\Core.php(49): VisitorAccess->SectionAVisitorDetails()
+#3 C:\xampp\htdocs\fms\public\index.php(4): Core->__construct()
+#4 {main}
+  thrown in C:\xampp\htdocs\fms\app\models\VisitorAccessFormDbModel.php on line 15
+[02-Nov-2020 10:28:53 Africa/Accra] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function VisitorAccessFormDbModel::__construct(), 1 passed in C:\xampp\htdocs\fms\app\helpers\misc_helper.php on line 1187 and exactly 2 expected in C:\xampp\htdocs\fms\app\models\VisitorAccessFormDbModel.php:15
+Stack trace:
+#0 C:\xampp\htdocs\fms\app\helpers\misc_helper.php(1187): VisitorAccessFormDbModel->__construct(Array)
+#1 C:\xampp\htdocs\fms\app\controllers\VisitorAccess.php(33): getDeptRef(9)
+#2 C:\xampp\htdocs\fms\app\libraries\Core.php(49): VisitorAccess->SectionAVisitorDetails()
+#3 C:\xampp\htdocs\fms\public\index.php(4): Core->__construct()
+#4 {main}
+  thrown in C:\xampp\htdocs\fms\app\models\VisitorAccessFormDbModel.php on line 15
+[02-Nov-2020 10:28:53 Africa/Accra] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function VisitorAccessFormDbModel::__construct(), 1 passed in C:\xampp\htdocs\fms\app\helpers\misc_helper.php on line 1187 and exactly 2 expected in C:\xampp\htdocs\fms\app\models\VisitorAccessFormDbModel.php:15
+Stack trace:
+#0 C:\xampp\htdocs\fms\app\helpers\misc_helper.php(1187): VisitorAccessFormDbModel->__construct(Array)
+#1 C:\xampp\htdocs\fms\app\controllers\VisitorAccess.php(33): getDeptRef(9)
+#2 C:\xampp\htdocs\fms\app\libraries\Core.php(49): VisitorAccess->SectionAVisitorDetails()
+#3 C:\xampp\htdocs\fms\public\index.php(4): Core->__construct()
+#4 {main}
+  thrown in C:\xampp\htdocs\fms\app\models\VisitorAccessFormDbModel.php on line 15
+[02-Nov-2020 10:31:07 Africa/Accra] PHP Notice:  Array to string conversion in C:\xampp\htdocs\fms\app\views\visitor-access\section_a_visitor_details.php on line 250
+[02-Nov-2020 10:31:07 Africa/Accra] PHP Stack trace:
+[02-Nov-2020 10:31:07 Africa/Accra] PHP   1. {main}() C:\xampp\htdocs\fms\public\index.php:0
+[02-Nov-2020 10:31:07 Africa/Accra] PHP   2. Core->__construct() C:\xampp\htdocs\fms\public\index.php:4
+[02-Nov-2020 10:31:07 Africa/Accra] PHP   3. VisitorAccess->SectionAVisitorDetails() C:\xampp\htdocs\fms\app\libraries\Core.php:49
+[02-Nov-2020 10:31:07 Africa/Accra] PHP   4. VisitorAccess->view() C:\xampp\htdocs\fms\app\controllers\VisitorAccess.php:48
+[02-Nov-2020 10:31:07 Africa/Accra] PHP   5. require_once() C:\xampp\htdocs\fms\app\libraries\Controller.php:28
+[02-Nov-2020 10:32:32 Africa/Accra] PHP Notice:  Array to string conversion in C:\xampp\htdocs\fms\app\views\visitor-access\section_a_visitor_details.php on line 250
+[02-Nov-2020 10:32:32 Africa/Accra] PHP Stack trace:
+[02-Nov-2020 10:32:32 Africa/Accra] PHP   1. {main}() C:\xampp\htdocs\fms\public\index.php:0
+[02-Nov-2020 10:32:32 Africa/Accra] PHP   2. Core->__construct() C:\xampp\htdocs\fms\public\index.php:4
+[02-Nov-2020 10:32:32 Africa/Accra] PHP   3. VisitorAccess->SectionAVisitorDetails() C:\xampp\htdocs\fms\app\libraries\Core.php:49
+[02-Nov-2020 10:32:32 Africa/Accra] PHP   4. VisitorAccess->view() C:\xampp\htdocs\fms\app\controllers\VisitorAccess.php:48
+[02-Nov-2020 10:32:32 Africa/Accra] PHP   5. require_once() C:\xampp\htdocs\fms\app\libraries\Controller.php:28
