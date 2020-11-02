@@ -156,5 +156,18 @@ function excludeReviewer()
     return Database::getInstance();
 }
 
-?>
+function setCurrentController (string $current_controller) {
+    $_SESSION['current_controller'] = $current_controller;
+}
 
+function setCurrentAction(string $current_action) {
+    $_SESSION['current_action'] = $current_action;
+}
+
+function getCurrentController() {
+    return $_SESSION['current_controller'];
+}
+
+function getCurrentAction () {
+    return $_SESSION['current_action'];
+}

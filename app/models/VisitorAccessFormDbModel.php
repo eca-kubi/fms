@@ -12,9 +12,9 @@ class VisitorAccessFormDbModel extends DbModel
     public ?string $date_raised;
     public ?int $department_id;
 
-    public function __construct(?array $where_col_val)
+    public function __construct(?array $properties, ?array $where_col_val)
     {
-        parent::__construct($where_col_val);
+        parent::__construct($properties, $where_col_val);
     }
 
     public function delete($id)
@@ -22,7 +22,7 @@ class VisitorAccessFormDbModel extends DbModel
         // TODO: Implement delete() method.
     }
 
-    public function update($id, array $updated_record)
+    public function update()
     {
         // TODO: Implement update() method.
     }
@@ -49,7 +49,11 @@ class VisitorAccessFormDbModel extends DbModel
 
     public function getMultiple() : VisitorAccessFormCollection
     {
-        $array_values = $this->db->get($this->table);
-        return VisitorAccessFormCollection::createFromArrayValues($array_values);
+        try {
+            $array_values = $this->db->get($this->table);
+            return VisitorAccessFormCollection::createFromArrayValues($array_values);
+        } catch (Exception $e) {
+        }
+        return VisitorAccessFormCollection::createFromArrayValues([]);
     }
 }

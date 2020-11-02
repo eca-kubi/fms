@@ -9,6 +9,7 @@ class VisitorDbModel extends DbModel
     public string $visitor_type;
     public string $visitor_category;
     public string $company;
+    public string $identification_type;
     public string $identification_num;
     public string $phone_num;
 

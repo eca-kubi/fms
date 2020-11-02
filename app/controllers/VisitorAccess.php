@@ -27,9 +27,11 @@ class VisitorAccess extends Controller
             redirect('users/login/visitor-access/section-a-visitor-details');
         }
         $current_user = getUserSession();
+        $payload['script_paths'] = ['visitor-access'];
+        $payload['page_path'] = 'visitor-access/section-a-visitor-details';
         $payload['title'] = 'Visitor Access Form - Section A (Visitor Details)';
         $payload['ref_num'] = $payload['reference'] = getDeptRef($current_user->department_id);
-        $payload['custom_js_file'] = 'visitor-access-form.js';
+        //$payload['custom_js_file'] = 'visitor-access-form.js';
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Trim post data to remove surrounding whitespace
             array_filter($_POST, fn&($item) => trim($item));
@@ -51,6 +53,7 @@ class VisitorAccess extends Controller
     {
         $payload = [];
         $payload['title'] = 'Dashboard';
+        $payload['script_paths'] = ['visitor-access'];
         $this->view('visitor-access/dashboard', $payload);
     }
 

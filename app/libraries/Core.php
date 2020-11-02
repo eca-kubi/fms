@@ -32,26 +32,20 @@ class Core
                     if ($this->currentMethod === 'login') {
                         $this->params = [implode('/', $this->params). ($getParams? "?$getParams" : "")];
                     }
-                    call_user_func_array([$this->currentController, $this->currentMethod], $this->params);
-                    return;
                 } else {
                     $this->currentControllerFile = 'Errors';
-                    require_once '../app/controllers/' . $this->currentControllerFile . '.php';
-                    $this->currentController = new $this->currentControllerFile;
-                    call_user_func([$this->currentController, 'index'], 404);
-                    return;
+                    $this->params = [404];
                 }
             } else {
                 $this->currentControllerFile = 'Errors';
-                require_once '../app/controllers/' . $this->currentControllerFile . '.php';
-                $this->currentController = new $this->currentControllerFile;
-                call_user_func([$this->currentController, 'index'], 404);
-                return;
+                $this->params = [404];
             }
         }
 
         require_once '../app/controllers/' . $this->currentControllerFile . '.php';
         $this->currentController = new $this->currentControllerFile;
+        setCurrentAction($this->currentMethod);
+        setCurrentController($this->currentControllerFile);
         call_user_func_array([$this->currentController, $this->currentMethod], $this->params);
     }
 

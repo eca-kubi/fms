@@ -2,21 +2,27 @@
 
 abstract class DbModel implements iDbModel, JsonSerializable
 {
+    use InitializeProperties;
+
     protected string $table;
     protected MysqliDb $db;
     private ?array $where_col_val;
+    private ?array $properties;
 
-    public function __construct(?array $col_val)
+    public function __construct(?array $properties = null, ?array $where_col_val=null)
     {
         $this->db = Database::getDbh(); // MysqliDb
-        $this->where_col_val = $col_val;
-        if (!empty($this->where_col_val)) {
+        $this->where_col_val = $where_col_val;
+        $this->properties = $properties;
+        if (!empty($properties)) {
+            $this->initialize($properties);
+        } elseif (!empty($this->where_col_val)) {
             if (is_array($this->where_col_val)) {
                 $ret = $this->fetchSingle($this->where_col_val);
                 if ($ret) {
                     foreach ($ret as $col => $value) {
                         if (property_exists($this, $col))
-                        $this->$col = $value;
+                            $this->$col = $value;
                     }
                 }
             }
@@ -58,4 +64,5 @@ abstract class DbModel implements iDbModel, JsonSerializable
     {
         return $this->db->insertMulti($this->table, $this->getMultiple()->jsonSerialize());
     }
+
 }

@@ -5,7 +5,7 @@ class GenericEntity implements JsonSerializable
 {
     use InitializeProperties;
 
-    public function __construct(?array $properties)
+    public function __construct(?array $properties = null)
     {
         $this->initialize($properties);
     }

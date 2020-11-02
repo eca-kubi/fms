@@ -17,7 +17,7 @@ interface iDbModel
 
     public function delete($id);
 
-    public function update($id, array $updated_record);
+    public function update();
 
     public function has(string $column, $value);
 }

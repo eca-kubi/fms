@@ -20,29 +20,84 @@ spl_autoload_register(function ($class_name) {
     }
 });
 require_once '../../vendor/autoload.php';
+require_once '../config/config.php';
+require_once '../config/host.php';
 // Import PHPMailer classes into the global namespace
 // These must be at the top of your script, not inside a function
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
+use Stevenmaguire\OAuth2\Client\Provider\Microsoft;
 
-// DB Params
-define('DB_HOST', 'localhost');
-define('DB_USER', 'sms_db_admin');
-define('DB_PASS', 'Gmail@3000');
-define('DB_NAME', 'sms');
+class MyMicrosoft extends Microsoft {
+    /**
+     * Default scopes
+     *
+     * @var array
+     */
+    public $defaultScopes = ['mail.send', 'mail.readwrite'];
+
+    /**
+     * Base url for authorization.
+     *
+     * @var string
+     */
+    //protected $urlAuthorize = 'https://login.live.com/oauth20_authorize.srf';
+    protected $urlAuthorize = 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize';
+
+    /**
+     * Base url for access token.
+     *
+     * @var string
+     */
+    //protected $urlAccessToken = 'https://login.live.com/oauth20_token.srf';
+    protected $urlAccessToken = 'https://login.microsoftonline.com/common/oauth2/v2.0/token';
+
+    /**
+     * Base url for resource owner.
+     *
+     * @var string
+     */
+    protected $urlResourceOwnerDetails = 'https://apis.live.net/v5.0/me';
+}
+
 define('EMAIL_TABLE', 'emails');
 try {
     $mail = new PHPMailer(true); // Passing `true` enables exceptions
     //Server settings
-    $mail->SMTPDebug = 0; // Enable verbose debug output
+    $mail->SMTPDebug = 4; // Enable verbose debug output
     $mail->isSMTP(); // Set mailer to use SMTP
-    $mail->Host = 'west.exch027.serverdata.net;west.exch027.serverdata.net'; // Specify main and backup SMTP servers
+    $mail->AuthType = 'XOAUTH2';
+    $mail->Host = 'smtp.office365.com'; // Specify main and backup SMTP servers
     $mail->SMTPAuth = true; // Enable SMTP authentication
     $mail->Username = 'webservices@adamusgh.com'; // SMTP username
-    $mail->Password = '@1234NzGh'; // SMTP password
-    $mail->SMTPSecure = 'tls'; // Enable TLS encryption, `ssl` also accepted
+    $mail->Password = '!123456ab'; // SMTP password
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Enable TLS encryption, `ssl` also accepted
     $mail->Port = 587; // TCP port to connect to
     $mail->setFrom('webservices@adamusgh.com', 'Adamus Web Services');
+    $mail->SMTPAutoTLS = false;
+    $clientId = 'b72205b0-8882-4bb0-96b8-386132efbeab';
+    $clientSecret = 'aif-A9bXM9L8Hn3TDyOC~3~bNaDhO69_m3';
+    $accessToken = AZURE_APP_ACCESS_TOKEN;
+    //Create a new OAuth2 provider instance
+    $provider = new MyMicrosoft(
+        [
+            'clientId' => $clientId,
+            'clientSecret' => $clientSecret,
+        ]
+    );
+
+    $options = [
+        'provider' => $provider,
+        'clientId' => $clientId,
+        'clientSecret' => $clientSecret,
+        'refreshToken' => $accessToken,
+        'userName' =>$mail->Username
+    ];
+
+//Pass the OAuth provider instance to PHPMailer
+    $mail->setOAuth(
+        new \PHPMailer\PHPMailer\OAuth($options)
+    );
     while (true) {
         $emails = fetch_email();
         foreach ($emails as $email) {
@@ -63,16 +118,15 @@ try {
         sleep(10);
     }
 } catch (Exception $e) {
-    //echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
+    echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
 }
 
 function fetch_email(): array
 {
     $db = Database::getDbh();
-    $ret = $db->where('sent', false)
+    return $db->where('sent', false)
         ->objectBuilder()
         ->get(EMAIL_TABLE);
-    return $ret;
 }
 
 function update_status($id)

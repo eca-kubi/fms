@@ -24,4 +24,9 @@ class ValidationErrorCollection extends GenericCollection
     {
         return $this->values;
     }
+
+    public static function createFromArrayValues(array $array_values)
+    {
+        // TODO: Implement createFromArrayValues() method.
+    }
 }

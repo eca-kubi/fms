@@ -43,6 +43,7 @@ use Hayageek\OAuth2\Client\Provider\Yahoo;
 // @see https://github.com/stevenmaguire/oauth2-microsoft
 use Stevenmaguire\OAuth2\Client\Provider\Microsoft;
 
+
 if (!isset($_GET['code']) && !isset($_GET['provider'])) {
 ?>
 <html>
@@ -56,9 +57,9 @@ if (!isset($_GET['code']) && !isset($_GET['provider'])) {
 exit;
 }
 
-require 'vendor/autoload.php';
+//require 'vendor/autoload.php';
 
-session_start();
+//session_start();
 
 $providerName = '';
 
@@ -74,12 +75,12 @@ if (!in_array($providerName, ['Google', 'Microsoft', 'Yahoo'])) {
 
 //These details are obtained by setting up an app in the Google developer console,
 //or whichever provider you're using.
-$clientId = 'RANDOMCHARS-----duv1n2.apps.googleusercontent.com';
-$clientSecret = 'RANDOMCHARS-----lGyjPcRtvP';
+$clientId = 'b72205b0-8882-4bb0-96b8-386132efbeab';
+$clientSecret = 'aif-A9bXM9L8Hn3TDyOC~3~bNaDhO69_m3';
 
 //If this automatic URL doesn't work, set it yourself manually to the URL of this script
-$redirectUri = (isset($_SERVER['HTTPS']) ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
-//$redirectUri = 'http://localhost/PHPMailer/redirect';
+//$redirectUri = (isset($_SERVER['HTTPS']) ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
+$redirectUri = 'https://local.arlgh.com/forms/pages/getoauthtoken';
 
 $params = [
     'clientId' => $clientId,
@@ -104,11 +105,11 @@ switch ($providerName) {
         $provider = new Yahoo($params);
         break;
     case 'Microsoft':
-        $provider = new Microsoft($params);
+        $provider = new MyMicrosoft($params);
         $options = [
             'scope' => [
-                'wl.imap',
-                'wl.offline_access'
+                'mail.send',
+                'mail.readwrite'
             ]
         ];
         break;
