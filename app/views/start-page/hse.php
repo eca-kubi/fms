@@ -18,6 +18,21 @@
             </div>
         </div>
     </div>
+    <div class="col-lg-4 mbr-col-md-10 d-none" data-url="<?php echo HOST . '/nearmiss' ?>">
+        <div class="wrap">
+            <div class="ico-wrap w-25 mr-5">
+                <span class="mbr-iconfont">
+                    <?php require APP_ROOT . '\views\includes\svg-icons\vest.svg'; ?>
+                </span>
+            </div>
+            <div class="text-wrap w-75">
+                <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5 m-0">Near Miss Draw<span></span></h2>
+                <p class="mbr-fonts-style text1 mbr-text desc">
+                    <a href="https://adamusgh.com/apps/near-miss">Near Miss Draw</a>
+                </p>
+            </div>
+        </div>
+    </div>
     <div class="col-lg-4 mbr-col-md-10" data-url="https://adamusgh.com/apps/incident-alert">
         <div class="wrap">
             <div class="ico-wrap w-25 mr-5">

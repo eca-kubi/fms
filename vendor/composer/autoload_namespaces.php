@@ -6,6 +6,5 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    '\\Simple' => array($vendorDir . '/alexistm/simple-json-php/includes/json.php'),
     'Evenement' => array($vendorDir . '/evenement/evenement/src'),
 );

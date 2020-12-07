@@ -21,4 +21,8 @@ abstract class GenericCollection implements IteratorAggregate, iGenericCollectio
         }
         return $values;
     }
+
+    public function isEmpty() : bool{
+        return count($this->values) === 0;
+    }
 }

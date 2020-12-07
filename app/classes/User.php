@@ -1,33 +1,25 @@
 <?php
 
-class User
+class User extends GenericEntity
 {
-    public $first_name;
-    public $last_name;
-    public $staff_id;
-    public $user_id;
-    public $role;
-    public $email;
-    public $profile_pic;
-    public $job_title;
-    public $department;
-    public $department_id;
-    public $basic_salary;
-    public $password;
-    public $default_password;
+    use UserTrait;
 
-    public function __construct($user_id = '')
+    public function __construct($user_id = '', ?array $properties = null)
     {
+        parent::__construct();
+
         if (!empty($user_id)) {
             try {
                 $row = Database::getDbh()->where('user_id', $user_id)
                     ->join('departments d', 'd.department_id=u.department_id', 'LEFT')
-                    ->objectBuilder()->getOne('users u', '*, concat_ws(" ", u.first_name, u.last_name) as name');
+                    ->objectBuilder()->getOne('users u', '*, concat_ws(" ", u.first_name, u.last_name) as name, staff_id as staff_number');
                 foreach ($row as $var => $value) {
                     $this->$var = $value;
                 }
             } catch (Exception $e) {
             }
+        } else if ($properties) {
+            $this->initialize($properties);
         }
     }
 
@@ -35,8 +27,11 @@ class User
     {
         $db = Database::getDbh();
         $db->where($column, $value);
-        if ($db->has('users')) {
-            return 'true';
+        try {
+            if ($db->has('users')) {
+                return 'true';
+            }
+        } catch (Exception $e) {
         }
         return false;
     }
@@ -44,18 +39,26 @@ class User
     public static function login($staff_id, $password)
     {
         $db = Database::getDbh();
-        $ret = $db->where('staff_id', $staff_id)
-            ->objectBuilder()
-            ->getOne('users');
-        if ($ret) {
-            $hashed_password = $ret->password;
-            if (password_verify($password, $hashed_password)) {
-                return $ret;
+        //$ret = [];
+        try {
+            $ret = new User('', $db->where('staff_id', $staff_id)
+                ->getOne('users'));
+            if ($ret) {
+                $hashed_password = $ret->password;
+                if (password_verify($password, $hashed_password)) {
+                    return $ret;
+                }
             }
+        } catch (Exception $e) {
         }
         return false;
     }
 
+    /**
+     * @param array|null $where
+     * @return self[]
+     * @throws Exception
+     */
     public static function get(array $where = null): array
     {
         $db = Database::getDbh();

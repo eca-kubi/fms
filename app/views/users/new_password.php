@@ -1,11 +1,18 @@
+<?php
+/**
+ * @var LoginViewModel $view_model
+ */
+
+use ViewModels\LoginViewModel;
+
+?>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>
-        <?php /** @var array $payload */
-        echo $payload['title']; ?>
+        <?php echo $view_model->title; ?>
     </title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,7 +26,7 @@
 </head>
 <body>
 <?php
-modal('new_password');
+modal('new_password', ['view_model' => $view_model]);
 ?>
 
 <input type="hidden" value="<?php echo URL_ROOT ?>" id="url_root"/>
@@ -37,7 +44,7 @@ modal('new_password');
         });
         $('#new_password_modal').modal('show')
             .on('shown.bs.modal', () => {
-                $('#password').focus();
+                $('#password').trigger('focus');
             });
         /*$('[type=password]').showPassword('focus', {
           toggle: { className: 'my-toggle' }

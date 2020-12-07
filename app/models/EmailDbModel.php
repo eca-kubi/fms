@@ -2,71 +2,30 @@
 
 class EmailDbModel extends DbModel
 {
-    protected string $table = 'emails';
-    public ?int $email_id;
-    public ?string $subject;
-    public ?string $content;
-    public ?string $recipient_address;
-    public ?string $recipient_name;
-    public ?bool $sent;
-    public ?string $attachment;
+    protected static string $table = 'emails';
+    protected static string $primary_key = 'email_id';
+    protected static string $entity_class = Email::class;
+    use EmailTrait;
 
-    public function __construct(?array $properties)
+    public function __construct(?array $properties = null, ?array $where_col_val = null)
     {
-        parent::__construct($properties);
+        parent::__construct($properties, $where_col_val);
     }
 
-    public function has($column, $value)
+
+    public static function getEntitySingle(int $id) : Email
     {
-        $db = Database::getDbh();
-        $db->where($column, $value);
         try {
-            if ($db->has($this->table)) {
-                return 'true';
-            }
+            return new Email(Database::getDbh()->where(static::$primary_key, $id)->getOne(static::$table));
         } catch (Exception $e) {
         }
-        return false;
+        return new Email();
     }
 
-    // Verify existence of column value
-
-    /**
-     * Summary of getEmail
-     * @param int $email_id
-     * @return object|false
-     *
-     */
-    public function getEmail(int $email_id)
+    public static function getEntityMultiple() : EmailCollection
     {
         try {
-            return (object)
-            Database::getDbh()->where('email_id', $email_id)
-                ->objectBuilder()
-                ->getOne($this->table);
-        } catch (Exception $e) {
-        }
-        return false;
-    }
-
-    public function add($insertData): bool
-    {
-        try {
-            return Database::getDbh()->insert($this->table, $insertData);
-        } catch (Exception $e) {
-        }
-        return false;
-    }
-
-    public function getSingle() : Email
-    {
-        return new Email($this->jsonSerialize());
-    }
-
-    public function getMultiple() : EmailCollection
-    {
-        try {
-            $array_values = $this->db->get($this->table);
+            $array_values = Database::getDbh()->get(self::$table);
             return EmailCollection::createFromArrayValues($array_values);
         } catch (Exception $e) {
         }
@@ -76,14 +35,5 @@ class EmailDbModel extends DbModel
     public function delete($id)
     {
         // TODO: Implement delete() method.
-    }
-
-    public function update()
-    {
-        try {
-            return $this->db->update($this->table, (array)$this->getSingle());
-        } catch (Exception $e) {
-        }
-        return false;
     }
 }

@@ -2,12 +2,20 @@
 <module type="WEB_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/app/models" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/vendor" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/app/traits" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/app/interfaces" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/app/classes" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/app/libraries" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/public/assets/enjoyhint-master" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/app/helpers" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/app/controllers" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/.idea/codeStyles" />
       <excludeFolder url="file://$MODULE_DIR$/.idea/dataSources" />
       <excludeFolder url="file://$MODULE_DIR$/app/templates/salary-advance-manager" />
       <excludeFolder url="file://$MODULE_DIR$/app/views/choose_session" />
       <excludeFolder url="file://$MODULE_DIR$/app/views/includes/safety-flash" />
-      <excludeFolder url="file://$MODULE_DIR$/app/views/modals" />
       <excludeFolder url="file://$MODULE_DIR$/app/views/notices" />
       <excludeFolder url="file://$MODULE_DIR$/app/views/safety-flash" />
       <excludeFolder url="file://$MODULE_DIR$/app/views/salary-advance-finance-officer" />
@@ -40,7 +48,19 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/sirbrillig/phpcs-variable-analysis" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/squizlabs/php_codesniffer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/stevenmaguire/oauth2-microsoft" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/browsershot" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/image" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/image-optimizer" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/psr/log" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/temporary-directory" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/process" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-php80" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/league/mime-type-detection" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/league/glide" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/league/flysystem" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/intervention/image" />
     </content>
+    <content url="file://$MODULE_DIR$/app/views/modals/visitor-access-form" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

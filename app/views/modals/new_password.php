@@ -5,6 +5,12 @@
  * Date: 2/17/2019
  * Time: 4:08 PM
  */
+/**
+ * @var LoginViewModel $view_model
+ */
+
+use ViewModels\LoginViewModel;
+
 ?>
 <!-- New Password Modal -->
 <div class="modal fade" id="new_password_modal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
@@ -33,8 +39,7 @@
                                    data-match="#password" required>
                             <small class="with-errors help-block"></small>
                         </div>
-                        <input type="hidden" name="email" value="<?php /** @var array $payload */
-                        echo $payload['post']['email']; ?>">
+                        <input type="hidden" name="email" value="<?php echo $view_model->email; ?>">
                     </form>
                 </div>
             </div>

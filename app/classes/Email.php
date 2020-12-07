@@ -3,16 +3,11 @@
 
 class Email extends GenericEntity
 {
-    public ?int $email_id;
-    public ?string $subject;
-    public ?string $content;
-    public ?string $recipient_address;
-    public ?string $recipient_name;
-    public ?bool $sent;
-    public ?string $attachment;
+   use EmailTrait;
 
-    public function __construct(?array $properties)
+    public function __construct(?array $properties = null)
     {
         parent::__construct($properties);
+        $this->date_created = now();
     }
 }

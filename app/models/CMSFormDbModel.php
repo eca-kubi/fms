@@ -1,6 +1,6 @@
 <?php
 
-class CMSFormDbModel extends DbModel implements \JsonSerializable
+class CMSFormDbModel implements \JsonSerializable
 {
     public static string $table = 'cms_form';
     public $cms_form_id;
@@ -952,5 +952,15 @@ class CMSFormDbModel extends DbModel implements \JsonSerializable
     public static function get($id)
     {
         // TODO: Implement get() method.
+    }
+
+    public function getSingle()
+    {
+        // TODO: Implement getSingle() method.
+    }
+
+    public function getMultiple()
+    {
+        // TODO: Implement getMultiple() method.
     }
 }

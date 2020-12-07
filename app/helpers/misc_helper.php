@@ -1,25 +1,11 @@
 <?php
 
-use diversen\sendfile;
-use FileUpload\File;
-use FileUpload\PathResolver;
-use FileUpload\FileSystem;
-use FileUpload\FileUploadFactory;
+use DbModels\VisitorAccessForm\VisitorAccessFormDbModel;
 use Moment\CustomFormats\MomentJs;
 use Moment\Moment;
 use Moment\MomentException;
 
 $current_user = getUserSession();
-
-function arrToObj($arr)
-{
-    return json_decode(json_encode($arr, JSON_THROW_ON_ERROR, 512), true, 512, JSON_THROW_ON_ERROR);
-}
-
-function objToArr($obj)
-{
-    return json_decode(json_encode($obj, JSON_THROW_ON_ERROR, 512), true, 512, JSON_THROW_ON_ERROR);
-}
 
 // format date
 function formatDate($date, $from, $to)
@@ -55,12 +41,14 @@ function reArrayFiles(&$file_post)
     return $file_ary;
 }
 
-function userExists($user_id)
+function userExists($user_id): bool
 {
     $db = Database::getDbh();
-
-    return $db->where('user_id', $user_id)
-        ->has('users');
+    try {
+        return $db->where('user_id', $user_id)->has('users');
+    } catch (Exception $e) {
+    }
+    return false;
 }
 
 function getRandomString()
@@ -79,12 +67,13 @@ function filterPost()
     return filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 }
 
-function today()
+function today($format = DATE_FORMAT_DMY)
 {
     try {
-        echo (new DateTime())->format(DFF);
+        return (new DateTime())->format($format);
     } catch (Exception $e) {
     }
+    return null;
 }
 
 /**
@@ -106,9 +95,14 @@ function removeEmptyVal($value)
     return $value;
 }
 
-function isCurrentGM(string $user_id)
+function isCurrentGM(int $user_id)
 {
-    return $user_id === getCurrentGM();
+    return $user_id == getCurrentGM();
+}
+
+function isCurrentSecurityManager(int $user_id)
+{
+    return $user_id == getCurrentSecurityManager();
 }
 
 /**
@@ -213,17 +207,16 @@ function getTime($date)
 }
 
 /**
- * @param $department_id
- * @return mixed
+ * @param int $department_id
+ * @return array|mixed|null
  */
-function getDepartmentHod($department_id)
+function getDepartmentHod(int $department_id)
 {
-    $db = Database::getDbh();
-    $ret = $db->where('department_id', $department_id)
-        ->where('role', ROLE_MANAGER)
-        ->objectBuilder()
-        ->getOne('users');
-    return $ret;
+    try {
+        return Database::getDbh()->where('department_id', $department_id)->getValue("departments", 'current_manager');
+    } catch (Exception $e) {
+    }
+    return null;
 }
 
 
@@ -235,24 +228,34 @@ function getDepartmentHod($department_id)
  * @param string $attachment
  * @return bool
  */
-function insertEmail($subject, $body, $recipient_address, $recipient_name = '', $attachment = "")
+function insertEmail(string $subject, string $body, string $recipient_address, $recipient_name = '', $attachment = ""): bool
 {
     $email_model = new EmailDbModel();
-    return $email_model->add([
+    return $email_model->initialize([
         'subject' => $subject,
-        'body' => $body,
+        'content' => $body,
         'recipient_address' => $recipient_address,
         'recipient_name' => $recipient_name,
         'attachment' => $attachment
-    ]);
+    ])->save();
 }
 
-/**
- * @return string $id
- */
 function getCurrentGM()
 {
-    return Database::getDbh()->where('prop', 'current_gm')->getValue('settings', 'value');
+    try {
+        return Database::getDbh()->where('prop', 'current_gm')->getValue('settings', 'value');
+    } catch (Exception $e) {
+    }
+    return '';
+}
+
+function getCurrentSecurityManager()
+{
+    try {
+        return Database::getDbh()->where('short_name', 'SEC')->getValue('departments', 'current_manager');
+    } catch (Exception $e) {
+    }
+    return '';
 }
 
 function getFinanceOfficer()
@@ -279,22 +282,26 @@ function getDepartment($department_id)
     return 'N/A';
 }
 
-function isCurrentHR(string $user_id)
+function isCurrentHR(int $user_id)
 {
-    return getCurrentHR() === $user_id;
+    return getCurrentHR() == $user_id;
 }
 
-function isCurrentFmgr(string $user_id)
+function isCurrentFmgr(int $user_id)
 {
-    return getCurrentFgmr() === $user_id;
+    return getCurrentFgmr() == $user_id;
 }
 
 function getCurrentHR()
 {
-    return
-        Database::getDbh()
-            ->where('prop', 'current_hr')
-            ->getValue('settings', 'value');
+    try {
+        return
+            Database::getDbh()
+                ->where('prop', 'current_hr')
+                ->getValue('settings', 'value');
+    } catch (Exception $e) {
+    }
+    return '';
 }
 
 function getCurrentFgmr()
@@ -377,11 +384,10 @@ function now()
 {
     $date_time = '';
     try {
-        $date_time = (new DateTime())->format(DFB_DT);
+        $date_time = (new DateTime())->format(DateFormat::BACKEND_DATETIME_FORMAT);
     } catch (Exception $e) {
-    } finally {
-        return $date_time;
     }
+    return $date_time;
 }
 
 
@@ -407,20 +413,28 @@ function genDeptRef($department_id, $table, $single = true)
     return $short_name . $type . $m_format . '-' . $count;
 }
 
-function site_url($url = '')
+function site_url($url = ''): string
 {
     return URL_ROOT . '/' . $url;
 }
 
-function modal($modal)
+function modal(string $modal, array $payload = [])
 {
-    // todo: extract payload
-    //extract($payload);
+    extract($payload);
     $path = APP_ROOT . '/views/modals/' . $modal . '.php';
     if (file_exists($path)) {
         require_once $path;
     }
 }
+
+function includeView(string $view_path, array $payload = [])
+{
+    extract($payload);
+    if (file_exists($view_path)) {
+        require_once $view_path;
+    }
+}
+
 
 function goBack()
 {
@@ -529,15 +543,19 @@ function array_unique_multidim_array($array, $key)
     return $temp_array;
 }
 
-function isCurrentManagerForDepartment(string $department_id, string $user_id)
+function isCurrentManagerForDepartment(string $department_id, string $user_id): bool
 {
     return getCurrentManager($department_id) === $user_id;
 }
 
-function getCurrentManager($department_id)
+function getCurrentManager($department_id): int
 {
     $db = Database::getDbh();
-    return $db->where('department_id', $department_id)->getValue('departments', 'current_manager');
+    try {
+        return (int)$db->where('department_id', $department_id)->getValue('departments', 'current_manager');
+    } catch (Exception $e) {
+    }
+    return -1;
 }
 
 /**
@@ -1122,59 +1140,8 @@ function toJSDate($time) {
     return (DateTime::createFromFormat('Y-m-d', $time))->format('d-m-Y');
 }
 
-function prepPostData($section, $cms_form_id = '')
-{
-    $_POST = filterPost();
-    $validated_post = validatePost($_POST);
-    $current_user = getUserSession();
-    $v_dbmodel = new VisitorDbModel([]);
-    $va_dbmodel = new VisitorAccessFormDbModel([]);
-
-    if ($section === SECTION_A_VISITOR_DETAILS) {
-        $vdbmodel->change_description = $_POST['change_description'];
-        $vdbmodel->advantages = $_POST['advantages'];
-        $vdbmodel->alternatives = $_POST['alternatives'];
-        $vdbmodel->area_affected = $_POST['area_affected'];
-        if (!empty($_POST['other_type'])) {
-            $_POST['change_type'][] = $_POST['other_type'];
-            $key = array_search('Other', $_POST['change_type']);
-            if (false !== $key) {
-                unset($_POST['change_type'][$key]);
-            }
-            $vdbmodel->other_type = $_POST['other_type'];
-        }
-        $vdbmodel->change_type = concatWith(', ', ' & ', $_POST['change_type']);
-        $vdbmodel->originator_id = $current_user->user_id;
-        $vdbmodel->certify_details = $_POST['certify_details'];
-        $vdbmodel->state = STATUS_ACTIVE;
-        $vdbmodel->hod_ref_num = getDeptRef($current_user->department_id);
-        $vdbmodel->department_id = $current_user->department_id;
-        $vdbmodel->title = $_POST['title'];
-        // upload additional info
-        $vdbmodel->hod_id = $_POST['hod_id'];
-    } elseif ($section === SECTION_HOD_ASSESSMENT) {
-        $vdbmodel = new CMSFormModel(['cms_form_id' => $cms_form_id]);
-        $vdbmodel->hod_approval = $_POST['hod_approval'];
-        $vdbmodel->hod_reasons = $_POST['hod_reasons'];
-        if ($vdbmodel->hod_approval == STATUS_REJECTED) {
-            $vdbmodel->state = STATUS_REJECTED;
-        }
-        try {
-            $vdbmodel->hod_approval_date = (new DateTime())->format(DFB_DT);
-        } catch (Exception $e) {
-        }
-    } elseif ($section === SECTION_RISK_ASSESSMENT) {
-        $vdbmodel = new CMSFormModel(['cms_form_id' => $cms_form_id]);
-        $temp = Database::getDbh()->getValue('departments', 'department_id', null);
-        $all_depts = [];
-        foreach ($temp as $dept) {
-            if (Database::getDbh()->where('department_id', $dept)->has('cms_impact_question')) {
-                $all_depts[] = $dept;
-            }
-        }
-        $vdbmodel->affected_dept = implode(',', $all_depts);
-    }
-    return $vdbmodel;
+function toDbDate($time) {
+    return (DateTime::createFromFormat('Y-m-d', $time));
 }
 
 function trimPostData(){
@@ -1184,10 +1151,10 @@ function trimPostData(){
 function getDeptRef($department_id)
 {
     $department = new Department($department_id);
-    $va_form = new VisitorAccessFormDbModel(['date_raised' => now()]);
+    $visitor_access_form = new VisitorAccessFormDbModel();
     $short_name = $department->short_name;
     $today = date('Ymd');
-    $count = count($va_form->getMultiple()->toArray()) + 1 . "";
+    $count = count($visitor_access_form->getEntityMultiple()->toArray()) + 1 . "";
     return sprintf("%s-%s-VAF%s", $short_name,$today, str_pad($count, '3', '0', STR_PAD_LEFT)); // eg. ITD-20201021-VAF001;
 }
 
@@ -1206,12 +1173,50 @@ function getGms()
     return $result;
 }
 
-function loadCustomScript(array $script_paths) {
-    foreach ($script_paths as $script_path) {
-        $script = ($script_path == '/')?  APP_ROOT ."/views/includes/custom-scripts/custom.js.php" :
-            APP_ROOT ."/views/includes/custom-scripts/" . $script_path . "/custom.js.php";
+function loadCustomScripts(array $custom_scripts) {
+    foreach ($custom_scripts as $custom_script) {
+        $script = ($custom_script == '/')?  APP_ROOT ."/views/includes/custom-scripts/custom.js.php" :
+            APP_ROOT ."/views/includes/custom-scripts/$custom_script.js.php";
         if (file_exists($script)) {
             echo "<script>"; require_once $script; echo "</script>";
         }
     }
 }
+
+function aSectionExistsBeforeThisSection(string $this_section) {
+    return array_search($this_section, SECTION_ORDER);
+}
+
+function echoCompleted()
+{
+    return  '<span class="font-italic completed"><span class="small animated completed">[Completed]</span> <i class="fa fa-check fa-1x completed animated d-none"></i></span>';
+}
+
+/**
+ * @param $department_id
+ * @return User[];
+ */
+function getApproversForDepartment(int $department_id): array
+{
+    try {
+        //return User::get(['user_role_level' => USER_ROLE_APPROVER_LEVEL, 'department_id' => $department_id]);
+        return [new User(getCurrentManager($department_id))];
+    } catch (Exception $e) {
+    }
+    return [];
+}
+
+function generateDocumentID(int $department_id) {
+    return getDeptRef($department_id);
+}
+
+function echoInComplete($append = '')
+{
+    return "<span class=\"font-italic \"> <span class=\"text-dark small animated incomplete ml-1\">[Incomplete] $append</span> </span> ";
+}
+
+function alert($message, $class = 'alert text-primary text-bold')
+{
+    echo "<p class='$class mb-0 small text-bold py-1 alert alert-dismissible'>" . "<i class='fa fa-warning text-warning'></i> " . $message . '</p>';
+}
+

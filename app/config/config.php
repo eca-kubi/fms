@@ -15,8 +15,8 @@ define('DB_NAME', 'sms');
 define('DB_PARAMS', ['db' => DB_NAME, 'host' => DB_HOST, 'username' => DB_USER, 'password' => DB_PASS, 'charset' => 'utf8mb4']);
 /*define('APP_ROOT', dirname(__FILE__, 2));*/
 define('APP_ROOT', dirname(dirname(__FILE__)));
-define('SITE_NAME', 'Nzema Monthly Report');
-define('APP_NAME', 'NMR');
+define('SITE_NAME', 'Adamus Apps');
+define('APP_NAME', 'Forms');
 define('APP_VERSION', '3.0.0');
 define('NAVBAR_MT', '109.516px');
 define('PROFILE_PIC_DIR', URL_ROOT . '/public/assets/images/profile_pics/');
@@ -67,14 +67,6 @@ const ICON_PATH = URL_ROOT . '/public/assets/images/icons/icons.svg';
 const PAGE_TITLE_DRAFT_REPORT = 'Draft Report';
 const CKFILEFINDER_CONNECTOR_PATH = "/public/assets/js/ckfinder/core/connector/php/connector.php";
 
-/*-----------SECTIONS------------------*/
-const SECTION_A_VISITOR_DETAILS = 'SECTION_A_VISITOR_DETAILS';
-const SECTION_B_ACCESS_LEVEL = 'SECTION_B_ACCESS_LEVEL';
-const SECTION_C_SITE_SPONSORS_APPROVAL = 'SECTION_C_SITE_SPONSORS_APPROVAL';
-const SECTION_D_SITE_ACCESS_APPROVAL = 'SECTION_D_SITE_ACCESS_APPROVAL';
-const SECTION_E_VISITORS_DECLARATION = 'SECTION_D_VISITORS_DECLARATION';
-const SECTION_F_HOST_APPROVAL = 'SECTION_F_HOST_APPROVAL';
-
 const GMs = ['General Manager', 'Mining Manager', 'Process Manager'];
 
 const AZURE_TENANT_ID = '3a652cac-c74f-4bd7-9144-a937afc5b541';
@@ -82,3 +74,6 @@ const AZURE_ADAMUS_APPS_CLIENT_ID = 'b72205b0-8882-4bb0-96b8-386132efbeab';
 const AZURE_ADAMUS_APPS_CLIENT_SECRET = 'aif-A9bXM9L8Hn3TDyOC~3~bNaDhO69_m3';
 const USER_ID_ECAKUBI = '590dc027-8292-45a7-b76d-16d36c0d2e13';
 const USER_ID_WEBSERVICES = '163bbe6b-8953-43d3-acc8-4f615efada89';
+
+const DATE_FORMAT_YMD = 'Y-m-d';
+const DATE_FORMAT_DMY = 'd-m-Y';

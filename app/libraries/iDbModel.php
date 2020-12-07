@@ -3,21 +3,20 @@
 
 interface iDbModel
 {
-    public function getSingle();
+    public static function getEntitySingle(int $id);
 
-    public function getMultiple();
+    public static function getEntityMultiple();
 
-    public function insertNew(array $new_record);
+    public static function insert(array $record);
 
-    public function insert();
+    public static function insertMulti(array $new_multi_records);
 
-    public function insertNewMulti(array $new_multi_records);
+    public static function update(int $id, array $record);
 
-    public function insertMulti();
+    public function delete(int $id);
 
-    public function delete($id);
+    public static function has(string $column, $value);
 
-    public function update();
+    public function getInsertId();
 
-    public function has(string $column, $value);
 }

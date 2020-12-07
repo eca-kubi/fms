@@ -1,5 +1,10 @@
 <?php
-$user = getUserSession();
+/**
+ *@var LoginViewModel $view_model
+ */
+
+use ViewModels\LoginViewModel;
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -8,8 +13,7 @@ $user = getUserSession();
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
     <title>
-        <?php /** @var array $payload */
-        echo $payload['title']; ?>
+        <?php echo $view_model->title; ?>
     </title>
     <script src="<?php echo URL_ROOT; ?>/public/assets/js/jquery.min.js"></script>
     <link rel="icon" href="<?php echo URL_ROOT; ?>/public/favicon.ico" type="image/x-icon"/>
@@ -232,7 +236,7 @@ $user = getUserSession();
             <div class="row">
                 <div class="col mb-2">
                     <div id="user_login">
-                        <form action="<?php echo site_url('users/login/' . $payload['redirect_url']) ?>"
+                        <form action="<?php echo site_url('users/login/' . $view_model->redirect_url) ?>"
                               enctype="multipart/form-data"
                               method="post" role="form"
                               data-toggle="validator">
@@ -244,8 +248,8 @@ $user = getUserSession();
                                     <div class="col-sm-12">
                                         <input type="text" id="staff_id" name="staff_id"
                                                class="<?php //echo !empty($payload['post']->staff_id_err)? 'border-danger-4': '' ?>"
-                                               placeholder="STAFF ID" aria-describedby="helpId"
-                                               value="<?php echo !empty($payload['post']->staff_id) ? $payload['post']->staff_id : '' ?>"
+                                               placeholder="USERNAME" aria-describedby="helpId"
+                                               value="<?php echo $view_model->staff_id? : '' ?>"
                                                required/>
                                         <small class="with-errors help-block d-block">
                                             <?php //echo isset($payload['post']->staff_id_err)? $payload['post']->staff_id_err: '' ?>
@@ -332,9 +336,9 @@ $user = getUserSession();
         </div>
     </div>
 </div>
-<script src="<?php echo URL_ROOT; ?>/public/assets/js/bootstrap.bundle.min.js"></script>
+<script src="<?php echo URL_ROOT; ?>/public/assets/js/bootstrap.bundle.js"></script>
 <script>
-    $('#staff_id').focus();
+    $('#staff_id').trigger('focus');
 </script>
 </body>
 </html>

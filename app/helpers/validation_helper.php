@@ -1,19 +1,25 @@
 <?php
 
 use Respect\Validation\Validator as v;
+use ViewModels\FormViewModel;
+use ViewModels\LMS\LeaveFormViewModel;
+use ViewModels\LoginViewModel;
+use ViewModels\UserRegistrationFormViewModel;
 
 function validatePost($form)
 {
     // Init data
-    $post = initData();
+    //$post = initData();
     if ($_SERVER["REQUEST_METHOD"] == 'POST') {
-        // Sanitize POST data
         $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-        $post->error_count = 0;
+        // Sanitize POST data
+        //$post->error_count = 0;
         switch ($form) {
             case 'registration_form':
-                // Process form\
-                $post->first_name = trim($_POST['first_name']);
+            case 'edit_form':
+                $_POST = array_map('trim', $_POST);
+                $post = new UserRegistrationFormViewModel('User Registration', $_POST);
+                /*$post->first_name = trim($_POST['first_name']);
                 $post->last_name = trim($_POST['last_name']);
                 $post->email = trim($_POST['email']);
                 $post->password = trim($_POST['password']);
@@ -26,105 +32,51 @@ function validatePost($form)
                 $post->contract_start = formatDate(trim($_POST['contract_start']), DATE_FORMATS['front_end'], DATE_FORMATS['back_end']);
                 $post->contract_end = formatDate(trim($_POST['contract_end']), DATE_FORMATS['front_end'], DATE_FORMATS['back_end']);
                 $post->role = trim($_POST["role"]);
-                $post->department_id = trim($_POST['department_id']);
+                $post->department_id = trim($_POST['department_id']);*/
 
+                if ($form == 'registration_form') {
+                    isUsernameAlreadyUsed($post);
+                }
                 // Check email
-                if (User::has('email', $post->email)) {
-                    $post->email_err = 'Email is already taken';
-                    $post->error_count++;
-                }
+                isEmailAlreadyUsed($post);
+
                 // Validate staff id
-                if (empty($post->staff_id)) {
-                    $post->staff_id_err = 'Please enter staff Id';
-                    $post->error_count++;
-                } else {
-                    // Check staff_id
-                    if (User::has('staff_id', $post->staff_id)) {
-                        $post->staff_id_err = 'Staff Id is already taken';
-                        $post->error_count++;
-                    }
-                }
+                validateStaffId($post);
 
                 // Validate First Name
-                if (empty($post->first_name)) {
-                    $post->first_name_err = 'Please enter first name';
-                    $post->error_count++;
-                }
+                validateFirstname($post);
 
                 // Validate Last Name
-                if (empty($post->last_name)) {
-                    $post->last_name_err = 'Please enter last name';
-                    $post->error_count++;
-                }
+                validateLastName($post);
 
                 // Validate Password
-                if (empty($post->password)) {
-                    $post->password_err = 'Please enter password';
-                    $post->error_count++;
-                } elseif (strlen($post->password) < 6) {
-                    $post->password_err = 'Password must be at least 6 characters';
-                    $post->error_count++;
-                }
+                validatePassword($post);
 
                 // Validate Confirm Password
-                if (empty($post->confirm_password)) {
-                    $post->confirm_password_err = 'Please confirm password';
-                    $post->error_count++;
-                } else {
-                    if ($post->password !== $post->confirm_password) {
-                        $post->confirm_password_err = 'Passwords do not match';
-                        $post->error_count++;
-                    }
-                }
+                validateConfirmPassword($post);
 
                 // Validate Profile Picture
-                $result = uploadProfilePic('profile_pic', $post->staff_id);
-                if (!$result['success']) {
-                    $post->profile_pic_err = $result['reason'];
-                    $post->error_count++;
-                } else {
-                    $post->profile_pic = $post->staff_id . '.jpg';
-                }
-                if ($_FILES['profile_pic']['size'] <= 0) {
-                    $post->profile_pic = DEFAULT_PROFILE_PIC;
-                }
+                validateProfilePic($post);
+
                 // Validate phone number
-                if (v::numeric()->validate($post->phone_number)) {
-                    if (!v::numeric()->length(10, 10)) {
-                        $post->phone_number_err = 'Phone number must be ten-digit long';
-                        $post->error_count++;
-                    }
-                } else {
-                    $post->phone_number_err = 'Phone number must be numeric';
-                    $post->error_count++;
-                }
+                validatePhoneNumber($post);
 
                 // Validate department
-                if (empty($post->department_id)) {
-                    $post->department_err = 'Please select a department.';
-                    $post->error_count++;
-                }
+                validateDepartment($post);
+
                 return $post;
             case 'login_form':
-                // Process form
-                $post->staff_id = strtolower(trim($_POST['staff_id']));
-                $post->password = $_POST['password'];
+                $post = new LoginViewModel('Login', $_POST);
+                /*$post->staff_id = strtolower(trim($_POST['staff_id']));
+                $post->password = $_POST['password'];*/
 
                 // Validate Staff ID
-                if (empty($post->staff_id)) {
-                    $post->staff_id_err = 'Please enter staff ID';
-                    $post->error_count++;
-                    return $post;
-                }
+                validateStaffId($post);
 
                 // Validate Password
-                if (empty($post->password)) {
-                    $post->password_err = 'Please enter password';
-                    $post->error_count++;
-                    return $post;
-                }
+                validatePassword($post);
 
-                // Verify staff id
+                // Attempt login
                 if (!User::has('staff_id', $post->staff_id)) {
                     $post->staff_id_err = 'Invalid Username/Password';
                     return $post;
@@ -136,169 +88,44 @@ function validatePost($form)
                     return $post;
                 }
                 return $post;
-            case 'edit_form':
-                // Process form
-                $post->first_name = trim($_POST['first_name']);
-                $post->last_name = trim($_POST['last_name']);
-                $post->email = trim($_POST['email']);
-                $post->job_title = trim($_POST['job_title']);
-                $post->staff_category = trim($_POST['staff_category']);
-                $post->phone_number = trim($_POST['phone_number']);
-                $post->staff_id = trim($_POST['staff_id']);
-                $post->employment_date = formatDate(trim($_POST['employment_date']), DATE_FORMATS['front_end'], DATE_FORMATS['back_end']);
-                $post->contract_start = formatDate(trim($_POST['contract_start']), DATE_FORMATS['front_end'], DATE_FORMATS['back_end']);
-                $post->contract_end = formatDate(trim($_POST['contract_end']), DATE_FORMATS['front_end'], DATE_FORMATS['back_end']);
-                $post->role = trim($_POST["role"]);
-                $post->department = trim($_POST['department']);
-
-                // Validate Email
-                if ($post->email !== '' && User::has('email', $post->email)) {
-                    $post->email_err = 'Email is already taken';
-                    $post->error_count++;
-                }
-
-                // Validate staff id
-                if (empty($post->staff_id)) {
-                    $post->staff_id_err = 'Please enter staff Id';
-                    $post->error_count++;
-                }
-
-                // Validate First Name
-                if (empty($post->first_name)) {
-                    $post->first_name_err = 'Please enter first name';
-                    $post->error_count++;
-                }
-
-                // Validate Surname
-                if (empty($post->last_name)) {
-                    $post->last_name_err = 'Please enter last name';
-                    $post->error_count++;
-                }
-
-                // Validate Profile Picture
-                $result = uploadProfilePic('profile_pic', $post->staff_id);
-                if (!$result['success']) {
-                    $post->profile_pic_err = $result['reason'];
-                    $post->error_count++;
-                } else {
-                    $post->profile_pic = $result['file'];
-                }
-
-                // Validate phone number
-                if (v::numeric()->validate($post->phone_number)) {
-                    if (!v::numeric()->length(10, 10)) {
-                        $post->phone_number_err = 'Phone number must be ten-digit long';
-                        $post->error_count++;
-                    }
-                } else {
-                    $post->phone_number_err = 'Phone number must be numeric';
-                    $post->error_count++;
-                }
-                return $post;
             case 'profile_form':
-                // Sanitize POST data
-                //$post->role = jobTitleToRole($_POST['job_title']);
+                $post = new UserRegistrationFormViewModel('Profile', $_POST);
                 $post->error_count = 0;
-                $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                $post->first_name = trim($_POST['first_name']);
+                //$_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                /*$post->first_name = trim($_POST['first_name']);
                 $post->last_name = trim($_POST['last_name']);
-                $post->email = trim($_POST['email']);
+                $post->email = trim($_POST['email']);*/
                 //$post->password = trim($_POST['password']);
                 //$post->confirm_password = trim($_POST['confirm_password']);
-                $post->phone_number = trim($_POST['phone_number']);
-                $post->disable_leave_notif = isset($_POST['disable_leave_notif']) ? $_POST['disable_leave_notif'] : '';
-                // Process form
+                //$post->phone_number = trim($_POST['phone_number']);
+                $post->disable_leave_notif = isset($_POST['disable_leave_notif']) ?: '';
                 // Validate Email
-                if ($post->email !== '' && User::has('email', $post->email)) {
-                    $post->email_err = 'Email is already taken';
-                    $post->error_count++;
-                }
+                validateEmail($post);
 
-                // Validate staff id
-                // if (empty($post->staff_id)) {
-                //     $post->staff_id_err = 'Please enter staff Id';
-                //     $post->error_count++;
-                // } else {
-                //     // Check staff_id
-                //     if ($userModel->has($post->staff_id)) {
-                //         $post->staff_id_err = 'Staff Id is already taken';
-                //         $post->error_count++;
-                //     }
-                // }
+                validateProfilePic($post);
 
-                // Validate First Name
-                if (empty($post->first_name)) {
-                    $post->first_name_err = 'Please enter first name';
-                    $post->error_count++;
-                }
+                validatePhoneNumber($post);
 
-                // Validate Surname
-                if (empty($post->last_name)) {
-                    $post->last_name_err = 'Please enter last name';
-                    $post->error_count++;
-                }
-
-                // Validate Password
-                // if (empty($post->password)) {
-                //     $post->password_err = 'Please enter password';
-                //     $post->error_count++;
-                // } elseif (strlen($post->password) < 6) {
-                //     $post->password_err = 'Password must be at least 6 characters';
-                //     $post->error_count++;
-                // }
-
-                // Validate Confirm Password
-                // if (empty($post->confirm_password)) {
-                //     $post->confirm_password_err = 'Please confirm password';
-                //     $post->error_count++;
-                // } else {
-                //     if ($post->password !== $post->confirm_password) {
-                //         $post->confirm_password_err = 'Passwords do not match';
-                //         $post->error_count++;
-                //     }
-                // }
-
-                // Validate Profile Picture
-                $result = uploadProfilePic('profile_pic', getUserSession()->staff_id);
-                if (!$result['success']) {
-                    $post->profile_pic_err = $result['reason'];
-                    $post->error_count++;
-                } else {
-                    $post->profile_pic = $result['file'];
-                }
-                if ($_FILES['profile_pic']['size'] < 0) {
-                    $post->profile_pic = DEFAULT_PROFILE_PIC;
-                }
-
-                // Validate phone number
-                if (v::numeric()->validate($post->phone_number)) {
-                    if (!v::numeric()->length(10, 10)) {
-                        $post->phone_number_err = 'Phone number must be ten-digit long';
-                        $post->error_count++;
-                    }
-                } else {
-                    $post->phone_number_err = 'Phone number must be numeric';
-                    $post->error_count++;
-                }
                 return $post;
             case 'book_leave':
                 // validate leave form
-                $post->start_date = formatDate($_POST["start_date"], DATE_FORMATS['front_end'], DATE_FORMATS['back_end']);
-                $post->end_date = formatDate($_POST["end_date"], DATE_FORMATS['front_end'], DATE_FORMATS['back_end']);
-                $post->type = $_POST["type"];
-                $post->vac_address = $_POST["vac_address"];
-                $post->vac_phone_no = $_POST["vac_phone_no"];
-                $post->resume_date = formatDate($_POST["resume_date"], DATE_FORMATS['front_end'], DATE_FORMATS['back_end']);
-                $post->relationship = isset($_POST["relationship"]) ? $_POST["relationship"] : '';
-                $post->leave_reason = $_POST["leave_reason"];
-                break;
+                $post = new LeaveFormViewModel('Request Leave', $_POST);
+                /*   $post->start_date = formatDate($_POST["start_date"], DATE_FORMATS['front_end'], DATE_FORMATS['back_end']);
+                   $post->end_date = formatDate($_POST["end_date"], DATE_FORMATS['front_end'], DATE_FORMATS['back_end']);
+                   $post->type = $_POST["type"];
+                   $post->vac_address = $_POST["vac_address"];
+                   $post->vac_phone_no = $_POST["vac_phone_no"];
+                   $post->resume_date = formatDate($_POST["resume_date"], DATE_FORMATS['front_end'], DATE_FORMATS['back_end']);
+                   $post->relationship = isset($_POST["relationship"]) ? $_POST["relationship"] : '';
+                   $post->leave_reason = $_POST["leave_reason"];*/
+                return $post;
             default:
         }
     }
-    return $post;
+    return new FormViewModel('');
 }
 
-function initData()
+/*function initData()
 {
     return json_decode(json_encode([
         'user_id' => null,
@@ -346,44 +173,117 @@ function initData()
         'resume_date' => '',
         'current_date' => (new DateTime())->format(DATE_FORMATS['front_end']),
     ]));
+}*/
 
-}
-
-function validateDate($date, $format = 'Y-m-d H:i:s')
+function validatePhoneNumber($post)
 {
-    $d = DateTime::createFromFormat($format, $date);
-    return $d && $d->format($format) == $date;
-}
-
-function validateVisitorAccessForm(array $post_data, string $section) : ValidationErrorCollection
-{
-    $errors = [];
-    switch ($section) {
-        case SECTION_A_VISITOR_DETAILS:
-            // Arrival Date
-            $date_validator = v::date(DateFormat::FRONTEND_FORMAT);
-            if (!$date_validator->validate($post_data['arrival_date'])) {
-                $errors[] = new ValidationError('arrival_date', 'The value provided is not a valid date in the format ' . toJSDate(now()));
-            }
-            if (!$date_validator->validate($post_data['departure_date'])) {
-                $errors[] = new ValidationError('departure_date', 'The value provided is not a valid date in the format ' . toJSDate(now()));
-            }
-
-            // Departure Date
-            // Name
-            // Id Num
-            // Company
-            // Visitor Type
-            // Reason For Visit
-            // Visitor Category
-        return new ValidationErrorCollection(...$errors);
-        case SECTION_B_ACCESS_LEVEL:
-        case SECTION_C_SITE_SPONSORS_APPROVAL:
-        case SECTION_D_SITE_ACCESS_APPROVAL:
-        case SECTION_E_VISITORS_DECLARATION:
-        case SECTION_F_HOST_APPROVAL:
-            break;
-        default;
+    // Validate phone number
+    if (v::numeric()->validate($post->phone_number)) {
+        if (!v::numeric()->length(10, 10)) {
+            $post->phone_number_err = 'Phone number must be ten-digit long';
+            $post->error_count++;
+        }
+    } else {
+        $post->phone_number_err = 'Phone number must be numeric';
+        $post->error_count++;
     }
-    return $ve;
+}
+
+function validateProfilePic($post)
+{
+    // Validate Profile Picture
+    $result = uploadProfilePic('profile_pic', getUserSession()->staff_id);
+    if (!$result['success']) {
+        $post->profile_pic_err = $result['reason'];
+        $post->error_count++;
+    } else {
+        $post->profile_pic = $result['file'];
+    }
+    if ($_FILES['profile_pic']['size'] < 0) {
+        $post->profile_pic = DEFAULT_PROFILE_PIC;
+    }
+}
+
+function validateDepartment($post)
+{
+    if (empty($post->department_id)) {
+        $post->department_err = 'Please select a department.';
+        $post->error_count++;
+    }
+}
+
+function validateConfirmPassword($post)
+{
+    if (empty($post->confirm_password)) {
+        $post->confirm_password_err = 'Please confirm password';
+        $post->error_count++;
+    } else {
+        if ($post->password !== $post->confirm_password) {
+            $post->confirm_password_err = 'Passwords do not match';
+            $post->error_count++;
+        }
+    }
+}
+
+function validateFirstname($post)
+{
+    // Validate First Name
+    if (empty($post->first_name)) {
+        $post->first_name_err = 'Please enter first name';
+        $post->error_count++;
+    }
+}
+
+function validateLastName($post)
+{
+
+    // Validate Surname
+    if (empty($post->last_name)) {
+        $post->last_name_err = 'Please enter last name';
+        $post->error_count++;
+    }
+}
+
+function validatePassword($post)
+{
+    if (empty($post->password)) {
+        $post->password_err = 'Please enter password';
+        $post->error_count++;
+    } elseif (strlen($post->password) < 6) {
+        $post->password_err = 'Password must be at least 6 characters';
+        $post->error_count++;
+    }
+}
+
+function validateStaffId($post)
+{
+    if (empty($post->staff_id)) {
+        $post->staff_id_err = 'Please enter username';
+        $post->error_count++;
+    }
+}
+
+function isUsernameAlreadyUsed($post)
+{
+    // Check staff_id
+    if (User::has('staff_id', $post->staff_id)) {
+        $post->staff_id_err = 'Username is already taken';
+        $post->error_count++;
+    }
+}
+
+function isEmailAlreadyUsed($post)
+{
+    if (User::has('email', $post->email)) {
+        $post->email_err = 'Email is already taken';
+        $post->error_count++;
+    }
+}
+
+function validateEmail($post)
+{
+    if (!$post->email) {
+        $post->email_err = 'Email is required';
+        $post->error_count++;
+    }
 }

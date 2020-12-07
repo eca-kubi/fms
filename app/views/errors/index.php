@@ -1,3 +1,11 @@
+<?php
+/**
+ * @var ErrorViewModel $view_model
+ */
+
+use ViewModels\ErrorViewModel;
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title><?php /** @var string $title */
-        echo $title; ?></title>
+        echo $view_model->title; ?></title>
     <link rel="icon" href="<?php echo URL_ROOT; ?>/public/favicon.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/fonts.css">
@@ -64,8 +72,8 @@
             width: 100%;
             height: 600px;
             background-color: rgba(255, 255, 255, 0.7);
-            -webkit-box-shadow: 0 0px 0px 30px rgba(255, 255, 255, 0.7) inset;
-            box-shadow: 0 0px 0px 30px rgba(255, 255, 255, 0.7) inset;
+            -webkit-box-shadow: 0 0 0 30px rgba(255, 255, 255, 0.7) inset;
+            box-shadow: 0 0 0 30px rgba(255, 255, 255, 0.7) inset;
             z-index: -1;
         }
 
@@ -91,7 +99,7 @@
             -ms-transform: translate(-50%, -50%);
             transform: translate(-50%, -50%);
             font-size: 220px;
-            margin: 0px;
+            margin: 0;
             color: #222225;
             text-transform: uppercase;
         }
@@ -129,8 +137,8 @@
         .notfound-search button {
             font-family: 'Muli', sans-serif;
             position: absolute;
-            right: 0px;
-            top: 0px;
+            right: 0;
+            top: 0;
             width: 120px;
             height: 40px;
             text-align: center;
@@ -198,10 +206,9 @@
     <div class="notfound-bg"></div>
     <div class="notfound">
         <div class="notfound-404">
-            <h1><?php echo $title; ?></h1>
+            <h1><?php echo $view_model->title; ?></h1>
         </div>
-        <h2>Oops! <?php /** @var string $message */
-            echo $message; ?></h2>
+        <h2>Oops! <?php echo $view_model->message; ?></h2>
         <form class="notfound-search">
             <input type="text" placeholder="Search...">
             <button type="button">Search</button>

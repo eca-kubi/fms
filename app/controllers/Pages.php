@@ -1,4 +1,10 @@
 <?php
+
+use Spatie\Browsershot\Browsershot;
+use Spatie\Browsershot\Exceptions\CouldNotTakeBrowsershot;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
+
 class Pages extends Controller
 {
     public function index()
@@ -17,7 +23,8 @@ class Pages extends Controller
         $this->view('about', $payload);
     }
 
-    public  function startPage() {
+    public function startPage()
+    {
         $payload = [];
         $payload['title'] = 'Dashboard';
         if (!isLoggedIn()) {
@@ -44,5 +51,20 @@ class Pages extends Controller
     public function sendmail()
     {
         $this->view('pages/send_mail', []);
+    }
+
+    public function test()
+    {
+        // $process = new Process(['node C:/xampp/htdocs/fms/print-to-pdf.js https://local.arlgh.com/forms/visitor-access-form/print/0']);
+        $process = Process::fromShellCommandline('node print-to-pdf.js');
+        $process->setTimeout(30);
+        $process->setOptions(['create_new_console' => true]);
+        $process->setWorkingDirectory('C:/xampp/htdocs/fms');
+        try {
+            $process->mustRun();
+            echo $process->getOutput();
+        } catch (ProcessFailedException $exception) {
+            echo $exception->getMessage();
+        }
     }
 }

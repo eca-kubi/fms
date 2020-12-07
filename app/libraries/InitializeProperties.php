@@ -9,5 +9,12 @@ trait InitializeProperties
             if (property_exists($this, $property))
             $this->{$property} = $value;
         }
+        return $this;
+    }
+
+    public function setProperties(array $properties)
+    {
+        $this->initialize($properties);
+        return $this;
     }
 }

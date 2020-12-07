@@ -1,6 +1,13 @@
-<?php require_once APP_ROOT . '\views\includes\header.php'; ?>
-<?php require_once APP_ROOT . '\views\includes\navbar.php'; ?>
-<?php require_once APP_ROOT . '\views\includes\sidebar.php'; ?>
+<?php use ViewModels\UserRegistrationFormViewModel;
+
+require_once APP_ROOT . '\views\includes\header.php'; ?>
+<?php require_once APP_ROOT . '\views\includes\visitor-access-form\navbar.php'; ?>
+<?php require_once APP_ROOT . '\views\includes\visitor-access-form\sidebar.php'; ?>
+<?php
+/**
+ * @var UserRegistrationFormViewModel $view_model
+ */
+?>
 <style>
     .table-user-information > tbody > tr {
         border-top: 1px solid rgb(221, 221, 221);
@@ -16,11 +23,16 @@
     }
 
     .table-user-information > tbody > tr > td {
-        width: 25%;
+        width: 50%;
+        font-weight: 500;
     }
 
     .table-user-information > tbody > tr > td {
         text-transform: capitalize;
+    }
+
+    .table-user-information >tbody >tr >td:first-child {
+        text-align: right;
     }
 </style>
 <!-- .content-wrapper -->
@@ -73,13 +85,13 @@
                             <div class="col-md-3">
                                 <div class="text-center">
                                     <?php
-                                    /** @var array $payload */
-                                    $full_name = $payload['post']->first_name . ' ' . $payload['post']->last_name;
-                                    if ($payload['post']->profile_pic === DEFAULT_PROFILE_PIC) {
-                                        $initials = $payload['post']->first_name[0] . $payload['post']->last_name[0];
+                                
+                                    $full_name = $view_model->first_name . ' ' . $view_model->last_name;
+                                    if ($view_model->profile_pic === DEFAULT_PROFILE_PIC) {
+                                        $initials = $view_model->first_name[0] . $view_model->last_name[0];
                                         echo "<img avatar=\"$full_name\" class=\"img-fluid p-1 img-thumbnail img-size-32\" alt=\"$initials\" >";
                                     } else { ?>
-                                        <img src="<?php echo PROFILE_PIC_DIR . $payload['post']->profile_pic; ?>"
+                                        <img src="<?php echo PROFILE_PIC_DIR . $view_model->profile_pic; ?>"
                                              class="img-fluid img-thumbnail img-size-32" alt="avatar"/>
                                     <?php } ?>
                                     <h6 class="invisible">Profile Picture</h6>
@@ -103,51 +115,43 @@
                                         <tr>
                                             <td>Name:</td>
                                             <td>
-                                                <?php echo $payload['post']->first_name . ' ' . $payload['post']->last_name; ?>
+                                                <?php echo $view_model->first_name . ' ' . $view_model->last_name; ?>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>Staff Number (ID):</td>
                                             <td>
-                                                <?php echo strtoupper($payload['post']->staff_id); ?>
+                                                <?php echo strtoupper($view_model->staff_id); ?>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>Department:</td>
                                             <td>
-                                                <?php echo $payload['post']->department; ?>
+                                                <?php echo $view_model->department; ?>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>Position:</td>
                                             <td>
-                                                <?php echo $payload['post']->job_title; ?>
+                                                <?php echo $view_model->job_title; ?>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>Staff Category:</td>
                                             <td>
-                                                <?php echo $payload['post']->staff_category; ?>
+                                                <?php echo $view_model->staff_category; ?>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>Email:</td>
                                             <td class="text-lowercase">
-                                                <?php echo $payload['post']->email; ?>
+                                                <?php echo $view_model->email; ?>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>Mobile Number:</td>
                                             <td>
-                                                <?php echo $payload['post']->phone_number; ?>
-                                            </td>
-                                        </tr>
-                                        <tr class="d-none">
-                                            <td>Managers</td>
-                                            <td>
-                                                <?php
-                                                echo $payload['mgrs'];
-                                                ?>
+                                                <?php echo $view_model->phone_number; ?>
                                             </td>
                                         </tr>
 
@@ -179,7 +183,7 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
+<?php modal(APP_ROOT. '/views/modals/change_password', []); ?>
 <?php require_once APP_ROOT . '\views\includes\footer.php'; ?>
-<?php require_once APP_ROOT . '\views\includes\scripts.php'; ?>
 </body>
 </html>

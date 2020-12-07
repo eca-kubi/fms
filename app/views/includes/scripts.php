@@ -40,7 +40,7 @@
 </script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/jquery-toast.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/jquery.lockscroll.min.js"></script>
-<script src="<?php echo URL_ROOT; ?>/public/assets/js/bootstrap.bundle.min.js"></script>
+<script src="<?php echo URL_ROOT; ?>/public/assets/"></script>
 <script src="<?php echo URL_ROOT ?>/public/assets/js/shards.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/adminlte.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/adminlte-2.js"></script>

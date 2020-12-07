@@ -1,0 +1,38 @@
+2020-12-06 13:19:22 - Starting C:\Program Files\nodejs\node.exe  --harmony C:\Users\IT\AppData\Roaming\npm\node_modules\node-windows\lib\wrapper.js --file C:\xampp\htdocs\fms\app.js --scriptoptions= --log "PDF Download Server wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2020-12-06 13:19:22 - Started 23696
+2020-12-06 13:26:30 - Stopping pdfdownloadserver.exe
+2020-12-06 13:26:30 - ProcessKill 23696
+2020-12-06 13:26:30 - Found child process: 25520 Name: conhost.exe
+2020-12-06 13:26:30 - Found child process: 19400 Name: node.exe
+2020-12-06 13:26:30 - Stopping process 25520
+2020-12-06 13:26:30 - Send SIGINT 25520
+2020-12-06 13:26:30 - SIGINT to 25520 failed - Killing as fallback
+2020-12-06 13:26:31 - Found child process: 16992 Name: chrome.exe
+2020-12-06 13:26:31 - Found child process: 11464 Name: chrome.exe
+2020-12-06 13:26:31 - Found child process: 17660 Name: chrome.exe
+2020-12-06 13:26:31 - Found child process: 11880 Name: chrome.exe
+2020-12-06 13:26:31 - Found child process: 13300 Name: chrome.exe
+2020-12-06 13:26:31 - Stopping process 13300
+2020-12-06 13:26:31 - Send SIGINT 13300
+2020-12-06 13:26:31 - SIGINT to 13300 failed - Killing as fallback
+2020-12-06 13:26:31 - Stopping process 11464
+2020-12-06 13:26:31 - Send SIGINT 11464
+2020-12-06 13:26:31 - SIGINT to 11464 failed - Killing as fallback
+2020-12-06 13:26:31 - Stopping process 17660
+2020-12-06 13:26:31 - Send SIGINT 17660
+2020-12-06 13:26:31 - SIGINT to 17660 failed - Killing as fallback
+2020-12-06 13:26:31 - Stopping process 11880
+2020-12-06 13:26:31 - Send SIGINT 11880
+2020-12-06 13:26:31 - SIGINT to 11880 failed - Killing as fallback
+2020-12-06 13:26:31 - Stopping process 16992
+2020-12-06 13:26:31 - Send SIGINT 16992
+2020-12-06 13:26:31 - SIGINT to 16992 failed - Killing as fallback
+2020-12-06 13:26:31 - Stopping process 19400
+2020-12-06 13:26:31 - Send SIGINT 19400
+2020-12-06 13:26:31 - SIGINT to 19400 failed - Killing as fallback
+2020-12-06 13:26:31 - Stopping process 23696
+2020-12-06 13:26:31 - Send SIGINT 23696
+2020-12-06 13:26:31 - SIGINT to 23696 failed - Killing as fallback
+2020-12-06 13:26:31 - Finished pdfdownloadserver.exe
+2020-12-06 13:26:32 - Starting C:\Program Files\nodejs\node.exe  --harmony C:\Users\IT\AppData\Roaming\npm\node_modules\node-windows\lib\wrapper.js --file C:\xampp\htdocs\fms\app.js --scriptoptions= --log "PDF Download Server wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2020-12-06 13:26:32 - Started 5664

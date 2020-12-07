@@ -4,9 +4,9 @@
 class AccessToken extends GenericEntity
 {
     public string $token_type = "Bearer";
-    public int $expires_in;
-    public int $ext_expires_in;
-    public string $access_token;
+    public int $expires_in = 0;
+    public int $ext_expires_in = 0;
+    public string $access_token = "";
 
     public function __construct(?array $properties = null)
     {

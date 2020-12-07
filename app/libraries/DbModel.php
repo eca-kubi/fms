@@ -4,65 +4,114 @@ abstract class DbModel implements iDbModel, JsonSerializable
 {
     use InitializeProperties;
 
-    protected string $table;
-    protected MysqliDb $db;
+    protected static string $table = 'table';
+    protected static string $primary_key = 'table_id';
+    protected static string $entity_class = GenericEntity::class;
     private ?array $where_col_val;
     private ?array $properties;
 
-    public function __construct(?array $properties = null, ?array $where_col_val=null)
+    public function __construct(?array $properties = null, ?array $where_col_val = null)
     {
-        $this->db = Database::getDbh(); // MysqliDb
         $this->where_col_val = $where_col_val;
         $this->properties = $properties;
+
         if (!empty($properties)) {
             $this->initialize($properties);
-        } elseif (!empty($this->where_col_val)) {
-            if (is_array($this->where_col_val)) {
-                $ret = $this->fetchSingle($this->where_col_val);
-                if ($ret) {
-                    foreach ($ret as $col => $value) {
-                        if (property_exists($this, $col))
-                            $this->$col = $value;
-                    }
-                }
-            }
+        } elseif (is_array($this->where_col_val) && !empty($this->where_col_val)) {
+            $col_val = $this->fetchSingle($this->where_col_val);
+            $this->initialize($col_val);
         }
     }
 
+    /**
+     * @param array $where_col_val
+     * @return array
+     */
     private function fetchSingle(array $where_col_val = [])
     {
-        $this->db->objectBuilder();
+        $db = Database::getDbh();
         foreach ($where_col_val as $col => $val) {
-            $this->db->where($col, $val);
+            $db->where($col, $val);
         }
-        return $this->db->getOne($this->table);
+        try {
+            return $db->getOne(static::$table);
+        } catch (Exception $e) {
+        }
+        return [];
     }
 
-
-    public function insertNew(array $new_record)
+    /**
+     * @param array $new_record
+     * @return bool
+     */
+    public static function insert(array $new_record)
     {
-        return $this->db->insert($this->table, $new_record);
+        try {
+            return Database::getDbh()->insert(static::$table, $new_record);
+        } catch (Exception $e) {
+        }
+        return false;
     }
 
-
-    public function insert()
+    public function save(): bool
     {
-        return $this->db->insert($this->table, $this->getSingle()->jsonSerialize());
+        try {
+            return Database::getDbh()->insert(static::$table, $this->jsonSerialize());
+        } catch (Exception $e) {
+        }
+        return false;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
-        return get_object_vars($this);
+//        return get_object_vars($this);
+        return (array)new static::$entity_class((array) $this);
     }
 
-    public function insertNewMulti(array $new_multi_records)
+    /**
+     * @param array $new_multi_records
+     * @return array
+     */
+    public static function insertMulti(array $new_multi_records)
     {
-        return $this->db->insertMulti($this->table, $new_multi_records);
+        try {
+            return Database::getDbh()->insertMulti(static::$table, $new_multi_records);
+        } catch (Exception $e) {
+        }
+        return [];
     }
 
-    public function insertMulti()
+    /**
+     * @param string $column
+     * @param $value
+     * @return bool
+     */
+    public static function has(string $column, $value)
     {
-        return $this->db->insertMulti($this->table, $this->getMultiple()->jsonSerialize());
+        try {
+            return Database::getDbh()->where($column, $value)->has(static::$table);
+        } catch (Exception $e) {
+        }
+        return false;
     }
 
+
+    public static function update(int $id, array $record): bool
+    {
+        try {
+            unset($record[static::$primary_key]);
+            return Database::getDbh()->where(static::$primary_key, $id)->update(static::$table, $record);
+        } catch (Exception $e) {
+        }
+        return false;
+    }
+
+    public function getInsertId()
+    {
+        try {
+            return Database::getDbh()->getInsertId();
+        } catch (Exception $e) {
+            return null;
+        }
+    }
 }

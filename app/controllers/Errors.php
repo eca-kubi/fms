@@ -1,8 +1,11 @@
 <?php
+
+use ViewModels\ErrorViewModel;
+
 class Errors extends Controller
 {
 
-    public function index($error_code): void
+    public function index(?int $error_code): void
     {
         $status = $error_code?: $_SERVER['REDIRECT_STATUS'];
         $codes = array(
@@ -17,11 +20,12 @@ class Errors extends Controller
             1000 => array('1000', 'A required view is missing.'),
         );
 
-        [$title] = $codes[$status];
-        [$payload['title'], $payload['message']] =  $codes[$status];
+        list($title, $message) = $codes[$status];
+        $view_model = new ErrorViewModel($status, $message, $title);
+
         ob_start();
         header("HTTP/1.1 $title");
-        $this->view('errors/index', $payload);
+        $this->view('errors/index', ['view_model' => $view_model]);
         ob_flush();
     }
 }

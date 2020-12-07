@@ -1,21 +1,25 @@
 <?php
 
 
+use VisitorAccessForm\Entities\Visitor;
+use VisitorAccessForm\VisitorCollection;
+
 class VisitorDbModel extends DbModel
 {
-    protected static string $table = 'visitor';
-    public int $visitor_id;
-    public string $full_name;
-    public string $visitor_type;
-    public string $visitor_category;
-    public string $company;
-    public string $identification_type;
-    public string $identification_num;
-    public string $phone_num;
+    private static string $table = 'visitor';
+    private static string $primary_key = 'visitor_id';
+    public ?int $visitor_id = null;
+    public ?string $full_name = null;
+    public ?string $visitor_type = null;
+    public ?string $visitor_category = null;
+    public ?string $company = null;
+    public ?string $identification_type = null;
+    public ?string $identification_num = null;
+    public ?string $phone_num = null;
 
-    public function __construct(?array $col_val)
+    public function __construct(?array $properties = null, ?array $where_col_val = null)
     {
-        parent::__construct($col_val);
+        parent::__construct($properties, $where_col_val);
     }
 
     public function delete($id)
@@ -23,24 +27,29 @@ class VisitorDbModel extends DbModel
         // TODO: Implement delete() method.
     }
 
-    public function update($id, array $updated_record)
-    {
-        // TODO: Implement update() method.
-    }
-
     public function has(string $column, $value)
     {
         // TODO: Implement has() method.
     }
 
-    public function getSingle() : Visitor
+    public function getEntitySingle(int $id) : Visitor
     {
         return new Visitor($this->jsonSerialize());
     }
 
-    public function getMultiple() : VisitorCollection
+    public static function getEntityMultiple() : VisitorCollection
     {
-        $array_values = $this->db->get(self::$table);
+        $array_values = [];
+        $instance = new self();
+        try {
+            $array_values = $instance->db->get(self::$table);
+        } catch (Exception $e) {
+        }
         return VisitorCollection::createFromArrayValues($array_values);
+    }
+
+    public static function getWithId(int $id)
+    {
+        return (new static(null, [self::$primary_key, $id]))->getEntitySingle();
     }
 }

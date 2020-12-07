@@ -6,7 +6,7 @@ class ValidationErrorCollection extends GenericCollection
     /**
      * @var ValidationError[]
      */
-    private array $values;
+    protected array $values;
     public function __construct(ValidationError ...$errors)
     {
         $this->values = $errors;
@@ -27,6 +27,10 @@ class ValidationErrorCollection extends GenericCollection
 
     public static function createFromArrayValues(array $array_values)
     {
-        // TODO: Implement createFromArrayValues() method.
+        $errors = [];
+        foreach ($array_values as $value) {
+            $errors[] = new ValidationError($value['field'], $value['description']);
+        }
+        return new self(...$errors);
     }
 }

@@ -15,7 +15,7 @@
                 <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5"><i
                             class="fa fa-folder w3-text-amber"></i> Finance</h2>
                 <p class="mbr-fonts-style mbr-text display-6">
-                    <a class="d-block w3-text-black" href="<?php echo URL_ROOT . '/salary-advance' ?>">
+                    <a class="d-block w3-text-black child" href="<?php echo URL_ROOT . '/salary-advance' ?>" target="_blank">
                         <i class="fa fa-check animated text-black"></i> Salary Advance </a>
                 </p>
             </div>
@@ -31,7 +31,7 @@
                 <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5"><i
                             class="fa fa-folder w3-text-amber"></i> Security</h2>
                 <p class="mbr-fonts-style mbr-text display-6">
-                    <a href='<?php echo site_url("visitor-access") ?>' class="d-block w3-text-black"><i
+                    <a href='<?php echo site_url("visitor-access-form") ?>' target="_blank" class="d-block w3-text-black child"><i
                                 class="fa fa fa-check animated text-black"></i> Visitor Access</a>
                 </p>
             </div>
@@ -47,10 +47,9 @@
                 <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5"><i
                             class="fa fa-folder w3-text-amber"></i> HSE <span></span></h2>
                 <p class="mbr-fonts-style mbr-text display-6 mb-0">
-                    <a href="https://adamusgh.com/apps/near-miss" target="_blank" class="d-block w3-text-black"><i
-                                class="fa fa-check text-black"></i> Near Miss</a>
-                    <a href="https://adamusgh.com/apps/incident-alert" target="_blank" class="d-block w3-text-black"><i
-                                class="fa fa-check text-black"></i> Incident Alert</a>
+                    <a href="https://adamusgh.com/covid-19" target="_blank"  class="d-block w3-text-black child"><i class="fa fa-check text-black"></i> COVID-19</a>
+                    <a href="https://adamusgh.com/apps/near-miss" target="_blank" class="d-block w3-text-black child"><i class="fa fa-check text-black"></i> Near Miss</a>
+                    <a href="https://adamusgh.com/apps/incident-alert" target="_blank" class="d-block w3-text-black child"><i class="fa fa-check text-black"></i> Incident Alert</a>
                 </p>
             </div>
         </div>
@@ -150,8 +149,8 @@
         </div>
     </div>
 </div>
-</div>
-</section>
+</div> <!-- .container -->
+</section> <!-- .section-1 -->
 <?php require_once APP_ROOT . '/views/includes/start-page-footer.php' ?>
 </body>
 </html>

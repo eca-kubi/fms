@@ -37,6 +37,11 @@
         $("[data-url]").on('click', function () {
             window.location.href = $(this).data('url');
         });
+
+        $('a.child').on('click', function (e) {
+            e.stopPropagation();
+        })
+
         /*$('.section-1')[0].addEventListener('animationend', () => {
             let enjoyhint_script_steps = [
                 {

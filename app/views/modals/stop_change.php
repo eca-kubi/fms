@@ -7,7 +7,8 @@
  */
 ?>
 <!-- Modal -->
-<div class="modal fade" id="stopProcess" tabindex="-1" role="dialog" aria-labelledby="stopProcessLabel"
+<div class="modal fade" id="cancelRequest" tabindex="-1" role="dialog"
+     aria-labelledby="stopProcessLabel"
      aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -18,11 +19,13 @@
                 </button>
             </div>
             <div class="modal-body">
-                <p>This will cancel the Change Process!</p>
+                <p>This action will cancel the visitor access request! <b>
+                        Warning: It cannot be undone.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-                <button type="button" class="btn btn-primary">Yes</button>
+                <a type="button" class="btn btn-primary"
+                   href="#">Yes</a>
             </div>
         </div>
     </div>
