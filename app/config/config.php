@@ -1,7 +1,7 @@
 <?php
 const OAUTH_APP_ID = '8655f59d-68a8-45b0-a2b0-027a2712eedf';
 const OAUTH_APP_PASSWORD = 'L-bQ0tq~38t~a96ii7EU-U.dKGJWPLM8YB';
-const OAUTH_REDIRECT_URI = 'https://local.arlgh.com/nmr/pages/getoauthtoken';
+const OAUTH_REDIRECT_URI = 'https://' . DOMAIN . '/nmr/pages/getoauthtoken';
 const OAUTH_SCOPES = 'openid profile email offline_access Mail.Send Mail.Send.Shared SMTP.Send User.Read';
 const OAUTH_AUTHORITY = 'https://login.microsoftonline.com/common';
 const OAUTH_AUTHORIZE_ENDPOINT = '/oauth2/v2.0/authorize';
@@ -28,11 +28,11 @@ define('DATE_FORMATS', [
 ]);
 const DEFAULT_DRAFT_MONTH = 'July';
 const DEFAULT_DRAFT_YEAR = '2020';
-const IT_MANAGER_EMAIL = 'babimpong@adamusgh.com';
-const IT_SUPPORT_OFFICER_EMAIL = 'ecakubi@adamusgh.com';
+const IT_MANAGER_EMAIL = 'kmat@adamusgh.com';
+const IT_ADMIN_EMAILS = 'ecakubi@adamusgh.com;eadompre@adamusgh.com;jsackey@adamusgh.com';
 const NO_FLASH__REPORT_DEPT = ['Accra Office', 'IT', 'Supply', 'Commercial', 'SRD', 'Security'];
 const NO_FULL_REPORT_DEPT = ['Accra Office', 'IT', 'Supply', 'Commercial'];
-const DISTRIBUTION_LIST_EMAILS = [['ecakubi@adamusgh.com', 'Eric'], ['babimpong@adamusgh.com', 'Bernard'],/* ['sopoku@adamusgh.com', 'Seth' ]*/
+const DISTRIBUTION_LIST_EMAILS = [['ecakubi@adamusgh.com', 'Eric'], ['kmat@adamusgh.com', 'Krisz'],/* ['sopoku@adamusgh.com', 'Seth' ]*/
     ['anyamekye@adamusgh.com', 'Anthony']];
 const NO_PROFILE = 'no_profile.jpg';
 const DEFAULT_PROFILE_PIC = 'no_profile.jpg';

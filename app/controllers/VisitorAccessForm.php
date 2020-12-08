@@ -16,7 +16,6 @@ use VisitorAccessForm\EmailComposerHelper;
 use VisitorAccessForm\Entities\AccessLevel;
 use VisitorAccessForm\Entities\VisitorAccessFormEntity;
 use VisitorAccessForm\ValidationHelper;
-use VisitorAccessForm\VisitorAccessFormCollection;
 
 class VisitorAccessForm extends Controller
 {
@@ -28,7 +27,7 @@ class VisitorAccessForm extends Controller
     public function index()
     {
         if (!isLoggedIn()) {
-            redirect('users/login');
+            redirect('users/login/visitor-access-form');
         }
 
         $this->dashboard();
