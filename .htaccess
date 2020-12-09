@@ -19,9 +19,12 @@ php_flag file_uploads On
 php_value upload_max_filesize 100M
 php_value post_max_size 105M
 php_value max_execution_time 90
-php_value xdebug.remote_mode  req
-php_flag xdebug.remote_enable On
-php_flag xdebug.remote_autostart On
+
+#php_value xdebug.start_with_request trigger #php_value xdebug.remote_mode  req
+#php_value xdebug.mode=debug #php_flag xdebug.remote_enable On #Can only be used in ini files
+#php_value xdebug.start_with_request yes #php_flag xdebug.remote_autostart On
+#php_value xdebug.start_upon_error yes #php_value xdebug.remote_mode jit
+
 
 # PHP error handling for development servers
 php_flag display_startup_errors on
