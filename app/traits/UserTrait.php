@@ -18,7 +18,7 @@ trait UserTrait
     public ?int $department_id = null;
     public ?string $password = null;
     public ?string $basic_salary = null;
-    public ?string $default_password = null;
+    public ?bool $default_password = null;
     public ?int $user_role_level = null;
     public ?string $staff_category= null;
 }
