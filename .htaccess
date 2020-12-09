@@ -4,6 +4,7 @@
   RewriteRule ^$ public/ [L,QSA]
   RewriteRule ^(.*)$ public/$1 [L,QSA]
 </IfModule>
+
 <IfModule setenvif_module>
     <IfModule headers_module>
         <FilesMatch "\.(cur|gif|ico|jpe?g|png|svgz?|webp)$">
@@ -12,6 +13,7 @@
         </FilesMatch>
     </IfModule>
 </IfModule>
+
 php_value date.timezone 'Africa/Accra'
 php_flag file_uploads On
 php_value upload_max_filesize 100M
@@ -45,4 +47,3 @@ php_value log_errors_max_len 0
 
 Header set Access-Control-Allow-Origin "*"
 Header set Access-Control-Allow-Headers: "customKey1,customKey2, headers, Pragma, Origin, X-Requested-With, Content-Type, Accept, Accept-Encoding, Authorization"
-

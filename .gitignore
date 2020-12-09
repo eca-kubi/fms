@@ -3,3 +3,4 @@
 /node_modules/
 /dummy.php
 /daemon/
+PHP_errors.log

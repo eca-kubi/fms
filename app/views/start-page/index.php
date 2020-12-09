@@ -3,6 +3,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php require_once APP_ROOT . '\views\includes\start-page-header.php'; ?>
+<style>
+
+</style>
 <body>
 <div class="row mbr-justify-content-center blockable">
     <div class="col-lg-4 mbr-col-md-10" data-url="<?php echo site_url('start-page/finance') ?>">
@@ -59,7 +62,7 @@
         <span class="badge badge-pill badge-outline-secondary text-sm tag-coming-soon">Coming soon</span>
         <div class="wrap">
             <div class="ico-wrap">
-                <span class="mbr-iconfont fa-wpforms fa"></span>
+                <span class="mbr-iconfont fa-user-o fa"></span>
             </div>
             <div class="text-wrap">
                 <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5"><i
