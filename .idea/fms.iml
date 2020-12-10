@@ -59,6 +59,9 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/league/glide" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/league/flysystem" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/intervention/image" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/intervention" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/spatie" />
+      <excludeFolder url="file://$MODULE_DIR$/.vscode" />
     </content>
     <content url="file://$MODULE_DIR$/app/views/modals/visitor-access-form" />
     <orderEntry type="inheritedJdk" />

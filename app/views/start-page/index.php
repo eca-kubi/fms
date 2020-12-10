@@ -1,5 +1,4 @@
-<?php /** @noinspection PhpIncludeInspection */
-/** @var array $payload */ ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <?php require_once APP_ROOT . '\views\includes\start-page-header.php'; ?>
@@ -8,22 +7,24 @@
 </style>
 <body>
 <div class="row mbr-justify-content-center blockable">
-    <div class="col-lg-4 mbr-col-md-10" data-url="<?php echo site_url('start-page/finance') ?>">
-        <span class="text-success text-sm tag-coming-soon invisible"><i class="fa fa-check"></i></span>
+    <div class="col-lg-4 mbr-col-md-10" data-url="<?php echo site_url('start-page/hse'); ?>">
+        <span class="badge badge-pill badge-outline-secondary text-sm tag-coming-soon invisible">Coming soon</span>
         <div class="wrap">
             <div class="ico-wrap">
-                <span class="mbr-iconfont fa fa-money"></span>
+                <span class="mbr-iconfont "><?php require_once APP_ROOT . '\views\includes\svg-icons\vest.svg'; ?></span>
             </div>
             <div class="text-wrap">
                 <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5"><i
-                            class="fa fa-folder w3-text-amber"></i> Finance</h2>
-                <p class="mbr-fonts-style mbr-text display-6">
-                    <a class="d-block w3-text-black child" href="<?php echo URL_ROOT . '/salary-advance' ?>" target="_blank">
-                        <i class="fa fa-check animated text-black"></i> Salary Advance </a>
+                            class="fa fa-folder w3-text-amber"></i> HSE <span></span></h2>
+                <p class="mbr-fonts-style mbr-text display-6 mb-0">
+                    <a href="https://adamusgh.com/covid-19" target="_blank"  class="d-block w3-text-black child"><i class="fa fa-check text-black"></i> COVID-19</a>
+                    <a href="https://adamusgh.com/apps/near-miss" target="_blank" class="d-block w3-text-black child"><i class="fa fa-check text-black"></i> Near Miss</a>
+                    <a href="https://adamusgh.com/apps/incident-alert" target="_blank" class="d-block w3-text-black child"><i class="fa fa-check text-black"></i> Incident Alert</a>
                 </p>
             </div>
         </div>
     </div>
+
     <div class="col-lg-4 mbr-col-md-10 coming-soon" data-url="<?php echo site_url('start-page/security'); ?>">
         <span class="text-success text-sm tag-coming-soon invisible"><i class="fa fa-check"></i></span>
         <div class="wrap">
@@ -40,19 +41,18 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-4 mbr-col-md-10" data-url="<?php echo site_url('start-page/hse'); ?>">
-        <span class="badge badge-pill badge-outline-secondary text-sm tag-coming-soon invisible">Coming soon</span>
+    <div class="col-lg-4 mbr-col-md-10" data-url="<?php echo site_url('start-page/finance') ?>">
+        <span class="text-success text-sm tag-coming-soon invisible"><i class="fa fa-check"></i></span>
         <div class="wrap">
             <div class="ico-wrap">
-                <span class="mbr-iconfont "><?php require_once APP_ROOT . '\views\includes\svg-icons\vest.svg'; ?></span>
+                <span class="mbr-iconfont fa fa-money"></span>
             </div>
             <div class="text-wrap">
                 <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5"><i
-                            class="fa fa-folder w3-text-amber"></i> HSE <span></span></h2>
-                <p class="mbr-fonts-style mbr-text display-6 mb-0">
-                    <a href="https://adamusgh.com/covid-19" target="_blank"  class="d-block w3-text-black child"><i class="fa fa-check text-black"></i> COVID-19</a>
-                    <a href="https://adamusgh.com/apps/near-miss" target="_blank" class="d-block w3-text-black child"><i class="fa fa-check text-black"></i> Near Miss</a>
-                    <a href="https://adamusgh.com/apps/incident-alert" target="_blank" class="d-block w3-text-black child"><i class="fa fa-check text-black"></i> Incident Alert</a>
+                            class="fa fa-folder w3-text-amber"></i> Finance</h2>
+                <p class="mbr-fonts-style mbr-text display-6">
+                    <a class="d-block w3-text-black child" href="<?php echo URL_ROOT . '/salary-advance' ?>" target="_blank">
+                        <i class="fa fa-check animated text-black"></i> Salary Advance </a>
                 </p>
             </div>
         </div>

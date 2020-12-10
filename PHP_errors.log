@@ -4691,3 +4691,16 @@ Stack trace:
 [06-Dec-2020 22:25:21 Africa/Accra] PHP   1. {main}() C:\xampp\htdocs\fms\public\index.php:0
 [06-Dec-2020 22:25:21 Africa/Accra] PHP   2. Core->__construct() C:\xampp\htdocs\fms\public\index.php:4
 [06-Dec-2020 22:25:21 Africa/Accra] PHP   3. Users->newPassword($email_hashed = *uninitialized*, $secret_token = *uninitialized*) C:\xampp\htdocs\fms\app\libraries\Core.php:71
+[09-Dec-2020 20:28:40 Africa/Accra] PHP Warning:  session_start() [<a href='0function.session-start0'>function.session-start0</a>]: Failed to decode session object. Session has been destroyed in C:\xampp\htdocs\fms\app\helpers\session_helper.php on line 2
+[09-Dec-2020 20:28:40 Africa/Accra] PHP Stack trace:
+[09-Dec-2020 20:28:40 Africa/Accra] PHP   1. {main}() C:\xampp\htdocs\fms\public\index.php:0
+[09-Dec-2020 20:28:40 Africa/Accra] PHP   2. require_once() C:\xampp\htdocs\fms\public\index.php:2
+[09-Dec-2020 20:28:40 Africa/Accra] PHP   3. require_once() C:\xampp\htdocs\fms\app\bootstrap.php:27
+[09-Dec-2020 20:28:40 Africa/Accra] PHP   4. session_start() C:\xampp\htdocs\fms\app\helpers\session_helper.php:2
+[09-Dec-2020 20:28:40 Africa/Accra] PHP Fatal error:  Uncaught TypeError: Typed property User::$default_password must be bool or null, string used in C:\xampp\htdocs\fms\app\helpers\session_helper.php:2
+Stack trace:
+#0 C:\xampp\htdocs\fms\app\helpers\session_helper.php(2): session_start()
+#1 C:\xampp\htdocs\fms\app\bootstrap.php(27): require_once('C:\\xampp\\htdocs...')
+#2 C:\xampp\htdocs\fms\public\index.php(2): require_once('C:\\xampp\\htdocs...')
+#3 {main}
+  thrown in C:\xampp\htdocs\fms\app\helpers\session_helper.php on line 2

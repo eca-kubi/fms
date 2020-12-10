@@ -1,4 +1,3 @@
-<?php /** @var array $payload */ /** @noinspection PhpIncludeInspection */?>
 <!DOCTYPE html>
 <html lang="en">
 <?php require_once APP_ROOT . '\views\includes\start-page-header.php'; ?>

@@ -4,6 +4,7 @@ use Spatie\Browsershot\Browsershot;
 use Spatie\Browsershot\Exceptions\CouldNotTakeBrowsershot;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
+use ViewModels\StartPageViewModel;
 
 class Pages extends Controller
 {
@@ -25,12 +26,11 @@ class Pages extends Controller
 
     public function startPage()
     {
-        $payload = [];
-        $payload['title'] = 'Dashboard';
+        $view_model = new StartPageViewModel('Start Page');
         if (!isLoggedIn()) {
             redirect('users/login/pages/start-page');
         }
-        $this->view('pages/start-page', $payload);
+        $this->view('pages/start-page', ['view_model' => $view_model]);
     }
 
     public function getoauthtoken()

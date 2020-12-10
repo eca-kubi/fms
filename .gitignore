@@ -4,3 +4,5 @@
 /dummy.php
 /daemon/
 PHP_errors.log
+/vendor
+*.js

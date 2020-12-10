@@ -1,10 +1,17 @@
-<?php ?>
+<?php
+/**
+ * @var StartPageViewModel $view_model;
+ */
+
+use ViewModels\StartPageViewModel;
+
+?>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="Description" content="Start page for Adamus staff portal.">
     <title>
-        <?php /** @var array $payload */ echo $payload['title']; ?></title>
+        <?php echo $view_model->title; ?></title>
 
     <link rel="preload" href="<?php echo URL_ROOT . '/public/assets/fontastic/fonts/fontastic.woff' ?>" as="font" type="font/woff" crossorigin>
 
@@ -54,7 +61,7 @@
         ::-ms-reveal,::-ms-clear{display:none!important}body{scroll-behavior:smooth;height:auto;min-height:100%}html{height:auto;min-height:100%;overflow:hidden}.wrap{white-space:normal}html{-ms-overflow-style:none}:-moz-submit-invalid{box-shadow:none}:-moz-ui-invalid{box-shadow:none}@media (min-width:425px) and (max-width:767px){p{font-size:x-small}}.wrap{height:200px}.badge{font-size:85%}
         .text-black{color:#111111!important}.text-sm{font-size:12px}
         html {
-            height: auto;
+            height: 100vh;
             min-height: 100%;
             overflow: hidden;
         }
@@ -62,14 +69,11 @@
             overflow: auto;
         }
 
-
-
-
     </style>
 </head>
 <body>
 <section class="animated fadeInRight m-2 border section-1"
-         style="    background-image: url(<?php echo URL_ROOT; ?>/public/assets/images/bgs/background.png)">
+         style="height: auto;background-image: url(<?php echo URL_ROOT; ?>/public/assets/images/bgs/background.png)">
     <div class="container">
         <div class="row">
             <span class="m-l"><a href="javascript:window.history.back();"
@@ -82,6 +86,6 @@
         </div>
         <div class="row mb-2" style="border-bottom: 4px solid #eedaa8!important">
             <span class="h3">
-              <i class="fal fa-folder-open"></i> <?php echo isset($sub_page) ? "<a href='" . site_url('start-page') . "' class='w3-text-black'>Forms</a>" . " / <span class='w3-text-gray'>$sub_page</span> " : 'Forms' ?>
+              <i class="fal fa-folder-open"></i> <?php echo $view_model->sub_page? "<a href='" . site_url('start-page') . "' class='w3-text-black'>Forms</a>" . " / <span class='w3-text-gray'>$view_model->sub_page</span> " : 'Forms' ?>
             </span>
         </div>

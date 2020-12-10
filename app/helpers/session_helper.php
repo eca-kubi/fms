@@ -42,7 +42,7 @@ alert;
 }
 
 
-function isLoggedIn()
+function isLoggedIn(): bool
 {
     if (isset($_SESSION['logged_in_user'])) {
         return true;
