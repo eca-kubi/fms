@@ -1,0 +1,37 @@
+{
+  "require": {
+    "respect/validation": "^1.1",
+    "phpmailer/phpmailer": "@stable",
+    "react/child-process": "^0.5.2",
+    "peppeocchi/php-cron-scheduler": "^2.4",
+    "smsgatewayme/client": "^0.0.1",
+    "fightbulc/moment": "^1.29",
+    "ext-json": "*",
+    "alexistm/simple-json-php": "^5.0",
+    "ext-zip": "*",
+    "tecnickcom/tcpdf": "^6.2",
+    "sirbrillig/phpcs-variable-analysis": "v2.7.0",
+    "nuovo/spreadsheet-reader": "0.5.11",
+    "phpoffice/phpspreadsheet": "1.10.1",
+    "stevenmaguire/oauth2-microsoft": "2.2.0",
+    "ext-curl": "*",
+    "spatie/browsershot": "3.41.0"
+  },
+  "require-dev": {
+    "roave/security-advisories": "dev-master",
+    "squizlabs/php_codesniffer": "3.5.1"
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://asset-packagist.org"
+    },
+    {
+      "type": "git",
+      "url": "https://github.com/smsgatewayme/client-php.git"
+    }
+  ],
+  "scripts": {
+    "phpcs": "phpcs --standard=phpcs.xml"
+  }
+}

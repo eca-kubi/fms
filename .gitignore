@@ -1,0 +1,10 @@
+.idea
+.vscode
+/node_modules/
+/dummy.php
+/daemon/
+/PHP_errors.log
+/vendor
+/*.js
+/*.log
+/public/pdf

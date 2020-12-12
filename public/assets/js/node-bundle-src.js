@@ -1,0 +1,1 @@
+ window.entities = require('entities');

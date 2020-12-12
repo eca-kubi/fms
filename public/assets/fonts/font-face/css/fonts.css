@@ -1,0 +1,256 @@
+/* lobster-two-regular - latin */
+@font-face {
+    font-family: 'Lobster Two';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Lobster Two'), local('LobsterTwo'),
+    url('../fonts/lobster-two-v12-latin-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('../fonts/lobster-two-v12-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* lobster-two-italic - latin */
+@font-face {
+    font-family: 'Lobster Two';
+    font-style: italic;
+    font-weight: 400;
+    src: local('Lobster Two Italic'), local('LobsterTwo-Italic'),
+    url('../fonts/lobster-two-v12-latin-italic.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('../fonts/lobster-two-v12-latin-italic.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* lobster-two-700italic - latin */
+@font-face {
+    font-family: 'Lobster Two';
+    font-style: italic;
+    font-weight: 700;
+    src: local('Lobster Two Bold Italic'), local('LobsterTwo-BoldItalic'),
+    url('../fonts/lobster-two-v12-latin-700italic.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('../fonts/lobster-two-v12-latin-700italic.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* lobster-two-700 - latin */
+@font-face {
+    font-family: 'Lobster Two';
+    font-style: normal;
+    font-weight: 700;
+    src: local('Lobster Two Bold'), local('LobsterTwo-Bold'),
+    url('../fonts/lobster-two-v12-latin-700.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('../fonts/lobster-two-v12-latin-700.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* jua-regular - latin */
+@font-face {
+    font-family: 'Jua';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Jua Regular'), local('Jua-Regular'),
+    url('../fonts/jua-v8-latin-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('../fonts/jua-v8-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+/* cinzel-decorative-regular - latin */
+@font-face {
+    font-family: 'Cinzel Decorative';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Cinzel Decorative Regular'), local('CinzelDecorative-Regular'),
+    url('../fonts/cinzel-decorative-v8-latin-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('../fonts/cinzel-decorative-v8-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* cinzel-decorative-700 - latin */
+@font-face {
+    font-family: 'Cinzel Decorative';
+    font-style: normal;
+    font-weight: 700;
+    src: local('Cinzel Decorative Bold'), local('CinzelDecorative-Bold'),
+    url('../fonts/cinzel-decorative-v8-latin-700.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('../fonts/cinzel-decorative-v8-latin-700.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* cinzel-decorative-900 - latin */
+@font-face {
+    font-family: 'Cinzel Decorative';
+    font-style: normal;
+    font-weight: 900;
+    src: local('Cinzel Decorative Black'), local('CinzelDecorative-Black'),
+    url('../fonts/cinzel-decorative-v8-latin-900.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('../fonts/cinzel-decorative-v8-latin-900.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+/* raleway-regular - latin */
+@font-face {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Raleway'), local('Raleway-Regular'),
+    url('../fonts/raleway-v14-latin-regular.ttf') format('truetype'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('../fonts/raleway-v14-latin-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('../fonts/raleway-v14-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* raleway-500 - latin */
+@font-face {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 500;
+    src: local('Raleway Medium'), local('Raleway-Medium'),
+    url('../fonts/raleway-v14-latin-500.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('../fonts/raleway-v14-latin-500.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* raleway-700 - latin */
+@font-face {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 700;
+    src: local('Raleway Bold'), local('Raleway-Bold'),
+    url('../fonts/raleway-v14-latin-700.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('../fonts/raleway-v14-latin-700.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* raleway-900 - latin */
+@font-face {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 900;
+    src: local('Raleway Black'), local('Raleway-Black'),
+    url('../fonts/raleway-v14-latin-900.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('../fonts/raleway-v14-latin-900.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+/* muli-regular - latin */
+@font-face {
+  font-family: 'Muli';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/muli-v12-latin-regular.eot'); /* IE9 Compat Modes */
+  src: local('Muli Regular'), local('Muli-Regular'),
+       url('../fonts/muli-v12-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('../fonts/muli-v12-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../fonts/muli-v12-latin-regular.woff') format('woff'), /* Modern Browsers */
+       url('../fonts/muli-v12-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('../fonts/muli-v12-latin-regular.svg#Muli') format('svg'); /* Legacy iOS */
+}
+
+/* passion-one-regular - latin */
+@font-face {
+  font-family: 'Passion One';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/passion-one-v8-latin-regular.eot'); /* IE9 Compat Modes */
+  src: local('Passion One Regular'), local('PassionOne-Regular'),
+       url('../fonts/passion-one-v8-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('../fonts/passion-one-v8-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../fonts/passion-one-v8-latin-regular.woff') format('woff'), /* Modern Browsers */
+       url('../fonts/passion-one-v8-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('../fonts/passion-one-v8-latin-regular.svg#PassionOne') format('svg'); /* Legacy iOS */
+}
+
+/* poppins-300 - latin-ext_latin_devanagari */
+@font-face {
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 300;
+    src: url('../fonts/poppins-v9-latin-ext_latin_devanagari-300.eot'); /* IE9 Compat Modes */
+    src: local('Poppins Light'), local('Poppins-Light'),
+    url('../fonts/poppins-v9-latin-ext_latin_devanagari-300.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('../fonts/poppins-v9-latin-ext_latin_devanagari-300.woff2') format('woff2'), /* Super Modern Browsers */
+    url('../fonts/poppins-v9-latin-ext_latin_devanagari-300.woff') format('woff'), /* Modern Browsers */
+    url('../fonts/poppins-v9-latin-ext_latin_devanagari-300.ttf') format('truetype'), /* Safari, Android, iOS */
+    url('../fonts/poppins-v9-latin-ext_latin_devanagari-300.svg#Poppins') format('svg'); /* Legacy iOS */
+}
+/* poppins-regular - latin-ext_latin_devanagari */
+@font-face {
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/poppins-v9-latin-ext_latin_devanagari-regular.eot'); /* IE9 Compat Modes */
+    src: local('Poppins Regular'), local('Poppins-Regular'),
+    url('../fonts/poppins-v9-latin-ext_latin_devanagari-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('../fonts/poppins-v9-latin-ext_latin_devanagari-regular.woff2') format('woff2'), /* Super Modern Browsers */
+    url('../fonts/poppins-v9-latin-ext_latin_devanagari-regular.woff') format('woff'), /* Modern Browsers */
+    url('../fonts/poppins-v9-latin-ext_latin_devanagari-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+    url('../fonts/poppins-v9-latin-ext_latin_devanagari-regular.svg#Poppins') format('svg'); /* Legacy iOS */
+}
+/* poppins-500 - latin-ext_latin_devanagari */
+@font-face {
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 500;
+    src: url('../fonts/poppins-v9-latin-ext_latin_devanagari-500.eot'); /* IE9 Compat Modes */
+    src: local('Poppins Medium'), local('Poppins-Medium'),
+    url('../fonts/poppins-v9-latin-ext_latin_devanagari-500.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('../fonts/poppins-v9-latin-ext_latin_devanagari-500.woff2') format('woff2'), /* Super Modern Browsers */
+    url('../fonts/poppins-v9-latin-ext_latin_devanagari-500.woff') format('woff'), /* Modern Browsers */
+    url('../fonts/poppins-v9-latin-ext_latin_devanagari-500.ttf') format('truetype'), /* Safari, Android, iOS */
+    url('../fonts/poppins-v9-latin-ext_latin_devanagari-500.svg#Poppins') format('svg'); /* Legacy iOS */
+}
+/* poppins-600 - latin-ext_latin_devanagari */
+@font-face {
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 600;
+    src: url('../fonts/poppins-v9-latin-ext_latin_devanagari-600.eot'); /* IE9 Compat Modes */
+    src: local('Poppins SemiBold'), local('Poppins-SemiBold'),
+    url('../fonts/poppins-v9-latin-ext_latin_devanagari-600.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('../fonts/poppins-v9-latin-ext_latin_devanagari-600.woff2') format('woff2'), /* Super Modern Browsers */
+    url('../fonts/poppins-v9-latin-ext_latin_devanagari-600.woff') format('woff'), /* Modern Browsers */
+    url('../fonts/poppins-v9-latin-ext_latin_devanagari-600.ttf') format('truetype'), /* Safari, Android, iOS */
+    url('../fonts/poppins-v9-latin-ext_latin_devanagari-600.svg#Poppins') format('svg'); /* Legacy iOS */
+}
+
+/* roboto-mono-regular - latin */
+@font-face {
+    font-family: 'Roboto Mono';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/roboto-mono-v7-latin-regular.eot'); /* IE9 Compat Modes */
+    src: local('Roboto Mono'), local('RobotoMono-Regular'),
+    url('../fonts/roboto-mono-v7-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('../fonts/roboto-mono-v7-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+    url('../fonts/roboto-mono-v7-latin-regular.woff') format('woff'), /* Modern Browsers */
+    url('../fonts/roboto-mono-v7-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+    url('../fonts/roboto-mono-v7-latin-regular.svg#RobotoMono') format('svg'); /* Legacy iOS */
+}
+
+/* nunito-sans-regular - latin */
+@font-face {
+    font-family: 'Nunito Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/nunito-sans-v5-latin-regular.eot'); /* IE9 Compat Modes */
+    src: local('Nunito Sans Regular'), local('NunitoSans-Regular'),
+    url('../fonts/nunito-sans-v5-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('../fonts/nunito-sans-v5-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+    url('../fonts/nunito-sans-v5-latin-regular.woff') format('woff'), /* Modern Browsers */
+    url('../fonts/nunito-sans-v5-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+    url('../fonts/nunito-sans-v5-latin-regular.svg#NunitoSans') format('svg'); /* Legacy iOS */
+}
+
+.font-lobster-two {
+    font-family: "Lobster Two", serif
+}
+
+.font-jua {
+    font-family: Jua, serif;
+}
+
+.font-raleway {
+    font-family: Raleway, serif;
+}
+
+.font-old-standard {
+    font-family: "Old Standard TT", serif ;
+}
+
+.font-roboto-mono {
+    font-family: "Roboto Mono", serif;
+}
+
+.font-poppins {
+    font-family: Poppins, serif;
+}
+
+.font-cinzel {
+    font-family: 'Cinzel Decorative', serif
+}
+
+.font-mulli {
+    font-family: Muli, serif;
+}
+
+.font-passion-one {
+    font-family: 'Passion One', serif;
+}
