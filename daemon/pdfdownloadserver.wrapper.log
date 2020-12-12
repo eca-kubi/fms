@@ -36,3 +36,5 @@
 2020-12-06 13:26:31 - Finished pdfdownloadserver.exe
 2020-12-06 13:26:32 - Starting C:\Program Files\nodejs\node.exe  --harmony C:\Users\IT\AppData\Roaming\npm\node_modules\node-windows\lib\wrapper.js --file C:\xampp\htdocs\fms\app.js --scriptoptions= --log "PDF Download Server wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
 2020-12-06 13:26:32 - Started 5664
+2020-12-12 06:10:21 - Starting C:\Program Files\nodejs\node.exe  --harmony C:\Users\IT\AppData\Roaming\npm\node_modules\node-windows\lib\wrapper.js --file C:\xampp\htdocs\fms\app.js --scriptoptions= --log "PDF Download Server wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2020-12-12 06:10:25 - Started 2472

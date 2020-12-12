@@ -3,6 +3,7 @@
 /node_modules/
 /dummy.php
 /daemon/
-PHP_errors.log
+/PHP_errors.log
 /vendor
-*.js
+/*.js
+/*.log

@@ -1,5 +1,5 @@
 <?php
-const URL_ROOT = 'https://local.arlgh.com/forms';
+const URL_ROOT = 'https://local.arlgh.com/fms';
 const HTTP_PROTOCOL = 'http://';
 const HTTPS_PROTOCOL = 'https://';
 const DOMAIN = 'local.arlgh.com';
