@@ -1,4 +1,0 @@
-<?php
-/*Error constants*/
-const ERROR_UNSPECIFIED_ERROR = 'E_1000';
-const ERROR_APPLICATION_ALREADY_REVIEWED = 'E_1002';
